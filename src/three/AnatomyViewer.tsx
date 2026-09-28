@@ -1,14 +1,33 @@
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import {
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+
 import {
   Canvas,
   type ThreeEvent,
+  useThree,
 } from "@react-three/fiber";
+
 import {
   Center,
   OrbitControls,
   useGLTF,
 } from "@react-three/drei";
+
 import * as THREE from "three";
+
+import {
+  getStructureCategory,
+  getUnknownAnatomyWords,
+  isInvalidStructureName,
+} from "../utils/anatomyNames";
+
+/* ======================================================
+   TIPOS
+====================================================== */
 
 export type AnatomyLayer =
   | "general"
@@ -28,12 +47,6 @@ export type ViewerAction = {
   id: number;
 };
 
-type StructureCategory =
-  | "heart"
-  | "artery"
-  | "vein"
-  | "other";
-
 type AnatomyViewerProps = {
   modelPath: string;
 
@@ -44,111 +57,76 @@ type AnatomyViewerProps = {
   ) => void;
 
   action?: ViewerAction | null;
+
+  zoomLevel?: number;
+
+  onZoomChange?: (
+    value: number
+  ) => void;
 };
 
-/*
- * Colores anatómicos.
- */
+/* ======================================================
+   COLORES
+====================================================== */
+
 const COLORS = {
   heart: "#8f2438",
+
   artery: "#d94b59",
+
   vein: "#4f6fa8",
-  other: "#9ca3af",
+
+  other: "#94a3b8",
 
   selected: "#f59e0b",
-  selectedEmissive: "#92400e",
+
+  selectedEmissive:
+    "#92400e",
 };
 
-/*
- * Clasifica automáticamente
- * una estructura a partir del nombre
- * interno del mesh.
- */
-function getStructureCategory(
-  meshName: string
-): StructureCategory {
-  const name =
-    meshName.toLowerCase();
+/* ======================================================
+   ZOOM
+====================================================== */
 
-  /*
-   * Primero corazón.
-   *
-   * Esto evita que nombres como
-   * coronary_leaflet terminen
-   * siendo confundidos con arterias.
-   */
-  if (
-    name.includes("heart") ||
-    name.includes("atrium") ||
-    name.includes("ventricle") ||
-    name.includes("valve") ||
-    name.includes("leaflet") ||
-    name.includes("papillary") ||
-    name.includes("interatrial") ||
-    name.includes("interventricular")
-  ) {
-    return "heart";
-  }
+const MIN_DISTANCE = 0.35;
+const MAX_DISTANCE = 18;
 
-  /*
-   * Arterias.
-   */
-  if (
-    name.includes("artery") ||
-    name.includes("arterial") ||
-    name.includes("aorta") ||
-    name.includes("aortic") ||
-    name.includes("pulmonary_trunk")
-  ) {
-    return "artery";
-  }
+/* ======================================================
+   COLOR POR CATEGORÍA
+====================================================== */
 
-  /*
-   * Venas.
-   */
-  if (
-    name.includes("vein") ||
-    name.includes("venous") ||
-    name.includes("vena") ||
-    name.includes("cava") ||
-    name.includes("sinus")
-  ) {
-    return "vein";
-  }
-
-  return "other";
-}
-
-/*
- * Color inicial según
- * categoría anatómica.
- */
 function getStructureColor(
-  meshName: string
+  structureName: string
 ) {
   const category =
-    getStructureCategory(meshName);
+    getStructureCategory(
+      structureName
+    );
 
   return COLORS[category];
 }
 
-/*
- * Decide cuáles estructuras
- * deben aparecer en la vista GENERAL.
- */
+/* ======================================================
+   VISTA GENERAL
+====================================================== */
+
 function isGeneralStructure(
-  meshName: string
+  structureName: string
 ) {
   const name =
-    meshName.toLowerCase();
+    structureName.toLowerCase();
 
   const category =
-    getStructureCategory(meshName);
+    getStructureCategory(
+      structureName
+    );
 
   /*
-   * Todo el corazón.
+   * Mostramos el corazón.
    */
-  if (category === "heart") {
+  if (
+    category === "heart"
+  ) {
     return true;
   }
 
@@ -158,14 +136,26 @@ function isGeneralStructure(
   const importantStructures = [
     "aorta",
     "aortic",
+
     "vena_cava",
     "cava",
+
     "pulmonary_trunk",
+
     "pulmonary_artery",
+    "pulmonary_arteries",
+
     "pulmonary_vein",
+    "pulmonary_veins",
+
     "carotid",
+
     "subclavian",
+
+    "brachiocephalic",
+
     "iliac",
+
     "femoral",
   ];
 
@@ -175,48 +165,82 @@ function isGeneralStructure(
   );
 }
 
-/*
- * Determina si un mesh debe estar
- * visible según la capa seleccionada.
- */
+/* ======================================================
+   VISIBILIDAD
+====================================================== */
+
 function shouldBeVisible(
-  meshName: string,
+  structureName: string,
   layer: AnatomyLayer
 ) {
-  const category =
-    getStructureCategory(meshName);
+  /*
+   * No mostramos objetos
+   * con nombres dañados.
+   */
+  if (
+    isInvalidStructureName(
+      structureName
+    )
+  ) {
+    return false;
+  }
 
-  if (layer === "complete") {
+  const category =
+    getStructureCategory(
+      structureName
+    );
+
+  if (
+    layer === "complete"
+  ) {
     return true;
   }
 
-  if (layer === "heart") {
+  if (
+    layer === "heart"
+  ) {
     return category === "heart";
   }
 
-  if (layer === "arteries") {
+  if (
+    layer === "arteries"
+  ) {
     return category === "artery";
   }
 
-  if (layer === "veins") {
+  if (
+    layer === "veins"
+  ) {
     return category === "vein";
   }
 
-  if (layer === "general") {
+  if (
+    layer === "general"
+  ) {
     return isGeneralStructure(
-      meshName
+      structureName
     );
   }
 
   return true;
 }
 
+/* ======================================================
+   MODELO CARDIOVASCULAR
+====================================================== */
+
 function CardiovascularModel({
   modelPath,
   layer,
   onStructureSelect,
   action,
-}: AnatomyViewerProps) {
+}: Pick<
+  AnatomyViewerProps,
+  | "modelPath"
+  | "layer"
+  | "onStructureSelect"
+  | "action"
+>) {
   const { scene } =
     useGLTF(modelPath);
 
@@ -225,17 +249,16 @@ function CardiovascularModel({
       null
     );
 
-  /*
-   * Copiamos el modelo y
-   * configuramos cada mesh.
-   */
+  /* ====================================================
+     PREPARACIÓN DEL MODELO
+  ==================================================== */
+
   const model = useMemo(() => {
     const clone =
       scene.clone(true);
 
     /*
-     * Normalización automática
-     * del tamaño del modelo.
+     * Calcular tamaño.
      */
     const box =
       new THREE.Box3().setFromObject(
@@ -254,7 +277,12 @@ function CardiovascularModel({
         size.z
       );
 
-    if (maxDimension > 0) {
+    /*
+     * Escala automática.
+     */
+    if (
+      maxDimension > 0
+    ) {
       const desiredSize = 6;
 
       const scale =
@@ -266,118 +294,153 @@ function CardiovascularModel({
       );
     }
 
-    clone.traverse(
-      (object) => {
-        if (
-          !(
-            object instanceof
-            THREE.Mesh
-          )
-        ) {
-          return;
-        }
-
-        object.castShadow = true;
-        object.receiveShadow = true;
-
-        object.geometry.computeVertexNormals();
-
-        /*
-         * Material independiente
-         * para cada estructura.
-         */
-        object.material =
-          new THREE.MeshStandardMaterial(
-            {
-              color:
-                getStructureColor(
-                  object.name
-                ),
-
-              roughness: 0.58,
-
-              metalness: 0,
-
-              transparent: false,
-
-              opacity: 1,
-
-              side:
-                THREE.DoubleSide,
-            }
-          );
+    /*
+     * Material independiente
+     * para cada mesh.
+     */
+    clone.traverse((object) => {
+      if (
+        !(
+          object instanceof
+          THREE.Mesh
+        )
+      ) {
+        return;
       }
-    );
+
+      object.castShadow = true;
+      object.receiveShadow = true;
+
+      object.geometry.computeVertexNormals();
+
+      object.material =
+        new THREE.MeshStandardMaterial({
+          color:
+            getStructureColor(
+              object.name
+            ),
+
+          roughness: 0.58,
+
+          metalness: 0,
+
+          transparent: false,
+
+          opacity: 1,
+
+          side:
+            THREE.DoubleSide,
+        });
+    });
 
     return clone;
   }, [scene]);
 
-  /*
-   * ==========================
-   * INFORMACIÓN DE CLASIFICACIÓN
-   * ==========================
-   *
-   * Esto aparecerá en consola.
-   */
+  /* ====================================================
+     INFORMACIÓN EN CONSOLA
+  ==================================================== */
+
   useEffect(() => {
     const counts = {
       heart: 0,
       arteries: 0,
       veins: 0,
       other: 0,
+      invalid: 0,
       total: 0,
     };
 
     const otherStructures:
       string[] = [];
 
-    model.traverse(
-      (object) => {
-        if (
-          !(
-            object instanceof
-            THREE.Mesh
-          )
-        ) {
-          return;
-        }
+    const invalidStructures:
+      string[] = [];
 
-        counts.total++;
+    const missingTranslations:
+      Record<
+        string,
+        string[]
+      > = {};
 
-        const category =
-          getStructureCategory(
-            object.name
-          );
-
-        if (
-          category === "heart"
-        ) {
-          counts.heart++;
-        }
-
-        if (
-          category === "artery"
-        ) {
-          counts.arteries++;
-        }
-
-        if (
-          category === "vein"
-        ) {
-          counts.veins++;
-        }
-
-        if (
-          category === "other"
-        ) {
-          counts.other++;
-
-          otherStructures.push(
-            object.name
-          );
-        }
+    model.traverse((object) => {
+      if (
+        !(
+          object instanceof
+          THREE.Mesh
+        )
+      ) {
+        return;
       }
-    );
+
+      counts.total++;
+
+      /*
+       * Nombres inválidos.
+       */
+      if (
+        isInvalidStructureName(
+          object.name
+        )
+      ) {
+        counts.invalid++;
+
+        invalidStructures.push(
+          object.name
+        );
+
+        return;
+      }
+
+      const category =
+        getStructureCategory(
+          object.name
+        );
+
+      if (
+        category === "heart"
+      ) {
+        counts.heart++;
+      }
+
+      if (
+        category === "artery"
+      ) {
+        counts.arteries++;
+      }
+
+      if (
+        category === "vein"
+      ) {
+        counts.veins++;
+      }
+
+      if (
+        category === "other"
+      ) {
+        counts.other++;
+
+        otherStructures.push(
+          object.name
+        );
+      }
+
+      /*
+       * Detectar traducciones
+       * todavía incompletas.
+       */
+      const unknownWords =
+        getUnknownAnatomyWords(
+          object.name
+        );
+
+      if (
+        unknownWords.length > 0
+      ) {
+        missingTranslations[
+          object.name
+        ] = unknownWords;
+      }
+    });
 
     console.log(
       "======================================"
@@ -398,13 +461,86 @@ function CardiovascularModel({
     );
 
     console.log(
-      otherStructures
+      otherStructures.join(
+        "\n"
+      )
     );
 
     console.log(
       "======================================"
     );
+
+    console.log(
+      "NOMBRES QUE NECESITAN TRADUCCIÓN"
+    );
+
+    Object.entries(
+      missingTranslations
+    ).forEach(
+      ([
+        structure,
+        unknownWords,
+      ]) => {
+        console.log(
+          `${structure} -> ${unknownWords.join(", ")}`
+        );
+      }
+    );
+
+    const uniqueUnknownWords = [
+      ...new Set(
+        Object.values(
+          missingTranslations
+        ).flat()
+      ),
+    ].sort();
+
+    console.log(
+      "======================================"
+    );
+
+    console.log(
+      "PALABRAS ÚNICAS SIN TRADUCIR:"
+    );
+
+    console.log(
+      uniqueUnknownWords.join(
+        "\n"
+      )
+    );
+
+    console.log(
+      "TOTAL:",
+      uniqueUnknownWords.length
+    );
+
+    if (
+      invalidStructures.length >
+      0
+    ) {
+      console.log(
+        "======================================"
+      );
+
+      console.log(
+        "NOMBRES INVÁLIDOS OCULTADOS:"
+      );
+
+      console.log(
+        invalidStructures.join(
+          "\n"
+        )
+      );
+    }
+
+    console.log(
+      "======================================"
+    );
   }, [model]);
+
+  /* ====================================================
+     MATERIAL
+  ==================================================== */
 
   const getMaterial = (
     mesh: THREE.Mesh
@@ -419,19 +555,23 @@ function CardiovascularModel({
     return null;
   };
 
-  /*
-   * Devuelve el mesh
-   * a su color anatómico.
-   */
+  /* ====================================================
+     RESTAURAR COLOR
+  ==================================================== */
+
   const restoreHighlight = (
     mesh: THREE.Mesh | null
   ) => {
-    if (!mesh) return;
+    if (!mesh) {
+      return;
+    }
 
     const material =
       getMaterial(mesh);
 
-    if (!material) return;
+    if (!material) {
+      return;
+    }
 
     material.color.set(
       getStructureColor(
@@ -447,17 +587,19 @@ function CardiovascularModel({
       0;
   };
 
-  /*
-   * Resalta la estructura
-   * seleccionada.
-   */
+  /* ====================================================
+     RESALTAR
+  ==================================================== */
+
   const highlightMesh = (
     mesh: THREE.Mesh
   ) => {
     const material =
       getMaterial(mesh);
 
-    if (!material) return;
+    if (!material) {
+      return;
+    }
 
     material.color.set(
       COLORS.selected
@@ -471,14 +613,13 @@ function CardiovascularModel({
       0.35;
   };
 
-  /*
-   * ==========================
-   * CAMBIO DE CAPA
-   * ==========================
-   */
+  /* ====================================================
+     CAMBIO DE CAPA
+  ==================================================== */
+
   useEffect(() => {
     /*
-     * Limpiamos selección.
+     * Limpiar selección.
      */
     if (
       selectedMeshRef.current
@@ -494,72 +635,65 @@ function CardiovascularModel({
     onStructureSelect?.(null);
 
     /*
-     * Aplicamos la visibilidad
-     * según la capa.
+     * Aplicar visibilidad.
      */
-    model.traverse(
-      (object) => {
-        if (
-          !(
-            object instanceof
-            THREE.Mesh
-          )
-        ) {
-          return;
-        }
-
-        object.visible =
-          shouldBeVisible(
-            object.name,
-            layer
-          );
-
-        /*
-         * Cada vez que cambiamos
-         * de capa dejamos limpio
-         * el material.
-         */
-        const material =
-          getMaterial(object);
-
-        if (!material) return;
-
-        material.color.set(
-          getStructureColor(
-            object.name
-          )
-        );
-
-        material.emissive.set(
-          "#000000"
-        );
-
-        material.emissiveIntensity =
-          0;
-
-        material.opacity = 1;
-
-        material.transparent =
-          false;
-
-        material.depthWrite =
-          true;
-
-        material.needsUpdate =
-          true;
+    model.traverse((object) => {
+      if (
+        !(
+          object instanceof
+          THREE.Mesh
+        )
+      ) {
+        return;
       }
-    );
+
+      object.visible =
+        shouldBeVisible(
+          object.name,
+          layer
+        );
+
+      const material =
+        getMaterial(object);
+
+      if (!material) {
+        return;
+      }
+
+      material.color.set(
+        getStructureColor(
+          object.name
+        )
+      );
+
+      material.emissive.set(
+        "#000000"
+      );
+
+      material.emissiveIntensity =
+        0;
+
+      material.opacity = 1;
+
+      material.transparent =
+        false;
+
+      material.depthWrite =
+        true;
+
+      material.needsUpdate =
+        true;
+    });
   }, [
     layer,
     model,
     onStructureSelect,
   ]);
 
-  /*
-   * ==========================
-   * SELECCIÓN POR CLIC
-   * ==========================
-   */
+  /* ====================================================
+     CLIC
+  ==================================================== */
+
   const handleClick = (
     event: ThreeEvent<MouseEvent>
   ) => {
@@ -578,15 +712,22 @@ function CardiovascularModel({
     }
 
     /*
-     * Si está invisible,
-     * no hacemos nada.
+     * Ignorar objetos inválidos.
      */
+    if (
+      isInvalidStructureName(
+        object.name
+      )
+    ) {
+      return;
+    }
+
     if (!object.visible) {
       return;
     }
 
     /*
-     * Restauramos la selección
+     * Restaurar selección
      * anterior.
      */
     if (
@@ -633,24 +774,28 @@ function CardiovascularModel({
     );
   };
 
-  /*
-   * ==========================
-   * TOOLBAR
-   * ==========================
-   */
+  /* ====================================================
+     TOOLBAR
+  ==================================================== */
+
   useEffect(() => {
-    if (!action) return;
+    if (!action) {
+      return;
+    }
 
     const selected =
       selectedMeshRef.current;
 
-    /*
-     * AISLAR
-     */
+    /* =========================
+       AISLAR
+    ========================= */
+
     if (
       action.type === "isolate"
     ) {
-      if (!selected) return;
+      if (!selected) {
+        return;
+      }
 
       model.traverse(
         (object) => {
@@ -668,13 +813,16 @@ function CardiovascularModel({
       return;
     }
 
-    /*
-     * OCULTAR
-     */
+    /* =========================
+       OCULTAR
+    ========================= */
+
     if (
       action.type === "hide"
     ) {
-      if (!selected) return;
+      if (!selected) {
+        return;
+      }
 
       selected.visible = false;
 
@@ -690,19 +838,24 @@ function CardiovascularModel({
       return;
     }
 
-    /*
-     * TRANSPARENCIA
-     */
+    /* =========================
+       TRANSPARENCIA
+    ========================= */
+
     if (
       action.type ===
       "transparency"
     ) {
-      if (!selected) return;
+      if (!selected) {
+        return;
+      }
 
       const material =
         getMaterial(selected);
 
-      if (!material) return;
+      if (!material) {
+        return;
+      }
 
       const isTransparent =
         material.opacity < 1;
@@ -731,13 +884,10 @@ function CardiovascularModel({
       return;
     }
 
-    /*
-     * RESTABLECER
-     *
-     * Importante:
-     * ahora no muestra TODO.
-     * Vuelve a la capa activa.
-     */
+    /* =========================
+       RESTABLECER
+    ========================= */
+
     if (
       action.type === "reset"
     ) {
@@ -761,7 +911,9 @@ function CardiovascularModel({
           const material =
             getMaterial(object);
 
-          if (!material) return;
+          if (!material) {
+            return;
+          }
 
           material.color.set(
             getStructureColor(
@@ -811,11 +963,151 @@ function CardiovascularModel({
   );
 }
 
+/* ======================================================
+   CONTROL DE ZOOM
+====================================================== */
+
+function CameraZoomController({
+  zoomLevel,
+  onZoomChange,
+}: {
+  zoomLevel: number;
+
+  onZoomChange?: (
+    value: number
+  ) => void;
+}) {
+  const {
+    camera,
+    controls,
+  } = useThree();
+
+  /*
+   * Barra / botones -> cámara
+   */
+  useEffect(() => {
+    const orbitControls =
+      controls as any;
+
+    if (
+      !orbitControls ||
+      !orbitControls.target
+    ) {
+      return;
+    }
+
+    const normalized =
+      zoomLevel / 100;
+
+    const distance =
+      MAX_DISTANCE -
+      normalized *
+        (MAX_DISTANCE -
+          MIN_DISTANCE);
+
+    const direction =
+      camera.position
+        .clone()
+        .sub(
+          orbitControls.target
+        )
+        .normalize();
+
+    camera.position.copy(
+      orbitControls.target
+        .clone()
+        .add(
+          direction.multiplyScalar(
+            distance
+          )
+        )
+    );
+
+    camera.updateProjectionMatrix();
+
+    orbitControls.update();
+  }, [
+    zoomLevel,
+    camera,
+    controls,
+  ]);
+
+  /*
+   * Rueda / touchpad -> barra
+   */
+  useEffect(() => {
+    const orbitControls =
+      controls as any;
+
+    if (
+      !orbitControls ||
+      !orbitControls.target
+    ) {
+      return;
+    }
+
+    const updateZoomLevel =
+      () => {
+        const distance =
+          camera.position.distanceTo(
+            orbitControls.target
+          );
+
+        const normalized =
+          (MAX_DISTANCE -
+            distance) /
+          (MAX_DISTANCE -
+            MIN_DISTANCE);
+
+        const percentage =
+          Math.round(
+            Math.min(
+              1,
+              Math.max(
+                0,
+                normalized
+              )
+            ) * 100
+          );
+
+        onZoomChange?.(
+          percentage
+        );
+      };
+
+    orbitControls.addEventListener(
+      "change",
+      updateZoomLevel
+    );
+
+    return () => {
+      orbitControls.removeEventListener(
+        "change",
+        updateZoomLevel
+      );
+    };
+  }, [
+    camera,
+    controls,
+    onZoomChange,
+  ]);
+
+  return null;
+}
+
+/* ======================================================
+   CARGA
+====================================================== */
+
 function LoadingModel() {
   return (
     <mesh>
       <sphereGeometry
-        args={[0.15, 32, 32]}
+        args={[
+          0.15,
+          32,
+          32,
+        ]}
       />
 
       <meshStandardMaterial
@@ -825,51 +1117,85 @@ function LoadingModel() {
   );
 }
 
+/* ======================================================
+   VISOR
+====================================================== */
+
 export default function AnatomyViewer({
   modelPath,
   layer,
   onStructureSelect,
   action,
+  zoomLevel = 55,
+  onZoomChange,
 }: AnatomyViewerProps) {
   return (
     <div className="h-full w-full">
       <Canvas
         shadows
         camera={{
-          position: [0, 0.5, 8],
+          position: [
+            0,
+            0.5,
+            8,
+          ],
+
           fov: 40,
-          near: 0.1,
+
+          near: 0.01,
+
           far: 1000,
         }}
         gl={{
           antialias: true,
+
           alpha: false,
         }}
         dpr={[1, 2]}
       >
+        {/* Fondo */}
+
         <color
           attach="background"
-          args={["#f1f5f9"]}
+          args={[
+            "#f1f5f9",
+          ]}
         />
+
+        {/* Iluminación */}
 
         <ambientLight
           intensity={0.65}
         />
 
         <directionalLight
-          position={[5, 6, 5]}
+          position={[
+            5,
+            6,
+            5,
+          ]}
           intensity={1.4}
         />
 
         <directionalLight
-          position={[-5, 3, 4]}
+          position={[
+            -5,
+            3,
+            4,
+          ]}
           intensity={0.7}
         />
 
         <directionalLight
-          position={[0, 4, -5]}
+          position={[
+            0,
+            4,
+            -5,
+          ]}
           intensity={0.45}
         />
+
+        {/* Modelo */}
 
         <Suspense
           fallback={
@@ -877,14 +1203,20 @@ export default function AnatomyViewer({
           }
         >
           <CardiovascularModel
-            modelPath={modelPath}
+            modelPath={
+              modelPath
+            }
             layer={layer}
             onStructureSelect={
               onStructureSelect
             }
-            action={action}
+            action={
+              action
+            }
           />
         </Suspense>
+
+        {/* Controles */}
 
         <OrbitControls
           makeDefault
@@ -892,11 +1224,32 @@ export default function AnatomyViewer({
           enableZoom
           enablePan
           enableDamping
-          dampingFactor={0.08}
+          dampingFactor={
+            0.08
+          }
           zoomSpeed={1}
-          minDistance={0.35}
-          maxDistance={18}
-          target={[0, 0, 0]}
+          minDistance={
+            MIN_DISTANCE
+          }
+          maxDistance={
+            MAX_DISTANCE
+          }
+          target={[
+            0,
+            0,
+            0,
+          ]}
+        />
+
+        {/* Sincronización zoom */}
+
+        <CameraZoomController
+          zoomLevel={
+            zoomLevel
+          }
+          onZoomChange={
+            onZoomChange
+          }
         />
       </Canvas>
     </div>
