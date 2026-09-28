@@ -46,6 +46,11 @@ export type ViewerAction = {
   id: number;
 };
 
+export type StructureFocusRequest = {
+  structureName: string;
+  id: number;
+};
+
 type AnatomyViewerProps = {
   modelPath: string;
 
@@ -56,6 +61,10 @@ type AnatomyViewerProps = {
   ) => void;
 
   action?: ViewerAction | null;
+
+  focusRequest?:
+    | StructureFocusRequest
+    | null;
 };
 
 /* ======================================================
@@ -78,7 +87,7 @@ const COLORS = {
 };
 
 /* ======================================================
-   COLOR SEGÚN ESTRUCTURA
+   COLOR
 ====================================================== */
 
 function getStructureColor(
@@ -107,20 +116,12 @@ function isGeneralStructure(
       structureName
     );
 
-  /*
-   * Siempre mostramos
-   * estructuras cardíacas.
-   */
   if (
     category === "heart"
   ) {
     return true;
   }
 
-  /*
-   * Vasos principales para
-   * evitar saturar al estudiante.
-   */
   const importantStructures = [
     "aorta",
     "aortic",
@@ -154,17 +155,13 @@ function isGeneralStructure(
 }
 
 /* ======================================================
-   VISIBILIDAD POR CAPA
+   VISIBILIDAD
 ====================================================== */
 
 function shouldBeVisible(
   structureName: string,
   layer: AnatomyLayer
 ) {
-  /*
-   * No mostramos objetos
-   * con nombres dañados.
-   */
   if (
     isInvalidStructureName(
       structureName
@@ -214,7 +211,7 @@ function shouldBeVisible(
 }
 
 /* ======================================================
-   MODELO CARDIOVASCULAR
+   MODELO
 ====================================================== */
 
 function CardiovascularModel({
@@ -222,12 +219,14 @@ function CardiovascularModel({
   layer,
   onStructureSelect,
   action,
+  focusRequest,
 }: Pick<
   AnatomyViewerProps,
   | "modelPath"
   | "layer"
   | "onStructureSelect"
   | "action"
+  | "focusRequest"
 >) {
   const {
     scene,
@@ -246,9 +245,6 @@ function CardiovascularModel({
     const clone =
       scene.clone(true);
 
-    /*
-     * Calcular dimensiones.
-     */
     const box =
       new THREE.Box3().setFromObject(
         clone
@@ -266,13 +262,23 @@ function CardiovascularModel({
         size.z
       );
 
-    /*
-     * Normalizar escala.
-     */
     if (
       maxDimension > 0
     ) {
-      const desiredSize = 6;
+      /*
+       * El modelo cardiovascular
+       * completo necesita un poco
+       * más de aire alrededor.
+       *
+       * El corazón detallado conserva
+       * el tamaño que ya funcionaba.
+       */
+      const desiredSize =
+        modelPath.includes(
+          "cardiovascular_overview"
+        )
+          ? 5.8
+          : 6;
 
       const scale =
         desiredSize /
@@ -283,10 +289,6 @@ function CardiovascularModel({
       );
     }
 
-    /*
-     * Material independiente
-     * para cada estructura.
-     */
     clone.traverse(
       (object) => {
         if (
@@ -304,11 +306,6 @@ function CardiovascularModel({
         object.receiveShadow =
           true;
 
-        /*
-         * Material propio
-         * para poder modificar
-         * cada estructura.
-         */
         object.material =
           new THREE.MeshStandardMaterial({
             color:
@@ -331,7 +328,10 @@ function CardiovascularModel({
     );
 
     return clone;
-  }, [scene]);
+  }, [
+    scene,
+    modelPath,
+  ]);
 
   /* ====================================================
      MATERIAL
@@ -351,7 +351,7 @@ function CardiovascularModel({
   };
 
   /* ====================================================
-     RESTAURAR RESALTADO
+     RESTAURAR COLOR
   ==================================================== */
 
   const restoreHighlight = (
@@ -383,7 +383,7 @@ function CardiovascularModel({
   };
 
   /* ====================================================
-     RESALTAR ESTRUCTURA
+     RESALTAR
   ==================================================== */
 
   const highlightMesh = (
@@ -409,7 +409,7 @@ function CardiovascularModel({
   };
 
   /* ====================================================
-     DIAGNÓSTICO EN CONSOLA
+     DIAGNÓSTICO
   ==================================================== */
 
   useEffect(() => {
@@ -467,29 +467,25 @@ function CardiovascularModel({
           );
 
         if (
-          category ===
-          "heart"
+          category === "heart"
         ) {
           counts.heart++;
         }
 
         if (
-          category ===
-          "artery"
+          category === "artery"
         ) {
           counts.arteries++;
         }
 
         if (
-          category ===
-          "vein"
+          category === "vein"
         ) {
           counts.veins++;
         }
 
         if (
-          category ===
-          "other"
+          category === "other"
         ) {
           counts.other++;
 
@@ -522,10 +518,6 @@ function CardiovascularModel({
       "CLASIFICACIÓN CARDIOVASCULAR"
     );
 
-    console.log(
-      "======================================"
-    );
-
     console.table(
       counts
     );
@@ -540,27 +532,6 @@ function CardiovascularModel({
       )
     );
 
-    console.log(
-      "======================================"
-    );
-
-    console.log(
-      "NOMBRES QUE NECESITAN TRADUCCIÓN"
-    );
-
-    Object.entries(
-      missingTranslations
-    ).forEach(
-      ([
-        structure,
-        unknownWords,
-      ]) => {
-        console.log(
-          `${structure} -> ${unknownWords.join(", ")}`
-        );
-      }
-    );
-
     const uniqueUnknownWords = [
       ...new Set(
         Object.values(
@@ -568,10 +539,6 @@ function CardiovascularModel({
         ).flat()
       ),
     ].sort();
-
-    console.log(
-      "======================================"
-    );
 
     console.log(
       "PALABRAS ÚNICAS SIN TRADUCIR:"
@@ -583,19 +550,10 @@ function CardiovascularModel({
       )
     );
 
-    console.log(
-      "TOTAL:",
-      uniqueUnknownWords.length
-    );
-
     if (
       invalidStructures.length >
       0
     ) {
-      console.log(
-        "======================================"
-      );
-
       console.log(
         "NOMBRES INVÁLIDOS OCULTADOS:"
       );
@@ -606,21 +564,13 @@ function CardiovascularModel({
         )
       );
     }
-
-    console.log(
-      "======================================"
-    );
   }, [model]);
 
   /* ====================================================
-     CAMBIO DE CAPA / MODELO
+     CAMBIO DE CAPA
   ==================================================== */
 
   useEffect(() => {
-    /*
-     * Limpiar estructura
-     * seleccionada.
-     */
     if (
       selectedMeshRef.current
     ) {
@@ -636,9 +586,6 @@ function CardiovascularModel({
       null
     );
 
-    /*
-     * Restablecer meshes.
-     */
     model.traverse(
       (object) => {
         if (
@@ -695,7 +642,89 @@ function CardiovascularModel({
   ]);
 
   /* ====================================================
-     CLIC SOBRE ESTRUCTURA
+     ENFOQUE DESDE MODO ESTUDIO
+  ==================================================== */
+
+  useEffect(() => {
+    if (
+      !focusRequest
+    ) {
+      return;
+    }
+
+    let targetMesh:
+      | THREE.Mesh
+      | null = null;
+
+    model.traverse(
+      (object) => {
+        if (
+          targetMesh
+        ) {
+          return;
+        }
+
+        if (
+          !(
+            object instanceof
+            THREE.Mesh
+          )
+        ) {
+          return;
+        }
+
+        if (
+          object.name ===
+          focusRequest.structureName
+        ) {
+          targetMesh =
+            object;
+        }
+      }
+    );
+
+    if (
+      !targetMesh
+    ) {
+      console.warn(
+        "No se encontró la estructura:",
+        focusRequest.structureName
+      );
+
+      return;
+    }
+
+    if (
+      selectedMeshRef.current &&
+      selectedMeshRef.current !==
+        targetMesh
+    ) {
+      restoreHighlight(
+        selectedMeshRef.current
+      );
+    }
+
+    targetMesh.visible =
+      true;
+
+    selectedMeshRef.current =
+      targetMesh;
+
+    highlightMesh(
+      targetMesh
+    );
+
+    onStructureSelect?.(
+      targetMesh.name
+    );
+  }, [
+    focusRequest,
+    model,
+    onStructureSelect,
+  ]);
+
+  /* ====================================================
+     CLIC
   ==================================================== */
 
   const handleClick = (
@@ -729,10 +758,6 @@ function CardiovascularModel({
       return;
     }
 
-    /*
-     * Quitar resaltado
-     * anterior.
-     */
     if (
       selectedMeshRef.current &&
       selectedMeshRef.current !==
@@ -743,38 +768,11 @@ function CardiovascularModel({
       );
     }
 
-    /*
-     * Guardar selección.
-     */
     selectedMeshRef.current =
       object;
 
     highlightMesh(
       object
-    );
-
-    console.log(
-      "--------------------------------------"
-    );
-
-    console.log(
-      "ESTRUCTURA SELECCIONADA"
-    );
-
-    console.log(
-      "Nombre:",
-      object.name
-    );
-
-    console.log(
-      "Categoría:",
-      getStructureCategory(
-        object.name
-      )
-    );
-
-    console.log(
-      "--------------------------------------"
     );
 
     onStructureSelect?.(
@@ -783,7 +781,7 @@ function CardiovascularModel({
   };
 
   /* ====================================================
-     ACCIONES DEL TOOLBAR
+     TOOLBAR
   ==================================================== */
 
   useEffect(() => {
@@ -794,9 +792,7 @@ function CardiovascularModel({
     const selected =
       selectedMeshRef.current;
 
-    /* =========================
-       AISLAR
-    ========================= */
+    /* AISLAR */
 
     if (
       action.type ===
@@ -822,9 +818,7 @@ function CardiovascularModel({
       return;
     }
 
-    /* =========================
-       OCULTAR
-    ========================= */
+    /* OCULTAR */
 
     if (
       action.type ===
@@ -851,9 +845,7 @@ function CardiovascularModel({
       return;
     }
 
-    /* =========================
-       TRANSPARENCIA
-    ========================= */
+    /* TRANSPARENCIA */
 
     if (
       action.type ===
@@ -902,9 +894,7 @@ function CardiovascularModel({
       return;
     }
 
-    /* =========================
-       RESTABLECER
-    ========================= */
+    /* RESTABLECER */
 
     if (
       action.type ===
@@ -932,9 +922,7 @@ function CardiovascularModel({
               object
             );
 
-          if (
-            !material
-          ) {
+          if (!material) {
             return;
           }
 
@@ -992,7 +980,7 @@ function CardiovascularModel({
 }
 
 /* ======================================================
-   CARGANDO
+   LOADING
 ====================================================== */
 
 function LoadingModel() {
@@ -1022,6 +1010,7 @@ export default function AnatomyViewer({
   layer,
   onStructureSelect,
   action,
+  focusRequest,
 }: AnatomyViewerProps) {
   return (
     <div className="h-full w-full">
@@ -1045,12 +1034,9 @@ export default function AnatomyViewer({
 
           alpha: false,
         }}
-        dpr={[
-          1,
-          2,
-        ]}
+        dpr={[1, 2]}
       >
-        {/* Fondo */}
+        {/* FONDO */}
 
         <color
           attach="background"
@@ -1059,12 +1045,10 @@ export default function AnatomyViewer({
           ]}
         />
 
-        {/* Iluminación */}
+        {/* ILUMINACIÓN */}
 
         <ambientLight
-          intensity={
-            0.65
-          }
+          intensity={0.65}
         />
 
         <directionalLight
@@ -1073,9 +1057,7 @@ export default function AnatomyViewer({
             6,
             5,
           ]}
-          intensity={
-            1.4
-          }
+          intensity={1.4}
         />
 
         <directionalLight
@@ -1084,9 +1066,7 @@ export default function AnatomyViewer({
             3,
             4,
           ]}
-          intensity={
-            0.7
-          }
+          intensity={0.7}
         />
 
         <directionalLight
@@ -1095,12 +1075,10 @@ export default function AnatomyViewer({
             4,
             -5,
           ]}
-          intensity={
-            0.45
-          }
+          intensity={0.45}
         />
 
-        {/* Modelo */}
+        {/* MODELO */}
 
         <Suspense
           fallback={
@@ -1120,21 +1098,13 @@ export default function AnatomyViewer({
             action={
               action
             }
+            focusRequest={
+              focusRequest
+            }
           />
         </Suspense>
 
-        {/* =================================
-            CONTROLES DEL MOUSE
-
-            Rueda:
-            zoom
-
-            Clic izquierdo + arrastrar:
-            rotar
-
-            Clic derecho + arrastrar:
-            desplazar
-        ================================= */}
+        {/* CONTROLES */}
 
         <OrbitControls
           enableRotate
@@ -1144,21 +1114,11 @@ export default function AnatomyViewer({
           dampingFactor={
             0.08
           }
-          zoomSpeed={
-            0.8
-          }
-          rotateSpeed={
-            0.7
-          }
-          panSpeed={
-            0.7
-          }
-          minDistance={
-            0.35
-          }
-          maxDistance={
-            18
-          }
+          zoomSpeed={0.8}
+          rotateSpeed={0.7}
+          panSpeed={0.7}
+          minDistance={0.35}
+          maxDistance={18}
           target={[
             0,
             0,
