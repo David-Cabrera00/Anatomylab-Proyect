@@ -7,13 +7,36 @@ import AnatomyViewer, {
   type ViewerActionType,
 } from "./three/AnatomyViewer";
 
-import { getSpanishStructureName } from "./utils/anatomyNames";
+import {
+  getSpanishStructureName,
+  getStructureCategory,
+} from "./utils/anatomyNames";
+
 import {
   getCardiovascularStructure,
 } from "./data/cardiovascular";
 
-const CARDIOVASCULAR_MODEL =
+/* =========================================
+   MODELOS
+========================================= */
+
+const CARDIOVASCULAR_OVERVIEW_MODEL =
   "/models/cardiovascular/cardiovascular_overview_v2.glb";
+
+const HEART_DETAIL_MODEL =
+  "/models/cardiovascular/cardiovascular_bodyparts.glb";
+
+/* =========================================
+   VISTAS
+========================================= */
+
+type CardiovascularView =
+  | "overview"
+  | "heart-detail";
+
+/* =========================================
+   SISTEMAS
+========================================= */
 
 const systems = [
   "Cardiovascular",
@@ -23,6 +46,10 @@ const systems = [
   "Muscular",
   "Digestivo",
 ];
+
+/* =========================================
+   CAPAS
+========================================= */
 
 const layers: {
   id: AnatomyLayer;
@@ -51,73 +78,169 @@ const layers: {
 ];
 
 function App() {
-  /*
-   * Capa anatómica activa.
-   */
-  const [activeLayer, setActiveLayer] =
-    useState<AnatomyLayer>("general");
+  /* =========================================
+     VISTA CARDIOVASCULAR
+  ========================================= */
 
-  /*
-   * Estructura seleccionada actualmente.
-   */
+  const [
+    cardiovascularView,
+    setCardiovascularView,
+  ] = useState<CardiovascularView>(
+    "overview"
+  );
+
+  /* =========================================
+     CAPA ACTIVA
+  ========================================= */
+
+  const [
+    activeLayer,
+    setActiveLayer,
+  ] = useState<AnatomyLayer>(
+    "general"
+  );
+
+  /* =========================================
+     ESTRUCTURA SELECCIONADA
+  ========================================= */
+
   const [
     selectedStructure,
     setSelectedStructure,
-  ] = useState<string | null>(null);
+  ] = useState<string | null>(
+    null
+  );
 
-  /*
-   * Acción enviada al visor:
-   * aislar, ocultar, transparencia o reset.
-   */
+  /* =========================================
+     ACCIONES DEL VISOR
+  ========================================= */
+
   const [
     viewerAction,
     setViewerAction,
-  ] = useState<ViewerAction | null>(null);
+  ] = useState<ViewerAction | null>(
+    null
+  );
 
-  /*
-   * Ejecuta una acción del toolbar.
-   */
   const runViewerAction = (
     type: ViewerActionType
   ) => {
-    setViewerAction((previous) => ({
-      type,
-      id: (previous?.id ?? 0) + 1,
-    }));
+    setViewerAction(
+      (previous) => ({
+        type,
+        id:
+          (previous?.id ?? 0) +
+          1,
+      })
+    );
   };
 
+  /* =========================================
+     MODELO ACTUAL
+  ========================================= */
+
+  const currentModel =
+    cardiovascularView ===
+    "heart-detail"
+      ? HEART_DETAIL_MODEL
+      : CARDIOVASCULAR_OVERVIEW_MODEL;
+
   /*
-   * Traduce automáticamente el nombre
-   * interno del mesh al español.
+   * En el corazón detallado
+   * mostramos todos sus meshes.
    */
+  const currentLayer:
+    AnatomyLayer =
+    cardiovascularView ===
+    "heart-detail"
+      ? "complete"
+      : activeLayer;
+
+  /* =========================================
+     DATOS DE LA ESTRUCTURA
+  ========================================= */
+
   const selectedStructureName =
     selectedStructure
       ? getSpanishStructureName(
           selectedStructure
         )
       : null;
-      
-  const selectedStructureData =
-  selectedStructure
-    ? getCardiovascularStructure(
-        selectedStructure
-      )
-    : null;     
 
-  /*
-   * Nombre de la capa activa.
-   */
-  const activeLayerName =
-    layers.find(
-      (layer) =>
-        layer.id === activeLayer
-    )?.label ?? "General";
+  const selectedStructureData =
+    selectedStructure
+      ? getCardiovascularStructure(
+          selectedStructure
+        )
+      : null;
+
+  const selectedCategory =
+    selectedStructure
+      ? getStructureCategory(
+          selectedStructure
+        )
+      : null;
+
+  /* =========================================
+     EXPLORAR CORAZÓN
+  ========================================= */
+
+  const canExploreHeart =
+    cardiovascularView ===
+      "overview" &&
+    selectedStructure !== null &&
+    selectedCategory === "heart";
+
+  /* =========================================
+     NOMBRE DE LA VISTA
+  ========================================= */
+
+  const activeViewName =
+    cardiovascularView ===
+    "heart-detail"
+      ? "Corazón en detalle"
+      : layers.find(
+          (layer) =>
+            layer.id ===
+            activeLayer
+        )?.label ?? "General";
+
+  /* =========================================
+     ENTRAR AL CORAZÓN
+  ========================================= */
+
+  const openHeartDetail = () => {
+  setSelectedStructure(null);
+
+  setViewerAction(null);
+
+  setCardiovascularView(
+    "heart-detail"
+  );
+};
+  /* =========================================
+     VOLVER AL SISTEMA
+  ========================================= */
+
+const returnToOverview = () => {
+  setSelectedStructure(null);
+
+  setViewerAction(null);
+
+  setActiveLayer(
+    "general"
+  );
+
+  setCardiovascularView(
+    "overview"
+  );
+};
 
   return (
     <div className="flex h-screen flex-col bg-slate-50 text-slate-900">
-      {/* ============================= */}
+      {/* ================================= */}
       {/* HEADER */}
-      {/* ============================= */}
+      {/* ================================= */}
 
       <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
         <div>
@@ -126,7 +249,8 @@ function App() {
           </h1>
 
           <p className="text-xs text-slate-500">
-            Plataforma interactiva de aprendizaje
+            Plataforma interactiva
+            de aprendizaje
           </p>
         </div>
 
@@ -141,14 +265,14 @@ function App() {
         </div>
       </header>
 
-      {/* ============================= */}
-      {/* ÁREA PRINCIPAL */}
-      {/* ============================= */}
+      {/* ================================= */}
+      {/* CONTENIDO PRINCIPAL */}
+      {/* ================================= */}
 
       <main className="flex min-h-0 flex-1">
-        {/* ============================= */}
-        {/* SIDEBAR IZQUIERDO */}
-        {/* ============================= */}
+        {/* ================================= */}
+        {/* SIDEBAR */}
+        {/* ================================= */}
 
         <aside className="w-55 shrink-0 border-r border-slate-200 bg-white p-4">
           <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -172,8 +296,6 @@ function App() {
             )}
           </nav>
 
-          {/* APRENDIZAJE */}
-
           <div className="mt-6 border-t border-slate-300 pt-5">
             <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Aprendizaje
@@ -193,86 +315,132 @@ function App() {
           </div>
         </aside>
 
-        {/* ============================= */}
+        {/* ================================= */}
         {/* VISOR 3D */}
-        {/* ============================= */}
+        {/* ================================= */}
 
         <section className="relative min-w-0 flex-1 overflow-hidden bg-slate-100">
           <AnatomyViewer
-            modelPath={
-              CARDIOVASCULAR_MODEL
-            }
-            layer={activeLayer}
+            key={cardiovascularView}
+            modelPath={currentModel}
+            layer={currentLayer}
             onStructureSelect={
               setSelectedStructure
             }
             action={viewerAction}
           />
 
-          {/* ============================= */}
+          {/* ================================= */}
+          {/* CAPAS */}
+          {/* ================================= */}
+
+          {cardiovascularView ===
+            "overview" && (
+            <div className="absolute left-1/2 top-5 z-10 flex -translate-x-1/2 gap-1 rounded-xl border border-slate-200 bg-white/95 p-1.5 shadow-sm backdrop-blur">
+              {layers.map(
+                (layer) => (
+                  <button
+                    key={
+                      layer.id
+                    }
+                    onClick={() => {
+                      setSelectedStructure(
+                        null
+                      );
+
+                      setViewerAction(
+                        null
+                      );
+
+                      setActiveLayer(
+                        layer.id
+                      );
+                    }}
+                    className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+                      activeLayer ===
+                      layer.id
+                        ? "bg-slate-900 text-white"
+                        : "text-slate-600 hover:bg-slate-100"
+                    }`}
+                  >
+                    {
+                      layer.label
+                    }
+                  </button>
+                )
+              )}
+            </div>
+          )}
+
+          {/* ================================= */}
+          {/* CORAZÓN DETALLADO */}
+          {/* ================================= */}
+
+          {cardiovascularView ===
+            "heart-detail" && (
+            <div className="absolute left-1/2 top-5 z-10 flex -translate-x-1/2 items-center gap-3 rounded-xl border border-slate-200 bg-white/95 p-2 shadow-sm backdrop-blur">
+              <button
+                onClick={
+                  returnToOverview
+                }
+                className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+              >
+                ← Volver al
+                sistema
+              </button>
+
+              <div className="h-5 w-px bg-slate-200" />
+
+              <span className="pr-2 text-sm font-semibold text-slate-800">
+                Corazón en
+                detalle
+              </span>
+            </div>
+          )}
+
+          {/* ================================= */}
           {/* LEYENDA */}
-          {/* ============================= */}
+          {/* ================================= */}
 
-          <div className="absolute left-5 top-5 z-10 rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-sm backdrop-blur">
-            <p className="mb-2 font-semibold text-slate-700">
-              Capas anatómicas
-            </p>
+          {cardiovascularView ===
+            "overview" && (
+            <div className="absolute left-5 top-5 z-10 rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-sm backdrop-blur">
+              <p className="mb-2 font-semibold text-slate-700">
+                Capas
+                anatómicas
+              </p>
 
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-[#8f2438]" />
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full bg-[#8f2438]" />
 
-                <span className="text-slate-600">
-                  Corazón
-                </span>
-              </div>
+                  <span className="text-slate-600">
+                    Corazón
+                  </span>
+                </div>
 
-              <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-[#d94b59]" />
+                <div className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full bg-[#d94b59]" />
 
-                <span className="text-slate-600">
-                  Arterias
-                </span>
-              </div>
+                  <span className="text-slate-600">
+                    Arterias
+                  </span>
+                </div>
 
-              <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-[#4f6fa8]" />
+                <div className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full bg-[#4f6fa8]" />
 
-                <span className="text-slate-600">
-                  Venas
-                </span>
+                  <span className="text-slate-600">
+                    Venas
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* ============================= */}
-          {/* SELECTOR DE CAPAS */}
-          {/* ============================= */}
-
-          <div className="absolute left-1/2 top-5 z-10 flex -translate-x-1/2 gap-1 rounded-xl border border-slate-200 bg-white/95 p-1.5 shadow-sm backdrop-blur">
-            {layers.map((layer) => (
-              <button
-                key={layer.id}
-                onClick={() =>
-                  setActiveLayer(
-                    layer.id
-                  )
-                }
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  activeLayer ===
-                  layer.id
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                }`}
-              >
-                {layer.label}
-              </button>
-            ))}
-          </div>
-
-          {/* ============================= */}
+          {/* ================================= */}
           {/* TOOLBAR */}
-          {/* ============================= */}
+          {/* ================================= */}
 
           <div className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 gap-2 rounded-xl border border-slate-200 bg-white/95 p-2 shadow-sm backdrop-blur">
             <button
@@ -330,12 +498,14 @@ function App() {
           </div>
         </section>
 
-        {/* ============================= */}
+        {/* ================================= */}
         {/* PANEL DERECHO */}
-        {/* ============================= */}
+        {/* ================================= */}
+
         <aside className="w-80 shrink-0 overflow-y-auto border-l border-slate-200 bg-white p-5">
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Estructura seleccionada
+            Estructura
+            seleccionada
           </p>
 
           <div className="mt-5">
@@ -343,32 +513,48 @@ function App() {
               ♥
             </div>
 
-            {/* NOMBRE */}
-
             <h2 className="text-xl font-semibold">
               {selectedStructureName ??
-                "Sistema cardiovascular"}
+                (cardiovascularView ===
+                "heart-detail"
+                  ? "Corazón"
+                  : "Sistema cardiovascular")}
             </h2>
 
-            {/* SISTEMA */}
-
             <p className="mt-1 text-sm text-slate-500">
-              Sistema cardiovascular
+              Sistema
+              cardiovascular
             </p>
-
-            {/* CAPA */}
 
             <p className="mt-2 text-xs font-medium text-slate-400">
               Vista:{" "}
-              {activeLayerName}
+              {
+                activeViewName
+              }
             </p>
           </div>
 
+          {/* ================================= */}
+          {/* EXPLORAR CORAZÓN */}
+          {/* ================================= */}
+
+          {canExploreHeart && (
+            <button
+              onClick={
+                openHeartDetail
+              }
+              className="mt-5 w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800 transition hover:bg-red-100"
+            >
+              Explorar corazón
+              en detalle →
+            </button>
+          )}
+
           <div className="my-5 border-t border-slate-200" />
 
-          {/* ============================= */}
+          {/* ================================= */}
           {/* DESCRIPCIÓN */}
-          {/* ============================= */}
+          {/* ================================= */}
 
           <div>
             <h3 className="text-sm font-semibold">
@@ -380,9 +566,16 @@ function App() {
                 ? selectedStructureData.description
                 : selectedStructure
                   ? `Has seleccionado ${selectedStructureName}. Todavía estamos agregando información educativa para esta estructura.`
-                  : "Selecciona una estructura del modelo para consultar su información anatómica."}
+                  : cardiovascularView ===
+                      "heart-detail"
+                    ? "Explora las cavidades, válvulas y estructuras internas disponibles en el modelo detallado del corazón."
+                    : "Selecciona una estructura del sistema cardiovascular para consultar su información anatómica."}
             </p>
           </div>
+
+          {/* ================================= */}
+          {/* DATOS EDUCATIVOS */}
+          {/* ================================= */}
 
           {selectedStructureData && (
             <>
@@ -394,7 +587,9 @@ function App() {
                 </h3>
 
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {selectedStructureData.function}
+                  {
+                    selectedStructureData.function
+                  }
                 </p>
               </div>
 
@@ -406,7 +601,9 @@ function App() {
                 </h3>
 
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {selectedStructureData.location}
+                  {
+                    selectedStructureData.location
+                  }
                 </p>
               </div>
 
@@ -414,14 +611,19 @@ function App() {
 
               <div>
                 <h3 className="text-sm font-semibold">
-                  Relaciones anatómicas
+                  Relaciones
+                  anatómicas
                 </h3>
 
                 <ul className="mt-2 space-y-1 text-sm text-slate-600">
                   {selectedStructureData.relationships.map(
-                    (relationship) => (
+                    (
+                      relationship
+                    ) => (
                       <li
-                        key={relationship}
+                        key={
+                          relationship
+                        }
                         className="flex gap-2"
                       >
                         <span className="text-slate-400">
@@ -429,7 +631,9 @@ function App() {
                         </span>
 
                         <span>
-                          {relationship}
+                          {
+                            relationship
+                          }
                         </span>
                       </li>
                     )
@@ -439,9 +643,9 @@ function App() {
             </>
           )}
 
-          {/* ============================= */}
+          {/* ================================= */}
           {/* ANATOMY AI */}
-          {/* ============================= */}
+          {/* ================================= */}
 
           <button
             disabled={
@@ -449,7 +653,8 @@ function App() {
             }
             className="mt-6 w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Preguntar a Anatomy AI
+            Preguntar a
+            Anatomy AI
           </button>
         </aside>
       </main>
