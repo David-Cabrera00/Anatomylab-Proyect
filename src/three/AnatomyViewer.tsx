@@ -16,8 +16,7 @@ import * as THREE from "three";
  * tienes funcionando dentro de public/models/cardiovascular/
  */
 const MODEL_PATH =
-  "/models/cardiovascular/cardiovascular_bodyparts.glb";
-
+  "/models/cardiovascular/cardiovascular_overview_v2.glb";
 /*
  * Colores principales del modelo.
  */
