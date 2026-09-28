@@ -8,6 +8,9 @@ import AnatomyViewer, {
 } from "./three/AnatomyViewer";
 
 import { getSpanishStructureName } from "./utils/anatomyNames";
+import {
+  getCardiovascularStructure,
+} from "./data/cardiovascular";
 
 const CARDIOVASCULAR_MODEL =
   "/models/cardiovascular/cardiovascular_overview_v2.glb";
@@ -93,6 +96,13 @@ function App() {
           selectedStructure
         )
       : null;
+      
+  const selectedStructureData =
+  selectedStructure
+    ? getCardiovascularStructure(
+        selectedStructure
+      )
+    : null;     
 
   /*
    * Nombre de la capa activa.
@@ -323,8 +333,7 @@ function App() {
         {/* ============================= */}
         {/* PANEL DERECHO */}
         {/* ============================= */}
-
-        <aside className="w-70 shrink-0 border-l border-slate-200 bg-white p-5">
+        <aside className="w-80 shrink-0 overflow-y-auto border-l border-slate-200 bg-white p-5">
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
             Estructura seleccionada
           </p>
@@ -367,63 +376,68 @@ function App() {
             </h3>
 
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              {selectedStructure ? (
-                <>
-                  Has seleccionado{" "}
-                  <span className="font-medium text-slate-800">
-                    {
-                      selectedStructureName
-                    }
-                  </span>
-                  . Aquí podrás consultar
-                  su descripción anatómica,
-                  función, relaciones y
-                  material de estudio.
-                </>
-              ) : activeLayer ===
-                "general" ? (
-                <>
-                  Vista simplificada de las
-                  principales estructuras
-                  del sistema
-                  cardiovascular.
-                  Selecciona una estructura
-                  para estudiarla.
-                </>
-              ) : activeLayer ===
-                "heart" ? (
-                <>
-                  Explora las estructuras
-                  principales del corazón y
-                  selecciona una para
-                  consultar su información.
-                </>
-              ) : activeLayer ===
-                "arteries" ? (
-                <>
-                  Explora el sistema
-                  arterial. Selecciona una
-                  arteria para consultar su
-                  información anatómica.
-                </>
-              ) : activeLayer ===
-                "veins" ? (
-                <>
-                  Explora el sistema
-                  venoso. Selecciona una
-                  vena para consultar su
-                  información anatómica.
-                </>
-              ) : (
-                <>
-                  Vista completa del sistema
-                  cardiovascular con todas
-                  las estructuras
-                  disponibles.
-                </>
-              )}
+              {selectedStructureData
+                ? selectedStructureData.description
+                : selectedStructure
+                  ? `Has seleccionado ${selectedStructureName}. Todavía estamos agregando información educativa para esta estructura.`
+                  : "Selecciona una estructura del modelo para consultar su información anatómica."}
             </p>
           </div>
+
+          {selectedStructureData && (
+            <>
+              <div className="my-5 border-t border-slate-200" />
+
+              <div>
+                <h3 className="text-sm font-semibold">
+                  Función
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {selectedStructureData.function}
+                </p>
+              </div>
+
+              <div className="my-5 border-t border-slate-200" />
+
+              <div>
+                <h3 className="text-sm font-semibold">
+                  Ubicación
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {selectedStructureData.location}
+                </p>
+              </div>
+
+              <div className="my-5 border-t border-slate-200" />
+
+              <div>
+                <h3 className="text-sm font-semibold">
+                  Relaciones anatómicas
+                </h3>
+
+                <ul className="mt-2 space-y-1 text-sm text-slate-600">
+                  {selectedStructureData.relationships.map(
+                    (relationship) => (
+                      <li
+                        key={relationship}
+                        className="flex gap-2"
+                      >
+                        <span className="text-slate-400">
+                          •
+                        </span>
+
+                        <span>
+                          {relationship}
+                        </span>
+                      </li>
+                    )
+                  )}
+                </ul>
+              </div>
+            </>
+          )}
 
           {/* ============================= */}
           {/* ANATOMY AI */}
