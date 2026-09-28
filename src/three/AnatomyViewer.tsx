@@ -10,169 +10,395 @@ import {
 } from "@react-three/drei";
 import * as THREE from "three";
 
-/*
- * IMPORTANTE:
- * Este es el nombre del archivo que actualmente
- * tienes funcionando dentro de public/models/cardiovascular/
- */
-const MODEL_PATH =
-  "/models/cardiovascular/cardiovascular_bodyparts.glb";
+export type AnatomyLayer =
+  | "general"
+  | "heart"
+  | "arteries"
+  | "veins"
+  | "complete";
 
-/*
- * Colores principales del modelo.
- */
-const BASE_COLOR = "#8f2438";
-const SELECTED_COLOR = "#ef5b67";
-const SELECTED_EMISSIVE = "#7f1d1d";
-
-/*
- * Acciones que puede ejecutar el toolbar.
- */
 export type ViewerActionType =
   | "isolate"
   | "hide"
   | "transparency"
   | "reset";
 
-/*
- * El id permite ejecutar varias veces
- * consecutivas la misma acción.
- */
 export type ViewerAction = {
   type: ViewerActionType;
   id: number;
 };
 
+type StructureCategory =
+  | "heart"
+  | "artery"
+  | "vein"
+  | "other";
+
 type AnatomyViewerProps = {
-  /*
-   * Se ejecuta cuando el usuario
-   * selecciona una estructura.
-   */
+  modelPath: string;
+
+  layer: AnatomyLayer;
+
   onStructureSelect?: (
     structureName: string | null
   ) => void;
 
-  /*
-   * Acción enviada desde App.tsx.
-   */
   action?: ViewerAction | null;
 };
 
+/*
+ * Colores anatómicos.
+ */
+const COLORS = {
+  heart: "#8f2438",
+  artery: "#d94b59",
+  vein: "#4f6fa8",
+  other: "#9ca3af",
+
+  selected: "#f59e0b",
+  selectedEmissive: "#92400e",
+};
+
+/*
+ * Clasifica automáticamente
+ * una estructura a partir del nombre
+ * interno del mesh.
+ */
+function getStructureCategory(
+  meshName: string
+): StructureCategory {
+  const name =
+    meshName.toLowerCase();
+
+  /*
+   * Primero corazón.
+   *
+   * Esto evita que nombres como
+   * coronary_leaflet terminen
+   * siendo confundidos con arterias.
+   */
+  if (
+    name.includes("heart") ||
+    name.includes("atrium") ||
+    name.includes("ventricle") ||
+    name.includes("valve") ||
+    name.includes("leaflet") ||
+    name.includes("papillary") ||
+    name.includes("interatrial") ||
+    name.includes("interventricular")
+  ) {
+    return "heart";
+  }
+
+  /*
+   * Arterias.
+   */
+  if (
+    name.includes("artery") ||
+    name.includes("arterial") ||
+    name.includes("aorta") ||
+    name.includes("aortic") ||
+    name.includes("pulmonary_trunk")
+  ) {
+    return "artery";
+  }
+
+  /*
+   * Venas.
+   */
+  if (
+    name.includes("vein") ||
+    name.includes("venous") ||
+    name.includes("vena") ||
+    name.includes("cava") ||
+    name.includes("sinus")
+  ) {
+    return "vein";
+  }
+
+  return "other";
+}
+
+/*
+ * Color inicial según
+ * categoría anatómica.
+ */
+function getStructureColor(
+  meshName: string
+) {
+  const category =
+    getStructureCategory(meshName);
+
+  return COLORS[category];
+}
+
+/*
+ * Decide cuáles estructuras
+ * deben aparecer en la vista GENERAL.
+ */
+function isGeneralStructure(
+  meshName: string
+) {
+  const name =
+    meshName.toLowerCase();
+
+  const category =
+    getStructureCategory(meshName);
+
+  /*
+   * Todo el corazón.
+   */
+  if (category === "heart") {
+    return true;
+  }
+
+  /*
+   * Grandes vasos principales.
+   */
+  const importantStructures = [
+    "aorta",
+    "aortic",
+    "vena_cava",
+    "cava",
+    "pulmonary_trunk",
+    "pulmonary_artery",
+    "pulmonary_vein",
+    "carotid",
+    "subclavian",
+    "iliac",
+    "femoral",
+  ];
+
+  return importantStructures.some(
+    (keyword) =>
+      name.includes(keyword)
+  );
+}
+
+/*
+ * Determina si un mesh debe estar
+ * visible según la capa seleccionada.
+ */
+function shouldBeVisible(
+  meshName: string,
+  layer: AnatomyLayer
+) {
+  const category =
+    getStructureCategory(meshName);
+
+  if (layer === "complete") {
+    return true;
+  }
+
+  if (layer === "heart") {
+    return category === "heart";
+  }
+
+  if (layer === "arteries") {
+    return category === "artery";
+  }
+
+  if (layer === "veins") {
+    return category === "vein";
+  }
+
+  if (layer === "general") {
+    return isGeneralStructure(
+      meshName
+    );
+  }
+
+  return true;
+}
+
 function CardiovascularModel({
+  modelPath,
+  layer,
   onStructureSelect,
   action,
 }: AnatomyViewerProps) {
-  const { scene } = useGLTF(MODEL_PATH);
+  const { scene } =
+    useGLTF(modelPath);
 
-  /*
-   * Guarda la estructura actualmente
-   * seleccionada.
-   */
   const selectedMeshRef =
-    useRef<THREE.Mesh | null>(null);
-
-  /*
-   * Creamos nuestra propia copia
-   * del modelo.
-   */
-  const model = useMemo(() => {
-    const clone = scene.clone(true);
-
-    /*
-     * Calculamos el tamaño completo
-     * del corazón.
-     */
-    const box =
-      new THREE.Box3().setFromObject(clone);
-
-    const size =
-      box.getSize(new THREE.Vector3());
-
-    const maxDimension = Math.max(
-      size.x,
-      size.y,
-      size.z
+    useRef<THREE.Mesh | null>(
+      null
     );
 
+  /*
+   * Copiamos el modelo y
+   * configuramos cada mesh.
+   */
+  const model = useMemo(() => {
+    const clone =
+      scene.clone(true);
+
     /*
-     * Normalizamos automáticamente
-     * el tamaño.
+     * Normalización automática
+     * del tamaño del modelo.
      */
+    const box =
+      new THREE.Box3().setFromObject(
+        clone
+      );
+
+    const size =
+      box.getSize(
+        new THREE.Vector3()
+      );
+
+    const maxDimension =
+      Math.max(
+        size.x,
+        size.y,
+        size.z
+      );
+
     if (maxDimension > 0) {
-      const desiredSize = 4;
+      const desiredSize = 6;
 
       const scale =
-        desiredSize / maxDimension;
+        desiredSize /
+        maxDimension;
 
-      clone.scale.setScalar(scale);
+      clone.scale.setScalar(
+        scale
+      );
     }
 
-    /*
-     * Configuramos cada estructura
-     * independientemente.
-     */
-    clone.traverse((object) => {
-      if (!(object instanceof THREE.Mesh)) {
-        return;
+    clone.traverse(
+      (object) => {
+        if (
+          !(
+            object instanceof
+            THREE.Mesh
+          )
+        ) {
+          return;
+        }
+
+        object.castShadow = true;
+        object.receiveShadow = true;
+
+        object.geometry.computeVertexNormals();
+
+        /*
+         * Material independiente
+         * para cada estructura.
+         */
+        object.material =
+          new THREE.MeshStandardMaterial(
+            {
+              color:
+                getStructureColor(
+                  object.name
+                ),
+
+              roughness: 0.58,
+
+              metalness: 0,
+
+              transparent: false,
+
+              opacity: 1,
+
+              side:
+                THREE.DoubleSide,
+            }
+          );
       }
-
-      object.castShadow = true;
-      object.receiveShadow = true;
-
-      /*
-       * Mejora visual de las superficies.
-       */
-      object.geometry.computeVertexNormals();
-
-      /*
-       * Cada mesh obtiene su propio material.
-       * Así podemos cambiar una estructura
-       * sin modificar las demás.
-       */
-      object.material =
-        new THREE.MeshStandardMaterial({
-          color: BASE_COLOR,
-          roughness: 0.58,
-          metalness: 0,
-          transparent: false,
-          opacity: 1,
-        });
-    });
+    );
 
     return clone;
   }, [scene]);
 
   /*
-   * Mostrar todos los meshes
-   * encontrados en la consola.
+   * ==========================
+   * INFORMACIÓN DE CLASIFICACIÓN
+   * ==========================
+   *
+   * Esto aparecerá en consola.
    */
   useEffect(() => {
-    console.log(
-      "======================================"
-    );
+    const counts = {
+      heart: 0,
+      arteries: 0,
+      veins: 0,
+      other: 0,
+      total: 0,
+    };
 
-    console.log(
-      "ESTRUCTURAS DEL MODELO CARDIOVASCULAR"
-    );
+    const otherStructures:
+      string[] = [];
 
-    console.log(
-      "======================================"
-    );
+    model.traverse(
+      (object) => {
+        if (
+          !(
+            object instanceof
+            THREE.Mesh
+          )
+        ) {
+          return;
+        }
 
-    let meshCount = 0;
+        counts.total++;
 
-    model.traverse((object) => {
-      if (object instanceof THREE.Mesh) {
-        meshCount++;
+        const category =
+          getStructureCategory(
+            object.name
+          );
 
-        console.log(
-          `${meshCount}. ${object.name}`
-        );
+        if (
+          category === "heart"
+        ) {
+          counts.heart++;
+        }
+
+        if (
+          category === "artery"
+        ) {
+          counts.arteries++;
+        }
+
+        if (
+          category === "vein"
+        ) {
+          counts.veins++;
+        }
+
+        if (
+          category === "other"
+        ) {
+          counts.other++;
+
+          otherStructures.push(
+            object.name
+          );
+        }
       }
-    });
+    );
 
     console.log(
-      `Total de meshes encontrados: ${meshCount}`
+      "======================================"
+    );
+
+    console.log(
+      "CLASIFICACIÓN CARDIOVASCULAR"
+    );
+
+    console.log(
+      "======================================"
+    );
+
+    console.table(counts);
+
+    console.log(
+      "Estructuras sin clasificar:"
+    );
+
+    console.log(
+      otherStructures
     );
 
     console.log(
@@ -180,10 +406,6 @@ function CardiovascularModel({
     );
   }, [model]);
 
-  /*
-   * Devuelve el material del mesh
-   * de una manera segura.
-   */
   const getMaterial = (
     mesh: THREE.Mesh
   ) => {
@@ -198,7 +420,8 @@ function CardiovascularModel({
   };
 
   /*
-   * Quita el resaltado de una estructura.
+   * Devuelve el mesh
+   * a su color anatómico.
    */
   const restoreHighlight = (
     mesh: THREE.Mesh | null
@@ -210,17 +433,23 @@ function CardiovascularModel({
 
     if (!material) return;
 
-    material.color.set(BASE_COLOR);
+    material.color.set(
+      getStructureColor(
+        mesh.name
+      )
+    );
 
     material.emissive.set(
       "#000000"
     );
 
-    material.emissiveIntensity = 0;
+    material.emissiveIntensity =
+      0;
   };
 
   /*
-   * Resalta la estructura seleccionada.
+   * Resalta la estructura
+   * seleccionada.
    */
   const highlightMesh = (
     mesh: THREE.Mesh
@@ -231,53 +460,148 @@ function CardiovascularModel({
     if (!material) return;
 
     material.color.set(
-      SELECTED_COLOR
+      COLORS.selected
     );
 
     material.emissive.set(
-      SELECTED_EMISSIVE
+      COLORS.selectedEmissive
     );
 
-    material.emissiveIntensity = 0.4;
+    material.emissiveIntensity =
+      0.35;
   };
 
   /*
-   * Se ejecuta cuando hacemos
-   * clic sobre una estructura.
+   * ==========================
+   * CAMBIO DE CAPA
+   * ==========================
    */
-  const handleClick = (
-    event: ThreeEvent<MouseEvent>
-  ) => {
-    event.stopPropagation();
-
-    const object = event.object;
-
-    if (!(object instanceof THREE.Mesh)) {
-      return;
-    }
-
+  useEffect(() => {
     /*
-     * Si anteriormente había otra
-     * estructura seleccionada,
-     * quitamos su resaltado.
+     * Limpiamos selección.
      */
     if (
-      selectedMeshRef.current &&
-      selectedMeshRef.current !== object
+      selectedMeshRef.current
     ) {
       restoreHighlight(
         selectedMeshRef.current
       );
     }
 
-    /*
-     * Guardamos la nueva selección.
-     */
-    selectedMeshRef.current = object;
+    selectedMeshRef.current =
+      null;
+
+    onStructureSelect?.(null);
 
     /*
-     * Resaltamos la nueva estructura.
+     * Aplicamos la visibilidad
+     * según la capa.
      */
+    model.traverse(
+      (object) => {
+        if (
+          !(
+            object instanceof
+            THREE.Mesh
+          )
+        ) {
+          return;
+        }
+
+        object.visible =
+          shouldBeVisible(
+            object.name,
+            layer
+          );
+
+        /*
+         * Cada vez que cambiamos
+         * de capa dejamos limpio
+         * el material.
+         */
+        const material =
+          getMaterial(object);
+
+        if (!material) return;
+
+        material.color.set(
+          getStructureColor(
+            object.name
+          )
+        );
+
+        material.emissive.set(
+          "#000000"
+        );
+
+        material.emissiveIntensity =
+          0;
+
+        material.opacity = 1;
+
+        material.transparent =
+          false;
+
+        material.depthWrite =
+          true;
+
+        material.needsUpdate =
+          true;
+      }
+    );
+  }, [
+    layer,
+    model,
+    onStructureSelect,
+  ]);
+
+  /*
+   * ==========================
+   * SELECCIÓN POR CLIC
+   * ==========================
+   */
+  const handleClick = (
+    event: ThreeEvent<MouseEvent>
+  ) => {
+    event.stopPropagation();
+
+    const object =
+      event.object;
+
+    if (
+      !(
+        object instanceof
+        THREE.Mesh
+      )
+    ) {
+      return;
+    }
+
+    /*
+     * Si está invisible,
+     * no hacemos nada.
+     */
+    if (!object.visible) {
+      return;
+    }
+
+    /*
+     * Restauramos la selección
+     * anterior.
+     */
+    if (
+      selectedMeshRef.current &&
+      selectedMeshRef.current !==
+        object
+    ) {
+      restoreHighlight(
+        selectedMeshRef.current
+      );
+    }
+
+    selectedMeshRef.current =
+      object;
+
     highlightMesh(object);
 
     console.log(
@@ -294,25 +618,25 @@ function CardiovascularModel({
     );
 
     console.log(
-      "Tipo:",
-      object.type
+      "Categoría:",
+      getStructureCategory(
+        object.name
+      )
     );
 
     console.log(
       "--------------------------------------"
     );
 
-    /*
-     * Enviamos el nombre a App.tsx.
-     */
     onStructureSelect?.(
       object.name
     );
   };
 
   /*
-   * Escucha las acciones enviadas
-   * desde el toolbar.
+   * ==========================
+   * TOOLBAR
+   * ==========================
    */
   useEffect(() => {
     if (!action) return;
@@ -322,39 +646,44 @@ function CardiovascularModel({
 
     /*
      * AISLAR
-     *
-     * Solo queda visible la
-     * estructura seleccionada.
      */
-    if (action.type === "isolate") {
+    if (
+      action.type === "isolate"
+    ) {
       if (!selected) return;
 
-      model.traverse((object) => {
-        if (
-          object instanceof THREE.Mesh
-        ) {
-          object.visible =
-            object === selected;
+      model.traverse(
+        (object) => {
+          if (
+            object instanceof
+            THREE.Mesh
+          ) {
+            object.visible =
+              object ===
+              selected;
+          }
         }
-      });
+      );
 
       return;
     }
 
     /*
      * OCULTAR
-     *
-     * Oculta únicamente la
-     * estructura seleccionada.
      */
-    if (action.type === "hide") {
+    if (
+      action.type === "hide"
+    ) {
       if (!selected) return;
 
       selected.visible = false;
 
-      restoreHighlight(selected);
+      restoreHighlight(
+        selected
+      );
 
-      selectedMeshRef.current = null;
+      selectedMeshRef.current =
+        null;
 
       onStructureSelect?.(null);
 
@@ -363,13 +692,10 @@ function CardiovascularModel({
 
     /*
      * TRANSPARENCIA
-     *
-     * Alterna entre:
-     * opacity 1
-     * opacity 0.25
      */
     if (
-      action.type === "transparency"
+      action.type ===
+      "transparency"
     ) {
       if (!selected) return;
 
@@ -384,18 +710,23 @@ function CardiovascularModel({
       if (isTransparent) {
         material.opacity = 1;
 
-        material.transparent = false;
+        material.transparent =
+          false;
 
-        material.depthWrite = true;
+        material.depthWrite =
+          true;
       } else {
-        material.opacity = 0.25;
+        material.opacity = 0.2;
 
-        material.transparent = true;
+        material.transparent =
+          true;
 
-        material.depthWrite = false;
+        material.depthWrite =
+          false;
       }
 
-      material.needsUpdate = true;
+      material.needsUpdate =
+        true;
 
       return;
     }
@@ -403,65 +734,69 @@ function CardiovascularModel({
     /*
      * RESTABLECER
      *
-     * Devuelve absolutamente todo
-     * al estado original.
+     * Importante:
+     * ahora no muestra TODO.
+     * Vuelve a la capa activa.
      */
-    if (action.type === "reset") {
-      model.traverse((object) => {
-        if (
-          !(object instanceof THREE.Mesh)
-        ) {
-          return;
+    if (
+      action.type === "reset"
+    ) {
+      model.traverse(
+        (object) => {
+          if (
+            !(
+              object instanceof
+              THREE.Mesh
+            )
+          ) {
+            return;
+          }
+
+          object.visible =
+            shouldBeVisible(
+              object.name,
+              layer
+            );
+
+          const material =
+            getMaterial(object);
+
+          if (!material) return;
+
+          material.color.set(
+            getStructureColor(
+              object.name
+            )
+          );
+
+          material.emissive.set(
+            "#000000"
+          );
+
+          material.emissiveIntensity =
+            0;
+
+          material.opacity = 1;
+
+          material.transparent =
+            false;
+
+          material.depthWrite =
+            true;
+
+          material.needsUpdate =
+            true;
         }
+      );
 
-        /*
-         * Volvemos a mostrar
-         * cualquier pieza oculta.
-         */
-        object.visible = true;
-
-        const material =
-          getMaterial(object);
-
-        if (!material) return;
-
-        /*
-         * Color original.
-         */
-        material.color.set(
-          BASE_COLOR
-        );
-
-        /*
-         * Sin resaltado.
-         */
-        material.emissive.set(
-          "#000000"
-        );
-
-        material.emissiveIntensity = 0;
-
-        /*
-         * Sin transparencia.
-         */
-        material.opacity = 1;
-
-        material.transparent = false;
-
-        material.depthWrite = true;
-
-        material.needsUpdate = true;
-      });
-
-      /*
-       * Limpiamos la selección.
-       */
-      selectedMeshRef.current = null;
+      selectedMeshRef.current =
+        null;
 
       onStructureSelect?.(null);
     }
   }, [
     action,
+    layer,
     model,
     onStructureSelect,
   ]);
@@ -476,10 +811,6 @@ function CardiovascularModel({
   );
 }
 
-/*
- * Pequeño objeto temporal mientras
- * carga el GLB.
- */
 function LoadingModel() {
   return (
     <mesh>
@@ -495,6 +826,8 @@ function LoadingModel() {
 }
 
 export default function AnatomyViewer({
+  modelPath,
+  layer,
   onStructureSelect,
   action,
 }: AnatomyViewerProps) {
@@ -503,9 +836,16 @@ export default function AnatomyViewer({
       <Canvas
         shadows
         camera={{
-          position: [0, 0.5, 7],
+          position: [
+            0,
+            0.5,
+            8,
+          ],
+
           fov: 40,
+
           near: 0.1,
+
           far: 1000,
         }}
         gl={{
@@ -514,40 +854,38 @@ export default function AnatomyViewer({
         }}
         dpr={[1, 2]}
       >
-        {/* Fondo */}
         <color
           attach="background"
           args={["#f1f5f9"]}
         />
 
-        {/* Iluminación general */}
         <ambientLight
-          intensity={0.55}
+          intensity={0.65}
         />
 
-        {/* Luz principal */}
         <directionalLight
           position={[5, 6, 5]}
-          intensity={1.6}
-          castShadow
+          intensity={1.4}
         />
 
-        {/* Luz lateral */}
         <directionalLight
           position={[-5, 3, 4]}
-          intensity={0.75}
+          intensity={0.7}
         />
 
-        {/* Luz posterior */}
         <directionalLight
           position={[0, 4, -5]}
-          intensity={0.5}
+          intensity={0.45}
         />
 
         <Suspense
-          fallback={<LoadingModel />}
+          fallback={
+            <LoadingModel />
+          }
         >
           <CardiovascularModel
+            modelPath={modelPath}
+            layer={layer}
             onStructureSelect={
               onStructureSelect
             }
@@ -555,7 +893,6 @@ export default function AnatomyViewer({
           />
         </Suspense>
 
-        {/* Cámara interactiva */}
         <OrbitControls
           makeDefault
           enableRotate
@@ -564,15 +901,10 @@ export default function AnatomyViewer({
           enableDamping
           dampingFactor={0.08}
           minDistance={2}
-          maxDistance={15}
+          maxDistance={18}
           target={[0, 0, 0]}
         />
       </Canvas>
     </div>
   );
 }
-
-/*
- * Precarga del modelo.
- */
-useGLTF.preload(MODEL_PATH);

@@ -2,14 +2,17 @@ import { useState } from "react";
 import "./App.css";
 
 import AnatomyViewer, {
+  type AnatomyLayer,
   type ViewerAction,
   type ViewerActionType,
 } from "./three/AnatomyViewer";
 
 /*
- * Sistemas que aparecen
- * en el menú izquierdo.
+ * Modelo cardiovascular principal.
  */
+const CARDIOVASCULAR_MODEL =
+  "/models/cardiovascular/cardiovascular_overview_v2.glb";
+
 const systems = [
   "Cardiovascular",
   "Respiratorio",
@@ -20,8 +23,8 @@ const systems = [
 ];
 
 /*
- * Traducción de los nombres internos
- * del modelo a nombres en español.
+ * Nombres que ya tenemos
+ * traducidos del corazón.
  */
 const structureNames: Record<
   string,
@@ -82,63 +85,122 @@ const structureNames: Record<
     "Tronco pulmonar",
 };
 
+/*
+ * Botones de capas.
+ */
+const layers: {
+  id: AnatomyLayer;
+  label: string;
+}[] = [
+  {
+    id: "general",
+    label: "General",
+  },
+
+  {
+    id: "heart",
+    label: "Corazón",
+  },
+
+  {
+    id: "arteries",
+    label: "Arterias",
+  },
+
+  {
+    id: "veins",
+    label: "Venas",
+  },
+
+  {
+    id: "complete",
+    label: "Completo",
+  },
+];
+
 function App() {
   /*
-   * Mesh seleccionado actualmente.
+   * Capa activa.
+   *
+   * General será la vista inicial.
+   */
+  const [
+    activeLayer,
+    setActiveLayer,
+  ] =
+    useState<AnatomyLayer>(
+      "general"
+    );
+
+  /*
+   * Estructura seleccionada.
    */
   const [
     selectedStructure,
     setSelectedStructure,
-  ] = useState<string | null>(null);
+  ] =
+    useState<string | null>(
+      null
+    );
 
   /*
-   * Acción que enviaremos
-   * al visor 3D.
+   * Acción del toolbar.
    */
   const [
     viewerAction,
     setViewerAction,
-  ] = useState<ViewerAction | null>(
-    null
-  );
+  ] =
+    useState<ViewerAction | null>(
+      null
+    );
 
-  /*
-   * Ejecuta una acción del toolbar.
-   *
-   * El id aumenta para que React
-   * detecte incluso dos acciones
-   * consecutivas iguales.
-   */
   const runViewerAction = (
     type: ViewerActionType
   ) => {
-    setViewerAction((previous) => ({
-      type,
-      id: (previous?.id ?? 0) + 1,
-    }));
+    setViewerAction(
+      (previous) => ({
+        type,
+
+        id:
+          (previous?.id ?? 0) +
+          1,
+      })
+    );
   };
 
   /*
-   * Convierte el nombre técnico
-   * en el nombre que verá el usuario.
+   * Nombre visual.
+   *
+   * Si todavía no tenemos
+   * traducción, limpiamos
+   * los guiones bajos.
    */
   const selectedStructureName =
     selectedStructure
       ? structureNames[
           selectedStructure
         ] ??
-        selectedStructure.replaceAll(
-          "_",
-          " "
-        )
+        selectedStructure
+          .replaceAll("_", " ")
+          .replaceAll(
+            ".",
+            " "
+          )
       : null;
+
+  const layerName =
+    layers.find(
+      (layer) =>
+        layer.id ===
+        activeLayer
+    )?.label ?? "General";
 
   return (
     <div className="flex h-screen flex-col bg-slate-50 text-slate-900">
 
-      {/* ============================= */}
+      {/* ==================== */}
       {/* HEADER */}
-      {/* ============================= */}
+      {/* ==================== */}
 
       <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
 
@@ -167,15 +229,15 @@ function App() {
       </header>
 
 
-      {/* ============================= */}
-      {/* ÁREA PRINCIPAL */}
-      {/* ============================= */}
+      {/* ==================== */}
+      {/* MAIN */}
+      {/* ==================== */}
 
       <main className="flex min-h-0 flex-1">
 
-        {/* ============================= */}
-        {/* SIDEBAR IZQUIERDO */}
-        {/* ============================= */}
+        {/* ==================== */}
+        {/* SIDEBAR */}
+        {/* ==================== */}
 
         <aside className="w-55 shrink-0 border-r border-slate-200 bg-white p-4">
 
@@ -203,8 +265,6 @@ function App() {
           </nav>
 
 
-          {/* Aprendizaje */}
-
           <div className="mt-6 border-t border-slate-300 pt-5">
 
             <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -228,27 +288,101 @@ function App() {
         </aside>
 
 
-        {/* ============================= */}
+        {/* ==================== */}
         {/* VISOR 3D */}
-        {/* ============================= */}
+        {/* ==================== */}
 
         <section className="relative min-w-0 flex-1 overflow-hidden bg-slate-100">
 
           <AnatomyViewer
+            modelPath={
+              CARDIOVASCULAR_MODEL
+            }
+            layer={
+              activeLayer
+            }
             onStructureSelect={
               setSelectedStructure
             }
-            action={viewerAction}
+            action={
+              viewerAction
+            }
           />
 
 
-          {/* ============================= */}
-          {/* TOOLBAR DEL VISOR */}
-          {/* ============================= */}
+          {/* ==================== */}
+          {/* CAPAS */}
+          {/* ==================== */}
+
+          <div className="absolute left-1/2 top-5 z-10 flex -translate-x-1/2 gap-1 rounded-xl border border-slate-200 bg-white/95 p-1.5 shadow-sm backdrop-blur">
+
+            {layers.map(
+              (layer) => (
+                <button
+                  key={layer.id}
+                  onClick={() =>
+                    setActiveLayer(
+                      layer.id
+                    )
+                  }
+                  className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    activeLayer ===
+                    layer.id
+                      ? "bg-slate-900 text-white"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  {layer.label}
+                </button>
+              )
+            )}
+
+          </div>
+
+
+          {/* ==================== */}
+          {/* LEYENDA */}
+          {/* ==================== */}
+
+          <div className="absolute left-5 top-5 z-10 rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-sm backdrop-blur">
+
+            <div className="mb-2 font-semibold text-slate-700">
+              Capas anatómicas
+            </div>
+
+            <div className="space-y-2">
+
+              <div className="flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-[#8f2438]" />
+                <span>
+                  Corazón
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-[#d94b59]" />
+                <span>
+                  Arterias
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-[#4f6fa8]" />
+                <span>
+                  Venas
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          {/* ==================== */}
+          {/* TOOLBAR */}
+          {/* ==================== */}
 
           <div className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 gap-2 rounded-xl border border-slate-200 bg-white/95 p-2 shadow-sm backdrop-blur">
-
-            {/* AISLAR */}
 
             <button
               onClick={() =>
@@ -265,8 +399,6 @@ function App() {
             </button>
 
 
-            {/* OCULTAR */}
-
             <button
               onClick={() =>
                 runViewerAction(
@@ -282,8 +414,6 @@ function App() {
             </button>
 
 
-            {/* TRANSPARENCIA */}
-
             <button
               onClick={() =>
                 runViewerAction(
@@ -298,8 +428,6 @@ function App() {
               Transparencia
             </button>
 
-
-            {/* RESTABLECER */}
 
             <button
               onClick={() =>
@@ -317,9 +445,9 @@ function App() {
         </section>
 
 
-        {/* ============================= */}
+        {/* ==================== */}
         {/* PANEL DERECHO */}
-        {/* ============================= */}
+        {/* ==================== */}
 
         <aside className="w-70 shrink-0 border-l border-slate-200 bg-white p-5">
 
@@ -335,18 +463,19 @@ function App() {
             </div>
 
 
-            {/* Nombre */}
-
             <h2 className="text-xl font-semibold">
               {selectedStructureName ??
-                "Corazón"}
+                "Sistema cardiovascular"}
             </h2>
 
 
-            {/* Sistema */}
-
             <p className="mt-1 text-sm text-slate-500">
               Sistema cardiovascular
+            </p>
+
+
+            <p className="mt-2 text-xs font-medium text-slate-400">
+              Vista: {layerName}
             </p>
 
           </div>
@@ -355,30 +484,35 @@ function App() {
           <div className="my-5 border-t border-slate-200" />
 
 
-          {/* ============================= */}
-          {/* DESCRIPCIÓN */}
-          {/* ============================= */}
-
           <div>
 
             <h3 className="text-sm font-semibold">
               Descripción
             </h3>
 
+
             <p className="mt-2 text-sm leading-6 text-slate-600">
 
               {selectedStructure
                 ? `Has seleccionado ${selectedStructureName}. Aquí podrás consultar su descripción anatómica, función, relaciones y material de estudio.`
-                : "Selecciona una estructura del modelo 3D para consultar su información anatómica, relaciones y material de estudio."}
+                : activeLayer ===
+                    "general"
+                  ? "Vista simplificada de las principales estructuras del sistema cardiovascular. Selecciona una estructura para estudiarla."
+                  : activeLayer ===
+                      "arteries"
+                    ? "Explora el sistema arterial y selecciona una arteria para consultar su información anatómica."
+                    : activeLayer ===
+                        "veins"
+                      ? "Explora el sistema venoso y selecciona una vena para consultar su información anatómica."
+                      : activeLayer ===
+                          "heart"
+                        ? "Explora las estructuras cardíacas disponibles en el modelo."
+                        : "Vista completa del sistema cardiovascular con todas las estructuras disponibles."}
 
             </p>
 
           </div>
 
-
-          {/* ============================= */}
-          {/* ANATOMY AI */}
-          {/* ============================= */}
 
           <button className="mt-6 w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
             Preguntar a Anatomy AI
