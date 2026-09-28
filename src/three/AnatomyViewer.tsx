@@ -836,16 +836,9 @@ export default function AnatomyViewer({
       <Canvas
         shadows
         camera={{
-          position: [
-            0,
-            0.5,
-            8,
-          ],
-
+          position: [0, 0.5, 8],
           fov: 40,
-
           near: 0.1,
-
           far: 1000,
         }}
         gl={{
@@ -900,7 +893,8 @@ export default function AnatomyViewer({
           enablePan
           enableDamping
           dampingFactor={0.08}
-          minDistance={2}
+          zoomSpeed={1}
+          minDistance={0.35}
           maxDistance={18}
           target={[0, 0, 0]}
         />
