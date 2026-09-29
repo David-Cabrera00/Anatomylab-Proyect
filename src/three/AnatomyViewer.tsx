@@ -19,21 +19,47 @@ import {
 import * as THREE from "three";
 
 import {
-  getStructureCategory,
+  getStructureCategory as getCardiovascularCategory,
   getUnknownAnatomyWords,
   isInvalidStructureName,
 } from "../utils/anatomyNames";
 
+import {
+  getRespiratoryStructureName,
+  isSuspiciousRespiratoryName,
+} from "../utils/respiratoryNames";
+
 /* ======================================================
-   TIPOS
+   SISTEMAS
+====================================================== */
+
+export type AnatomySystemId =
+  | "cardiovascular"
+  | "respiratory";
+
+/* ======================================================
+   CAPAS
 ====================================================== */
 
 export type AnatomyLayer =
   | "general"
+
+  // Cardiovascular
   | "heart"
   | "arteries"
   | "veins"
+
+  // Respiratorio
+  | "lungs"
+  | "airways"
+  | "upper-airway"
+
+  // Compartido
   | "complete";
+
+/* ======================================================
+   ACCIONES
+====================================================== */
 
 export type ViewerActionType =
   | "isolate"
@@ -46,14 +72,22 @@ export type ViewerAction = {
   id: number;
 };
 
+/* ======================================================
+   ENFOQUE AUTOMÁTICO
+====================================================== */
+
 export type StructureFocusRequest = {
   structureName: string;
   id: number;
 };
 
-type AnatomyViewerProps = {
-  modelPath: string;
+/* ======================================================
+   PROPS
+====================================================== */
 
+type AnatomyViewerProps = {
+  system: AnatomySystemId;
+  modelPath: string;
   layer: AnatomyLayer;
 
   onStructureSelect?: (
@@ -68,51 +102,231 @@ type AnatomyViewerProps = {
 };
 
 /* ======================================================
+   CATEGORÍAS
+====================================================== */
+
+type ViewerCategory =
+  | "heart"
+  | "artery"
+  | "vein"
+  | "lung"
+  | "airway"
+  | "upper-airway"
+  | "other";
+
+/* ======================================================
    COLORES
 ====================================================== */
 
-const COLORS = {
+const CARDIOVASCULAR_COLORS = {
   heart: "#8f2438",
-
   artery: "#d94b59",
-
   vein: "#4f6fa8",
-
   other: "#94a3b8",
-
-  selected: "#f59e0b",
-
-  selectedEmissive:
-    "#92400e",
 };
 
+const RESPIRATORY_COLORS = {
+  lung: "#b97882",
+  airway: "#7896a8",
+  upperAirway: "#9c87aa",
+  other: "#94a3b8",
+};
+
+const SELECTED_COLOR =
+  "#f59e0b";
+
+const SELECTED_EMISSIVE =
+  "#92400e";
+
 /* ======================================================
-   COLOR
+   NORMALIZAR TEXTO
 ====================================================== */
 
-function getStructureColor(
-  structureName: string
+function normalizeName(
+  value: string
 ) {
-  const category =
-    getStructureCategory(
-      structureName
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
     );
-
-  return COLORS[category];
 }
 
 /* ======================================================
-   VISTA GENERAL
+   CLASIFICACIÓN RESPIRATORIA
 ====================================================== */
 
-function isGeneralStructure(
+function getRespiratoryCategory(
+  structureName: string
+): ViewerCategory {
+  const name =
+    normalizeName(
+      structureName
+    );
+
+  /* VÍA AÉREA SUPERIOR */
+
+  if (
+    name.includes("nariz") ||
+    name.includes("nose") ||
+    name.includes("nasal") ||
+    name.includes("paranasal") ||
+    name.includes("seno") ||
+    name.includes("sinus") ||
+    name.includes("laringe") ||
+    name.includes("larynx") ||
+    name.includes("epiglot") ||
+    name.includes("faringe") ||
+    name.includes("pharynx")
+  ) {
+    return "upper-airway";
+  }
+
+  /* PULMONES */
+
+  if (
+    name.includes("pulmon") ||
+    name.includes("lung") ||
+    name.includes("lobulo") ||
+    name.includes("lobe") ||
+    name.includes("segmento") ||
+    name.includes("segment") ||
+    name.includes("lingula") ||
+    name.includes("incisura") ||
+    name.includes("fisura") ||
+    name.includes("fissure")
+  ) {
+    return "lung";
+  }
+
+  /* VÍAS RESPIRATORIAS */
+
+  if (
+    name.includes("traquea") ||
+    name.includes("trachea") ||
+    name.includes(
+      "traqueobronquial"
+    ) ||
+    name.includes(
+      "tracheobronchial"
+    ) ||
+    name.includes("bronqu") ||
+    name.includes("bronch") ||
+    name.includes("airway")
+  ) {
+    return "airway";
+  }
+
+  return "other";
+}
+
+/* ======================================================
+   CLASIFICACIÓN GENERAL
+====================================================== */
+
+function getViewerCategory(
+  system: AnatomySystemId,
+  structureName: string
+): ViewerCategory {
+  if (
+    system ===
+    "cardiovascular"
+  ) {
+    return getCardiovascularCategory(
+      structureName
+    );
+  }
+
+  return getRespiratoryCategory(
+    structureName
+  );
+}
+
+/* ======================================================
+   COLOR DE ESTRUCTURA
+====================================================== */
+
+function getStructureColor(
+  system: AnatomySystemId,
+  structureName: string
+) {
+  const category =
+    getViewerCategory(
+      system,
+      structureName
+    );
+
+  if (
+    system ===
+    "cardiovascular"
+  ) {
+    if (
+      category === "heart"
+    ) {
+      return CARDIOVASCULAR_COLORS
+        .heart;
+    }
+
+    if (
+      category === "artery"
+    ) {
+      return CARDIOVASCULAR_COLORS
+        .artery;
+    }
+
+    if (
+      category === "vein"
+    ) {
+      return CARDIOVASCULAR_COLORS
+        .vein;
+    }
+
+    return CARDIOVASCULAR_COLORS
+      .other;
+  }
+
+  if (
+    category === "lung"
+  ) {
+    return RESPIRATORY_COLORS
+      .lung;
+  }
+
+  if (
+    category === "airway"
+  ) {
+    return RESPIRATORY_COLORS
+      .airway;
+  }
+
+  if (
+    category ===
+    "upper-airway"
+  ) {
+    return RESPIRATORY_COLORS
+      .upperAirway;
+  }
+
+  return RESPIRATORY_COLORS
+    .other;
+}
+
+/* ======================================================
+   CARDIOVASCULAR GENERAL
+====================================================== */
+
+function isGeneralCardiovascularStructure(
   structureName: string
 ) {
   const name =
-    structureName.toLowerCase();
+    normalizeName(
+      structureName
+    );
 
   const category =
-    getStructureCategory(
+    getCardiovascularCategory(
       structureName
     );
 
@@ -125,26 +339,17 @@ function isGeneralStructure(
   const importantStructures = [
     "aorta",
     "aortic",
-
     "vena_cava",
     "cava",
-
     "pulmonary_trunk",
-
     "pulmonary_artery",
     "pulmonary_arteries",
-
     "pulmonary_vein",
     "pulmonary_veins",
-
     "carotid",
-
     "subclavian",
-
     "brachiocephalic",
-
     "iliac",
-
     "femoral",
   ];
 
@@ -155,10 +360,29 @@ function isGeneralStructure(
 }
 
 /* ======================================================
+   RESPIRATORIO GENERAL
+====================================================== */
+
+function isGeneralRespiratoryStructure(
+  structureName: string
+) {
+  const category =
+    getRespiratoryCategory(
+      structureName
+    );
+
+  return (
+    category === "lung" ||
+    category === "airway"
+  );
+}
+
+/* ======================================================
    VISIBILIDAD
 ====================================================== */
 
 function shouldBeVisible(
+  system: AnatomySystemId,
   structureName: string,
   layer: AnatomyLayer
 ) {
@@ -171,7 +395,8 @@ function shouldBeVisible(
   }
 
   const category =
-    getStructureCategory(
+    getViewerCategory(
+      system,
       structureName
     );
 
@@ -181,53 +406,100 @@ function shouldBeVisible(
     return true;
   }
 
-  if (
-    layer === "heart"
-  ) {
-    return category === "heart";
-  }
+  /* CARDIOVASCULAR */
 
   if (
-    layer === "arteries"
+    system ===
+    "cardiovascular"
   ) {
-    return category === "artery";
+    if (
+      layer === "heart"
+    ) {
+      return (
+        category === "heart"
+      );
+    }
+
+    if (
+      layer === "arteries"
+    ) {
+      return (
+        category === "artery"
+      );
+    }
+
+    if (
+      layer === "veins"
+    ) {
+      return (
+        category === "vein"
+      );
+    }
+
+    if (
+      layer === "general"
+    ) {
+      return isGeneralCardiovascularStructure(
+        structureName
+      );
+    }
   }
 
-  if (
-    layer === "veins"
-  ) {
-    return category === "vein";
-  }
+  /* RESPIRATORIO */
 
   if (
-    layer === "general"
+    system === "respiratory"
   ) {
-    return isGeneralStructure(
-      structureName
-    );
+    if (
+      layer === "lungs"
+    ) {
+      return (
+        category === "lung"
+      );
+    }
+
+    if (
+      layer === "airways"
+    ) {
+      return (
+        category === "airway"
+      );
+    }
+
+    if (
+      layer ===
+      "upper-airway"
+    ) {
+      return (
+        category ===
+        "upper-airway"
+      );
+    }
+
+    if (
+      layer === "general"
+    ) {
+      return isGeneralRespiratoryStructure(
+        structureName
+      );
+    }
   }
 
   return true;
 }
 
 /* ======================================================
-   MODELO
+   MODELO ANATÓMICO
 ====================================================== */
 
-function CardiovascularModel({
+function AnatomyModel({
+  system,
   modelPath,
   layer,
   onStructureSelect,
   action,
   focusRequest,
-}: Pick<
-  AnatomyViewerProps,
-  | "modelPath"
-  | "layer"
-  | "onStructureSelect"
-  | "action"
-  | "focusRequest"
->) {
+}: AnatomyViewerProps) {
   const {
     scene,
   } = useGLTF(modelPath);
@@ -265,20 +537,24 @@ function CardiovascularModel({
     if (
       maxDimension > 0
     ) {
-      /*
-       * El modelo cardiovascular
-       * completo necesita un poco
-       * más de aire alrededor.
-       *
-       * El corazón detallado conserva
-       * el tamaño que ya funcionaba.
-       */
-      const desiredSize =
+      let desiredSize = 6;
+
+      if (
+        system ===
+          "cardiovascular" &&
         modelPath.includes(
           "cardiovascular_overview"
         )
-          ? 5.8
-          : 6;
+      ) {
+        desiredSize = 5.8;
+      }
+
+      if (
+        system ===
+        "respiratory"
+      ) {
+        desiredSize = 6;
+      }
 
       const scale =
         desiredSize /
@@ -310,17 +586,14 @@ function CardiovascularModel({
           new THREE.MeshStandardMaterial({
             color:
               getStructureColor(
+                system,
                 object.name
               ),
 
             roughness: 0.58,
-
             metalness: 0,
-
             transparent: false,
-
             opacity: 1,
-
             side:
               THREE.DoubleSide,
           });
@@ -330,6 +603,7 @@ function CardiovascularModel({
     return clone;
   }, [
     scene,
+    system,
     modelPath,
   ]);
 
@@ -370,6 +644,7 @@ function CardiovascularModel({
 
     material.color.set(
       getStructureColor(
+        system,
         mesh.name
       )
     );
@@ -397,11 +672,11 @@ function CardiovascularModel({
     }
 
     material.color.set(
-      COLORS.selected
+      SELECTED_COLOR
     );
 
     material.emissive.set(
-      COLORS.selectedEmissive
+      SELECTED_EMISSIVE
     );
 
     material.emissiveIntensity =
@@ -413,19 +688,14 @@ function CardiovascularModel({
   ==================================================== */
 
   useEffect(() => {
-    const counts = {
-      heart: 0,
-      arteries: 0,
-      veins: 0,
-      other: 0,
-      invalid: 0,
+    const counts: Record<
+      string,
+      number
+    > = {
       total: 0,
     };
 
     const otherStructures:
-      string[] = [];
-
-    const invalidStructures:
       string[] = [];
 
     const missingTranslations:
@@ -434,6 +704,10 @@ function CardiovascularModel({
         string[]
       > = {};
 
+    /*
+     * Primer recorrido:
+     * clasificación general.
+     */
     model.traverse(
       (object) => {
         if (
@@ -447,65 +721,45 @@ function CardiovascularModel({
 
         counts.total++;
 
-        if (
-          isInvalidStructureName(
-            object.name
-          )
-        ) {
-          counts.invalid++;
-
-          invalidStructures.push(
-            object.name
-          );
-
-          return;
-        }
-
         const category =
-          getStructureCategory(
+          getViewerCategory(
+            system,
             object.name
           );
 
-        if (
-          category === "heart"
-        ) {
-          counts.heart++;
-        }
-
-        if (
-          category === "artery"
-        ) {
-          counts.arteries++;
-        }
-
-        if (
-          category === "vein"
-        ) {
-          counts.veins++;
-        }
+        counts[category] =
+          (counts[category] ??
+            0) + 1;
 
         if (
           category === "other"
         ) {
-          counts.other++;
-
           otherStructures.push(
             object.name
           );
         }
 
-        const unknownWords =
-          getUnknownAnatomyWords(
-            object.name
-          );
-
+        /*
+         * Diagnóstico de traducciones
+         * cardiovascular.
+         */
         if (
-          unknownWords.length >
-          0
+          system ===
+          "cardiovascular"
         ) {
-          missingTranslations[
-            object.name
-          ] = unknownWords;
+          const unknownWords =
+            getUnknownAnatomyWords(
+              object.name
+            );
+
+          if (
+            unknownWords.length >
+            0
+          ) {
+            missingTranslations[
+              object.name
+            ] = unknownWords;
+          }
         }
       }
     );
@@ -515,56 +769,189 @@ function CardiovascularModel({
     );
 
     console.log(
-      "CLASIFICACIÓN CARDIOVASCULAR"
-    );
-
-    console.table(
-      counts
+      `SISTEMA: ${system.toUpperCase()}`
     );
 
     console.log(
-      "Estructuras sin clasificar:"
+      "======================================"
     );
 
-    console.log(
-      otherStructures.join(
-        "\n"
-      )
-    );
+    console.table(counts);
 
-    const uniqueUnknownWords = [
-      ...new Set(
-        Object.values(
-          missingTranslations
-        ).flat()
-      ),
-    ].sort();
-
-    console.log(
-      "PALABRAS ÚNICAS SIN TRADUCIR:"
-    );
-
-    console.log(
-      uniqueUnknownWords.join(
-        "\n"
-      )
-    );
+    /* ======================================
+       RESPIRATORIO
+    ====================================== */
 
     if (
-      invalidStructures.length >
-      0
+      system ===
+      "respiratory"
     ) {
-      console.log(
-        "NOMBRES INVÁLIDOS OCULTADOS:"
+      const respiratoryNames: {
+        original: string;
+        visible: string;
+      }[] = [];
+
+      const suspiciousNames: {
+        original: string;
+        visible: string;
+      }[] = [];
+
+      model.traverse(
+        (object) => {
+          if (
+            !(
+              object instanceof
+              THREE.Mesh
+            )
+          ) {
+            return;
+          }
+
+          const visibleName =
+            getRespiratoryStructureName(
+              object.name
+            );
+
+          respiratoryNames.push({
+            original:
+              object.name,
+
+            visible:
+              visibleName,
+          });
+
+          if (
+            isSuspiciousRespiratoryName(
+              object.name
+            )
+          ) {
+            suspiciousNames.push({
+              original:
+                object.name,
+
+              visible:
+                visibleName,
+            });
+          }
+        }
       );
 
       console.log(
-        invalidStructures.join(
+        "======================================"
+      );
+
+      console.log(
+        "NOMBRES RESPIRATORIOS:"
+      );
+
+      /*
+       * La tabla completa queda disponible
+       * por si después queremos revisarla.
+       */
+      console.table(
+        respiratoryNames
+      );
+
+      console.log(
+        "======================================"
+      );
+
+      console.log(
+        "NOMBRES QUE NECESITAN REVISIÓN:"
+      );
+
+      /*
+       * IMPORTANTE:
+       * los imprimimos uno por uno para
+       * evitar que Chrome muestre Array(18).
+       */
+      suspiciousNames.forEach(
+        ({
+          original,
+          visible,
+        }) => {
+          console.log(
+            `${original} -> ${visible}`
+          );
+        }
+      );
+
+      console.log(
+        "TOTAL A REVISAR:",
+        suspiciousNames.length
+      );
+    }
+
+    /* ======================================
+       SIN CLASIFICAR
+    ====================================== */
+
+    console.log(
+      "======================================"
+    );
+
+    console.log(
+      "ESTRUCTURAS SIN CLASIFICAR:"
+    );
+
+    if (
+      otherStructures.length ===
+      0
+    ) {
+      console.log(
+        "Ninguna"
+      );
+    } else {
+      console.log(
+        otherStructures.join(
           "\n"
         )
       );
     }
-  }, [model]);
+
+    /* ======================================
+       CARDIOVASCULAR
+    ====================================== */
+
+    if (
+      system ===
+      "cardiovascular"
+    ) {
+      const unknownWords = [
+        ...new Set(
+          Object.values(
+            missingTranslations
+          ).flat()
+        ),
+      ].sort();
+
+      console.log(
+        "======================================"
+      );
+
+      console.log(
+        "PALABRAS ÚNICAS SIN TRADUCIR:"
+      );
+
+      console.log(
+        unknownWords.join(
+          "\n"
+        )
+      );
+
+      console.log(
+        "TOTAL:",
+        unknownWords.length
+      );
+    }
+
+    console.log(
+      "======================================"
+    );
+  }, [
+    model,
+    system,
+  ]);
 
   /* ====================================================
      CAMBIO DE CAPA
@@ -599,6 +986,7 @@ function CardiovascularModel({
 
         object.visible =
           shouldBeVisible(
+            system,
             object.name,
             layer
           );
@@ -612,6 +1000,7 @@ function CardiovascularModel({
 
         material.color.set(
           getStructureColor(
+            system,
             object.name
           )
         );
@@ -623,7 +1012,8 @@ function CardiovascularModel({
         material.emissiveIntensity =
           0;
 
-        material.opacity = 1;
+        material.opacity =
+          1;
 
         material.transparent =
           false;
@@ -636,13 +1026,14 @@ function CardiovascularModel({
       }
     );
   }, [
+    system,
     layer,
     model,
     onStructureSelect,
   ]);
 
   /* ====================================================
-     ENFOQUE DESDE MODO ESTUDIO
+     ENFOQUE AUTOMÁTICO
   ==================================================== */
 
   useEffect(() => {
@@ -792,7 +1183,9 @@ function CardiovascularModel({
     const selected =
       selectedMeshRef.current;
 
-    /* AISLAR */
+    /* =================================
+       AISLAR
+    ================================= */
 
     if (
       action.type ===
@@ -818,7 +1211,9 @@ function CardiovascularModel({
       return;
     }
 
-    /* OCULTAR */
+    /* =================================
+       OCULTAR
+    ================================= */
 
     if (
       action.type ===
@@ -845,7 +1240,9 @@ function CardiovascularModel({
       return;
     }
 
-    /* TRANSPARENCIA */
+    /* =================================
+       TRANSPARENCIA
+    ================================= */
 
     if (
       action.type ===
@@ -870,7 +1267,8 @@ function CardiovascularModel({
       if (
         isTransparent
       ) {
-        material.opacity = 1;
+        material.opacity =
+          1;
 
         material.transparent =
           false;
@@ -894,7 +1292,9 @@ function CardiovascularModel({
       return;
     }
 
-    /* RESTABLECER */
+    /* =================================
+       RESTABLECER
+    ================================= */
 
     if (
       action.type ===
@@ -913,6 +1313,7 @@ function CardiovascularModel({
 
           object.visible =
             shouldBeVisible(
+              system,
               object.name,
               layer
             );
@@ -928,6 +1329,7 @@ function CardiovascularModel({
 
           material.color.set(
             getStructureColor(
+              system,
               object.name
             )
           );
@@ -962,6 +1364,7 @@ function CardiovascularModel({
     }
   }, [
     action,
+    system,
     layer,
     model,
     onStructureSelect,
@@ -980,7 +1383,7 @@ function CardiovascularModel({
 }
 
 /* ======================================================
-   LOADING
+   CARGANDO
 ====================================================== */
 
 function LoadingModel() {
@@ -1006,6 +1409,7 @@ function LoadingModel() {
 ====================================================== */
 
 export default function AnatomyViewer({
+  system,
   modelPath,
   layer,
   onStructureSelect,
@@ -1022,16 +1426,12 @@ export default function AnatomyViewer({
             0.5,
             8,
           ],
-
           fov: 40,
-
           near: 0.01,
-
           far: 1000,
         }}
         gl={{
           antialias: true,
-
           alpha: false,
         }}
         dpr={[1, 2]}
@@ -1085,7 +1485,10 @@ export default function AnatomyViewer({
             <LoadingModel />
           }
         >
-          <CardiovascularModel
+          <AnatomyModel
+            system={
+              system
+            }
             modelPath={
               modelPath
             }
