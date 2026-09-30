@@ -5,18 +5,22 @@ export type NervousHierarchyCategory =
   | "nervous-peripheral"
   | "nervous-sense";
 
+export type NervousHierarchyStats = {
+  central: number;
+  peripheral: number;
+  sense: number;
+  other: number;
+  total: number;
+};
+
 export type NervousHierarchyResult = {
+  rootName: string;
+  topLevelObjects: number;
   markersFound: {
     centralEnd: boolean;
     peripheralEnd: boolean;
   };
-  stats: {
-    central: number;
-    peripheral: number;
-    sense: number;
-    other: number;
-    total: number;
-  };
+  stats: NervousHierarchyStats;
 };
 
 function normalizeName(value: string) {
@@ -27,6 +31,18 @@ function normalizeName(value: string) {
     .replace(/[_\-.()]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function findSequenceRoot(model: THREE.Object3D) {
+  let bestObject = model;
+
+  model.traverse((object) => {
+    if (object.children.length > bestObject.children.length) {
+      bestObject = object;
+    }
+  });
+
+  return bestObject;
 }
 
 function assignRegion(
@@ -43,8 +59,8 @@ function assignRegion(
   });
 }
 
-function getStats(model: THREE.Object3D) {
-  const stats = {
+function getStats(model: THREE.Object3D): NervousHierarchyStats {
+  const stats: NervousHierarchyStats = {
     central: 0,
     peripheral: 0,
     sense: 0,
@@ -63,13 +79,20 @@ function getStats(model: THREE.Object3D) {
 
     if (category === "nervous-central") {
       stats.central++;
-    } else if (category === "nervous-peripheral") {
-      stats.peripheral++;
-    } else if (category === "nervous-sense") {
-      stats.sense++;
-    } else {
-      stats.other++;
+      return;
     }
+
+    if (category === "nervous-peripheral") {
+      stats.peripheral++;
+      return;
+    }
+
+    if (category === "nervous-sense") {
+      stats.sense++;
+      return;
+    }
+
+    stats.other++;
   });
 
   return stats;
@@ -78,6 +101,8 @@ function getStats(model: THREE.Object3D) {
 export function classifyNervousHierarchy(
   model: THREE.Object3D
 ): NervousHierarchyResult {
+  const root = findSequenceRoot(model);
+
   let currentRegion: NervousHierarchyCategory =
     "nervous-central";
 
@@ -86,7 +111,7 @@ export function classifyNervousHierarchy(
     peripheralEnd: false,
   };
 
-  for (const child of model.children) {
+  for (const child of root.children) {
     assignRegion(child, currentRegion);
 
     const name = normalizeName(child.name);
@@ -104,6 +129,8 @@ export function classifyNervousHierarchy(
   }
 
   return {
+    rootName: root.name || "Scene",
+    topLevelObjects: root.children.length,
     markersFound,
     stats: getStats(model),
   };

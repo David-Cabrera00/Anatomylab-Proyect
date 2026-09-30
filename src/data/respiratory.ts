@@ -1,6 +1,6 @@
 import {
   getRespiratoryStructureName,
-} from "../utils/respiratoryNames";
+} from "../utils/respiratory/respiratoryNames";
 
 /* ======================================================
    ANATOMYLAB AI

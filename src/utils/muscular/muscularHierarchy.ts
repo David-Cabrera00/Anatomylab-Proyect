@@ -2,7 +2,7 @@ import * as THREE from "three";
 
 import type {
   SystemCategory,
-} from "./systemClassification";
+} from "../systemClassification";
 
 export type MuscularHierarchyStats = {
   headNeck: number;

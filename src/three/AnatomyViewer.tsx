@@ -28,12 +28,12 @@ import {
   getStructureCategory as getCardiovascularCategory,
   getUnknownAnatomyWords,
   isInvalidStructureName,
-} from "../utils/anatomyNames";
+} from "../utils/cardiovascular";
 
 import {
   getRespiratoryStructureName,
   isSuspiciousRespiratoryName,
-} from "../utils/respiratoryNames";
+} from "../utils/respiratory";
 
 import {
   getRespiratoryCategory,
@@ -42,22 +42,22 @@ import {
 
 import {
   classifyMuscularHierarchy,
-} from "../utils/muscularHierarchy";
+} from "../utils/muscular";
 
 import {
   classifyNervousHierarchy,
   type NervousHierarchyCategory,
-} from "../utils/nervousHierarchy";
+} from "../utils/nervous";
 
 import {
   classifySkeletalHierarchy,
   type SkeletalHierarchyCategory,
-} from "../utils/skeletalHierarchy";
+} from "../utils/skeletal";
 
 import {
   classifyDigestiveHierarchy,
   type DigestiveHierarchyCategory,
-} from "../utils/digestiveHierarchy";
+} from "../utils/digestive";
 
 /* ======================================================
    CATEGORÍAS INTERNAS DEL VISOR
