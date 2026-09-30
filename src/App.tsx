@@ -19,7 +19,7 @@ import {
 
 import {
   getStructureCategory,
-} from "./utils/anatomyNames";
+} from "./utils/cardiovascular/cardiovascularNames";
 
 import {
   getSystemStructureName,
