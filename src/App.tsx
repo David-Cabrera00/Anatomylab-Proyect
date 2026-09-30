@@ -1,23 +1,29 @@
-import { useState } from "react";
+import {
+  useState,
+} from "react";
 
 import "./App.css";
 
 import AnatomyViewer, {
-  type AnatomyLayer,
-  type AnatomySystemId,
   type ViewerAction,
   type ViewerActionType,
   type StructureFocusRequest,
 } from "./three/AnatomyViewer";
 
 import {
-  getSpanishStructureName,
+  anatomySystems,
+  anatomySystemList,
+  type AnatomyLayerId,
+  type AnatomySystemId,
+} from "./config/anatomySystems";
+
+import {
   getStructureCategory,
 } from "./utils/anatomyNames";
 
 import {
-  getRespiratoryStructureName,
-} from "./utils/respiratoryNames";
+  getSystemStructureName,
+} from "./utils/systemNames";
 
 import {
   getCardiovascularStructure,
@@ -32,19 +38,6 @@ import {
 } from "./data/studyGuides";
 
 /* ======================================================
-   MODELOS
-====================================================== */
-
-const CARDIOVASCULAR_OVERVIEW_MODEL =
-  "/models/cardiovascular/cardiovascular_overview_v2.glb";
-
-const HEART_DETAIL_MODEL =
-  "/models/cardiovascular/cardiovascular_bodyparts.glb";
-
-const RESPIRATORY_OVERVIEW_MODEL =
-  "/models/respiratory/respiratory_overview.glb";
-
-/* ======================================================
    VISTA CARDIOVASCULAR
 ====================================================== */
 
@@ -53,120 +46,60 @@ type CardiovascularView =
   | "heart-detail";
 
 /* ======================================================
-   SISTEMAS
+   SÍMBOLOS TEMPORALES
+
+   Más adelante podemos reemplazarlos por iconos.
 ====================================================== */
 
-type SystemItem = {
-  id: AnatomySystemId | string;
-  label: string;
-  enabled: boolean;
+const systemSymbols: Record<
+  AnatomySystemId,
+  string
+> = {
+  cardiovascular:
+    "♥",
+
+  respiratory:
+    "R",
+
+  nervous:
+    "N",
+
+  skeletal:
+    "E",
+
+  muscular:
+    "M",
+
+  digestive:
+    "D",
 };
 
-const systems: SystemItem[] = [
-  {
-    id: "cardiovascular",
-    label: "Cardiovascular",
-    enabled: true,
-  },
-
-  {
-    id: "respiratory",
-    label: "Respiratorio",
-    enabled: true,
-  },
-
-  {
-    id: "nervous",
-    label: "Nervioso",
-    enabled: false,
-  },
-
-  {
-    id: "skeletal",
-    label: "Esquelético",
-    enabled: false,
-  },
-
-  {
-    id: "muscular",
-    label: "Muscular",
-    enabled: false,
-  },
-
-  {
-    id: "digestive",
-    label: "Digestivo",
-    enabled: false,
-  },
-];
-
 /* ======================================================
-   CAPAS CARDIOVASCULARES
+   TEXTO INICIAL DE CADA SISTEMA
 ====================================================== */
 
-const cardiovascularLayers: {
-  id: AnatomyLayer;
-  label: string;
-}[] = [
-  {
-    id: "general",
-    label: "General",
-  },
+const systemDescriptions: Record<
+  AnatomySystemId,
+  string
+> = {
+  cardiovascular:
+    "Selecciona una estructura del sistema cardiovascular para consultar su información anatómica.",
 
-  {
-    id: "heart",
-    label: "Corazón",
-  },
+  respiratory:
+    "Selecciona una estructura del sistema respiratorio para consultar su información anatómica.",
 
-  {
-    id: "arteries",
-    label: "Arterias",
-  },
+  nervous:
+    "Selecciona una estructura del sistema nervioso para identificar sus componentes anatómicos.",
 
-  {
-    id: "veins",
-    label: "Venas",
-  },
+  skeletal:
+    "Selecciona una estructura del sistema esquelético para identificar huesos y regiones anatómicas.",
 
-  {
-    id: "complete",
-    label: "Completo",
-  },
-];
+  muscular:
+    "Selecciona una estructura del sistema muscular para identificar los músculos del cuerpo humano.",
 
-/* ======================================================
-   CAPAS RESPIRATORIAS
-====================================================== */
-
-const respiratoryLayers: {
-  id: AnatomyLayer;
-  label: string;
-}[] = [
-  {
-    id: "general",
-    label: "General",
-  },
-
-  {
-    id: "lungs",
-    label: "Pulmones",
-  },
-
-  {
-    id: "airways",
-    label: "Vías respiratorias",
-  },
-
-  {
-    id: "upper-airway",
-    label: "Vía aérea superior",
-  },
-
-  {
-    id: "complete",
-    label: "Completo",
-  },
-];
+  digestive:
+    "Selecciona una estructura del sistema digestivo para identificar órganos y estructuras relacionadas.",
+};
 
 /* ======================================================
    APP
@@ -186,7 +119,7 @@ function App() {
     );
 
   /* ====================================================
-     VISTA CARDIOVASCULAR
+     CARDIOVASCULAR
   ==================================================== */
 
   const [
@@ -205,7 +138,7 @@ function App() {
     activeLayer,
     setActiveLayer,
   ] =
-    useState<AnatomyLayer>(
+    useState<AnatomyLayerId>(
       "general"
     );
 
@@ -217,19 +150,37 @@ function App() {
     selectedStructure,
     setSelectedStructure,
   ] =
-    useState<string | null>(
+    useState<
+      string | null
+    >(
       null
     );
 
   /* ====================================================
-     ACCIONES VISOR
+     ACCIÓN DEL VISOR
   ==================================================== */
 
   const [
     viewerAction,
     setViewerAction,
   ] =
-    useState<ViewerAction | null>(
+    useState<
+      ViewerAction | null
+    >(
+      null
+    );
+
+  /* ====================================================
+     ENFOQUE
+  ==================================================== */
+
+  const [
+    focusRequest,
+    setFocusRequest,
+  ] =
+    useState<
+      StructureFocusRequest | null
+    >(
       null
     );
 
@@ -241,70 +192,74 @@ function App() {
     studyMode,
     setStudyMode,
   ] =
-    useState(false);
+    useState(
+      false
+    );
 
   const [
     studyStepIndex,
     setStudyStepIndex,
   ] =
-    useState(0);
-
-  const [
-    focusRequest,
-    setFocusRequest,
-  ] =
-    useState<StructureFocusRequest | null>(
-      null
+    useState(
+      0
     );
 
   /* ====================================================
-     GUÍA
+     CONFIGURACIÓN ACTUAL
+  ==================================================== */
+
+  const activeConfig =
+    anatomySystems[
+      activeSystem
+    ];
+
+  /* ====================================================
+     CAPAS
+  ==================================================== */
+
+  const activeLayers =
+    activeConfig.layers;
+
+  /* ====================================================
+     GUÍA ACTUAL
   ==================================================== */
 
   const currentStudyStep =
-    cardiovascularStudyGuide.steps[
+    cardiovascularStudyGuide
+      .steps[
       studyStepIndex
     ];
 
   const studyProgress =
-    ((studyStepIndex + 1) /
+    ((studyStepIndex +
+      1) /
       cardiovascularStudyGuide
         .steps.length) *
     100;
 
   /* ====================================================
-     CAPAS ACTIVAS
-  ==================================================== */
-
-  const activeLayers =
-    activeSystem ===
-    "cardiovascular"
-      ? cardiovascularLayers
-      : respiratoryLayers;
-
-  /* ====================================================
      MODELO ACTUAL
   ==================================================== */
 
-  let currentModel =
-    CARDIOVASCULAR_OVERVIEW_MODEL;
+  const heartDetailModel =
+    anatomySystems
+      .cardiovascular
+      .detailModels
+      ?.heart;
 
-  if (
-    activeSystem ===
-    "respiratory"
-  ) {
-    currentModel =
-      RESPIRATORY_OVERVIEW_MODEL;
-  }
+  let currentModel =
+    activeConfig
+      .modelPath;
 
   if (
     activeSystem ===
       "cardiovascular" &&
     cardiovascularView ===
-      "heart-detail"
+      "heart-detail" &&
+    heartDetailModel
   ) {
     currentModel =
-      HEART_DETAIL_MODEL;
+      heartDetailModel;
   }
 
   /* ====================================================
@@ -312,7 +267,7 @@ function App() {
   ==================================================== */
 
   const currentLayer:
-    AnatomyLayer =
+    AnatomyLayerId =
     activeSystem ===
       "cardiovascular" &&
     cardiovascularView ===
@@ -321,29 +276,15 @@ function App() {
       : activeLayer;
 
   /* ====================================================
-     NOMBRE SISTEMA
-  ==================================================== */
-
-  const systemDisplayName =
-    activeSystem ===
-    "cardiovascular"
-      ? "Sistema cardiovascular"
-      : "Sistema respiratorio";
-
-  /* ====================================================
-     NOMBRE ESTRUCTURA
+     NOMBRE DE ESTRUCTURA
   ==================================================== */
 
   const selectedStructureName =
     selectedStructure
-      ? activeSystem ===
-        "cardiovascular"
-        ? getSpanishStructureName(
-            selectedStructure
-          )
-        : getRespiratoryStructureName(
-            selectedStructure
-          )
+      ? getSystemStructureName(
+          activeSystem,
+          selectedStructure
+        )
       : null;
 
   /* ====================================================
@@ -357,16 +298,19 @@ function App() {
         ? getCardiovascularStructure(
             selectedStructure
           )
-        : getRespiratoryStructure(
-            selectedStructure
-          )
+        : activeSystem ===
+            "respiratory"
+          ? getRespiratoryStructure(
+              selectedStructure
+            )
+          : null
       : null;
 
   /* ====================================================
      CATEGORÍA CARDIOVASCULAR
   ==================================================== */
 
-  const selectedCategory =
+  const selectedCardiovascularCategory =
     activeSystem ===
       "cardiovascular" &&
     selectedStructure
@@ -376,7 +320,7 @@ function App() {
       : null;
 
   /* ====================================================
-     EXPLORAR CORAZÓN
+     CORAZÓN DETALLADO
   ==================================================== */
 
   const canExploreHeart =
@@ -385,11 +329,13 @@ function App() {
     !studyMode &&
     cardiovascularView ===
       "overview" &&
-    selectedStructure !== null &&
-    selectedCategory === "heart";
+    selectedStructure !==
+      null &&
+    selectedCardiovascularCategory ===
+      "heart";
 
   /* ====================================================
-     NOMBRE VISTA
+     NOMBRE DE VISTA
   ==================================================== */
 
   const activeViewName =
@@ -406,11 +352,12 @@ function App() {
         "General";
 
   /* ====================================================
-     ACCIÓN DEL VISOR
+     EJECUTAR ACCIÓN
   ==================================================== */
 
   const runViewerAction = (
-    type: ViewerActionType
+    type:
+      ViewerActionType
   ) => {
     setViewerAction(
       (previous) => ({
@@ -418,7 +365,8 @@ function App() {
 
         id:
           (previous?.id ??
-            0) + 1,
+            0) +
+          1,
       })
     );
   };
@@ -428,17 +376,9 @@ function App() {
   ==================================================== */
 
   const changeSystem = (
-    systemId: string
+    systemId:
+      AnatomySystemId
   ) => {
-    if (
-      systemId !==
-        "cardiovascular" &&
-      systemId !==
-        "respiratory"
-    ) {
-      return;
-    }
-
     if (
       systemId ===
       activeSystem
@@ -446,17 +386,25 @@ function App() {
       return;
     }
 
-    setStudyMode(false);
+    setStudyMode(
+      false
+    );
 
-    setStudyStepIndex(0);
+    setStudyStepIndex(
+      0
+    );
 
-    setFocusRequest(null);
+    setFocusRequest(
+      null
+    );
 
     setSelectedStructure(
       null
     );
 
-    setViewerAction(null);
+    setViewerAction(
+      null
+    );
 
     setCardiovascularView(
       "overview"
@@ -472,49 +420,82 @@ function App() {
   };
 
   /* ====================================================
-     CAPA DE ESTUDIO CARDIOVASCULAR
+     CAMBIAR CAPA
   ==================================================== */
 
-  const getLayerForStructure = (
-    structureName: string
-  ): AnatomyLayer => {
-    const category =
-      getStructureCategory(
-        structureName
-      );
+  const changeLayer = (
+    layer:
+      AnatomyLayerId
+  ) => {
+    setFocusRequest(
+      null
+    );
 
-    if (
-      category === "heart"
-    ) {
-      return "heart";
-    }
+    setSelectedStructure(
+      null
+    );
 
-    if (
-      category === "artery"
-    ) {
-      return "arteries";
-    }
+    setViewerAction(
+      null
+    );
 
-    if (
-      category === "vein"
-    ) {
-      return "veins";
-    }
-
-    return "complete";
+    setActiveLayer(
+      layer
+    );
   };
 
   /* ====================================================
-     ENFOCAR
+     CAPA PARA MODO ESTUDIO
+  ==================================================== */
+
+  const getLayerForStudyStructure =
+    (
+      structureName:
+        string
+    ): AnatomyLayerId => {
+      const category =
+        getStructureCategory(
+          structureName
+        );
+
+      if (
+        category ===
+        "heart"
+      ) {
+        return "heart";
+      }
+
+      if (
+        category ===
+        "artery"
+      ) {
+        return "arteries";
+      }
+
+      if (
+        category ===
+        "vein"
+      ) {
+        return "veins";
+      }
+
+      return "complete";
+    };
+
+  /* ====================================================
+     ENFOCAR ESTRUCTURA
   ==================================================== */
 
   const focusStructure = (
-    structureName: string
+    structureName:
+      string
   ) => {
-    setViewerAction(null);
+    setViewerAction(
+      null
+    );
 
     setActiveLayer(
-      getLayerForStructure(
+      getLayerForStudyStructure(
         structureName
       )
     );
@@ -525,17 +506,19 @@ function App() {
 
         id:
           (previous?.id ??
-            0) + 1,
+            0) +
+          1,
       })
     );
   };
 
   /* ====================================================
-     PASO DE ESTUDIO
+     IR A PASO
   ==================================================== */
 
   const goToStudyStep = (
-    index: number
+    index:
+      number
   ) => {
     if (
       activeSystem !==
@@ -546,7 +529,8 @@ function App() {
 
     const maxIndex =
       cardiovascularStudyGuide
-        .steps.length - 1;
+        .steps.length -
+      1;
 
     const nextIndex =
       Math.min(
@@ -583,27 +567,42 @@ function App() {
   const startStudyMode =
     () => {
       if (
+        !activeConfig
+          .studyAvailable
+      ) {
+        return;
+      }
+
+      if (
         activeSystem !==
         "cardiovascular"
       ) {
         return;
       }
 
-      setStudyMode(true);
+      setStudyMode(
+        true
+      );
 
       setSelectedStructure(
         null
       );
 
-      setFocusRequest(null);
+      setFocusRequest(
+        null
+      );
 
-      setViewerAction(null);
+      setViewerAction(
+        null
+      );
 
       setCardiovascularView(
         "overview"
       );
 
-      goToStudyStep(0);
+      goToStudyStep(
+        0
+      );
     };
 
   /* ====================================================
@@ -612,11 +611,17 @@ function App() {
 
   const finishStudyMode =
     () => {
-      setStudyMode(false);
+      setStudyMode(
+        false
+      );
 
-      setStudyStepIndex(0);
+      setStudyStepIndex(
+        0
+      );
 
-      setFocusRequest(null);
+      setFocusRequest(
+        null
+      );
 
       setSelectedStructure(
         null
@@ -628,30 +633,44 @@ function App() {
 
       setViewerAction(
         (previous) => ({
-          type: "reset",
+          type:
+            "reset",
 
           id:
             (previous?.id ??
-              0) + 1,
+              0) +
+            1,
         })
       );
     };
 
   /* ====================================================
-     CORAZÓN DETALLADO
+     ABRIR CORAZÓN
   ==================================================== */
 
   const openHeartDetail =
     () => {
-      setStudyMode(false);
+      if (
+        !heartDetailModel
+      ) {
+        return;
+      }
 
-      setFocusRequest(null);
+      setStudyMode(
+        false
+      );
+
+      setFocusRequest(
+        null
+      );
 
       setSelectedStructure(
         null
       );
 
-      setViewerAction(null);
+      setViewerAction(
+        null
+      );
 
       setCardiovascularView(
         "heart-detail"
@@ -659,18 +678,22 @@ function App() {
     };
 
   /* ====================================================
-     VOLVER A OVERVIEW
+     VOLVER AL SISTEMA CARDIOVASCULAR
   ==================================================== */
 
   const returnToOverview =
     () => {
-      setFocusRequest(null);
+      setFocusRequest(
+        null
+      );
 
       setSelectedStructure(
         null
       );
 
-      setViewerAction(null);
+      setViewerAction(
+        null
+      );
 
       setActiveLayer(
         "general"
@@ -680,6 +703,10 @@ function App() {
         "overview"
       );
     };
+
+  /* ====================================================
+     RENDER
+  ==================================================== */
 
   return (
     <div className="flex h-screen flex-col bg-slate-50 text-slate-900">
@@ -700,7 +727,10 @@ function App() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium transition hover:bg-slate-50">
+          <button
+            type="button"
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium transition hover:bg-slate-50"
+          >
             Progreso
           </button>
 
@@ -719,13 +749,13 @@ function App() {
             SIDEBAR
         ================================================= */}
 
-        <aside className="w-55 shrink-0 border-r border-slate-200 bg-white p-4">
+        <aside className="w-55 shrink-0 overflow-y-auto border-r border-slate-200 bg-white p-4">
           <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
             Sistemas anatómicos
           </p>
 
           <nav className="space-y-1">
-            {systems.map(
+            {anatomySystemList.map(
               (system) => {
                 const isActive =
                   activeSystem ===
@@ -737,9 +767,6 @@ function App() {
                       system.id
                     }
                     type="button"
-                    disabled={
-                      !system.enabled
-                    }
                     onClick={() =>
                       changeSystem(
                         system.id
@@ -748,9 +775,7 @@ function App() {
                     className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
                       isActive
                         ? "bg-slate-900 text-white"
-                        : system.enabled
-                          ? "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                          : "cursor-not-allowed text-slate-300"
+                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     }`}
                   >
                     {
@@ -774,8 +799,8 @@ function App() {
             <button
               type="button"
               disabled={
-                activeSystem !==
-                  "cardiovascular" &&
+                !activeConfig
+                  .studyAvailable &&
                 !studyMode
               }
               onClick={
@@ -786,8 +811,8 @@ function App() {
               className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
                 studyMode
                   ? "bg-amber-50 text-amber-800"
-                  : activeSystem ===
-                      "cardiovascular"
+                  : activeConfig
+                        .studyAvailable
                     ? "text-slate-600 hover:bg-slate-100"
                     : "cursor-not-allowed text-slate-300"
               }`}
@@ -797,22 +822,37 @@ function App() {
                 : "Modo estudio"}
             </button>
 
-            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100">
+            <button
+              type="button"
+              disabled
+              className="w-full cursor-not-allowed rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-300"
+            >
               Quiz anatómico
             </button>
 
-            <button className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100">
+            <button
+              type="button"
+              disabled
+              className="w-full cursor-not-allowed rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-300"
+            >
               Tutor IA
             </button>
           </div>
         </aside>
 
         {/* =================================================
-            VISOR
+            VISOR 3D
         ================================================= */}
 
         <section className="relative min-w-0 flex-1 overflow-hidden bg-slate-100">
           <AnatomyViewer
+            /*
+             * Esta key es importante.
+             *
+             * Al cambiar de sistema se destruye
+             * completamente el visor anterior y
+             * se monta uno nuevo.
+             */
             key={`${activeSystem}-${cardiovascularView}`}
             system={
               activeSystem
@@ -853,23 +893,11 @@ function App() {
                         layer.id
                       }
                       type="button"
-                      onClick={() => {
-                        setFocusRequest(
-                          null
-                        );
-
-                        setSelectedStructure(
-                          null
-                        );
-
-                        setViewerAction(
-                          null
-                        );
-
-                        setActiveLayer(
+                      onClick={() =>
+                        changeLayer(
                           layer.id
-                        );
-                      }}
+                        )
+                      }
                       className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
                         activeLayer ===
                         layer.id
@@ -914,76 +942,51 @@ function App() {
             )}
 
           {/* =================================================
-              LEYENDA CARDIOVASCULAR
+              LEYENDA
           ================================================= */}
 
-          {activeSystem ===
-            "cardiovascular" &&
-            cardiovascularView ===
-              "overview" &&
-            !studyMode && (
+          {!studyMode &&
+            !(
+              activeSystem ===
+                "cardiovascular" &&
+              cardiovascularView ===
+                "heart-detail"
+            ) &&
+            activeConfig
+              .legend.length >
+              0 && (
               <div className="absolute left-5 top-5 z-10 rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-sm backdrop-blur">
                 <p className="mb-2 font-semibold text-slate-700">
                   Capas anatómicas
                 </p>
 
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full bg-[#8f2438]" />
-                    <span>
-                      Corazón
-                    </span>
-                  </div>
+                  {activeConfig.legend.map(
+                    (
+                      item
+                    ) => (
+                      <div
+                        key={
+                          item.label
+                        }
+                        className="flex items-center gap-2"
+                      >
+                        <span
+                          className="h-3 w-3 rounded-full"
+                          style={{
+                            backgroundColor:
+                              item.color,
+                          }}
+                        />
 
-                  <div className="flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full bg-[#d94b59]" />
-                    <span>
-                      Arterias
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full bg-[#4f6fa8]" />
-                    <span>
-                      Venas
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-          {/* =================================================
-              LEYENDA RESPIRATORIA
-          ================================================= */}
-
-          {activeSystem ===
-            "respiratory" && (
-              <div className="absolute left-5 top-5 z-10 rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-sm backdrop-blur">
-                <p className="mb-2 font-semibold text-slate-700">
-                  Capas anatómicas
-                </p>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full bg-[#b97882]" />
-                    <span>
-                      Pulmones
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full bg-[#7896a8]" />
-                    <span>
-                      Vías respiratorias
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full bg-[#9c87aa]" />
-                    <span>
-                      Vía aérea superior
-                    </span>
-                  </div>
+                        <span>
+                          {
+                            item.label
+                          }
+                        </span>
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             )}
@@ -1019,6 +1022,10 @@ function App() {
                 </button>
               </div>
 
+              {/* =================================================
+                  PROGRESO
+              ================================================= */}
+
               <div className="mt-4">
                 <div className="mb-2 flex justify-between text-xs text-slate-500">
                   <span>
@@ -1050,6 +1057,10 @@ function App() {
                 </div>
               </div>
 
+              {/* =================================================
+                  PASO
+              ================================================= */}
+
               <div className="mt-5">
                 <h4 className="text-lg font-semibold">
                   {
@@ -1079,8 +1090,13 @@ function App() {
                 </div>
               </div>
 
+              {/* =================================================
+                  NAVEGACIÓN
+              ================================================= */}
+
               <div className="mt-5 flex gap-2">
                 <button
+                  type="button"
                   disabled={
                     studyStepIndex ===
                     0
@@ -1101,6 +1117,7 @@ function App() {
                   .steps.length -
                   1 ? (
                   <button
+                    type="button"
                     onClick={
                       finishStudyMode
                     }
@@ -1110,6 +1127,7 @@ function App() {
                   </button>
                 ) : (
                   <button
+                    type="button"
                     onClick={() =>
                       goToStudyStep(
                         studyStepIndex +
@@ -1132,6 +1150,7 @@ function App() {
           {!studyMode && (
             <div className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 gap-2 rounded-xl border border-slate-200 bg-white/95 p-2 shadow-sm backdrop-blur">
               <button
+                type="button"
                 onClick={() =>
                   runViewerAction(
                     "isolate"
@@ -1140,12 +1159,13 @@ function App() {
                 disabled={
                   !selectedStructure
                 }
-                className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-40"
+                className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Aislar
               </button>
 
               <button
+                type="button"
                 onClick={() =>
                   runViewerAction(
                     "hide"
@@ -1154,12 +1174,13 @@ function App() {
                 disabled={
                   !selectedStructure
                 }
-                className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-40"
+                className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Ocultar
               </button>
 
               <button
+                type="button"
                 onClick={() =>
                   runViewerAction(
                     "transparency"
@@ -1168,12 +1189,13 @@ function App() {
                 disabled={
                   !selectedStructure
                 }
-                className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-40"
+                className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Transparencia
               </button>
 
               <button
+                type="button"
                 onClick={() =>
                   runViewerAction(
                     "reset"
@@ -1196,36 +1218,52 @@ function App() {
             Estructura seleccionada
           </p>
 
+          {/* =================================================
+              IDENTIFICACIÓN
+          ================================================= */}
+
           <div className="mt-5">
             <div
-              className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl text-xl ${
-                activeSystem ===
-                "cardiovascular"
-                  ? "bg-red-50"
-                  : "bg-sky-50"
-              }`}
+              className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl text-lg font-semibold"
+              style={{
+                backgroundColor:
+                  activeConfig
+                    .accentColor,
+
+                color:
+                  activeConfig
+                    .color,
+              }}
             >
-              {activeSystem ===
-              "cardiovascular"
-                ? "♥"
-                : "◌"}
+              {
+                systemSymbols[
+                  activeSystem
+                ]
+              }
             </div>
 
-            <h2 className="text-xl font-semibold">
+            <h2 className="break-words text-xl font-semibold">
               {selectedStructureName ??
-                systemDisplayName}
+                activeConfig
+                  .fullName}
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
               {
-                systemDisplayName
+                activeConfig
+                  .fullName
               }
             </p>
+
+            {/* =================================================
+                TIPO
+            ================================================= */}
 
             {selectedStructureData && (
               <span className="mt-2 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
                 {
-                  selectedStructureData.type
+                  selectedStructureData
+                    .type
                 }
               </span>
             )}
@@ -1280,16 +1318,30 @@ function App() {
 
             <p className="mt-2 text-sm leading-6 text-slate-600">
               {selectedStructureData
-                ? selectedStructureData.description
+                ? selectedStructureData
+                    .description
                 : selectedStructure
-                  ? `Has seleccionado ${selectedStructureName}. Todavía estamos agregando información educativa específica para esta estructura.`
+                  ? activeSystem ===
+                      "nervous"
+                    ? `Has seleccionado ${selectedStructureName}. La información educativa del sistema nervioso se añadirá en la siguiente fase.`
+                    : activeSystem ===
+                        "skeletal"
+                      ? `Has seleccionado ${selectedStructureName}. La información educativa del sistema esquelético se añadirá en la siguiente fase.`
+                      : activeSystem ===
+                          "muscular"
+                        ? `Has seleccionado ${selectedStructureName}. La información educativa del sistema muscular se añadirá en la siguiente fase.`
+                        : activeSystem ===
+                            "digestive"
+                          ? `Has seleccionado ${selectedStructureName}. La información educativa del sistema digestivo se añadirá en la siguiente fase.`
+                          : `Has seleccionado ${selectedStructureName}. Todavía estamos agregando información educativa específica para esta estructura.`
                   : activeSystem ===
-                      "respiratory"
-                    ? "Selecciona una estructura del modelo respiratorio para consultar su información anatómica."
-                    : cardiovascularView ===
+                        "cardiovascular" &&
+                      cardiovascularView ===
                         "heart-detail"
-                      ? "Explora las cavidades, válvulas y estructuras internas disponibles en el modelo detallado del corazón."
-                      : "Selecciona una estructura del sistema cardiovascular para consultar su información anatómica."}
+                    ? "Explora las cavidades, válvulas y estructuras internas disponibles en el modelo detallado del corazón."
+                    : systemDescriptions[
+                        activeSystem
+                      ]}
             </p>
           </div>
 
@@ -1300,6 +1352,8 @@ function App() {
           {selectedStructureData && (
             <>
               <div className="my-5 border-t border-slate-200" />
+
+              {/* FUNCIÓN */}
 
               <div>
                 <h3 className="text-sm font-semibold">
@@ -1316,6 +1370,8 @@ function App() {
 
               <div className="my-5 border-t border-slate-200" />
 
+              {/* UBICACIÓN */}
+
               <div>
                 <h3 className="text-sm font-semibold">
                   Ubicación
@@ -1331,40 +1387,49 @@ function App() {
 
               <div className="my-5 border-t border-slate-200" />
 
+              {/* RELACIONES */}
+
               <div>
                 <h3 className="text-sm font-semibold">
                   Relaciones anatómicas
                 </h3>
 
                 <ul className="mt-2 space-y-1 text-sm text-slate-600">
-                  {selectedStructureData.relationships.map(
-                    (
-                      relationship
-                    ) => (
-                      <li
-                        key={
-                          relationship
-                        }
-                        className="flex gap-2"
-                      >
-                        <span className="text-slate-400">
-                          •
-                        </span>
-
-                        <span>
-                          {
+                  {selectedStructureData
+                    .relationships
+                    .map(
+                      (
+                        relationship
+                      ) => (
+                        <li
+                          key={
                             relationship
                           }
-                        </span>
-                      </li>
-                    )
-                  )}
+                          className="flex gap-2"
+                        >
+                          <span className="text-slate-400">
+                            •
+                          </span>
+
+                          <span>
+                            {
+                              relationship
+                            }
+                          </span>
+                        </li>
+                      )
+                    )}
                 </ul>
               </div>
             </>
           )}
 
+          {/* =================================================
+              ANATOMY AI
+          ================================================= */}
+
           <button
+            type="button"
             disabled={
               !selectedStructure
             }
