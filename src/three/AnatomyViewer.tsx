@@ -41,15 +41,18 @@ import {
 
 import {
   getDigestiveCategory,
-  getMuscularCategory,
   getNervousCategory,
   getRespiratoryCategory,
   getSkeletalCategory,
   type SystemCategory,
 } from "../utils/systemClassification";
 
+import {
+  classifyMuscularHierarchy,
+} from "../utils/muscularHierarchy";
+
 /* ======================================================
-   ACCIONES DEL VISOR
+   ACCIONES
 ====================================================== */
 
 export type ViewerActionType =
@@ -64,7 +67,7 @@ export type ViewerAction = {
 };
 
 /* ======================================================
-   ENFOQUE EXTERNO
+   ENFOQUE
 ====================================================== */
 
 export type StructureFocusRequest = {
@@ -84,10 +87,14 @@ type AnatomyViewerProps = {
   layer: AnatomyLayerId;
 
   onStructureSelect?: (
-    structureName: string | null
+    structureName:
+      | string
+      | null
   ) => void;
 
-  action?: ViewerAction | null;
+  action?:
+    | ViewerAction
+    | null;
 
   focusRequest?:
     | StructureFocusRequest
@@ -101,76 +108,80 @@ type AnatomyViewerProps = {
 const COLORS = {
   /* Cardiovascular */
 
-  heart: "#8f2438",
+  heart:
+    "#8f2438",
 
-  artery: "#d94b59",
+  artery:
+    "#d94b59",
 
-  vein: "#4f6fa8",
+  vein:
+    "#4f6fa8",
 
   /* Respiratorio */
 
-  lung: "#b97882",
+  lung:
+    "#b97882",
 
-  airway: "#7896a8",
+  airway:
+    "#7896a8",
 
-  upperAirway: "#9c87aa",
+  upperAirway:
+    "#9c87aa",
 
   /* Nervioso */
 
-  nervousCentral: "#d6a84b",
+  nervousCentral:
+    "#d6a84b",
 
-  nervousPeripheral: "#e4c978",
+  nervousPeripheral:
+    "#e4c978",
 
   /* Esquelético */
 
-  skeletalAxial: "#d8d1c4",
+  skeletalAxial:
+    "#d8d1c4",
 
-  skeletalAppendicular: "#b9c1ca",
+  skeletalAppendicular:
+    "#b9c1ca",
 
   /* Muscular */
 
-  muscularHeadNeck: "#9f5656",
+  muscularHeadNeck:
+    "#9f5656",
 
-  muscularTrunk: "#a64b4b",
+  muscularTrunk:
+    "#a64b4b",
 
-  muscularUpper: "#bd6666",
+  muscularUpper:
+    "#bd6666",
 
-  muscularLower: "#874040",
+  muscularLower:
+    "#874040",
 
   /* Digestivo */
 
-  digestiveTract: "#b87949",
+  digestiveTract:
+    "#b87949",
 
-  digestiveAccessory: "#d2a15f",
+  digestiveAccessory:
+    "#d2a15f",
 
   /* Otros */
 
-  other: "#94a3b8",
+  other:
+    "#94a3b8",
 
   /* Selección */
 
-  selected: "#f59e0b",
+  selected:
+    "#f59e0b",
 
-  selectedEmissive: "#92400e",
+  selectedEmissive:
+    "#92400e",
 };
 
 /* ======================================================
-   EJES
-====================================================== */
-
-type AxisName =
-  | "x"
-  | "y"
-  | "z";
-
-type BodyAxes = {
-  vertical: AxisName;
-  horizontal: AxisName;
-  depth: AxisName;
-};
-
-/* ======================================================
-   NORMALIZAR TEXTO
+   NORMALIZACIÓN
 ====================================================== */
 
 function normalizeName(
@@ -186,19 +197,18 @@ function normalizeName(
 }
 
 /* ======================================================
-   CLASIFICACIÓN POR NOMBRE
+   CATEGORÍA PARA SISTEMAS NO MUSCULARES
 ====================================================== */
 
-function getNameCategory(
+function getStructureCategory(
   system: AnatomySystemId,
   structureName: string
 ): SystemCategory {
-  /* ====================================================
-     CARDIOVASCULAR
-  ==================================================== */
+  /* Cardiovascular */
 
   if (
-    system === "cardiovascular"
+    system ===
+    "cardiovascular"
   ) {
     const category =
       getCardiovascularCategory(
@@ -226,315 +236,55 @@ function getNameCategory(
     return "other";
   }
 
-  /* ====================================================
-     RESPIRATORIO
-  ==================================================== */
+  /* Respiratorio */
 
   if (
-    system === "respiratory"
+    system ===
+    "respiratory"
   ) {
     return getRespiratoryCategory(
       structureName
     );
   }
 
-  /* ====================================================
-     NERVIOSO
-  ==================================================== */
+  /* Nervioso */
 
   if (
-    system === "nervous"
+    system ===
+    "nervous"
   ) {
     return getNervousCategory(
       structureName
     );
   }
 
-  /* ====================================================
-     ESQUELÉTICO
-  ==================================================== */
+  /* Esquelético */
 
   if (
-    system === "skeletal"
+    system ===
+    "skeletal"
   ) {
     return getSkeletalCategory(
       structureName
     );
   }
 
-  /* ====================================================
-     MUSCULAR
-  ==================================================== */
+  /* Digestivo */
 
   if (
-    system === "muscular"
+    system ===
+    "digestive"
   ) {
-    return getMuscularCategory(
+    return getDigestiveCategory(
       structureName
     );
   }
 
-  /* ====================================================
-     DIGESTIVO
-  ==================================================== */
-
-  return getDigestiveCategory(
-    structureName
-  );
-}
-
-/* ======================================================
-   DETECTAR EJES DEL CUERPO
-====================================================== */
-
-function getBodyAxes(
-  bounds: THREE.Box3
-): BodyAxes {
-  const size =
-    bounds.getSize(
-      new THREE.Vector3()
-    );
-
-  const axes = [
-    {
-      axis: "x" as AxisName,
-      size: size.x,
-    },
-    {
-      axis: "y" as AxisName,
-      size: size.y,
-    },
-    {
-      axis: "z" as AxisName,
-      size: size.z,
-    },
-  ].sort(
-    (a, b) =>
-      b.size - a.size
-  );
-
-  return {
-    vertical:
-      axes[0].axis,
-
-    horizontal:
-      axes[1].axis,
-
-    depth:
-      axes[2].axis,
-  };
-}
-
-/* ======================================================
-   VALOR DE UN EJE
-====================================================== */
-
-function getAxisValue(
-  vector: THREE.Vector3,
-  axis: AxisName
-) {
-  if (
-    axis === "x"
-  ) {
-    return vector.x;
-  }
-
-  if (
-    axis === "y"
-  ) {
-    return vector.y;
-  }
-
-  return vector.z;
-}
-
-/* ======================================================
-   BOUNDING BOX PROPIA DE UN MESH
-
-   No incluye hijos.
-====================================================== */
-
-function getOwnMeshBounds(
-  mesh: THREE.Mesh
-) {
-  const geometry =
-    mesh.geometry;
-
-  if (
-    !geometry.boundingBox
-  ) {
-    geometry.computeBoundingBox();
-  }
-
-  if (
-    !geometry.boundingBox
-  ) {
-    return null;
-  }
-
-  return geometry.boundingBox
-    .clone()
-    .applyMatrix4(
-      mesh.matrixWorld
-    );
-}
-
-/* ======================================================
-   CLASIFICACIÓN MUSCULAR ESPACIAL
-====================================================== */
-
-function getMuscularSpatialCategory(
-  mesh: THREE.Mesh,
-  modelBounds: THREE.Box3,
-  axes: BodyAxes
-): SystemCategory {
-  const meshBounds =
-    getOwnMeshBounds(
-      mesh
-    );
-
-  if (
-    !meshBounds
-  ) {
-    return "muscular-trunk";
-  }
-
-  const bodySize =
-    modelBounds.getSize(
-      new THREE.Vector3()
-    );
-
-  const bodyCenter =
-    modelBounds.getCenter(
-      new THREE.Vector3()
-    );
-
-  const meshCenter =
-    meshBounds.getCenter(
-      new THREE.Vector3()
-    );
-
-  const verticalSize =
-    getAxisValue(
-      bodySize,
-      axes.vertical
-    );
-
-  const horizontalSize =
-    getAxisValue(
-      bodySize,
-      axes.horizontal
-    );
-
-  if (
-    verticalSize <= 0 ||
-    horizontalSize <= 0
-  ) {
-    return "muscular-trunk";
-  }
-
-  const bodyVerticalMin =
-    getAxisValue(
-      modelBounds.min,
-      axes.vertical
-    );
-
-  const meshVertical =
-    getAxisValue(
-      meshCenter,
-      axes.vertical
-    );
-
-  const meshHorizontal =
-    getAxisValue(
-      meshCenter,
-      axes.horizontal
-    );
-
-  const bodyHorizontal =
-    getAxisValue(
-      bodyCenter,
-      axes.horizontal
-    );
-
-  const verticalRatio =
-    (
-      meshVertical -
-      bodyVerticalMin
-    ) /
-    verticalSize;
-
-  const horizontalRatio =
-    Math.abs(
-      meshHorizontal -
-      bodyHorizontal
-    ) /
-    horizontalSize;
-
-  /* Cabeza y cuello */
-
-  if (
-    verticalRatio >= 0.82
-  ) {
-    return "muscular-head-neck";
-  }
-
-  /* Miembros inferiores */
-
-  if (
-    verticalRatio <= 0.47
-  ) {
-    return "muscular-lower-limb";
-  }
-
-  /* Miembros superiores */
-
-  if (
-    verticalRatio > 0.45 &&
-    verticalRatio < 0.82 &&
-    horizontalRatio >= 0.18
-  ) {
-    return "muscular-upper-limb";
-  }
-
-  /* Tronco */
-
-  return "muscular-trunk";
-}
-
-/* ======================================================
-   CLASIFICACIÓN FINAL
-====================================================== */
-
-function getMeshCategory(
-  system: AnatomySystemId,
-  mesh: THREE.Mesh,
-  modelBounds: THREE.Box3,
-  axes: BodyAxes
-): SystemCategory {
-  const nameCategory =
-    getNameCategory(
-      system,
-      mesh.name
-    );
-
-  if (
-    system === "muscular"
-  ) {
-    if (
-      nameCategory !== "other"
-    ) {
-      return nameCategory;
-    }
-
-    return getMuscularSpatialCategory(
-      mesh,
-      modelBounds,
-      axes
-    );
-  }
-
-  return nameCategory;
+  /*
+   * Muscular se clasifica usando
+   * muscularHierarchy.ts.
+   */
+  return "other";
 }
 
 /* ======================================================
@@ -576,66 +326,7 @@ function getMeshMaterial(
 }
 
 /* ======================================================
-   VISIBILIDAD DEL MATERIAL
-
-   IMPORTANTE:
-
-   Usamos material.visible en lugar de mesh.visible
-   para no ocultar accidentalmente los hijos de un
-   mesh padre del modelo Z-Anatomy.
-====================================================== */
-
-function setMeshRendered(
-  mesh: THREE.Mesh,
-  visible: boolean
-) {
-  /*
-   * El objeto siempre permanece activo
-   * dentro de la jerarquía.
-   */
-  mesh.visible = true;
-
-  const material =
-    getMeshMaterial(
-      mesh
-    );
-
-  if (
-    !material
-  ) {
-    return;
-  }
-
-  material.visible =
-    visible;
-
-  material.needsUpdate =
-    true;
-}
-
-/* ======================================================
-   SABER SI EL MESH ESTÁ MOSTRÁNDOSE
-====================================================== */
-
-function isMeshRendered(
-  mesh: THREE.Mesh
-) {
-  const material =
-    getMeshMaterial(
-      mesh
-    );
-
-  if (
-    !material
-  ) {
-    return false;
-  }
-
-  return material.visible;
-}
-
-/* ======================================================
-   COLOR POR CATEGORÍA
+   COLOR
 ====================================================== */
 
 function getCategoryColor(
@@ -716,6 +407,50 @@ function getCategoryColor(
 }
 
 /* ======================================================
+   MOSTRAR / OCULTAR MESH
+
+   Usamos layers de Three.js.
+
+   Layer 0 = visible.
+   Layer 1 = oculto.
+
+   Esto evita que ocultar un padre también
+   oculte todos sus descendientes.
+====================================================== */
+
+function setMeshRendered(
+  mesh: THREE.Mesh,
+  rendered: boolean
+) {
+  /*
+   * El objeto permanece visible jerárquicamente.
+   */
+  mesh.visible =
+    true;
+
+  if (
+    rendered
+  ) {
+    mesh.layers.set(
+      0
+    );
+  } else {
+    mesh.layers.set(
+      1
+    );
+  }
+}
+
+function isMeshRendered(
+  mesh: THREE.Mesh
+) {
+  return mesh.layers
+    .isEnabled(
+      0
+    );
+}
+
+/* ======================================================
    GENERAL CARDIOVASCULAR
 ====================================================== */
 
@@ -743,11 +478,15 @@ function isGeneralCardiovascularStructure(
     "aortic",
     "vena_cava",
     "cava",
+
     "pulmonary_trunk",
+
     "pulmonary_artery",
     "pulmonary_arteries",
+
     "pulmonary_vein",
     "pulmonary_veins",
+
     "carotid",
     "subclavian",
     "brachiocephalic",
@@ -776,13 +515,15 @@ function isGeneralRespiratoryStructure(
     );
 
   return (
-    category === "lung" ||
-    category === "airway"
+    category ===
+      "lung" ||
+    category ===
+      "airway"
   );
 }
 
 /* ======================================================
-   VISIBILIDAD POR CAPA
+   VISIBILIDAD SEGÚN CAPA
 ====================================================== */
 
 function shouldMeshBeVisible(
@@ -790,7 +531,26 @@ function shouldMeshBeVisible(
   mesh: THREE.Mesh,
   layer: AnatomyLayerId
 ) {
+  /* Mesh técnico */
+
   if (
+    mesh.userData
+      .anatomyIgnore ===
+    true
+  ) {
+    return false;
+  }
+
+  /*
+   * Para Muscular ya conocemos exactamente
+   * las piezas que pertenecen al modelo.
+   *
+   * No aplicamos aquí filtros de nombres
+   * diseñados originalmente para cardiovascular.
+   */
+  if (
+    system !==
+      "muscular" &&
     isInvalidStructureName(
       mesh.name
     )
@@ -808,7 +568,8 @@ function shouldMeshBeVisible(
   ==================================================== */
 
   if (
-    layer === "complete"
+    layer ===
+    "complete"
   ) {
     return true;
   }
@@ -818,10 +579,12 @@ function shouldMeshBeVisible(
   ==================================================== */
 
   if (
-    layer === "general"
+    layer ===
+    "general"
   ) {
     if (
-      system === "cardiovascular"
+      system ===
+      "cardiovascular"
     ) {
       return isGeneralCardiovascularStructure(
         mesh.name
@@ -829,13 +592,19 @@ function shouldMeshBeVisible(
     }
 
     if (
-      system === "respiratory"
+      system ===
+      "respiratory"
     ) {
       return isGeneralRespiratoryStructure(
         mesh.name
       );
     }
 
+    /*
+     * Nervioso, esquelético,
+     * muscular y digestivo:
+     * General muestra todo.
+     */
     return true;
   }
 
@@ -844,26 +613,32 @@ function shouldMeshBeVisible(
   ==================================================== */
 
   if (
-    layer === "heart"
+    layer ===
+    "heart"
   ) {
     return (
-      category === "heart"
+      category ===
+      "heart"
     );
   }
 
   if (
-    layer === "arteries"
+    layer ===
+    "arteries"
   ) {
     return (
-      category === "artery"
+      category ===
+      "artery"
     );
   }
 
   if (
-    layer === "veins"
+    layer ===
+    "veins"
   ) {
     return (
-      category === "vein"
+      category ===
+      "vein"
     );
   }
 
@@ -872,18 +647,22 @@ function shouldMeshBeVisible(
   ==================================================== */
 
   if (
-    layer === "lungs"
+    layer ===
+    "lungs"
   ) {
     return (
-      category === "lung"
+      category ===
+      "lung"
     );
   }
 
   if (
-    layer === "airways"
+    layer ===
+    "airways"
   ) {
     return (
-      category === "airway"
+      category ===
+      "airway"
     );
   }
 
@@ -1036,7 +815,9 @@ function AnatomyModel({
     );
 
   const selectedMeshRef =
-    useRef<THREE.Mesh | null>(
+    useRef<
+      THREE.Mesh | null
+    >(
       null
     );
 
@@ -1051,30 +832,31 @@ function AnatomyModel({
           true
         );
 
-      /* ==================================================
-         NORMALIZAR ESCALA
-      ================================================== */
+      /* ================================================
+         NORMALIZAR TAMAÑO
+      ================================================ */
 
-      const initialBounds =
+      const bounds =
         new THREE.Box3()
           .setFromObject(
             clone
           );
 
-      const initialSize =
-        initialBounds.getSize(
+      const size =
+        bounds.getSize(
           new THREE.Vector3()
         );
 
       const maxDimension =
         Math.max(
-          initialSize.x,
-          initialSize.y,
-          initialSize.z
+          size.x,
+          size.y,
+          size.z
         );
 
       if (
-        maxDimension > 0
+        maxDimension >
+        0
       ) {
         let desiredSize =
           anatomySystems[
@@ -1103,33 +885,9 @@ function AnatomyModel({
         true
       );
 
-      /* ==================================================
-         LIMITES DEL CUERPO
-      ================================================== */
-
-      const modelBounds =
-        new THREE.Box3()
-          .setFromObject(
-            clone
-          );
-
-      const axes =
-        getBodyAxes(
-          modelBounds
-        );
-
-      if (
-        system === "muscular"
-      ) {
-        console.log(
-          "EJES MUSCULARES:",
-          axes
-        );
-      }
-
-      /* ==================================================
-         PREPARAR MESHES
-      ================================================== */
+      /* ================================================
+         PREPARAR MATERIALES Y CATEGORÍAS INICIALES
+      ================================================ */
 
       clone.traverse(
         (object) => {
@@ -1142,35 +900,39 @@ function AnatomyModel({
             return;
           }
 
-          object.geometry
-            .computeBoundingBox();
-
-          const category =
-            getMeshCategory(
-              system,
-              object,
-              modelBounds,
-              axes
-            );
-
-          object.userData
-            .anatomyCategory =
-            category;
-
-          /*
-           * MUY IMPORTANTE:
-           *
-           * Nunca ocultamos object.visible porque
-           * puede tener otros meshes como hijos.
-           */
           object.visible =
             true;
+
+          object.layers.set(
+            0
+          );
 
           object.castShadow =
             true;
 
           object.receiveShadow =
             true;
+
+          object.userData
+            .anatomyIgnore =
+            false;
+
+          /*
+           * Muscular se clasificará después
+           * usando la jerarquía real.
+           */
+          const category =
+            system ===
+            "muscular"
+              ? "other"
+              : getStructureCategory(
+                  system,
+                  object.name
+                );
+
+          object.userData
+            .anatomyCategory =
+            category;
 
           object.material =
             new THREE.MeshStandardMaterial({
@@ -1192,14 +954,70 @@ function AnatomyModel({
               opacity:
                 1,
 
-              visible:
-                true,
-
               side:
                 THREE.DoubleSide,
             });
         }
       );
+
+      /* ================================================
+         MUSCULAR
+         CLASIFICACIÓN REAL SEGÚN Z-ANATOMY
+      ================================================ */
+
+      if (
+        system ===
+        "muscular"
+      ) {
+        const result =
+          classifyMuscularHierarchy(
+            clone
+          );
+
+        clone.userData
+          .muscularHierarchyResult =
+          result;
+
+        /*
+         * Ahora que cada mesh tiene su categoría
+         * correcta, aplicamos los colores.
+         */
+        clone.traverse(
+          (object) => {
+            if (
+              !(
+                object instanceof
+                THREE.Mesh
+              )
+            ) {
+              return;
+            }
+
+            const material =
+              getMeshMaterial(
+                object
+              );
+
+            if (
+              !material
+            ) {
+              return;
+            }
+
+            const category =
+              getStoredCategory(
+                object
+              );
+
+            material.color.set(
+              getCategoryColor(
+                system,
+                category
+              )
+            );
+          }
+        );
+      }
 
       return clone;
     }, [
@@ -1209,7 +1027,7 @@ function AnatomyModel({
     ]);
 
   /* ====================================================
-     RESTAURAR COLOR
+     RESTAURAR SELECCIÓN
   ==================================================== */
 
   const restoreHighlight = (
@@ -1297,18 +1115,6 @@ function AnatomyModel({
       total: 0,
     };
 
-    const structureNames: {
-      original: string;
-      visible: string;
-      category: string;
-    }[] = [];
-
-    const unknownCardiovascularWords:
-      Record<
-        string,
-        string[]
-      > = {};
-
     model.traverse(
       (object) => {
         if (
@@ -1321,6 +1127,20 @@ function AnatomyModel({
         }
 
         counts.total++;
+
+        if (
+          object.userData
+            .anatomyIgnore ===
+          true
+        ) {
+          counts.ignored =
+            (
+              counts.ignored ??
+              0
+            ) + 1;
+
+          return;
+        }
 
         const category =
           getStoredCategory(
@@ -1335,38 +1155,6 @@ function AnatomyModel({
               category
             ] ?? 0
           ) + 1;
-
-        structureNames.push({
-          original:
-            object.name,
-
-          visible:
-            getSystemStructureName(
-              system,
-              object.name
-            ),
-
-          category,
-        });
-
-        if (
-          system ===
-          "cardiovascular"
-        ) {
-          const unknown =
-            getUnknownAnatomyWords(
-              object.name
-            );
-
-          if (
-            unknown.length > 0
-          ) {
-            unknownCardiovascularWords[
-              object.name
-            ] =
-              unknown;
-          }
-        }
       }
     );
 
@@ -1387,38 +1175,43 @@ function AnatomyModel({
     ================================================== */
 
     if (
-      system === "muscular"
+      system ===
+      "muscular"
     ) {
+      const result =
+        model.userData
+          .muscularHierarchyResult;
+
       console.log(
-        "DISTRIBUCIÓN MUSCULAR"
+        "CLASIFICACIÓN MUSCULAR BASADA EN EL GLB:"
       );
 
       console.log(
-        "Cabeza/cuello:",
-        counts[
-          "muscular-head-neck"
-        ] ?? 0
+        result
       );
 
       console.log(
-        "Tronco:",
-        counts[
-          "muscular-trunk"
-        ] ?? 0
+        "VALORES ESPERADOS PARA muscular_overview.glb:"
       );
 
       console.log(
-        "Miembros superiores:",
-        counts[
-          "muscular-upper-limb"
-        ] ?? 0
+        "Cabeza/cuello: 175"
       );
 
       console.log(
-        "Miembros inferiores:",
-        counts[
-          "muscular-lower-limb"
-        ] ?? 0
+        "Tronco: 153"
+      );
+
+      console.log(
+        "Miembros superiores: 222"
+      );
+
+      console.log(
+        "Miembros inferiores: 272"
+      );
+
+      console.log(
+        "Ignorados técnicos: 1"
       );
     }
 
@@ -1465,18 +1258,8 @@ function AnatomyModel({
       );
 
       console.log(
-        "NOMBRES RESPIRATORIOS QUE NECESITAN REVISIÓN:"
-      );
-
-      suspicious.forEach(
-        ({
-          original,
-          visible,
-        }) => {
-          console.log(
-            `${original} -> ${visible}`
-          );
-        }
+        "NOMBRES RESPIRATORIOS A REVISAR:",
+        suspicious
       );
 
       console.log(
@@ -1486,21 +1269,53 @@ function AnatomyModel({
     }
 
     /* ==================================================
-       SISTEMAS NUEVOS
+       CARDIOVASCULAR
     ================================================== */
 
     if (
-      system === "nervous" ||
-      system === "skeletal" ||
-      system === "muscular" ||
-      system === "digestive"
+      system ===
+      "cardiovascular"
     ) {
-      console.log(
-        "CLASIFICACIÓN DE ESTRUCTURAS:"
+      const words =
+        new Set<string>();
+
+      model.traverse(
+        (object) => {
+          if (
+            !(
+              object instanceof
+              THREE.Mesh
+            )
+          ) {
+            return;
+          }
+
+          const unknown =
+            getUnknownAnatomyWords(
+              object.name
+            );
+
+          unknown.forEach(
+            (word) =>
+              words.add(
+                word
+              )
+          );
+        }
       );
 
-      console.table(
-        structureNames
+      console.log(
+        "PALABRAS CARDIOVASCULARES SIN TRADUCIR:"
+      );
+
+      console.log(
+        Array.from(
+          words
+        )
+          .sort()
+          .join(
+            "\n"
+          )
       );
     }
 
@@ -1552,9 +1367,6 @@ function AnatomyModel({
             layer
           );
 
-        /*
-         * Aquí está la corrección importante.
-         */
         setMeshRendered(
           object,
           shouldShow
@@ -1723,20 +1535,26 @@ function AnatomyModel({
     }
 
     if (
-      isInvalidStructureName(
-        object.name
+      object.userData
+        .anatomyIgnore ===
+      true
+    ) {
+      return;
+    }
+
+    if (
+      !isMeshRendered(
+        object
       )
     ) {
       return;
     }
 
-    /*
-     * Material oculto = estructura
-     * fuera de la capa actual.
-     */
     if (
-      !isMeshRendered(
-        object
+      system !==
+        "muscular" &&
+      isInvalidStructureName(
+        object.name
       )
     ) {
       return;
@@ -1768,7 +1586,7 @@ function AnatomyModel({
   };
 
   /* ====================================================
-     ACCIONES DEL TOOLBAR
+     TOOLBAR
   ==================================================== */
 
   useEffect(() => {
@@ -1782,9 +1600,7 @@ function AnatomyModel({
       selectedMeshRef
         .current;
 
-    /* ==================================================
-       AISLAR
-    ================================================== */
+    /* AISLAR */
 
     if (
       action.type ===
@@ -1807,10 +1623,22 @@ function AnatomyModel({
             return;
           }
 
+          if (
+            object.userData
+              .anatomyIgnore ===
+            true
+          ) {
+            setMeshRendered(
+              object,
+              false
+            );
+
+            return;
+          }
+
           setMeshRendered(
             object,
-            object ===
-              selected
+            object === selected
           );
         }
       );
@@ -1818,9 +1646,7 @@ function AnatomyModel({
       return;
     }
 
-    /* ==================================================
-       OCULTAR
-    ================================================== */
+    /* OCULTAR */
 
     if (
       action.type ===
@@ -1851,9 +1677,7 @@ function AnatomyModel({
       return;
     }
 
-    /* ==================================================
-       TRANSPARENCIA
-    ================================================== */
+    /* TRANSPARENCIA */
 
     if (
       action.type ===
@@ -1876,8 +1700,12 @@ function AnatomyModel({
         return;
       }
 
+      const currentlyTransparent =
+        material.opacity <
+        1;
+
       if (
-        material.opacity < 1
+        currentlyTransparent
       ) {
         material.opacity =
           1;
@@ -1904,12 +1732,11 @@ function AnatomyModel({
       return;
     }
 
-    /* ==================================================
-       RESTABLECER
-    ================================================== */
+    /* RESTABLECER */
 
     if (
-      action.type === "reset"
+      action.type ===
+      "reset"
     ) {
       model.traverse(
         (object) => {
@@ -1993,10 +1820,6 @@ function AnatomyModel({
     onStructureSelect,
   ]);
 
-  /* ====================================================
-     RENDER
-  ==================================================== */
-
   return (
     <Center>
       <primitive
@@ -2034,7 +1857,7 @@ function LoadingModel() {
 }
 
 /* ======================================================
-   VISOR PRINCIPAL
+   VISOR
 ====================================================== */
 
 export default function AnatomyViewer({
@@ -2072,16 +1895,12 @@ export default function AnatomyViewer({
           2,
         ]}
       >
-        {/* FONDO */}
-
         <color
           attach="background"
           args={[
             "#f1f5f9",
           ]}
         />
-
-        {/* ILUMINACIÓN */}
 
         <ambientLight
           intensity={
@@ -2122,8 +1941,6 @@ export default function AnatomyViewer({
           }
         />
 
-        {/* MODELO */}
-
         <Suspense
           fallback={
             <LoadingModel />
@@ -2150,8 +1967,6 @@ export default function AnatomyViewer({
             }
           />
         </Suspense>
-
-        {/* CONTROLES */}
 
         <OrbitControls
           enableRotate
