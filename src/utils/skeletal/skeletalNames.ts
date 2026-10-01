@@ -783,7 +783,7 @@ function addLaterality(
   if (
     FEMININE_SINGULAR.has(
       firstWord
-    )
+    ) || firstWord.endsWith('a')
   ) {
     suffix =
       laterality ===
@@ -797,7 +797,7 @@ function addLaterality(
   else if (
     FEMININE_PLURAL.has(
       firstWord
-    )
+    ) || firstWord.endsWith('as')
   ) {
     suffix =
       laterality ===
