@@ -5,6 +5,8 @@ import {
 
 import "./App.css";
 
+import { Badge, Button, Card } from "./components/ui";
+
 import AnatomyViewer, {
   type ViewerAction,
   type ViewerActionType,
@@ -773,26 +775,26 @@ function App() {
                   system.id;
 
                 return (
-                  <button
+                  <Button
                     key={
                       system.id
                     }
-                    type="button"
+                    variant="ghost"
+                    size="md"
+                    align="start"
+                    selected={isActive}
+                    aria-current={isActive ? "page" : undefined}
                     onClick={() =>
                       changeSystem(
                         system.id
                       )
                     }
-                    className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
-                      isActive
-                        ? "bg-slate-900 text-white"
-                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                    }`}
+                    className="w-full"
                   >
                     {
                       system.label
                     }
-                  </button>
+                  </Button>
                 );
               }
             )}
@@ -1159,9 +1161,10 @@ function App() {
           ================================================= */}
 
           {!studyMode && (
-            <div className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 gap-2 rounded-xl border border-slate-200 bg-white/95 p-2 shadow-sm backdrop-blur">
-              <button
-                type="button"
+            <Card variant="floating" className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 gap-1 p-2">
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() =>
                   runViewerAction(
                     "isolate"
@@ -1170,13 +1173,13 @@ function App() {
                 disabled={
                   !selectedStructure
                 }
-                className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Aislar
-              </button>
+              </Button>
 
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() =>
                   runViewerAction(
                     "hide"
@@ -1185,13 +1188,13 @@ function App() {
                 disabled={
                   !selectedStructure
                 }
-                className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Ocultar
-              </button>
+              </Button>
 
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() =>
                   runViewerAction(
                     "transparency"
@@ -1200,23 +1203,22 @@ function App() {
                 disabled={
                   !selectedStructure
                 }
-                className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Transparencia
-              </button>
+              </Button>
 
-              <button
-                type="button"
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() =>
                   runViewerAction(
                     "reset"
                   )
                 }
-                className="rounded-lg px-3 py-2 text-sm hover:bg-slate-100"
               >
                 Restablecer
-              </button>
-            </div>
+              </Button>
+            </Card>
           )}
         </section>
 
@@ -1271,12 +1273,12 @@ function App() {
             ================================================= */}
 
             {selectedStructureData && (
-              <span className="mt-2 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
+              <Badge className="mt-2">
                 {
                   selectedStructureData
                     .type
                 }
-              </span>
+              </Badge>
             )}
 
             <p className="mt-2 text-xs font-medium text-slate-400">
