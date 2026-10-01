@@ -17,7 +17,3 @@ pequeñas, subdivisiones de giros y surcos, duplicados técnicos y marcadores
 geométricos no recibieron ficha individual. El modelo no contiene un nodo único
 para «encéfalo», «cerebro», «cerebelo» o «médula espinal»; se documentan las
 partes concretas representadas.
-
-`Cuneus.l/.r` quedó sin ficha: su nombre visible actual se flexiona como
-«Cuña izquierdo/derecho». Corregirlo exige cambiar el normalizador, fuera del
-alcance de esta tarea.
