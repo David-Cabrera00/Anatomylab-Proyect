@@ -1,28 +1,38 @@
 import { createEducationalCollection } from "./educationalCollection";
+import { headNeckEntries } from "./muscular/headNeck";
+import { trunkEntries } from "./muscular/trunk";
+import { upperLimbEntries } from "./muscular/upperLimb";
+import { lowerLimbEntries } from "./muscular/lowerLimb";
+import { headNeckAdditionalEntries } from "./muscular/headNeckAdditional";
+import { trunkAdditionalEntries } from "./muscular/trunkAdditional";
+import { upperLimbAdditionalEntries } from "./muscular/upperLimbAdditional";
+import { lowerLimbAdditionalEntries } from "./muscular/lowerLimbAdditional";
 
-export const muscularStructures = createEducationalCollection([
-  {
-    originalName: "Músculo esternocleidomastoideo.r",
-    data: {
-      id: "sternocleidomastoid-right",
-      name: "Músculo esternocleidomastoideo derecho",
-      type: "Músculo esquelético",
-      description: "Músculo superficial del cuello con cabezas esternal y clavicular que convergen hacia la apófisis mastoides.",
-      function: "Flexiona el cuello cuando actúa junto con el músculo opuesto; de forma unilateral inclina la cabeza hacia su lado y la rota hacia el lado contrario.",
-      location: "Se extiende por la cara anterolateral derecha del cuello, entre el esternón, la clavícula y la apófisis mastoides.",
-      relationships: ["Esternón", "Clavícula derecha", "Apófisis mastoides"],
-    },
-  },
-  {
-    originalName: "Músculo recto del abdomen.l",
-    data: {
-      id: "rectus-abdominis-left",
-      name: "Músculo recto del abdomen izquierdo",
-      type: "Músculo esquelético",
-      description: "Músculo longitudinal de la pared abdominal anterior, situado a un lado de la línea alba.",
-      function: "Flexiona el tronco y contribuye a comprimir el contenido abdominal.",
-      location: "Se extiende desde el pubis hasta los cartílagos costales superiores y la apófisis xifoides, a la izquierda de la línea alba.",
-      relationships: ["Línea alba", "Pubis", "Vaina del recto del abdomen"],
-    },
-  },
+export const muscularEducationalGroups = {
+  headNeck: [...headNeckEntries, ...headNeckAdditionalEntries],
+  trunk: [...trunkEntries, ...trunkAdditionalEntries],
+  upperLimb: [...upperLimbEntries, ...upperLimbAdditionalEntries],
+  lowerLimb: [...lowerLimbEntries, ...lowerLimbAdditionalEntries],
+} as const;
+
+const collection = createEducationalCollection([
+  ...headNeckEntries,
+  ...headNeckAdditionalEntries,
+  ...trunkEntries,
+  ...trunkAdditionalEntries,
+  ...upperLimbEntries,
+  ...upperLimbAdditionalEntries,
+  ...lowerLimbEntries,
+  ...lowerLimbAdditionalEntries,
 ]);
+
+// Los IDs de las fichas piloto siguen resolviendo durante la migración para compatibilidad.
+const legacyIds: Record<string, string> = {
+  "sternocleidomastoid-right": "muscular.sternocleidomastoid",
+  "rectus-abdominis-left": "muscular.rectus-abdominis",
+};
+
+export const muscularStructures = {
+  ...collection,
+  getById: (id: string) => collection.getById(legacyIds[id] ?? id),
+};
