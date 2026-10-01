@@ -174,8 +174,8 @@ export const cardiovascularData: Record<
     ],
   },
 
-  Descending_aorta: {
-    id: "Descending_aorta",
+  Thoracic_aorta: {
+    id: "Thoracic_aorta",
 
     name: "Aorta descendente",
 
@@ -386,8 +386,8 @@ export const cardiovascularData: Record<
     ],
   },
 
-  Inferior_vena_cava: {
-    id: "Inferior_vena_cava",
+  "Inferior_vena_cava_(thoracic_part)": {
+    id: "Inferior_vena_cava_(thoracic_part)",
 
     name: "Vena cava inferior",
 

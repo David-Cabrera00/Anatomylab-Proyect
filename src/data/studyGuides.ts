@@ -45,7 +45,7 @@ export const cardiovascularStudyGuide: StudyGuide = {
       id: "cv-study-02",
 
       structureId:
-        "Inferior_vena_cava",
+        "Inferior_vena_cava_(thoracic_part)",
 
       title:
         "Vena cava inferior",

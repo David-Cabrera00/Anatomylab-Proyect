@@ -785,22 +785,30 @@ export function getRespiratoryStructureName(
     return exact;
   }
 
+  const side = structureName.match(/\.(l|r)$/i)?.[1]?.toLowerCase();
+  const baseName = side ? structureName.slice(0, -2) : structureName;
+
   /*
    * Si no existe traducción exacta,
    * usamos el normalizador.
    */
   const clean =
-    cleanRespiratoryName(
-      structureName
-    );
+    exactTranslations[baseName] ?? cleanRespiratoryName(baseName);
 
   if (!clean) {
     return "Estructura respiratoria";
   }
 
-  return capitalizeSentence(
-    clean
-  );
+  const visibleName = capitalizeSentence(clean);
+  if (!side || /\b(?:izquierd[oa]s?|derech[oa]s?)$/i.test(visibleName)) {
+    return visibleName;
+  }
+
+  const feminine = /^(?:arteria|vena|glándula|vía|porción|faringe|laringe|tráquea)\b/i.test(visibleName);
+  const suffix = side === "l"
+    ? feminine ? "izquierda" : "izquierdo"
+    : feminine ? "derecha" : "derecho";
+  return `${visibleName} ${suffix}`;
 }
 
 /* ======================================================

@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useState,
 } from "react";
 
@@ -156,6 +157,16 @@ function App() {
       null
     );
 
+  const [selectedThreeName, setSelectedThreeName] = useState<string | null>(null);
+
+  const handleStructureSelect = useCallback((
+    originalName: string | null,
+    threeName: string | null = null
+  ) => {
+    setSelectedStructure(originalName);
+    setSelectedThreeName(threeName);
+  }, []);
+
   /* ====================================================
      ACCIÓN DEL VISOR
   ==================================================== */
@@ -296,7 +307,7 @@ function App() {
       ? activeSystem ===
         "cardiovascular"
         ? getCardiovascularStructure(
-            selectedStructure
+            selectedThreeName ?? selectedStructure
           )
         : activeSystem ===
             "respiratory"
@@ -315,7 +326,7 @@ function App() {
       "cardiovascular" &&
     selectedStructure
       ? getStructureCategory(
-          selectedStructure
+          selectedThreeName ?? selectedStructure
         )
       : null;
 
@@ -398,7 +409,7 @@ function App() {
       null
     );
 
-    setSelectedStructure(
+    handleStructureSelect(
       null
     );
 
@@ -431,7 +442,7 @@ function App() {
       null
     );
 
-    setSelectedStructure(
+    handleStructureSelect(
       null
     );
 
@@ -584,7 +595,7 @@ function App() {
         true
       );
 
-      setSelectedStructure(
+      handleStructureSelect(
         null
       );
 
@@ -623,7 +634,7 @@ function App() {
         null
       );
 
-      setSelectedStructure(
+      handleStructureSelect(
         null
       );
 
@@ -664,7 +675,7 @@ function App() {
         null
       );
 
-      setSelectedStructure(
+      handleStructureSelect(
         null
       );
 
@@ -687,7 +698,7 @@ function App() {
         null
       );
 
-      setSelectedStructure(
+      handleStructureSelect(
         null
       );
 
@@ -864,7 +875,7 @@ function App() {
               currentLayer
             }
             onStructureSelect={
-              setSelectedStructure
+              handleStructureSelect
             }
             action={
               viewerAction

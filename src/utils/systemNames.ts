@@ -14,6 +14,13 @@ import {
   getNervousStructureName,
 } from "./nervous/nervousNames";
 
+import {
+  getSkeletalStructureName,
+} from "./skeletal/skeletalNames";
+
+import { getMuscularStructureName } from "./muscular/muscularNames";
+import { getDigestiveStructureName } from "./digestive/digestiveNames";
+
 /* ======================================================
    ANATOMYLAB AI
    SISTEMA CENTRAL DE NOMBRES
@@ -25,7 +32,10 @@ type Laterality =
   | null;
 
 /* ======================================================
-   EXTRAER LATERALIDAD
+   EXTRAER LATERALIDAD GENÉRICA
+
+   Se utiliza solo como respaldo; cada sistema conocido
+   tiene su propio normalizador.
 ====================================================== */
 
 function extractLaterality(
@@ -42,7 +52,7 @@ function extractLaterality(
     null;
 
   /* ====================================================
-     DUPLICADOS BLENDER
+     DUPLICADOS DE BLENDER
   ==================================================== */
 
   name =
@@ -52,11 +62,13 @@ function extractLaterality(
     );
 
   /* ====================================================
-     IZQUIERDO / DERECHO
+     FORMATO .l / .r
   ==================================================== */
 
   if (
-    /\.l$/i.test(name)
+    /\.l$/i.test(
+      name
+    )
   ) {
     laterality =
       "left";
@@ -67,7 +79,9 @@ function extractLaterality(
         ""
       );
   } else if (
-    /\.r$/i.test(name)
+    /\.r$/i.test(
+      name
+    )
   ) {
     laterality =
       "right";
@@ -86,16 +100,18 @@ function extractLaterality(
 }
 
 /* ======================================================
-   LIMPIAR NOMBRE
+   LIMPIEZA GENÉRICA
 ====================================================== */
 
 function cleanBaseName(
   structureName: string
-) {
+): string {
   let name =
     structureName;
 
-  /* Sufijos técnicos */
+  /* ====================================================
+     SUFIJOS TÉCNICOS
+  ==================================================== */
 
   name =
     name.replace(
@@ -103,7 +119,9 @@ function cleanBaseName(
       ""
     );
 
-  /* Underscores */
+  /* ====================================================
+     UNDERSCORES
+  ==================================================== */
 
   name =
     name.replace(
@@ -111,7 +129,9 @@ function cleanBaseName(
       " "
     );
 
-  /* Asteriscos */
+  /* ====================================================
+     ASTERISCOS
+  ==================================================== */
 
   name =
     name.replace(
@@ -119,7 +139,9 @@ function cleanBaseName(
       ""
     );
 
-  /* Espacios duplicados */
+  /* ====================================================
+     ESPACIOS DUPLICADOS
+  ==================================================== */
 
   name =
     name.replace(
@@ -136,26 +158,34 @@ function cleanBaseName(
 
 function capitalize(
   value: string
-) {
-  if (!value) {
+): string {
+  if (
+    !value
+  ) {
     return value;
   }
 
   return (
-    value.charAt(0).toUpperCase() +
+    value
+      .charAt(0)
+      .toUpperCase() +
     value.slice(1)
   );
 }
 
 /* ======================================================
    LATERALIDAD GENÉRICA
+
+   Solo para el respaldo genérico.
 ====================================================== */
 
 function getLateralityText(
   name: string,
   laterality: Laterality
-) {
-  if (!laterality) {
+): string {
+  if (
+    !laterality
+  ) {
     return "";
   }
 
@@ -214,10 +244,7 @@ function getLateralityText(
 /* ======================================================
    LIMPIEZA GENÉRICA
 
-   Temporalmente utilizada por:
-   - Esquelético
-   - Muscular
-   - Digestivo
+   Respaldo para un sistema no reconocido.
 ====================================================== */
 
 function cleanGenericName(
@@ -243,7 +270,9 @@ function cleanGenericName(
       nameWithoutSide
     );
 
-  if (!cleanName) {
+  if (
+    !cleanName
+  ) {
     return "Estructura anatómica";
   }
 
@@ -262,39 +291,78 @@ function cleanGenericName(
 }
 
 /* ======================================================
-   FUNCIÓN PÚBLICA
+   FUNCIÓN PRINCIPAL
 ====================================================== */
 
 export function getSystemStructureName(
   system: AnatomySystemId,
   structureName: string
 ): string {
-  switch (system) {
-    case "cardiovascular":
-      return getSpanishStructureName(
-        structureName
-      );
+  /* ====================================================
+     CARDIOVASCULAR
+  ==================================================== */
 
-    case "respiratory":
-      return getRespiratoryStructureName(
-        structureName
-      );
-
-    case "nervous":
-      return getNervousStructureName(
-        structureName
-      );
-
-    case "skeletal":
-    case "muscular":
-    case "digestive":
-      return cleanGenericName(
-        structureName
-      );
-
-    default:
-      return cleanGenericName(
-        structureName
-      );
+  if (
+    system ===
+    "cardiovascular"
+  ) {
+    return getSpanishStructureName(
+      structureName
+    );
   }
+
+  /* ====================================================
+     RESPIRATORIO
+  ==================================================== */
+
+  if (
+    system ===
+    "respiratory"
+  ) {
+    return getRespiratoryStructureName(
+      structureName
+    );
+  }
+
+  /* ====================================================
+     NERVIOSO
+  ==================================================== */
+
+  if (
+    system ===
+    "nervous"
+  ) {
+    return getNervousStructureName(
+      structureName
+    );
+  }
+
+  /* ====================================================
+     ESQUELÉTICO
+  ==================================================== */
+
+  if (
+    system ===
+    "skeletal"
+  ) {
+    return getSkeletalStructureName(
+      structureName
+    );
+  }
+
+  /* ====================================================
+     MUSCULAR Y DIGESTIVO
+  ==================================================== */
+
+  if (system === "muscular") {
+    return getMuscularStructureName(structureName);
+  }
+
+  if (system === "digestive") {
+    return getDigestiveStructureName(structureName);
+  }
+
+  return cleanGenericName(
+    structureName
+  );
 }
