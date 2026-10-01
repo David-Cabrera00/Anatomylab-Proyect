@@ -1,0 +1,507 @@
+import type { EducationalStructureBinding } from "../educationalCollection";
+import { bilateral } from "./binding";
+
+export const centralEntries: readonly EducationalStructureBinding[] = [
+  // Cerebelo: el GLB representa partes, no un nodo único llamado «cerebelo».
+  {
+    originalName: "Lóbulo central",
+    data: {
+      id: "nervous.cerebellar-central-lobule", name: "Lóbulo central", type: "Cerebelo",
+      description: "Porción del vermis cerebeloso anterior, situada entre la língula y el culmen.",
+      function: "Forma parte de los circuitos cerebelosos que ajustan la coordinación motora.",
+      location: "Vermis de la región superior del cerebelo.",
+      relationships: ["Vermis", "Culmen", "Língula del cerebelo"],
+    },
+  },
+  bilateral("Flocculus", {
+    id: "nervous.flocculus", name: "Flóculo", type: "Cerebelo",
+    description: "Pequeña porción lateral del lóbulo floculonodular del cerebelo.",
+    function: "Participa en el control del equilibrio y de los movimientos oculares.",
+    location: "Cara inferior del cerebelo, próxima al tronco encefálico.",
+    relationships: ["Nódulo del vermis", "Sistema vestibular"],
+  }),
+  {
+    originalName: "Nódulo del vermis",
+    data: {
+      id: "nervous.cerebellar-nodulus", name: "Nódulo del vermis", type: "Cerebelo",
+      description: "Componente medial del lóbulo floculonodular cerebeloso.",
+      function: "Contribuye al procesamiento vestibular y al equilibrio.",
+      location: "Parte inferior del vermis cerebeloso.",
+      relationships: ["Flóculos", "Cuarto ventrículo"],
+    },
+  },
+  bilateral("Pedúnculo cerebeloso superior", {
+    id: "nervous.superior-cerebellar-peduncle", name: "Pedúnculo cerebeloso superior", type: "Vía cerebelosa",
+    description: "Haz de fibras que conecta el cerebelo con el mesencéfalo.",
+    function: "Conduce principalmente señales de salida del cerebelo hacia circuitos motores.",
+    location: "Entre el cerebelo y la parte rostral del tronco encefálico.",
+    relationships: ["Cerebelo", "Mesencéfalo"],
+  }),
+
+  // Diencéfalo y vías visuales.
+  bilateral("Tálamo", {
+    id: "nervous.thalamus", name: "Tálamo", type: "Diencéfalo",
+    description: "Conjunto de núcleos diencefálicos situado a cada lado del tercer ventrículo.",
+    function: "Integra y retransmite información sensitiva y motora hacia la corteza cerebral.",
+    location: "Profundo en el encéfalo, superior al tronco encefálico.",
+    relationships: ["Tercer ventrículo", "Corteza cerebral", "Hipotálamo"],
+  }),
+  {
+    originalName: "Hipotálamo",
+    data: {
+      id: "nervous.hypothalamus", name: "Hipotálamo", type: "Diencéfalo",
+      description: "Región diencefálica inferior al tálamo, conectada funcionalmente con la hipófisis.",
+      function: "Coordina respuestas autonómicas, endocrinas y mecanismos de homeostasis.",
+      location: "Forma parte del suelo y las paredes inferiores del tercer ventrículo.",
+      relationships: ["Tálamo", "Tercer ventrículo", "Hipófisis"],
+    },
+  },
+  bilateral("Cuerpo geniculado lateral", {
+    id: "nervous.lateral-geniculate-body", name: "Cuerpo geniculado lateral", type: "Núcleo talámico",
+    description: "Núcleo visual del metatálamo que recibe fibras del tracto óptico.",
+    function: "Releva información visual hacia la corteza occipital.",
+    location: "Región posterolateral del tálamo.",
+    relationships: ["Tracto óptico", "Radiación óptica"],
+  }),
+  bilateral("Cuerpo geniculado medial", {
+    id: "nervous.medial-geniculate-body", name: "Cuerpo geniculado medial", type: "Núcleo talámico",
+    description: "Núcleo auditivo del metatálamo.",
+    function: "Transmite información auditiva hacia la corteza temporal.",
+    location: "Región posterior del tálamo, medial al cuerpo geniculado lateral.",
+    relationships: ["Colículo inferior", "Corteza auditiva"],
+  }),
+  bilateral("Quiasma óptico", {
+    id: "nervous.optic-chiasm", name: "Quiasma óptico", type: "Vía visual",
+    description: "Región donde cruzan parcialmente fibras de ambos nervios ópticos.",
+    function: "Redistribuye la información de los hemicampos visuales hacia los tractos ópticos.",
+    location: "Base del encéfalo, anterior al hipotálamo.",
+    relationships: ["Nervios ópticos", "Tractos ópticos"],
+  }),
+  bilateral("Tracto óptico", {
+    id: "nervous.optic-tract", name: "Tracto óptico", type: "Vía visual",
+    description: "Haz de fibras que continúa posterior al quiasma óptico.",
+    function: "Conduce señales visuales hacia núcleos diencefálicos y mesencefálicos.",
+    location: "Se extiende desde el quiasma hacia el cuerpo geniculado lateral.",
+    relationships: ["Quiasma óptico", "Cuerpo geniculado lateral"],
+  }),
+  {
+    originalName: "Tercer ventrículo",
+    data: {
+      id: "nervous.third-ventricle", name: "Tercer ventrículo", type: "Sistema ventricular",
+      description: "Cavidad media del diencéfalo que contiene líquido cefalorraquídeo.",
+      function: "Permite la circulación de líquido cefalorraquídeo entre los ventrículos laterales y el acueducto cerebral.",
+      location: "Entre ambos tálamos, sobre el hipotálamo.",
+      relationships: ["Ventrículos laterales", "Acueducto del mesencéfalo"],
+    },
+  },
+
+  // Núcleos basales.
+  bilateral("Núcleo caudado", {
+    id: "nervous.caudate-nucleus", name: "Núcleo caudado", type: "Núcleo basal",
+    description: "Núcleo de sustancia gris que sigue el contorno del ventrículo lateral.",
+    function: "Participa en circuitos de selección de acciones y control motor.",
+    location: "Profundo en el hemisferio cerebral, junto al ventrículo lateral.",
+    relationships: ["Putamen", "Globo pálido", "Ventrículo lateral"],
+  }),
+  bilateral("Putamen", {
+    id: "nervous.putamen", name: "Putamen", type: "Núcleo basal",
+    description: "Componente lateral del núcleo lentiforme y parte del estriado.",
+    function: "Interviene en circuitos motores de los núcleos basales.",
+    location: "Profundo en el hemisferio cerebral, lateral al globo pálido.",
+    relationships: ["Núcleo caudado", "Globo pálido"],
+  }),
+  bilateral("Globo pálido", {
+    id: "nervous.globus-pallidus", name: "Globo pálido", type: "Núcleo basal",
+    description: "Componente medial del núcleo lentiforme.",
+    function: "Modula la salida de los circuitos de los núcleos basales implicados en el movimiento.",
+    location: "Medial al putamen en el telencéfalo profundo.",
+    relationships: ["Putamen", "Tálamo"],
+  }),
+
+  // Corteza cerebral y sistema límbico.
+  bilateral("Giro precentral", {
+    id: "nervous.precentral-gyrus", name: "Giro precentral", type: "Corteza cerebral",
+    description: "Giro frontal situado inmediatamente anterior al surco central.",
+    function: "Contiene gran parte de la corteza motora primaria para los movimientos voluntarios.",
+    location: "Lóbulo frontal, delante del surco central.",
+    relationships: ["Surco central", "Tracto corticoespinal"],
+  }),
+  bilateral("Giro poscentral", {
+    id: "nervous.postcentral-gyrus", name: "Giro poscentral", type: "Corteza cerebral",
+    description: "Giro parietal situado inmediatamente posterior al surco central.",
+    function: "Aloja la corteza somatosensitiva primaria.",
+    location: "Lóbulo parietal, detrás del surco central.",
+    relationships: ["Surco central", "Tálamo"],
+  }),
+  bilateral("Surco central", {
+    id: "nervous.central-sulcus", name: "Surco central", type: "Surco cerebral",
+    description: "Surco prominente que separa los lóbulos frontal y parietal.",
+    function: "Sirve de referencia anatómica entre las cortezas motora y somatosensitiva primarias.",
+    location: "Cara superolateral del hemisferio cerebral.",
+    relationships: ["Giro precentral", "Giro poscentral"],
+  }),
+  bilateral("Lóbulo parietal superior", {
+    id: "nervous.superior-parietal-lobule", name: "Lóbulo parietal superior", type: "Corteza cerebral",
+    description: "Región cortical parietal superior al surco intraparietal.",
+    function: "Integra información somatosensitiva y espacial.",
+    location: "Parte superior y posterior del lóbulo parietal.",
+    relationships: ["Surco intraparietal", "Giro poscentral"],
+  }),
+  bilateral("Giro angular", {
+    id: "nervous.angular-gyrus", name: "Giro angular", type: "Corteza de asociación",
+    description: "Giro del lóbulo parietal inferior que rodea el extremo del surco temporal superior.",
+    function: "Participa en la integración multimodal relacionada con lenguaje, lectura y cognición espacial.",
+    location: "Región temporoparietal posterior.",
+    relationships: ["Giro supramarginal", "Surco temporal superior"],
+  }),
+  bilateral("Giro supramarginal", {
+    id: "nervous.supramarginal-gyrus", name: "Giro supramarginal", type: "Corteza de asociación",
+    description: "Giro parietal inferior que rodea el extremo de la cisura lateral.",
+    function: "Contribuye a la integración sensitiva y a procesos del lenguaje.",
+    location: "Lóbulo parietal inferior.",
+    relationships: ["Giro angular", "Cisura lateral"],
+  }),
+  bilateral("Surco calcarino", {
+    id: "nervous.calcarine-sulcus", name: "Surco calcarino", type: "Surco cerebral",
+    description: "Surco de la cara medial del lóbulo occipital.",
+    function: "Delimita regiones de la corteza visual primaria en sus bordes.",
+    location: "Cara medial del lóbulo occipital.",
+    relationships: ["Cúneo", "Giro lingual"],
+  }),
+  bilateral("Giros temporales transversos", {
+    id: "nervous.transverse-temporal-gyri", name: "Giros temporales transversos", type: "Corteza cerebral",
+    description: "Giros situados en la superficie superior del lóbulo temporal.",
+    function: "Contienen la corteza auditiva primaria.",
+    location: "Profundos en la cisura lateral del hemisferio.",
+    relationships: ["Cuerpo geniculado medial", "Lóbulo temporal"],
+  }),
+  bilateral("Hipocampo", {
+    id: "nervous.hippocampus", name: "Hipocampo", type: "Sistema límbico",
+    description: "Estructura cortical del lóbulo temporal medial.",
+    function: "Interviene en la formación y consolidación de memorias declarativas.",
+    location: "Profundo en el lóbulo temporal, junto al ventrículo lateral.",
+    relationships: ["Fórnix", "Cuerpo amigdaloide"],
+  }),
+  bilateral("Cuerpo amigdaloide", {
+    id: "nervous.amygdaloid-body", name: "Cuerpo amigdaloide", type: "Sistema límbico",
+    description: "Conjunto de núcleos del lóbulo temporal medial.",
+    function: "Participa en el procesamiento emocional y en respuestas autonómicas asociadas.",
+    location: "Anterior al hipocampo en el lóbulo temporal.",
+    relationships: ["Hipocampo", "Hipotálamo"],
+  }),
+
+  // Conexiones profundas y sistema ventricular.
+  {
+    originalName: "Cuerpo calloso",
+    data: {
+      id: "nervous.corpus-callosum", name: "Cuerpo calloso", type: "Comisura cerebral",
+      description: "Gran haz de sustancia blanca que une ambos hemisferios cerebrales.",
+      function: "Permite la comunicación entre áreas corticales de los dos hemisferios.",
+      location: "Profundo en la línea media, superior a los ventrículos laterales.",
+      relationships: ["Hemisferios cerebrales", "Ventrículos laterales"],
+    },
+  },
+  bilateral("Fornix", {
+    id: "nervous.fornix", name: "Fórnix", type: "Vía límbica",
+    description: "Haz de fibras que conecta el hipocampo con otras estructuras del sistema límbico.",
+    function: "Conduce señales hipocampales hacia los cuerpos mamilares y otras regiones.",
+    location: "Arqueado bajo el cuerpo calloso y sobre el tercer ventrículo.",
+    relationships: ["Hipocampo", "Cuerpos mamilares"],
+  }),
+  bilateral("Sustancia blanca del telencéfalo", {
+    id: "nervous.telencephalic-white-matter", name: "Sustancia blanca del telencéfalo", type: "Sustancia blanca",
+    description: "Conjunto de fibras nerviosas subcorticales de los hemisferios cerebrales.",
+    function: "Conecta regiones corticales entre sí y con estructuras profundas.",
+    location: "Bajo la corteza cerebral de cada hemisferio.",
+    relationships: ["Corteza cerebral", "Cuerpo calloso"],
+  }),
+  bilateral("Ventrículo lateral", {
+    id: "nervous.lateral-ventricle", name: "Ventrículo lateral", type: "Sistema ventricular",
+    description: "Cavidad con líquido cefalorraquídeo dentro de cada hemisferio cerebral.",
+    function: "Forma parte del sistema de circulación del líquido cefalorraquídeo.",
+    location: "Profundo en el telencéfalo.",
+    relationships: ["Tercer ventrículo", "Plexo coroideo"],
+  }),
+
+  // Tronco encefálico.
+  bilateral("Mesencéfalo", {
+    id: "nervous.midbrain", name: "Mesencéfalo", type: "Tronco encefálico",
+    description: "Porción superior del tronco encefálico, entre el diencéfalo y el puente.",
+    function: "Contiene vías de paso y centros implicados en movimientos oculares y respuestas visuales y auditivas.",
+    location: "Entre tálamo y puente.",
+    relationships: ["Puente", "Colículos", "Nervios III y IV"],
+  }),
+  bilateral("Puente troncoencefálico", {
+    id: "nervous.pons", name: "Puente troncoencefálico", type: "Tronco encefálico",
+    description: "Porción del tronco encefálico situada entre el mesencéfalo y el bulbo raquídeo.",
+    function: "Conduce vías ascendentes y descendentes y comunica la corteza con el cerebelo.",
+    location: "Anterior al cerebelo, sobre el bulbo raquídeo.",
+    relationships: ["Mesencéfalo", "Bulbo raquídeo", "Cerebelo"],
+  }),
+  bilateral("Bulbo raquídeo", {
+    id: "nervous.medulla-oblongata", name: "Bulbo raquídeo", type: "Tronco encefálico",
+    description: "Porción inferior del tronco encefálico, continua con la médula espinal.",
+    function: "Aloja vías nerviosas y centros que regulan funciones cardiorrespiratorias.",
+    location: "Entre el puente y la médula espinal.",
+    relationships: ["Puente", "Médula espinal", "Nervios craneales IX a XII"],
+  }),
+  bilateral("Colículo superior", {
+    id: "nervous.superior-colliculus", name: "Colículo superior", type: "Mesencéfalo",
+    description: "Relieve dorsal del mesencéfalo asociado a circuitos visuales.",
+    function: "Participa en la orientación de ojos y cabeza hacia estímulos visuales.",
+    location: "Tectum mesencefálico, superior al colículo inferior.",
+    relationships: ["Mesencéfalo", "Vía visual"],
+  }),
+  bilateral("Colículo inferior", {
+    id: "nervous.inferior-colliculus", name: "Colículo inferior", type: "Mesencéfalo",
+    description: "Relieve dorsal del mesencéfalo que integra información auditiva.",
+    function: "Releva señales auditivas hacia el cuerpo geniculado medial.",
+    location: "Tectum mesencefálico, inferior al colículo superior.",
+    relationships: ["Cuerpo geniculado medial", "Vía auditiva"],
+  }),
+
+  // Médula espinal: el GLB muestra sus tejidos y vías, pero no un nodo global «médula espinal».
+  {
+    originalName: "Sustancia blanca de la médula espinal",
+    data: {
+      id: "nervous.spinal-white-matter", name: "Sustancia blanca de la médula espinal", type: "Médula espinal",
+      description: "Fibras mielinizadas organizadas en cordones alrededor de la sustancia gris medular.",
+      function: "Conduce información sensitiva ascendente y motora descendente.",
+      location: "Región periférica de la médula espinal.",
+      relationships: ["Cuerno anterior", "Cuerno posterior", "Tractos espinales"],
+    },
+  },
+  {
+    originalName: "Cuerno anterior de la médula espinal",
+    data: {
+      id: "nervous.spinal-anterior-horn", name: "Cuerno anterior de la médula espinal", type: "Sustancia gris",
+      description: "Proyección anterior de la sustancia gris medular que contiene motoneuronas somáticas.",
+      function: "Envía señales motoras hacia músculos esqueléticos por las raíces anteriores.",
+      location: "Parte anterior de la sustancia gris medular.",
+      relationships: ["Raíz anterior del nervio espinal", "Músculos esqueléticos"],
+    },
+  },
+  {
+    originalName: "Cuerno posterior de la médula espinal",
+    data: {
+      id: "nervous.spinal-posterior-horn", name: "Cuerno posterior de la médula espinal", type: "Sustancia gris",
+      description: "Proyección posterior de la sustancia gris medular que recibe aferencias sensitivas.",
+      function: "Procesa información que llega por las raíces posteriores.",
+      location: "Parte posterior de la sustancia gris medular.",
+      relationships: ["Raíz posterior del nervio espinal", "Tractos sensitivos"],
+    },
+  },
+  {
+    originalName: "Tracto corticoespinal lateral",
+    data: {
+      id: "nervous.lateral-corticospinal-tract", name: "Tracto corticoespinal lateral", type: "Tracto motor",
+      description: "Vía motora descendente formada principalmente por fibras cruzadas de la corteza cerebral.",
+      function: "Contribuye al control voluntario fino de las extremidades.",
+      location: "Cordón lateral de la médula espinal.",
+      relationships: ["Corteza motora", "Cuerno anterior"],
+    },
+  },
+  {
+    originalName: "Tracto espinotalámico lateral",
+    data: {
+      id: "nervous.lateral-spinothalamic-tract", name: "Tracto espinotalámico lateral", type: "Tracto sensitivo",
+      description: "Vía ascendente del sistema anterolateral de la médula espinal.",
+      function: "Transporta principalmente información de dolor y temperatura hacia el tálamo.",
+      location: "Cordón anterolateral de la médula espinal.",
+      relationships: ["Cuerno posterior", "Tálamo"],
+    },
+  },
+  {
+    originalName: "Fascículo grácil",
+    data: {
+      id: "nervous.gracile-fasciculus", name: "Fascículo grácil", type: "Tracto sensitivo",
+      description: "Haz medial de la columna posterior de la médula espinal.",
+      function: "Conduce tacto fino, vibración y propiocepción consciente del tronco inferior y miembro inferior.",
+      location: "Cordón posterior medular, medial al fascículo cuneiforme.",
+      relationships: ["Fascículo cuneiforme", "Bulbo raquídeo"],
+    },
+  },
+  {
+    originalName: "Fascículo cuneiforme",
+    data: {
+      id: "nervous.cuneate-fasciculus", name: "Fascículo cuneiforme", type: "Tracto sensitivo",
+      description: "Haz lateral de la columna posterior presente en los niveles medulares superiores.",
+      function: "Conduce tacto fino, vibración y propiocepción consciente del tronco superior y miembro superior.",
+      location: "Cordón posterior cervical y torácico superior.",
+      relationships: ["Fascículo grácil", "Bulbo raquídeo"],
+    },
+  },
+
+  // Referencias corticales y núcleos adicionales representados en el GLB.
+  bilateral("Giro frontal superior", {
+    id: "nervous.superior-frontal-gyrus", name: "Giro frontal superior", type: "Corteza cerebral",
+    description: "Giro de la superficie superior del lóbulo frontal.",
+    function: "Forma parte de redes corticales implicadas en planificación y control de la conducta.",
+    location: "Lóbulo frontal, superior al surco frontal superior.",
+    relationships: ["Giro frontal medio", "Corteza frontal"],
+  }),
+  bilateral("Giro frontal medio", {
+    id: "nervous.middle-frontal-gyrus", name: "Giro frontal medio", type: "Corteza cerebral",
+    description: "Giro de la cara lateral del lóbulo frontal.",
+    function: "Participa en redes de atención y funciones ejecutivas.",
+    location: "Entre los surcos frontales superior e inferior.",
+    relationships: ["Giro frontal superior", "Surco frontal inferior"],
+  }),
+  bilateral("Giros occipitales superiores", {
+    id: "nervous.superior-occipital-gyri", name: "Giros occipitales superiores", type: "Corteza cerebral",
+    description: "Relieves corticales de la región superior del lóbulo occipital.",
+    function: "Forman parte de áreas corticales que procesan información visual.",
+    location: "Cara lateral superior del lóbulo occipital.",
+    relationships: ["Polo occipital", "Surco calcarino"],
+  }),
+  bilateral("Polo occipital", {
+    id: "nervous.occipital-pole", name: "Polo occipital", type: "Corteza cerebral",
+    description: "Extremo posterior del hemisferio cerebral.",
+    function: "Sirve como referencia para localizar la región cortical visual.",
+    location: "Porción más posterior del lóbulo occipital.",
+    relationships: ["Surco calcarino", "Giros occipitales"],
+  }),
+  bilateral("Giro lingual", {
+    id: "nervous.lingual-gyrus", name: "Giro lingual", type: "Corteza cerebral",
+    description: "Giro de la cara inferior y medial del lóbulo occipital.",
+    function: "Participa en el procesamiento visual.",
+    location: "Inferior al surco calcarino.",
+    relationships: ["Surco calcarino", "Polo occipital"],
+  }),
+  bilateral("Giro temporal medio", {
+    id: "nervous.middle-temporal-gyrus", name: "Giro temporal medio", type: "Corteza cerebral",
+    description: "Giro de la cara lateral del lóbulo temporal.",
+    function: "Participa en redes de asociación auditiva, visual y semántica.",
+    location: "Entre los surcos temporales superior e inferior.",
+    relationships: ["Giro temporal inferior", "Surco temporal superior"],
+  }),
+  bilateral("Giro temporal inferior", {
+    id: "nervous.inferior-temporal-gyrus", name: "Giro temporal inferior", type: "Corteza cerebral",
+    description: "Giro de la región inferolateral del lóbulo temporal.",
+    function: "Contribuye al reconocimiento visual de objetos.",
+    location: "Inferior al surco temporal inferior.",
+    relationships: ["Giro temporal medio", "Corteza occipitotemporal"],
+  }),
+  bilateral("Superior temporal gyrus (Lateral part)", {
+    id: "nervous.superior-temporal-gyrus-lateral", name: "Giro temporal superior (porción lateral)", type: "Corteza cerebral",
+    description: "Parte lateral del giro temporal superior representada en el modelo.",
+    function: "Participa en el procesamiento cortical de información auditiva.",
+    location: "Región superior lateral del lóbulo temporal.",
+    relationships: ["Surco temporal superior", "Giros temporales transversos"],
+  }),
+  bilateral("Surco intraparietal", {
+    id: "nervous.intraparietal-sulcus", name: "Surco intraparietal", type: "Surco cerebral",
+    description: "Surco que divide regiones superiores e inferiores del lóbulo parietal.",
+    function: "Es una referencia anatómica para la organización de la corteza parietal.",
+    location: "Cara lateral del lóbulo parietal.",
+    relationships: ["Lóbulo parietal superior", "Lóbulo parietal inferior"],
+  }),
+  bilateral("Cuerpo mamilar", {
+    id: "nervous.mammillary-body", name: "Cuerpo mamilar", type: "Hipotálamo",
+    description: "Pequeño núcleo par de la parte posterior del hipotálamo.",
+    function: "Participa en circuitos límbicos vinculados con la memoria.",
+    location: "Cara inferior del hipotálamo.",
+    relationships: ["Fórnix", "Tálamo"],
+  }),
+  bilateral("Núcleo rojo", {
+    id: "nervous.red-nucleus", name: "Núcleo rojo", type: "Núcleo mesencefálico",
+    description: "Núcleo motor del tegmento mesencefálico.",
+    function: "Participa en circuitos motores que vinculan cerebelo y tronco encefálico.",
+    location: "Tegmento del mesencéfalo.",
+    relationships: ["Cerebelo", "Mesencéfalo"],
+  }),
+  bilateral("Núcleo del tracto solitario", {
+    id: "nervous.solitary-nucleus", name: "Núcleo del tracto solitario", type: "Núcleo bulbar",
+    description: "Núcleo sensitivo visceral y gustativo del bulbo raquídeo.",
+    function: "Recibe señales de nervios craneales relacionadas con gusto y sensibilidad visceral.",
+    location: "Región dorsal del bulbo raquídeo.",
+    relationships: ["Nervios facial, glosofaríngeo y vago", "Bulbo raquídeo"],
+  }),
+
+  // Hitos adicionales del encéfalo y la médula con valor docente propio.
+  bilateral("Precuneus", {
+    id: "nervous.precuneus", name: "Precúneo", type: "Corteza cerebral",
+    description: "Región cortical de la cara medial del lóbulo parietal.",
+    function: "Participa en redes de integración espacial y de autorreferencia.",
+    location: "Entre el surco parietooccipital y el lóbulo paracentral.",
+    relationships: ["Lóbulo parietal", "Surco parietooccipital"],
+  }),
+  {
+    originalName: "Comisura anterior",
+    data: {
+      id: "nervous.anterior-commissure", name: "Comisura anterior", type: "Comisura cerebral",
+      description: "Haz de fibras que conecta regiones de ambos hemisferios cerebrales.",
+      function: "Permite comunicación interhemisférica, especialmente entre regiones temporales y olfatorias.",
+      location: "Línea media, anterior a los pilares del fórnix.",
+      relationships: ["Cuerpo calloso", "Fórnix"],
+    },
+  },
+  {
+    originalName: "Cuarto ventrículo",
+    data: {
+      id: "nervous.fourth-ventricle", name: "Cuarto ventrículo", type: "Sistema ventricular",
+      description: "Cavidad del sistema ventricular situada entre el tronco encefálico y el cerebelo.",
+      function: "Recibe líquido cefalorraquídeo del acueducto cerebral y lo comunica con el espacio subaracnoideo.",
+      location: "Posterior al puente y la porción superior del bulbo raquídeo.",
+      relationships: ["Acueducto del mesencéfalo", "Cerebelo", "Bulbo raquídeo"],
+    },
+  },
+  {
+    originalName: "Acueducto del mesencéfalo",
+    data: {
+      id: "nervous.cerebral-aqueduct", name: "Acueducto del mesencéfalo", type: "Sistema ventricular",
+      description: "Conducto estrecho que atraviesa el mesencéfalo.",
+      function: "Comunica el tercer ventrículo con el cuarto ventrículo para el paso de líquido cefalorraquídeo.",
+      location: "Interior del mesencéfalo.",
+      relationships: ["Tercer ventrículo", "Cuarto ventrículo"],
+    },
+  },
+  bilateral("Oliva", {
+    id: "nervous.medullary-olive", name: "Oliva", type: "Bulbo raquídeo",
+    description: "Relieve de la cara anterolateral del bulbo asociado al complejo olivar inferior.",
+    function: "Participa en circuitos que envían información al cerebelo para el aprendizaje motor.",
+    location: "Lateral a la pirámide bulbar.",
+    relationships: ["Pirámide del bulbo raquídeo", "Cerebelo"],
+  }),
+  bilateral("Pirámide del bulbo raquídeo", {
+    id: "nervous.medullary-pyramid", name: "Pirámide del bulbo raquídeo", type: "Bulbo raquídeo",
+    description: "Relieve anterior del bulbo formado por fibras motoras descendentes.",
+    function: "Conduce fibras corticoespinales hacia la médula espinal.",
+    location: "Cara anterior del bulbo, medial a la oliva.",
+    relationships: ["Tracto corticoespinal", "Oliva"],
+  }),
+  bilateral("Núcleo ambiguo", {
+    id: "nervous.nucleus-ambiguus", name: "Núcleo ambiguo", type: "Núcleo bulbar",
+    description: "Núcleo motor del bulbo vinculado con los nervios glosofaríngeo y vago.",
+    function: "Envía fibras motoras a músculos de faringe y laringe implicados en deglución y fonación.",
+    location: "Formación reticular del bulbo raquídeo.",
+    relationships: ["Nervio glosofaríngeo", "Nervio vago"],
+  }),
+  bilateral("Núcleos vestibulares", {
+    id: "nervous.vestibular-nuclei", name: "Núcleos vestibulares", type: "Núcleos del tronco encefálico",
+    description: "Grupo de núcleos que recibe información del aparato vestibular.",
+    function: "Integra señales para el equilibrio, la postura y los movimientos oculares.",
+    location: "Unión entre el puente y el bulbo, próxima al cuarto ventrículo.",
+    relationships: ["Nervio vestibular", "Cerebelo"],
+  }),
+  {
+    originalName: "Núcleo intermediolateral",
+    data: {
+      id: "nervous.intermediolateral-nucleus", name: "Núcleo intermediolateral", type: "Sustancia gris medular",
+      description: "Columna de neuronas autónomas preganglionares de la médula toracolumbar.",
+      function: "Origina fibras simpáticas que salen por las raíces anteriores.",
+      location: "Cuerno lateral de la médula espinal torácica y lumbar superior.",
+      relationships: ["Raíz anterior del nervio espinal", "Tronco simpático"],
+    },
+  },
+  {
+    originalName: "Tracto espinocerebeloso posterior",
+    data: {
+      id: "nervous.posterior-spinocerebellar-tract", name: "Tracto espinocerebeloso posterior", type: "Tracto sensitivo",
+      description: "Vía ascendente que transporta información propioceptiva hacia el cerebelo.",
+      function: "Aporta información inconsciente sobre posición y movimiento para ajustar la coordinación.",
+      location: "Cordón lateral de la médula espinal.",
+      relationships: ["Médula espinal", "Cerebelo"],
+    },
+  },
+];

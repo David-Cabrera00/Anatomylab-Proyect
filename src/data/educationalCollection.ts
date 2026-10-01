@@ -10,23 +10,29 @@ export type AnatomyStructureData = {
 };
 
 export type EducationalStructureBinding = {
-  originalName: string;
   data: AnatomyStructureData;
-};
+} & (
+  | { originalName: string; originalNames?: never }
+  | { originalNames: readonly string[]; originalName?: never }
+);
 
 export function createEducationalCollection(entries: readonly EducationalStructureBinding[]) {
   const byId = new Map<string, AnatomyStructureData>();
   const byOriginalName = new Map<string, AnatomyStructureData>();
 
-  for (const { originalName, data } of entries) {
-    if (!originalName.trim() || !data.id.trim() || !data.name.trim() || !data.description.trim()) {
+  for (const entry of entries) {
+    const { data } = entry;
+    const originalNames = entry.originalNames ?? [entry.originalName];
+    if (!originalNames.length || originalNames.some((name) => !name.trim()) ||
+        !data.id.trim() || !data.name.trim() || !data.description.trim()) {
       throw new Error("Ficha educativa incompleta");
     }
-    if (byId.has(data.id) || byOriginalName.has(originalName)) {
-      throw new Error(`Ficha educativa duplicada: ${data.id} / ${originalName}`);
+    if (byId.has(data.id) || originalNames.some((name) => byOriginalName.has(name)) ||
+        new Set(originalNames).size !== originalNames.length) {
+      throw new Error(`Ficha educativa duplicada: ${data.id}`);
     }
     byId.set(data.id, data);
-    byOriginalName.set(originalName, data);
+    for (const name of originalNames) byOriginalName.set(name, data);
   }
 
   return {
