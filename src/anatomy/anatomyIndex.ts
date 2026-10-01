@@ -49,6 +49,7 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
     laterality: "left",
     structureType: "estructura cerebelosa",
     keywords: ["ala", "lóbulo central", "cerebelo"],
+    educationalId: "nervous.central-lobule-wing",
   }),
   createAnatomyEntry({
     id: "skeletal.hip-bone.right",

@@ -2,6 +2,15 @@ import type { EducationalStructureBinding } from "../educationalCollection";
 import { bilateral } from "./binding";
 
 export const centralEntries: readonly EducationalStructureBinding[] = [
+  bilateral("Ala del l\u00f3bulo central", {
+    id: "nervous.central-lobule-wing",
+    name: "Ala del l\u00f3bulo central",
+    type: "Cerebelo",
+    description: "Porci\u00f3n lateral del l\u00f3bulo central del vermis cerebeloso.",
+    function: "Contribuye a los circuitos cerebelosos que coordinan y ajustan el movimiento.",
+    location: "Regi\u00f3n anterior del cerebelo, a cada lado del vermis.",
+    relationships: ["L\u00f3bulo central", "Vermis cerebeloso", "Culmen"],
+  }),
   // Cerebelo: el GLB representa partes, no un nodo único llamado «cerebelo».
   {
     originalName: "Lóbulo central",
