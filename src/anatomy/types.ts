@@ -11,16 +11,23 @@ export type AnatomyDivisionId = Exclude<
 
 export type AnatomyLaterality = "left" | "right" | "midline" | null;
 
-export type AnatomyStructureIndexEntry = Readonly<{
-  /** ID propio de AnatomyLab; se asigna explícitamente y nunca se deriva del GLB. */
-  id: string;
-  system: AnatomySystemId;
-  /** Ruta del modelo en anatomySystems; distingue la vista general de modelos de detalle. */
-  modelPath: string;
+/** Clave lógica; la ruta física se obtiene de anatomySystems. */
+export type AnatomyModelKey = "overview" | "heart-detail";
+
+export type AnatomyModelBinding = Readonly<{
+  modelKey: AnatomyModelKey;
   /** Nombre exacto del nodo glTF, disponible como anatomyOriginalName. */
   originalName: string;
   /** Dato técnico opcional; nunca se usa como clave del índice. */
   threeName?: string;
+}>;
+
+export type AnatomyStructureIndexEntry = Readonly<{
+  /** ID propio de AnatomyLab; se asigna explícitamente y nunca se deriva del GLB. */
+  id: string;
+  system: AnatomySystemId;
+  /** Una estructura puede estar presente en varias variantes del modelo. */
+  modelBindings: readonly AnatomyModelBinding[];
   displayName: string;
   layer?: AnatomyDivisionId;
   region?: string;

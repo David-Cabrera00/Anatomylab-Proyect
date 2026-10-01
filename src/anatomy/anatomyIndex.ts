@@ -1,7 +1,10 @@
-import { anatomySystems } from "../config/anatomySystems";
 import type { AnatomySystemId } from "../config/anatomySystems";
 import { createAnatomyEntry } from "./createAnatomyEntry";
-import type { AnatomyStructureIndexEntry } from "./types";
+import type {
+  AnatomyDivisionId,
+  AnatomyModelKey,
+  AnatomyStructureIndexEntry,
+} from "./types";
 
 // Muestra inicial comprobada contra los GLB actuales. Los IDs son deliberados:
 // no se generan a partir de object.name, del nombre original ni del visible.
@@ -9,9 +12,10 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
   createAnatomyEntry({
     id: "cardiovascular.inferior-vena-cava.thoracic",
     system: "cardiovascular",
-    modelPath: anatomySystems.cardiovascular.modelPath,
-    originalName: "Inferior vena cava (thoracic part)",
-    displayName: "Vena cava inferior",
+    modelBindings: [
+      { modelKey: "overview", originalName: "Inferior vena cava (thoracic part)" },
+    ],
+    displayName: "Vena cava inferior (porción torácica)",
     layer: "veins",
     region: "Tórax",
     subregion: "Mediastino",
@@ -23,8 +27,9 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
   createAnatomyEntry({
     id: "respiratory.middle-lobar-bronchus.right",
     system: "respiratory",
-    modelPath: anatomySystems.respiratory.modelPath,
-    originalName: "Bronquio lobar medio.r",
+    modelBindings: [
+      { modelKey: "overview", originalName: "Bronquio lobar medio.r" },
+    ],
     layer: "airways",
     region: "Tórax",
     subregion: "Pulmón derecho",
@@ -35,8 +40,9 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
   createAnatomyEntry({
     id: "nervous.central-lobule-wing.left",
     system: "nervous",
-    modelPath: anatomySystems.nervous.modelPath,
-    originalName: "Ala del lóbulo central.l",
+    modelBindings: [
+      { modelKey: "overview", originalName: "Ala del lóbulo central.l" },
+    ],
     layer: "nervous-central",
     region: "Encéfalo",
     subregion: "Cerebelo",
@@ -47,8 +53,9 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
   createAnatomyEntry({
     id: "skeletal.hip-bone.right",
     system: "skeletal",
-    modelPath: anatomySystems.skeletal.modelPath,
-    originalName: "Hueso coxal.r",
+    modelBindings: [
+      { modelKey: "overview", originalName: "Hueso coxal.r" },
+    ],
     layer: "skeletal-appendicular",
     region: "Pelvis",
     subregion: "Cintura pélvica",
@@ -59,8 +66,9 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
   createAnatomyEntry({
     id: "muscular.sternocleidomastoid.right",
     system: "muscular",
-    modelPath: anatomySystems.muscular.modelPath,
-    originalName: "Músculo esternocleidomastoideo.r",
+    modelBindings: [
+      { modelKey: "overview", originalName: "Músculo esternocleidomastoideo.r" },
+    ],
     layer: "muscular-head-neck",
     region: "Cuello",
     laterality: "right",
@@ -70,8 +78,9 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
   createAnatomyEntry({
     id: "digestive.parotid-gland.left",
     system: "digestive",
-    modelPath: anatomySystems.digestive.modelPath,
-    originalName: "Glándula parótida.l",
+    modelBindings: [
+      { modelKey: "overview", originalName: "Glándula parótida.l" },
+    ],
     layer: "digestive-accessory",
     region: "Cabeza",
     subregion: "Región parotídea",
@@ -82,7 +91,16 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
 ];
 
 const entriesById = new Map<string, AnatomyStructureIndexEntry>();
-const entriesByOriginalName = new Map<string, AnatomyStructureIndexEntry[]>();
+const entriesByModelNode = new Map<string, AnatomyStructureIndexEntry>();
+const entriesByOriginalName = new Map<string, Set<AnatomyStructureIndexEntry>>();
+
+function modelNodeKey(
+  system: AnatomySystemId,
+  modelKey: AnatomyModelKey,
+  originalName: string
+): string {
+  return JSON.stringify([system, modelKey, originalName]);
+}
 
 for (const entry of entries) {
   if (entriesById.has(entry.id)) {
@@ -90,34 +108,81 @@ for (const entry of entries) {
   }
   entriesById.set(entry.id, entry);
 
-  const matches = entriesByOriginalName.get(entry.originalName) ?? [];
-  matches.push(entry);
-  entriesByOriginalName.set(entry.originalName, matches);
+  for (const binding of entry.modelBindings) {
+    const key = modelNodeKey(entry.system, binding.modelKey, binding.originalName);
+    if (entriesByModelNode.has(key)) {
+      throw new Error(
+        `Nodo anatómico duplicado: ${entry.system} / ${binding.modelKey} / ${binding.originalName}`
+      );
+    }
+    entriesByModelNode.set(key, entry);
+
+    const matches = entriesByOriginalName.get(binding.originalName) ?? new Set();
+    matches.add(entry);
+    entriesByOriginalName.set(binding.originalName, matches);
+  }
 }
 
 export const anatomyIndex: readonly AnatomyStructureIndexEntry[] =
   Object.freeze([...entries]);
 
-export function getAnatomyStructureById(
+export function getAnatomyEntryById(
   id: string
 ): AnatomyStructureIndexEntry | null {
   return entriesById.get(id) ?? null;
 }
 
-/** Coincidencia exacta; devuelve varias entradas si distintos modelos reutilizan el nombre. */
+/** Sin modelKey, una coincidencia ambigua exige especificar la variante. */
+export function getAnatomyEntryByOriginalName(
+  system: AnatomySystemId,
+  originalName: string,
+  modelKey?: AnatomyModelKey
+): AnatomyStructureIndexEntry | null {
+  if (modelKey) {
+    return entriesByModelNode.get(modelNodeKey(system, modelKey, originalName)) ?? null;
+  }
+
+  const matches = findAnatomyStructuresByOriginalName(originalName, { system });
+  if (matches.length > 1) {
+    throw new Error(
+      `Nombre original ambiguo en ${system}: ${originalName}; indica modelKey`
+    );
+  }
+  return matches[0] ?? null;
+}
+
+/** Consulta secundaria global; admite nombres repetidos entre sistemas o modelos. */
 export function findAnatomyStructuresByOriginalName(
   originalName: string,
-  options: { system?: AnatomySystemId; modelPath?: string } = {}
+  options: { system?: AnatomySystemId; modelKey?: AnatomyModelKey } = {}
 ): readonly AnatomyStructureIndexEntry[] {
-  return (entriesByOriginalName.get(originalName) ?? []).filter(
+  return [...(entriesByOriginalName.get(originalName) ?? [])].filter(
     (entry) =>
       (!options.system || entry.system === options.system) &&
-      (!options.modelPath || entry.modelPath === options.modelPath)
+      (!options.modelKey ||
+        entry.modelBindings.some(
+          (binding) =>
+            binding.modelKey === options.modelKey &&
+            binding.originalName === originalName
+        ))
   );
 }
 
-export function getAnatomyStructuresBySystem(
+export function getAnatomyEntriesBySystem(
   system: AnatomySystemId
 ): readonly AnatomyStructureIndexEntry[] {
   return anatomyIndex.filter((entry) => entry.system === system);
 }
+
+export function getAnatomyEntriesByLayer(
+  system: AnatomySystemId,
+  layer: AnatomyDivisionId
+): readonly AnatomyStructureIndexEntry[] {
+  return anatomyIndex.filter(
+    (entry) => entry.system === system && entry.layer === layer
+  );
+}
+
+// Nombres anteriores conservados para consumidores que ya usen el módulo.
+export const getAnatomyStructureById = getAnatomyEntryById;
+export const getAnatomyStructuresBySystem = getAnatomyEntriesBySystem;
