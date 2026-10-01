@@ -19,6 +19,12 @@ import {
 import * as THREE from "three";
 
 import {
+  attachOriginalAnatomyNames,
+  findStructureMesh,
+  getSelectableStructureName,
+} from "./anatomyOriginalNames";
+
+import {
   anatomySystems,
   type AnatomyLayerId,
   type AnatomySystemId,
@@ -102,7 +108,8 @@ type AnatomyViewerProps = {
   modelPath: string;
   layer: AnatomyLayerId;
   onStructureSelect?: (
-    structureName: string | null
+    structureName: string | null,
+    threeName?: string | null
   ) => void;
   action?: ViewerAction | null;
   focusRequest?: StructureFocusRequest | null;
@@ -529,12 +536,13 @@ function AnatomyModel({
   action,
   focusRequest,
 }: AnatomyViewerProps) {
-  const { scene } = useGLTF(modelPath);
+  const { scene, parser } = useGLTF(modelPath);
 
   const selectedMeshRef =
     useRef<THREE.Mesh | null>(null);
 
   const model = useMemo(() => {
+    attachOriginalAnatomyNames(scene, parser);
     const clone = scene.clone(true);
 
     /* ================================================
@@ -649,7 +657,7 @@ function AnatomyModel({
     });
 
     return clone;
-  }, [scene, system, modelPath]);
+  }, [scene, parser, system, modelPath]);
 
   /* ====================================================
      RESTAURAR RESALTADO
@@ -872,7 +880,7 @@ function AnatomyModel({
     }
 
     selectedMeshRef.current = null;
-    onStructureSelect?.(null);
+    onStructureSelect?.(null, null);
 
     model.traverse((object) => {
       if (!(object instanceof THREE.Mesh)) {
@@ -930,26 +938,13 @@ function AnatomyModel({
       return;
     }
 
-    let target: THREE.Mesh | null = null;
+    const selectedTarget = findStructureMesh(
+      model,
+      system,
+      focusRequest.structureName
+    );
 
-    model.traverse((object) => {
-      if (target) {
-        return;
-      }
-
-      if (!(object instanceof THREE.Mesh)) {
-        return;
-      }
-
-      if (
-        object.name ===
-        focusRequest.structureName
-      ) {
-        target = object;
-      }
-    });
-
-    if (!target) {
+    if (!selectedTarget) {
       console.warn(
         "No se encontró la estructura:",
         focusRequest.structureName
@@ -959,20 +954,24 @@ function AnatomyModel({
 
     if (
       selectedMeshRef.current &&
-      selectedMeshRef.current !== target
+      selectedMeshRef.current !== selectedTarget
     ) {
       restoreHighlight(
         selectedMeshRef.current
       );
     }
 
-    setMeshRendered(target, true);
-    selectedMeshRef.current = target;
-    highlightMesh(target);
-    onStructureSelect?.(target.name);
+    setMeshRendered(selectedTarget, true);
+    selectedMeshRef.current = selectedTarget;
+    highlightMesh(selectedTarget);
+    onStructureSelect?.(
+      getSelectableStructureName(system, selectedTarget),
+      selectedTarget.name
+    );
   }, [
     focusRequest,
     model,
+    system,
     onStructureSelect,
   ]);
 
@@ -1020,7 +1019,10 @@ function AnatomyModel({
 
     selectedMeshRef.current = object;
     highlightMesh(object);
-    onStructureSelect?.(object.name);
+    onStructureSelect?.(
+      getSelectableStructureName(system, object),
+      object.name
+    );
   };
 
   /* ====================================================
@@ -1069,7 +1071,7 @@ function AnatomyModel({
       setMeshRendered(selected, false);
       restoreHighlight(selected);
       selectedMeshRef.current = null;
-      onStructureSelect?.(null);
+      onStructureSelect?.(null, null);
       return;
     }
 
@@ -1145,7 +1147,7 @@ function AnatomyModel({
       });
 
       selectedMeshRef.current = null;
-      onStructureSelect?.(null);
+      onStructureSelect?.(null, null);
     }
   }, [
     action,

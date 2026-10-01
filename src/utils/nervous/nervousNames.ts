@@ -112,7 +112,7 @@ const NERVOUS_EXACT_TRANSLATIONS: Record<
     "Cuerpo ciliar",
 
   Cuneus:
-    "Cuña",
+    "Cúneo",
 
   Flocculus:
     "Flóculo",

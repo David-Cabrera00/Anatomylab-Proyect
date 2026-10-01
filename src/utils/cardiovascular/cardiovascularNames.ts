@@ -582,6 +582,65 @@ const words: Record<
   the: "la",
 
   to: "hacia",
+
+  // Vocabulario presente en los dos GLB cardiovasculares.
+  lung: "pulmón", segmental: "segmentaria", basal: "basal",
+  apical: "apical", lingular: "lingular", lobar: "lobar",
+  bifurcation: "bifurcación", gastroduodenal: "gastroduodenal",
+  anorectal: "anorrectal", suprarenal: "suprarrenal",
+  appendicular: "apendicular", colic: "cólica", ileocolic: "ileocólica",
+  ileal: "ileal", pancreaticoduodenal: "pancreatoduodenal",
+  marginal: "marginal", spinal: "espinal", cord: "médula",
+  circle: "círculo", epigastric: "epigástrica", gluteal: "glútea",
+  penis: "pene", pudendal: "pudenda", division: "división",
+  iliacus: "ilíaca", iliolumbar: "iliolumbar", sacral: "sacra",
+  obturator: "obturatriz", subcostal: "subcostal",
+  circumflex: "circunfleja", genicular: "genicular",
+  calcaneal: "calcánea", fibular: "fibular", tibial: "tibial",
+  tarsal: "tarsiana", arcuate: "arqueada", dorsalis: "dorsal",
+  pedis: "pie", popliteal: "poplítea", pharyngeal: "faríngea",
+  labial: "labial", submental: "submentoniana", palatine: "palatina",
+  greater: "mayor", pterygoid: "pterigoideo", canal: "conducto",
+  buccal: "bucal", mental: "mentoniana", mylohyoid: "milohioidea",
+  alveolar: "alveolar", meningeal: "meníngea",
+  "infra-orbital": "infraorbitaria", nasal: "nasal",
+  sphenopalatine: "esfenopalatina", frontal: "frontal",
+  transverse: "transverso", parietal: "parietal", precentral: "precentral",
+  postcentral: "poscentral", "temporo-occipital": "temporooccipital",
+  frontobasal: "frontobasal", prefrontal: "prefrontal",
+  insular: "insular", ethmoidal: "etmoidal", retinal: "retiniana",
+  lacrimal: "lagrimal", "supra-orbital": "supraorbitaria",
+  supratrochlear: "supratroclear", ophthalmic: "oftálmica",
+  collateral: "colateral", humeral: "humeral", median: "mediana",
+  interosseous: "interósea", recurrent: "recurrente",
+  thoraco: "toraco", acromial: "acromial",
+  "thoraco-acromial": "toracoacromial", scapular: "escapular",
+  thoracodorsal: "toracodorsal", subscapular: "subescapular",
+  pectoral: "pectoral", cervical: "cervical", first: "primera",
+  second: "segunda", supreme: "suprema", musculophrenic: "musculofrénica",
+  thyroid: "tiroidea", suprascapular: "supraescapular",
+  cerebellar: "cerebelosa", pontine: "pontina",
+  orbitofrontal: "orbitofrontal", callosomarginal: "callosomarginal",
+  pericallosal: "pericallosa", "parieto-occipital": "parietooccipital",
+  systemic: "sistémica", cardiac: "cardíaca", sulcus: "surco",
+  surface: "superficie", apex: "vértice", base: "base",
+  border: "borde", notch: "escotadura", root: "raíz",
+  valvular: "valvular", complex: "complejo", atrioventricular: "auriculoventricular",
+  cranial: "craneales", dural: "durales", sinuses: "senos",
+  intercavernous: "intercavernoso", cavernous: "cavernoso",
+  sagittal: "sagital", petrosal: "petroso", confluence: "confluencia",
+  straight: "recto", orbital: "orbital", intercapitular: "intercapitulares",
+  saphenous: "safena", network: "red", portal: "porta",
+  "gastro-omental": "gastroomental", lingual: "lingual",
+  retromandibular: "retromandibular", jugular: "yugular",
+  antebrachial: "antebraquial", cubital: "cubital", basilic: "basílica",
+  cephalic: "cefálica", auricular: "auricular", azygos: "ácigos",
+  "hemi-azygos": "hemiácigos", union: "unión", part: "porción",
+  segment: "segmento", accessory: "accesoria", non: "no",
+  communicating: "comunicante", apicoposterior: "apicoposterior",
+  inferolateral: "inferolateral", superiorly: "superiormente",
+  testicular: "testicular", maxillary: "maxilar", central: "central",
+  septum: "tabique", "non-coronary": "no coronaria",
 };
 
 /* ======================================================
@@ -606,7 +665,7 @@ export function isInvalidStructureName(
    * ?xr
    * ????????
    */
-  if (name.includes("?")) {
+  if (name.includes("?") || /^take[ _]+a[ _]+picture$/i.test(name)) {
     return true;
   }
 
@@ -628,8 +687,9 @@ export function getStructureCategory(
     return "other";
   }
 
-  const name =
-    structureName.toLowerCase();
+  const name = normalizeStructureName(structureName).name
+    .replace(/\s+/g, "_")
+    .toLowerCase();
 
   /* CORAZÓN */
 
@@ -738,6 +798,19 @@ function normalizeStructureName(
   name: string;
   side: Side;
 } {
+  // Los nombres originales usan espacios y .l/.r; Three.js usa _ y a veces
+  // incorpora la lateralidad a la última palabra. Conservarla antes de limpiar.
+  let name = structureName.trim().replace(/\.\d{3}$/i, "");
+  const originalSide = name.match(/\.([lr])$/i)?.[1]?.toLowerCase();
+  if (originalSide) name = name.slice(0, -2);
+  name = name.replace(/\.(?:j|g|t)$/i, "").replace(/\.+$/, "");
+  name = name.replace(/^\((.*)\)$/, "$1");
+  name = name.replace(/_/g, " ").replace(/\.{2,}/g, " ").replace(/\s+/g, " ").trim();
+
+  if (originalSide) {
+    return { name, side: originalSide === "l" ? "left" : "right" };
+  }
+
   /*
    * Términos donde sabemos que la
    * última l/r representa lateralidad.
@@ -775,8 +848,7 @@ function normalizeStructureName(
     "foot",
   ];
 
-  const lower =
-    structureName.toLowerCase();
+  const lower = name.toLowerCase();
 
   for (
     const ending of
@@ -789,7 +861,7 @@ function normalizeStructureName(
     ) {
       return {
         name:
-          structureName.slice(
+          name.slice(
             0,
             -1
           ),
@@ -805,7 +877,7 @@ function normalizeStructureName(
     ) {
       return {
         name:
-          structureName.slice(
+          name.slice(
             0,
             -1
           ),
@@ -816,10 +888,22 @@ function normalizeStructureName(
   }
 
   return {
-    name: structureName,
+    name,
     side: null,
   };
 }
+
+function canonicalKey(structureName: string): string {
+  const { name, side } = normalizeStructureName(structureName);
+  return `${name.replace(/-/g, " ").toLocaleLowerCase("es")}\u0000${side ?? ""}`;
+}
+
+const canonicalExactTranslations = new Map(
+  Object.entries(exactTranslations).map(([name, translation]) => [
+    canonicalKey(name),
+    translation,
+  ])
+);
 
 /* ======================================================
    UTILIDADES
@@ -889,340 +973,125 @@ function sideText(
    TRADUCTOR GENÉRICO
 ====================================================== */
 
-function translateGeneric(
-  structureName: string
-) {
-  const normalized =
-    normalizeStructureName(
-      structureName
-    );
+const positionalWords = new Set([
+  "anterior", "posterior", "superior", "inferior", "medial", "lateral",
+  "proximal", "distal", "superficial", "deep", "internal", "external",
+  "middle", "common", "proper", "ascending", "descending", "great",
+  "small", "long", "short", "left", "right", "dorsal", "palmar",
+  "plantar", "basal", "apical", "median",
+]);
 
-  const cleaned =
-    normalized.name
-      .replace(/\./g, "_")
-      .replace(/__+/g, "_");
+const feminineHeads = new Set([
+  "artery", "arteries", "vein", "veins", "branch", "branches", "aorta",
+  "vena", "valve", "leaflet", "atrium", "surface", "base", "root",
+  "division", "bifurcation", "confluence", "union", "network", "anastomosis",
+]);
 
-  const originalTokens =
-    cleaned
-      .split("_")
-      .filter(Boolean);
+const pluralHeads = new Set(["arteries", "veins", "branches", "sinuses"]);
 
-  /*
-   * También detectamos Left/Right
-   * escritos como palabra.
-   */
-  let side =
-    normalized.side;
+function phraseHead(phrase: string): string {
+  const tokens = phrase.toLowerCase().match(/[a-z]+/g) ?? [];
+  return tokens[tokens.length - 1] ?? "";
+}
 
-  const tokens =
-    originalTokens.filter(
-      (token) => {
-        const lower =
-          token.toLowerCase();
+function spanishArticle(phrase: string): string {
+  const head = phraseHead(phrase.replace(/\s*\([^)]*\)$/, ""));
+  const feminine = feminineHeads.has(head);
+  if (pluralHeads.has(head)) return feminine ? "de las" : "de los";
+  return feminine ? "de la" : "del";
+}
 
-        if (
-          lower === "left"
-        ) {
-          side = "left";
-
-          return false;
-        }
-
-        if (
-          lower === "right"
-        ) {
-          side = "right";
-
-          return false;
-        }
-
-        return true;
+function translateModifiers(modifiers: string[], feminine: boolean, plural: boolean): string[] {
+  return modifiers.map((word) => {
+    const translated = translateWord(word);
+    const lower = word.toLowerCase();
+    if (lower === "left" || lower === "right") return "";
+    if (plural && /(?:al|ar|or|il|ún|án)$/.test(translated)) {
+      return `${translated.replace(/ún$/, "un")}es`;
+    }
+    if (!positionalWords.has(word.toLowerCase())) {
+      // Los adjetivos anatómicos también concuerdan con arteria, vena, etc.
+      if (feminine && /o$/.test(translated) && !/^(no|toraco)$/.test(translated)) {
+        return `${translated.slice(0, -1)}a${plural ? "s" : ""}`;
       }
-    );
+      return plural && /[ao]$/.test(translated) ? `${translated}s` : translated;
+    }
+    if (lower === "great" && feminine) return plural ? "magnas" : "magna";
+    if (feminine && /o$/.test(translated)) return `${translated.slice(0, -1)}a${plural ? "s" : ""}`;
+    return plural && /[ao]$/.test(translated) ? `${translated}s` : translated;
+  }).filter(Boolean);
+}
 
-  if (tokens.length === 0) {
-    return structureName;
+function translateSimplePhrase(phrase: string): string {
+  const tokens = phrase.trim().replace(/[()]/g, "").split(/\s+/).filter(Boolean);
+  if (tokens.length === 0) return "";
+
+  const final = tokens[tokens.length - 1].toLowerCase();
+  const hasVenaCava = tokens.length >= 2 &&
+    tokens[tokens.length - 2].toLowerCase() === "vena" && final === "cava";
+  const head = hasVenaCava ? "vena cava" : translateWord(final);
+  const descriptors = tokens.slice(0, hasVenaCava ? -2 : -1);
+  const feminine = hasVenaCava || feminineHeads.has(final);
+  const plural = pluralHeads.has(final);
+  const directional = descriptors.find((word) => /^(left|right)$/i.test(word));
+  const anatomical = descriptors.filter((word) => !positionalWords.has(word.toLowerCase()));
+  const positional = descriptors.filter((word) => positionalWords.has(word.toLowerCase()));
+  const adjectives = translateModifiers([...anatomical, ...positional], feminine, plural);
+  const direction = directional
+    ? sideText(directional.toLowerCase() as Exclude<Side, null>, feminine ? "feminine" : "masculine", plural)
+    : null;
+  return [head, ...adjectives, direction].filter(Boolean).join(" ");
+}
+
+function translatePhrase(phrase: string): string {
+  const parenthetical = phrase.match(/^(.+?)\s*\(([^()]*)\)$/);
+  if (parenthetical) {
+    const [, base, detail] = parenthetical;
+    const part = detail.match(/^(thoracic|abdominal) part$/i);
+    const translatedDetail = part
+      ? `porción ${part[1].toLowerCase() === "thoracic" ? "torácica" : "abdominal"}`
+      : /^M\d+$/i.test(detail.trim())
+        ? `segmento ${detail.trim().toUpperCase()}`
+      : /^\/?\/?posterior\s*'*$/i.test(detail.trim())
+        ? "posterior"
+        : translatePhrase(detail.replace(/-/g, " "));
+    return `${translatePhrase(base)} (${translatedDetail})`;
   }
 
-  const lastToken =
-    tokens[
-      tokens.length - 1
-    ].toLowerCase();
-
-  /* =========================
-     ARTERIA
-  ========================= */
-
-  if (
-    lastToken === "artery"
-  ) {
-    const descriptors =
-      tokens.slice(0, -1);
-
-    const translated =
-      descriptors.map(
-        translateWord
-      );
-
-    const lateral =
-      sideText(
-        side,
-        "feminine",
-        false
-      );
-
-    return capitalize(
-      [
-        "arteria",
-        ...translated,
-        lateral,
-      ]
-        .filter(Boolean)
-        .join(" ")
-    );
+  const relation = phrase.match(/^(.+?)\s+(of|to)\s+(.+)$/i);
+  if (relation) {
+    const [, subject, preposition, object] = relation;
+    const connector = preposition.toLowerCase() === "to" ? "hacia el" : spanishArticle(object);
+    return `${translatePhrase(subject)} ${connector} ${translatePhrase(object)}`;
   }
 
-  /* =========================
-     ARTERIAS
-  ========================= */
+  return translateSimplePhrase(phrase);
+}
 
-  if (
-    lastToken ===
-    "arteries"
-  ) {
-    const descriptors =
-      tokens.slice(0, -1);
+function translateGeneric(structureName: string): string {
+  const { name, side } = normalizeStructureName(structureName);
+  const base = translatePhrase(name);
+  if (!side) return capitalize(base);
 
-    const translated =
-      descriptors.map(
-        translateWord
-      );
+  // Un marcador .l/.r y una palabra Left/Right expresan la misma lateralidad.
+  const explicitSide = /\b(left|right)\b/i.test(name);
+  if (explicitSide) return capitalize(base);
 
-    const lateral =
-      sideText(
-        side,
-        "feminine",
-        true
-      );
-
-    return capitalize(
-      [
-        "arterias",
-        ...translated,
-        lateral,
-      ]
-        .filter(Boolean)
-        .join(" ")
-    );
-  }
-
-  /* =========================
-     VENA
-  ========================= */
-
-  if (
-    lastToken === "vein"
-  ) {
-    const descriptors =
-      tokens.slice(0, -1);
-
-    const translated =
-      descriptors.map(
-        translateWord
-      );
-
-    const lateral =
-      sideText(
-        side,
-        "feminine",
-        false
-      );
-
-    return capitalize(
-      [
-        "vena",
-        ...translated,
-        lateral,
-      ]
-        .filter(Boolean)
-        .join(" ")
-    );
-  }
-
-  /* =========================
-     VENAS
-  ========================= */
-
-  if (
-    lastToken === "veins"
-  ) {
-    const descriptors =
-      tokens.slice(0, -1);
-
-    const translated =
-      descriptors.map(
-        translateWord
-      );
-
-    const lateral =
-      sideText(
-        side,
-        "feminine",
-        true
-      );
-
-    return capitalize(
-      [
-        "venas",
-        ...translated,
-        lateral,
-      ]
-        .filter(Boolean)
-        .join(" ")
-    );
-  }
-
-  /* =========================
-     TRONCO
-  ========================= */
-
-  if (
-    lastToken === "trunk"
-  ) {
-    const translated =
-      tokens
-        .slice(0, -1)
-        .map(translateWord);
-
-    const lateral =
-      sideText(
-        side,
-        "masculine"
-      );
-
-    return capitalize(
-      [
-        "tronco",
-        ...translated,
-        lateral,
-      ]
-        .filter(Boolean)
-        .join(" ")
-    );
-  }
-
-  /* =========================
-     ARCO
-  ========================= */
-
-  if (
-    lastToken === "arch"
-  ) {
-    const translated =
-      tokens
-        .slice(0, -1)
-        .map(translateWord);
-
-    const lateral =
-      sideText(
-        side,
-        "masculine"
-      );
-
-    return capitalize(
-      [
-        "arco",
-        ...translated,
-        lateral,
-      ]
-        .filter(Boolean)
-        .join(" ")
-    );
-  }
-
-  /* =========================
-     RAMA
-  ========================= */
-
-  if (
-    lastToken === "branch"
-  ) {
-    const translated =
-      tokens
-        .slice(0, -1)
-        .map(translateWord);
-
-    const lateral =
-      sideText(
-        side,
-        "feminine"
-      );
-
-    return capitalize(
-      [
-        "rama",
-        ...translated,
-        lateral,
-      ]
-        .filter(Boolean)
-        .join(" ")
-    );
-  }
-
-  /* =========================
-     RAMAS
-  ========================= */
-
-  if (
-    lastToken === "branches"
-  ) {
-    const translated =
-      tokens
-        .slice(0, -1)
-        .map(translateWord);
-
-    const lateral =
-      sideText(
-        side,
-        "feminine",
-        true
-      );
-
-    return capitalize(
-      [
-        "ramas",
-        ...translated,
-        lateral,
-      ]
-        .filter(Boolean)
-        .join(" ")
-    );
-  }
-
-  /* =========================
-     TRADUCCIÓN GENERAL
-  ========================= */
-
-  const translated =
-    tokens.map(
-      translateWord
-    );
-
-  const lateral =
-    sideText(
-      side,
-      "masculine"
-    );
-
-  if (lateral) {
-    translated.push(
-      lateral
-    );
-  }
-
-  return capitalize(
-    translated.join(" ")
+  const head = phraseHead(name.split(/\s+of\s+/i)[0].replace(/\s*\([^)]*\)$/, ""));
+  const suffix = sideText(
+    side,
+    feminineHeads.has(head) ? "feminine" : "masculine",
+    pluralHeads.has(head)
   );
+  const relation = name.match(/^(.+?)\s+(of|to)\s+(.+)$/i);
+  if (relation) {
+    const [, subject, preposition, object] = relation;
+    const connector = preposition.toLowerCase() === "to" ? "hacia el" : spanishArticle(object);
+    return capitalize(`${translatePhrase(subject)} ${suffix} ${connector} ${translatePhrase(object)}`);
+  }
+  const parenthetical = base.match(/^(.*?)\s*(\([^()]*\))$/);
+  if (parenthetical) return capitalize(`${parenthetical[1]} ${suffix} ${parenthetical[2]}`);
+  return capitalize(`${base} ${suffix}`);
 }
 
 /* ======================================================
@@ -1246,10 +1115,7 @@ export function getSpanishStructureName(
   /*
    * Primero buscamos traducción exacta.
    */
-  const exact =
-    exactTranslations[
-      structureName
-    ];
+  const exact = canonicalExactTranslations.get(canonicalKey(structureName));
 
   if (exact) {
     return exact;
@@ -1282,11 +1148,7 @@ export function getUnknownAnatomyWords(
     return [];
   }
 
-  if (
-    exactTranslations[
-      structureName
-    ]
-  ) {
+  if (canonicalExactTranslations.has(canonicalKey(structureName))) {
     return [];
   }
 
@@ -1295,22 +1157,13 @@ export function getUnknownAnatomyWords(
       structureName
     );
 
-  const cleanName =
-    normalized.name
-      .replace(/\./g, "_")
-      .replace(/__+/g, "_");
-
-  const structureWords =
-    cleanName
-      .split("_")
-      .map((word) =>
-        word.toLowerCase()
-      )
-      .filter(Boolean);
+  const structureWords = normalized.name.toLowerCase()
+    .match(/[a-z]+(?:-[a-z]+)*/g) ?? [];
 
   const ignoredWords = [
     "left",
     "right",
+    "m", // códigos M1/M2/M3 de los segmentos cerebrales
   ];
 
   const unknownWords =
