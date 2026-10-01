@@ -463,6 +463,22 @@ function createGenericBronchus(
 export function getRespiratoryStructure(
   structureId: string
 ): RespiratoryStructure | null {
+  const byId: Record<string, RespiratoryStructure> = {
+    [rightLung.id]: rightLung,
+    [leftLung.id]: leftLung,
+    [trachea.id]: trachea,
+    [rightMainBronchus.id]: rightMainBronchus,
+    [leftMainBronchus.id]: leftMainBronchus,
+    [larynx.id]: larynx,
+    [pharynx.id]: pharynx,
+    [rightUpperLobe.id]: rightUpperLobe,
+    [rightMiddleLobe.id]: rightMiddleLobe,
+    [rightLowerLobe.id]: rightLowerLobe,
+    [leftUpperLobe.id]: leftUpperLobe,
+    [leftLowerLobe.id]: leftLowerLobe,
+  };
+  if (Object.prototype.hasOwnProperty.call(byId, structureId)) return byId[structureId];
+
   const visibleName =
     getRespiratoryStructureName(
       structureId

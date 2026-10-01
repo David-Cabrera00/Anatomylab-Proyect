@@ -62,6 +62,7 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
     laterality: "right",
     structureType: "hueso",
     keywords: ["coxal", "pelvis", "cadera"],
+    educationalId: "hip-bone-right",
   }),
   createAnatomyEntry({
     id: "muscular.sternocleidomastoid.right",
@@ -74,6 +75,7 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
     laterality: "right",
     structureType: "músculo",
     keywords: ["esternocleidomastoideo", "cuello"],
+    educationalId: "sternocleidomastoid-right",
   }),
   createAnatomyEntry({
     id: "digestive.parotid-gland.left",
@@ -87,6 +89,7 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
     laterality: "left",
     structureType: "glándula salival",
     keywords: ["parótida", "saliva", "glándula salival"],
+    educationalId: "parotid-gland-left",
   }),
 ];
 
