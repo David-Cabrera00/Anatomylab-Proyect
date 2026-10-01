@@ -1,4 +1,6 @@
 import type { AnatomySystemId } from "../config/anatomySystems";
+import { createDigestiveAnatomyEntries, validateDigestiveAnatomyEntries } from "./digestiveAdapter";
+import { createNervousAnatomyEntries, validateNervousAnatomyEntries } from "./nervousAdapter";
 import { createAnatomyEntry } from "./createAnatomyEntry";
 import type {
   AnatomyDivisionId,
@@ -78,21 +80,13 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
     keywords: ["esternocleidomastoideo", "cuello"],
     educationalId: "sternocleidomastoid-right",
   }),
-  createAnatomyEntry({
-    id: "digestive.parotid-gland.left",
-    system: "digestive",
-    modelBindings: [
-      { modelKey: "overview", originalName: "Glándula parótida.l" },
-    ],
-    layer: "digestive-accessory",
-    region: "Cabeza",
-    subregion: "Región parotídea",
-    laterality: "left",
-    structureType: "glándula salival",
-    keywords: ["parótida", "saliva", "glándula salival"],
-    educationalId: "parotid-gland-left",
-  }),
+
+  ...createDigestiveAnatomyEntries(),
+  ...createNervousAnatomyEntries(),
 ];
+
+validateDigestiveAnatomyEntries(entries.filter((entry) => entry.system === "digestive"));
+validateNervousAnatomyEntries(entries.filter((entry) => entry.system === "nervous"));
 
 const entriesById = new Map<string, AnatomyStructureIndexEntry>();
 const entriesByModelNode = new Map<string, AnatomyStructureIndexEntry>();
