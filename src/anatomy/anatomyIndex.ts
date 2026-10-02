@@ -39,20 +39,7 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
     structureType: "bronquio",
     keywords: ["bronquio lobar", "lóbulo medio"],
   }),
-  createAnatomyEntry({
-    id: "nervous.central-lobule-wing.left",
-    system: "nervous",
-    modelBindings: [
-      { modelKey: "overview", originalName: "Ala del lóbulo central.l" },
-    ],
-    layer: "nervous-central",
-    region: "Encéfalo",
-    subregion: "Cerebelo",
-    laterality: "left",
-    structureType: "estructura cerebelosa",
-    keywords: ["ala", "lóbulo central", "cerebelo"],
-    educationalId: "nervous.central-lobule-wing",
-  }),
+
   createAnatomyEntry({
     id: "skeletal.hip-bone.right",
     system: "skeletal",
