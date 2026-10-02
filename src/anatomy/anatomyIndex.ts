@@ -1,6 +1,7 @@
 import type { AnatomySystemId } from "../config/anatomySystems";
 import { createDigestiveAnatomyEntries, validateDigestiveAnatomyEntries } from "./digestiveAdapter";
 import { createNervousAnatomyEntries, validateNervousAnatomyEntries } from "./nervousAdapter";
+import { createSkeletalAnatomyEntries, validateSkeletalAnatomyEntries } from "./skeletalAdapter";
 import { createAnatomyEntry } from "./createAnatomyEntry";
 import type {
   AnatomyDivisionId,
@@ -39,34 +40,7 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
     structureType: "bronquio",
     keywords: ["bronquio lobar", "lóbulo medio"],
   }),
-  createAnatomyEntry({
-    id: "nervous.central-lobule-wing.left",
-    system: "nervous",
-    modelBindings: [
-      { modelKey: "overview", originalName: "Ala del lóbulo central.l" },
-    ],
-    layer: "nervous-central",
-    region: "Encéfalo",
-    subregion: "Cerebelo",
-    laterality: "left",
-    structureType: "estructura cerebelosa",
-    keywords: ["ala", "lóbulo central", "cerebelo"],
-    educationalId: "nervous.central-lobule-wing",
-  }),
-  createAnatomyEntry({
-    id: "skeletal.hip-bone.right",
-    system: "skeletal",
-    modelBindings: [
-      { modelKey: "overview", originalName: "Hueso coxal.r" },
-    ],
-    layer: "skeletal-appendicular",
-    region: "Pelvis",
-    subregion: "Cintura pélvica",
-    laterality: "right",
-    structureType: "hueso",
-    keywords: ["coxal", "pelvis", "cadera"],
-    educationalId: "hip-bone-right",
-  }),
+
   createAnatomyEntry({
     id: "muscular.sternocleidomastoid.right",
     system: "muscular",
@@ -83,10 +57,12 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
 
   ...createDigestiveAnatomyEntries(),
   ...createNervousAnatomyEntries(),
+  ...createSkeletalAnatomyEntries(),
 ];
 
 validateDigestiveAnatomyEntries(entries.filter((entry) => entry.system === "digestive"));
 validateNervousAnatomyEntries(entries.filter((entry) => entry.system === "nervous"));
+validateSkeletalAnatomyEntries(entries.filter((entry) => entry.system === "skeletal"));
 
 const entriesById = new Map<string, AnatomyStructureIndexEntry>();
 const entriesByModelNode = new Map<string, AnatomyStructureIndexEntry>();
