@@ -11,6 +11,24 @@
 ====================================================== */
 
 const exactTranslations: Record<string, string> = {
+  "Bronquio segmentario basal ant. del pulmón derecho (BVIII)":
+    "Bronquio segmentario basal anterior del pulmón derecho (BVIII)",
+
+  "Medial basal segmental bronchus of right lung (BVII)":
+    "Bronquio segmentario basal medial del pulmón derecho (BVII)",
+
+  "Lateral basal segmental bronchus of left lung (BIX)":
+    "Bronquio segmentario basal lateral del pulmón izquierdo (BIX)",
+
+  "Bronquio segm. apicoposterior-pulmón izquierdo (BI + BII)":
+    "Bronquio segmentario apicoposterior del pulmón izquierdo (BI + BII)",
+
+  "Bronquio segm. lingular sup. del pulmón izquierdo (BIV)":
+    "Bronquio segmentario lingular superior del pulmón izquierdo (BIV)",
+
+  "Bronquio segmentario lingular inf. del pulmón izquierdo (BV)":
+    "Bronquio segmentario lingular inferior del pulmón izquierdo (BV)",
+
   /* =========================
      ESTRUCTURAS PRINCIPALES
   ========================= */

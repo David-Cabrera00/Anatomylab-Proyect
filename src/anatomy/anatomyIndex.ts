@@ -2,7 +2,9 @@ import type { AnatomySystemId } from "../config/anatomySystems";
 import { createDigestiveAnatomyEntries, validateDigestiveAnatomyEntries } from "./digestiveAdapter";
 import { createNervousAnatomyEntries, validateNervousAnatomyEntries } from "./nervousAdapter";
 import { createSkeletalAnatomyEntries, validateSkeletalAnatomyEntries } from "./skeletalAdapter";
-import { createAnatomyEntry } from "./createAnatomyEntry";
+import { createMuscularAnatomyEntries, validateMuscularAnatomyEntries } from "./muscularAdapter";
+import { createRespiratoryAnatomyEntries, validateRespiratoryAnatomyEntries } from "./respiratoryAdapter";
+import { createCardiovascularAnatomyEntries, validateCardiovascularAnatomyEntries } from "./cardiovascularAdapter";
 import type {
   AnatomyDivisionId,
   AnatomyModelKey,
@@ -12,57 +14,20 @@ import type {
 // Muestra inicial comprobada contra los GLB actuales. Los IDs son deliberados:
 // no se generan a partir de object.name, del nombre original ni del visible.
 const entries: readonly AnatomyStructureIndexEntry[] = [
-  createAnatomyEntry({
-    id: "cardiovascular.inferior-vena-cava.thoracic",
-    system: "cardiovascular",
-    modelBindings: [
-      { modelKey: "overview", originalName: "Inferior vena cava (thoracic part)" },
-    ],
-    displayName: "Vena cava inferior (porción torácica)",
-    layer: "veins",
-    region: "Tórax",
-    subregion: "Mediastino",
-    laterality: null,
-    structureType: "vena",
-    keywords: ["vena cava", "retorno venoso"],
-    educationalId: "Inferior_vena_cava_(thoracic_part)",
-  }),
-  createAnatomyEntry({
-    id: "respiratory.middle-lobar-bronchus.right",
-    system: "respiratory",
-    modelBindings: [
-      { modelKey: "overview", originalName: "Bronquio lobar medio.r" },
-    ],
-    layer: "airways",
-    region: "Tórax",
-    subregion: "Pulmón derecho",
-    laterality: "right",
-    structureType: "bronquio",
-    keywords: ["bronquio lobar", "lóbulo medio"],
-  }),
-
-  createAnatomyEntry({
-    id: "muscular.sternocleidomastoid.right",
-    system: "muscular",
-    modelBindings: [
-      { modelKey: "overview", originalName: "Músculo esternocleidomastoideo.r" },
-    ],
-    layer: "muscular-head-neck",
-    region: "Cuello",
-    laterality: "right",
-    structureType: "músculo",
-    keywords: ["esternocleidomastoideo", "cuello"],
-    educationalId: "sternocleidomastoid-right",
-  }),
-
+  ...createCardiovascularAnatomyEntries(),
+  ...createRespiratoryAnatomyEntries(),
   ...createDigestiveAnatomyEntries(),
   ...createNervousAnatomyEntries(),
   ...createSkeletalAnatomyEntries(),
+  ...createMuscularAnatomyEntries(),
 ];
 
 validateDigestiveAnatomyEntries(entries.filter((entry) => entry.system === "digestive"));
 validateNervousAnatomyEntries(entries.filter((entry) => entry.system === "nervous"));
 validateSkeletalAnatomyEntries(entries.filter((entry) => entry.system === "skeletal"));
+validateMuscularAnatomyEntries(entries.filter((entry) => entry.system === "muscular"));
+validateRespiratoryAnatomyEntries(entries.filter((entry) => entry.system === "respiratory"));
+validateCardiovascularAnatomyEntries(entries.filter((entry) => entry.system === "cardiovascular"));
 
 const entriesById = new Map<string, AnatomyStructureIndexEntry>();
 const entriesByModelNode = new Map<string, AnatomyStructureIndexEntry>();
