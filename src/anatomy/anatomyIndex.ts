@@ -2,6 +2,7 @@ import type { AnatomySystemId } from "../config/anatomySystems";
 import { createDigestiveAnatomyEntries, validateDigestiveAnatomyEntries } from "./digestiveAdapter";
 import { createNervousAnatomyEntries, validateNervousAnatomyEntries } from "./nervousAdapter";
 import { createSkeletalAnatomyEntries, validateSkeletalAnatomyEntries } from "./skeletalAdapter";
+import { createMuscularAnatomyEntries, validateMuscularAnatomyEntries } from "./muscularAdapter";
 import { createAnatomyEntry } from "./createAnatomyEntry";
 import type {
   AnatomyDivisionId,
@@ -41,28 +42,16 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
     keywords: ["bronquio lobar", "lóbulo medio"],
   }),
 
-  createAnatomyEntry({
-    id: "muscular.sternocleidomastoid.right",
-    system: "muscular",
-    modelBindings: [
-      { modelKey: "overview", originalName: "Músculo esternocleidomastoideo.r" },
-    ],
-    layer: "muscular-head-neck",
-    region: "Cuello",
-    laterality: "right",
-    structureType: "músculo",
-    keywords: ["esternocleidomastoideo", "cuello"],
-    educationalId: "sternocleidomastoid-right",
-  }),
-
   ...createDigestiveAnatomyEntries(),
   ...createNervousAnatomyEntries(),
   ...createSkeletalAnatomyEntries(),
+  ...createMuscularAnatomyEntries(),
 ];
 
 validateDigestiveAnatomyEntries(entries.filter((entry) => entry.system === "digestive"));
 validateNervousAnatomyEntries(entries.filter((entry) => entry.system === "nervous"));
 validateSkeletalAnatomyEntries(entries.filter((entry) => entry.system === "skeletal"));
+validateMuscularAnatomyEntries(entries.filter((entry) => entry.system === "muscular"));
 
 const entriesById = new Map<string, AnatomyStructureIndexEntry>();
 const entriesByModelNode = new Map<string, AnatomyStructureIndexEntry>();
