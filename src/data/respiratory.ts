@@ -217,6 +217,40 @@ const pharynx: RespiratoryStructure = {
   ],
 };
 
+const epiglottis: RespiratoryStructure = {
+  id: "epiglottis",
+  name: "Epiglotis",
+  type: "Vía aérea superior",
+  description:
+    "Lámina de cartílago elástico recubierta por mucosa que forma parte de la entrada de la laringe.",
+  function:
+    "Contribuye a proteger la vía aérea durante la deglución al desviar el bolo alimenticio lejos de la entrada laríngea.",
+  location:
+    "Se encuentra en la región superior de la laringe, posterior a la base de la lengua.",
+  relationships: [
+    "Se une al cartílago tiroides y al hueso hioides mediante ligamentos.",
+    "Su cara anterior se relaciona con la base de la lengua.",
+    "Delimita anteriormente la entrada de la laringe.",
+  ],
+};
+
+const nasalCavityMucosa: RespiratoryStructure = {
+  id: "nasal-cavity-mucosa",
+  name: "Capa mucosa de la cavidad nasal",
+  type: "Vía aérea superior",
+  description:
+    "Revestimiento húmedo de la cavidad nasal que cubre gran parte de sus paredes y cornetes.",
+  function:
+    "Ayuda a filtrar, calentar y humidificar el aire inspirado antes de que continúe hacia la faringe.",
+  location:
+    "Recubre la superficie interna de la cavidad nasal en la región superior del tracto respiratorio.",
+  relationships: [
+    "Se continúa posteriormente con la mucosa de la nasofaringe.",
+    "Se relaciona con los cornetes nasales, que aumentan la superficie de contacto con el aire.",
+    "Contiene epitelio y glándulas que participan en la limpieza del aire inspirado.",
+  ],
+};
+
 /* ======================================================
    LÓBULOS
 ====================================================== */
@@ -471,6 +505,8 @@ export function getRespiratoryStructure(
     [leftMainBronchus.id]: leftMainBronchus,
     [larynx.id]: larynx,
     [pharynx.id]: pharynx,
+    [epiglottis.id]: epiglottis,
+    [nasalCavityMucosa.id]: nasalCavityMucosa,
     [rightUpperLobe.id]: rightUpperLobe,
     [rightMiddleLobe.id]: rightMiddleLobe,
     [rightLowerLobe.id]: rightLowerLobe,
@@ -526,6 +562,14 @@ export function getRespiratoryStructure(
     )
   ) {
     return pharynx;
+  }
+
+  if (name === "epiglotis" || name.includes("epiglotis")) {
+    return epiglottis;
+  }
+
+  if (name.includes("mucosa") && name.includes("cavidad nasal")) {
+    return nasalCavityMucosa;
   }
 
   /* ====================================================

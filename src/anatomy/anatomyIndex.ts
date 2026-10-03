@@ -3,6 +3,7 @@ import { createDigestiveAnatomyEntries, validateDigestiveAnatomyEntries } from "
 import { createNervousAnatomyEntries, validateNervousAnatomyEntries } from "./nervousAdapter";
 import { createSkeletalAnatomyEntries, validateSkeletalAnatomyEntries } from "./skeletalAdapter";
 import { createMuscularAnatomyEntries, validateMuscularAnatomyEntries } from "./muscularAdapter";
+import { createRespiratoryAnatomyEntries, validateRespiratoryAnatomyEntries } from "./respiratoryAdapter";
 import { createAnatomyEntry } from "./createAnatomyEntry";
 import type {
   AnatomyDivisionId,
@@ -28,20 +29,7 @@ const entries: readonly AnatomyStructureIndexEntry[] = [
     keywords: ["vena cava", "retorno venoso"],
     educationalId: "Inferior_vena_cava_(thoracic_part)",
   }),
-  createAnatomyEntry({
-    id: "respiratory.middle-lobar-bronchus.right",
-    system: "respiratory",
-    modelBindings: [
-      { modelKey: "overview", originalName: "Bronquio lobar medio.r" },
-    ],
-    layer: "airways",
-    region: "Tórax",
-    subregion: "Pulmón derecho",
-    laterality: "right",
-    structureType: "bronquio",
-    keywords: ["bronquio lobar", "lóbulo medio"],
-  }),
-
+  ...createRespiratoryAnatomyEntries(),
   ...createDigestiveAnatomyEntries(),
   ...createNervousAnatomyEntries(),
   ...createSkeletalAnatomyEntries(),
@@ -52,6 +40,7 @@ validateDigestiveAnatomyEntries(entries.filter((entry) => entry.system === "dige
 validateNervousAnatomyEntries(entries.filter((entry) => entry.system === "nervous"));
 validateSkeletalAnatomyEntries(entries.filter((entry) => entry.system === "skeletal"));
 validateMuscularAnatomyEntries(entries.filter((entry) => entry.system === "muscular"));
+validateRespiratoryAnatomyEntries(entries.filter((entry) => entry.system === "respiratory"));
 
 const entriesById = new Map<string, AnatomyStructureIndexEntry>();
 const entriesByModelNode = new Map<string, AnatomyStructureIndexEntry>();
