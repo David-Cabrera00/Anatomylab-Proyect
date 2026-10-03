@@ -574,7 +574,8 @@ function AnatomyModel({
           "cardiovascular_bodyparts"
         )
       ) {
-        desiredSize = 6;
+        // El panel del visor es estrecho; el corazón necesita margen horizontal.
+        desiredSize = 1.8;
       }
 
       clone.scale.setScalar(
