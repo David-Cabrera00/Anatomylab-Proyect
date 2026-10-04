@@ -5,6 +5,7 @@ import { createAnatomyEntry } from "./createAnatomyEntry";
 import type { AnatomyStructureIndexEntry } from "./types";
 import type { AnatomyStructureData } from "../data/educationalCollection";
 import { digestiveModelCatalog } from "./catalogs/digestiveModelCatalog";
+import { digestiveStableIdByOriginalName } from "./metadata/digestiveStableIds";
 
 const catalogNames = new Set(digestiveModelCatalog.map((item) => item.originalName));
 const catalogByName = new Map(digestiveModelCatalog.map((item) => [item.originalName, item]));
@@ -18,9 +19,6 @@ const regionByName: Record<string, string> = {
 
 function laterality(originalName: string): "left" | "right" | "midline" {
   return originalName.endsWith(".l") ? "left" : originalName.endsWith(".r") ? "right" : "midline";
-}
-function stableSlug(originalName: string): string {
-  return originalName.replace(/\.(l|r)$/i, "").replace(/[()]/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 function layerFor(originalName: string): "digestive-tract" | "digestive-accessory" {
   return /^(Glándula|Hígado|Vesícula|Páncreas|Conducto|Lengua|Gingiva)/.test(originalName) ? "digestive-accessory" : "digestive-tract";
@@ -39,8 +37,14 @@ export function createDigestiveAnatomyEntries(): readonly AnatomyStructureIndexE
     const displayName = originalName === "Colon sigmoideo"
       ? "Colon sigmoide"
       : getSystemStructureName("digestive", originalName);
+
+    const stableId = (digestiveStableIdByOriginalName as Record<string, string | undefined>)[originalName];
+    if (!stableId) {
+      throw new Error(`ID persistente digestivo no encontrado para: ${originalName}`);
+    }
+
     return createAnatomyEntry({
-      id: `digestive.${stableSlug(originalName)}${side === "midline" ? "" : `.${side}`}`,
+      id: stableId,
       system: "digestive", modelBindings: [catalog],
       displayName,
       layer: layerFor(originalName), region: regionByName[originalName] ?? "Abdomen",

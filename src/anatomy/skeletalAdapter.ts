@@ -9,6 +9,7 @@ import {
 import { getSystemStructureName } from "../utils/systemNames";
 import { skeletalModelCatalog } from "./catalogs/skeletalModelCatalog";
 import { createAnatomyEntry } from "./createAnatomyEntry";
+import { skeletalStableIdByOriginalName } from "./metadata/skeletalStableIds";
 import type {
   AnatomyLaterality,
   AnatomyStructureIndexEntry,
@@ -53,11 +54,6 @@ const unmappedMetadataByName: Readonly<Record<string, UnmappedMetadata>> = {
   "Seno del hueso frontal": { anatomyId: "skeletal.frontal-sinus", region: "Cráneo", structureType: "Seno paranasal" },
 };
 
-const preservedPilotIds: Readonly<Record<string, string>> = {
-  "Escápula.l": "skeletal.scapula.left",
-  "Hueso coxal.r": "skeletal.hip-bone.right",
-};
-
 function lateralityFor(originalName: string): AnatomyLaterality {
   if (originalName.endsWith(".l")) return "left";
   if (originalName.endsWith(".r")) return "right";
@@ -68,13 +64,9 @@ function withoutLaterality(originalName: string): string {
   return originalName.replace(/\.(?:l|r)$/i, "");
 }
 
-function memberNumber(value: number): string {
-  return String(value).padStart(2, "0");
-}
-
 /**
- * Construye IDs desde la identidad educativa y el orden declarativo de sus
- * miembros. Nunca deriva la identidad aplicando slug al nombre del mesh.
+ * Construye metadata educativa usando IDs persistentes de skeletalStableIds.ts
+ * en lugar de generarlos desde el orden declarativo.
  */
 function createEducationalMetadata(): Map<string, EducationalMetadata> {
   const result = new Map<string, EducationalMetadata>();
@@ -82,13 +74,6 @@ function createEducationalMetadata(): Map<string, EducationalMetadata> {
 
   for (const binding of groups) {
     const originalNames = binding.originalNames ?? [binding.originalName];
-    const memberByBaseName = new Map<string, number>();
-    for (const originalName of originalNames) {
-      const baseName = withoutLaterality(originalName);
-      if (!memberByBaseName.has(baseName)) {
-        memberByBaseName.set(baseName, memberByBaseName.size + 1);
-      }
-    }
 
     for (const originalName of originalNames) {
       if (!catalogByName.has(originalName)) {
@@ -98,15 +83,13 @@ function createEducationalMetadata(): Map<string, EducationalMetadata> {
         throw new Error(`Binding educativo esquelético duplicado: overview:${originalName}`);
       }
 
-      const side = lateralityFor(originalName);
-      const member = memberByBaseName.get(withoutLaterality(originalName));
-      if (!member) throw new Error(`Identidad esquelética vacía: ${originalName}`);
-      const memberSuffix = memberByBaseName.size === 1
-        ? ""
-        : `.member-${memberNumber(member)}`;
-      const sideSuffix = side ? `.${side}` : "";
+      const stableId = (skeletalStableIdByOriginalName as Record<string, string | undefined>)[originalName];
+      if (!stableId) {
+        throw new Error(`ID persistente esquelético no encontrado para: ${originalName}`);
+      }
+
       result.set(originalName, {
-        anatomyId: preservedPilotIds[originalName] ?? `${binding.data.id}${memberSuffix}${sideSuffix}`,
+        anatomyId: stableId,
         data: binding.data,
       });
     }
@@ -223,7 +206,12 @@ export function validateSkeletalAnatomyEntries(
     }
   }
 
-  for (const [originalName, anatomyId] of Object.entries(preservedPilotIds)) {
+  const pilotChecks: Readonly<Record<string, string>> = {
+    "Escápula.l": "skeletal.scapula.left",
+    "Hueso coxal.r": "skeletal.hip-bone.right",
+  };
+
+  for (const [originalName, anatomyId] of Object.entries(pilotChecks)) {
     const entry = entries.find((candidate) =>
       candidate.modelBindings.some((binding) => binding.originalName === originalName)
     );
