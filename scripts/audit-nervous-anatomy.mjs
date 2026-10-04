@@ -18,6 +18,16 @@ const { nervousModelCatalog } = await import(
 const { nervousEducationalGroups } = await import("../src/data/nervous.ts");
 const { createNervousAnatomyEntries } = await import("../src/anatomy/nervousAdapter.ts");
 const { nervousStableIdByOriginalName } = await import("../src/anatomy/metadata/nervousStableIds.ts");
+const { nervousModelNodeStableIdByOriginalName } = await import(
+  "../src/anatomy/metadata/nervousModelNodeStableIds.ts"
+);
+const { nervousLayerByOriginalName } = await import(
+  "../src/anatomy/metadata/nervousHierarchyLayers.ts"
+);
+const nervousAnatomyIdByOriginalName = {
+  ...nervousStableIdByOriginalName,
+  ...nervousModelNodeStableIdByOriginalName,
+};
 const entries = anatomyIndex.filter((entry) => entry.system === "nervous");
 const catalogByName = new Map(nervousModelCatalog.map((entry) => [entry.originalName, entry]));
 const bindings = entries.flatMap((entry) => entry.modelBindings.map((binding) => ({
@@ -47,22 +57,22 @@ const withoutLaterality = (originalName) => originalName.replace(/\.(?:l|r)$/i, 
 const nodesWithoutStableAnatomyId = nervousModelCatalog
   .filter((entry) =>
     !educationalBindings.some((binding) => binding.originalName === entry.originalName) &&
-    !nervousStableIdByOriginalName[entry.originalName]
+    !nervousAnatomyIdByOriginalName[entry.originalName]
   )
   .map((entry) => entry.originalName);
 
 const positionDependentIds = entries.map((entry) => entry.id).filter((id) => /\.member-\d+(?:\.|$)/.test(id));
 const stableIdsForIndexedBindingsMissing = bindings
-  .filter((binding) => !nervousStableIdByOriginalName[binding.originalName])
+  .filter((binding) => !nervousAnatomyIdByOriginalName[binding.originalName])
   .map((binding) => binding.originalName);
 const indexedBindingsWithMismatchedStableId = bindings
-  .filter((binding) => nervousStableIdByOriginalName[binding.originalName] !== binding.anatomyId)
+  .filter((binding) => nervousAnatomyIdByOriginalName[binding.originalName] !== binding.anatomyId)
   .map((binding) => ({
     originalName: binding.originalName,
     anatomyId: binding.anatomyId,
-    registeredId: nervousStableIdByOriginalName[binding.originalName],
+    registeredId: nervousAnatomyIdByOriginalName[binding.originalName],
   }));
-const stableRegistryNamesMissingFromCatalog = Object.keys(nervousStableIdByOriginalName)
+const stableRegistryNamesMissingFromCatalog = Object.keys(nervousAnatomyIdByOriginalName)
   .filter((originalName) => !catalogByName.has(originalName));
 
 const identitySourceLines = [
@@ -112,6 +122,8 @@ for (const nodeIndex of activeIndexes) {
 
 let hierarchyResult = { stats: { central: 0, peripheral: 0, sense: 0, other: 0, total: 0 }, rootName: "Scene", topLevelObjects: 0, markersFound: { centralEnd: false, peripheralEnd: false } };
 let hierarchyError = null;
+const hierarchyCategoryByOriginalName = new Map();
+const hierarchyCategoryConflicts = [];
 try {
   const THREE = await import("three");
   const gltfLoader = await import("three/examples/jsm/loaders/GLTFLoader.js");
@@ -121,8 +133,45 @@ try {
     buffer.byteOffset + buffer.byteLength
   );
   const gltfScene = await loader.parseAsync(arrayBuffer, "public/models/nervous/");
+  gltfScene.scene.traverse((object) => {
+    const loaderName = object.userData.name;
+    const nodeIndex = gltfScene.parser.associations.get(object)?.nodes;
+    const associatedName = typeof nodeIndex === "number"
+      ? gltfScene.parser.json.nodes?.[nodeIndex]?.name
+      : undefined;
+    const originalName = typeof loaderName === "string" && loaderName.trim()
+      ? loaderName
+      : associatedName;
+    if (typeof originalName === "string" && originalName.trim()) {
+      object.userData.anatomyOriginalName = originalName;
+    }
+  });
   const { classifyNervousHierarchy } = await import("../src/utils/nervous/nervousHierarchy.ts");
   hierarchyResult = classifyNervousHierarchy(gltfScene.scene);
+  gltfScene.scene.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    let sourceObject = object;
+    let originalName;
+    while (sourceObject && !originalName) {
+      const candidates = [
+        sourceObject.userData.anatomyOriginalName,
+        sourceObject.userData.name,
+        sourceObject.name,
+      ];
+      originalName = candidates.find(
+        (candidate) => typeof candidate === "string" && catalogByName.has(candidate)
+      );
+      sourceObject = sourceObject.parent;
+    }
+    const category = object.userData.anatomyCategory;
+    if (!originalName || typeof category !== "string") return;
+    const previous = hierarchyCategoryByOriginalName.get(originalName);
+    if (previous && previous !== category) {
+      hierarchyCategoryConflicts.push({ originalName, before: previous, after: category });
+      return;
+    }
+    hierarchyCategoryByOriginalName.set(originalName, category);
+  });
 } catch (e) {
   hierarchyError = e instanceof Error ? e.message : String(e);
 }
@@ -172,6 +221,56 @@ function example(originalName) {
 
 const indexedNames = new Set(bindings.map((binding) => binding.originalName));
 const multiBindingEntries = entries.filter((entry) => entry.modelBindings.length > 1);
+const catalogNamesNotIndexed = nervousModelCatalog
+  .filter((entry) => !indexedNames.has(entry.originalName))
+  .map((entry) => entry.originalName);
+const meshNames = new Set(
+  activeIndexes
+    .filter((index) => nodes[index].mesh !== undefined)
+    .map((index) => nodes[index].name)
+);
+const nonMeshCatalogNames = nervousModelCatalog
+  .filter((entry) => !meshNames.has(entry.originalName))
+  .map((entry) => entry.originalName);
+const selectableCatalogNames = new Set(
+  nervousModelCatalog
+    .filter((entry) => entry.hasSelectableGeometry)
+    .map((entry) => entry.originalName)
+);
+const selectableCatalogNamesMissingFromModel = [...selectableCatalogNames]
+  .filter((name) => !meshNames.has(name));
+const modelMeshNamesMissingFromSelectableCatalog = [...meshNames]
+  .filter((name) => !selectableCatalogNames.has(name));
+const hierarchyMetadataMismatches = [...meshNames].flatMap((originalName) => {
+  const generatedLayer = nervousLayerByOriginalName[originalName];
+  const hierarchyLayer = hierarchyCategoryByOriginalName.get(originalName);
+  return generatedLayer !== hierarchyLayer
+    ? [{ originalName, generatedLayer, hierarchyLayer }]
+    : [];
+});
+const hierarchyMetadataNamesMissingFromModel = Object.keys(nervousLayerByOriginalName)
+  .filter((name) => !meshNames.has(name));
+const unindexedSelectableNames = catalogNamesNotIndexed.filter((name) => meshNames.has(name));
+const unindexedByHierarchy = {
+  "nervous-central": unindexedSelectableNames.filter((name) => hierarchyCategoryByOriginalName.get(name) === "nervous-central").length,
+  "nervous-peripheral": unindexedSelectableNames.filter((name) => hierarchyCategoryByOriginalName.get(name) === "nervous-peripheral").length,
+  "nervous-sense": unindexedSelectableNames.filter((name) => hierarchyCategoryByOriginalName.get(name) === "nervous-sense").length,
+  unclassified: unindexedSelectableNames.filter((name) => !hierarchyCategoryByOriginalName.has(name)).length,
+};
+const registeredCatalogNamesNotIndexed = catalogNamesNotIndexed
+  .filter((name) => nervousAnatomyIdByOriginalName[name]);
+const entryLayerMismatches = bindings.flatMap((binding) => {
+  const entry = byOriginalName.get(binding.originalName);
+  const hierarchyLayer = hierarchyCategoryByOriginalName.get(binding.originalName);
+  return entry && hierarchyLayer && entry.layer !== hierarchyLayer
+    ? [{
+        originalName: binding.originalName,
+        anatomyId: entry.id,
+        entryLayer: entry.layer,
+        hierarchyLayer,
+      }]
+    : [];
+});
 
 console.log(JSON.stringify({
   glb: {
@@ -185,8 +284,11 @@ console.log(JSON.stringify({
     topLevelObjects: hierarchyResult.topLevelObjects,
     markersFound: hierarchyResult.markersFound,
     classifiedStats: hierarchyResult.stats,
+    classifiedOriginalNames: hierarchyCategoryByOriginalName.size,
+    categoryConflicts: hierarchyCategoryConflicts,
   },
   catalogNodes: nervousModelCatalog.length,
+  selectableCatalogNodes: selectableCatalogNames.size,
   anatomyEntries: entries.length,
   modelBindings: bindings.length,
   entriesWithEducationalId: entries.filter((entry) => entry.educationalId).length,
@@ -212,8 +314,9 @@ console.log(JSON.stringify({
     stableIdsForIndexedBindingsMissing,
     indexedBindingsWithMismatchedStableId,
     stableRegistryNamesMissingFromCatalog,
-    explicitlyRegisteredModelNodeIds: Object.keys(nervousStableIdByOriginalName).length,
-    duplicateStableIds: duplicates(Object.values(nervousStableIdByOriginalName)),
+    explicitlyRegisteredIds: Object.keys(nervousAnatomyIdByOriginalName).length,
+    supplementalModelNodeIds: Object.keys(nervousModelNodeStableIdByOriginalName).length,
+    duplicateStableIds: duplicates(Object.values(nervousAnatomyIdByOriginalName)),
     reversedCatalog: {
       changedIdCount: changedIdsWhenCatalogReversed.length,
       changedIds: changedIdsWhenCatalogReversed,
@@ -224,9 +327,18 @@ console.log(JSON.stringify({
   educationalBindingsMissingFromCatalog: educationalBindings
     .filter((binding) => !catalogByName.has(binding.originalName))
     .map((binding) => binding.originalName),
-  catalogNamesNotIndexed: nervousModelCatalog
-    .filter((entry) => !indexedNames.has(entry.originalName))
-    .map((entry) => entry.originalName),
+  coverage: {
+    catalogNamesNotIndexed,
+    nonMeshCatalogNames,
+    selectableCatalogNamesMissingFromModel,
+    modelMeshNamesMissingFromSelectableCatalog,
+    hierarchyMetadataMismatches,
+    hierarchyMetadataNamesMissingFromModel,
+    unindexedSelectableNames: unindexedSelectableNames.length,
+    unindexedByHierarchy,
+    registeredCatalogNamesNotIndexed,
+    entryLayerMismatches,
+  },
   utf8Problems,
   sourceUtf8Problems,
   technicalNodesExcluded,
@@ -249,17 +361,24 @@ const failures = [
   stableIdsForIndexedBindingsMissing,
   indexedBindingsWithMismatchedStableId,
   stableRegistryNamesMissingFromCatalog,
-  duplicates(Object.values(nervousStableIdByOriginalName)),
+  duplicates(Object.values(nervousAnatomyIdByOriginalName)),
   changedIdsWhenCatalogReversed,
   duplicates(entries.map((entry) => entry.id)),
   duplicates(bindings.map((binding) => binding.key)),
   educationalBindings.filter((binding) => !catalogByName.has(binding.originalName)),
   utf8Problems,
   sourceUtf8Problems,
+  hierarchyCategoryConflicts,
+  entryLayerMismatches,
+  selectableCatalogNamesMissingFromModel,
+  modelMeshNamesMissingFromSelectableCatalog,
+  hierarchyMetadataMismatches,
+  hierarchyMetadataNamesMissingFromModel,
 ].some((items) => items.length > 0)
   || hierarchyError !== null
   || !hierarchyResult.markersFound.centralEnd
   || !hierarchyResult.markersFound.peripheralEnd
+  || hierarchyCategoryByOriginalName.size !== meshNames.size
   || hierarchyResult.stats.other !== 0;
 
 if (failures) process.exitCode = 1;
