@@ -21,7 +21,6 @@ import * as THREE from "three";
 import {
   attachOriginalAnatomyNames,
   findStructureMesh,
-  getSelectableStructureName,
   getAnatomyIdFromMesh,
 } from "./anatomyOriginalNames";
 
@@ -32,6 +31,7 @@ import {
 } from "../config/anatomySystems";
 
 import type { AnatomyModelKey } from "../anatomy";
+import { getAnatomyEntryById } from "../anatomy";
 
 import {
   getStructureCategory as getCardiovascularCategory,
@@ -99,7 +99,6 @@ export type ViewerAction = {
 
 export type StructureFocusRequest = {
   anatomyId: string;
-  originalName: string;
   id: number;
 };
 
@@ -112,11 +111,7 @@ type AnatomyViewerProps = {
   modelPath: string;
   layer: AnatomyLayerId;
   modelKey?: AnatomyModelKey;
-  onStructureSelect?: (
-    structureName: string | null,
-    threeName?: string | null,
-    anatomyId?: string | null
-  ) => void;
+  onStructureSelect?: (anatomyId: string | null) => void;
   action?: ViewerAction | null;
   focusRequest?: StructureFocusRequest | null;
 };
@@ -888,7 +883,7 @@ function AnatomyModel({
     }
 
     selectedMeshRef.current = null;
-    onStructureSelect?.(null, null);
+    onStructureSelect?.(null);
 
     model.traverse((object) => {
       if (!(object instanceof THREE.Mesh)) {
@@ -946,16 +941,26 @@ function AnatomyModel({
       return;
     }
 
+    const entry = getAnatomyEntryById(focusRequest.anatomyId);
+    const binding = entry?.system === system
+      ? entry.modelBindings.find((candidate) => candidate.modelKey === modelKey)
+      : undefined;
+
+    if (!binding) {
+      console.warn("No existe binding para la estructura:", focusRequest.anatomyId, modelKey);
+      return;
+    }
+
     const selectedTarget = findStructureMesh(
       model,
       system,
-      focusRequest.originalName
+      binding.originalName
     );
 
     if (!selectedTarget) {
       console.warn(
         "No se encontró la estructura:",
-        focusRequest.originalName
+        binding.originalName
       );
       return;
     }
@@ -972,12 +977,7 @@ function AnatomyModel({
     setMeshRendered(selectedTarget, true);
     selectedMeshRef.current = selectedTarget;
     highlightMesh(selectedTarget);
-    const anatomyId = getAnatomyIdFromMesh(selectedTarget, system, modelKey);
-    onStructureSelect?.(
-      getSelectableStructureName(system, selectedTarget),
-      selectedTarget.name,
-      anatomyId
-    );
+    onStructureSelect?.(focusRequest.anatomyId);
   }, [
     focusRequest,
     model,
@@ -1028,14 +1028,12 @@ function AnatomyModel({
       );
     }
 
+    const anatomyId = getAnatomyIdFromMesh(object, system, modelKey);
+    if (!anatomyId) return;
+
     selectedMeshRef.current = object;
     highlightMesh(object);
-    const anatomyId = getAnatomyIdFromMesh(object, system, modelKey);
-    onStructureSelect?.(
-      getSelectableStructureName(system, object),
-      object.name,
-      anatomyId
-    );
+    onStructureSelect?.(anatomyId);
   };
 
   /* ====================================================
@@ -1084,7 +1082,7 @@ function AnatomyModel({
       setMeshRendered(selected, false);
       restoreHighlight(selected);
       selectedMeshRef.current = null;
-      onStructureSelect?.(null, null);
+      onStructureSelect?.(null);
       return;
     }
 
@@ -1160,7 +1158,7 @@ function AnatomyModel({
       });
 
       selectedMeshRef.current = null;
-      onStructureSelect?.(null, null);
+      onStructureSelect?.(null);
     }
   }, [
     action,
@@ -1205,6 +1203,7 @@ export default function AnatomyViewer({
   system,
   modelPath,
   layer,
+  modelKey = "overview",
   onStructureSelect,
   action,
   focusRequest,
@@ -1254,7 +1253,7 @@ export default function AnatomyViewer({
             system={system}
             modelPath={modelPath}
             layer={layer}
-            modelKey="overview"
+            modelKey={modelKey}
             onStructureSelect={
               onStructureSelect
             }

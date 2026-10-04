@@ -22,6 +22,7 @@ const { cardiovascularStableIdByOriginalName } = await import(
   "../src/anatomy/metadata/cardiovascularStableIds.ts"
 );
 const { cardiovascularData } = await import("../src/data/cardiovascular.ts");
+const { cardiovascularStudyGuide } = await import("../src/data/studyGuides.ts");
 const { getUnknownAnatomyWords, isInvalidStructureName } = await import(
   "../src/utils/cardiovascular/cardiovascularNames.ts"
 );
@@ -30,6 +31,19 @@ const MODELS = [
   { modelKey: "overview", path: "public/models/cardiovascular/cardiovascular_overview_v2.glb" },
   { modelKey: "heart-detail", path: "public/models/cardiovascular/cardiovascular_bodyparts.glb" },
 ];
+
+const anatomyEntryById = new Map(anatomyIndex.map((entry) => [entry.id, entry]));
+const invalidStudySteps = cardiovascularStudyGuide.steps.flatMap((step) => {
+  const entry = anatomyEntryById.get(step.anatomyId);
+  if (!entry) return [{ stepId: step.id, anatomyId: step.anatomyId, reason: "missing-anatomy-id" }];
+  if (entry.system !== "cardiovascular") {
+    return [{ stepId: step.id, anatomyId: step.anatomyId, reason: "wrong-system" }];
+  }
+  if (!entry.modelBindings.some((binding) => binding.modelKey === "overview")) {
+    return [{ stepId: step.id, anatomyId: step.anatomyId, reason: "missing-overview-binding" }];
+  }
+  return [];
+});
 
 function readGlbJson(path) {
   const buffer = fs.readFileSync(path);
@@ -170,6 +184,11 @@ const report = {
   ),
   unknownTranslationWords: [...unknownWords].sort(),
   invalidDisplayNames: entries.map((entry) => entry.displayName).filter((name) => name === "Estructura sin identificar"),
+  studyGuide: {
+    steps: cardiovascularStudyGuide.steps.length,
+    duplicateStepIds: duplicates(cardiovascularStudyGuide.steps.map((step) => step.id)),
+    invalidSteps: invalidStudySteps,
+  },
   utf8Problems: [
     ...cardiovascularModelCatalog.map((entry) => entry.originalName),
     ...entries.flatMap((entry) => [entry.id, entry.displayName, entry.region, entry.subregion, entry.structureType]),
@@ -194,6 +213,8 @@ const failures = [
   report.educationalCoverage.csvNamesMissingStableId,
   report.unknownTranslationWords,
   report.invalidDisplayNames,
+  report.studyGuide.duplicateStepIds,
+  report.studyGuide.invalidSteps,
   report.utf8Problems,
 ].some((items) => items.length > 0)
   || report.catalogBindings !== modelBindings.length

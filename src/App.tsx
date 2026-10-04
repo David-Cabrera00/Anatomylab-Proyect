@@ -30,16 +30,8 @@ import {
   type AnatomySystemId,
 } from "./config/anatomySystems";
 
-import {
-  getStructureCategory,
-} from "./utils/cardiovascular/cardiovascularNames";
-
-import {
-  getSystemStructureName,
-} from "./utils/systemNames";
-
 import { getAnatomyStructureData } from "./data/anatomyStructureData";
-import { getAnatomyEntryById } from "./anatomy";
+import { getAnatomyEntryById, type AnatomyModelKey } from "./anatomy";
 import type { AnatomyStructureData } from "./data/anatomyStructureData";
 
 import {
@@ -165,18 +157,14 @@ function App() {
       null
     );
 
-  const [selectedOriginalName, setSelectedOriginalName] = useState<string | null>(null);
-  const [selectedThreeName, setSelectedThreeName] = useState<string | null>(null);
-
-const handleStructureSelect = useCallback((
-    originalName: string | null,
-    threeName: string | null = null,
-    anatomyId: string | null = null
-  ) => {
+const handleStructureSelect = useCallback((anatomyId: string | null) => {
     setSelectedAnatomyId(anatomyId);
-    setSelectedOriginalName(originalName);
-    setSelectedThreeName(threeName);
   }, []);
+
+  const selectedAnatomyEntry = selectedAnatomyId
+    ? getAnatomyEntryById(selectedAnatomyId)
+    : null;
+  const selectedDisplayName = selectedAnatomyEntry?.displayName ?? null;
 
   /* ====================================================
      ACCIÓN DEL VISOR
@@ -284,6 +272,9 @@ const handleStructureSelect = useCallback((
       heartDetailModel;
   }
 
+  const currentModelKey: AnatomyModelKey =
+    activeSystem === "cardiovascular" ? cardiovascularView : "overview";
+
   /* ====================================================
      CAPA ACTUAL
   ==================================================== */
@@ -320,15 +311,6 @@ const handleStructureSelect = useCallback((
      CATEGORÍA CARDIOVASCULAR
   ==================================================== */
 
-  const selectedCardiovascularCategory =
-    activeSystem ===
-      "cardiovascular" &&
-    selectedAnatomyId
-      ? getStructureCategory(
-          (selectedThreeName ?? selectedOriginalName ?? "")
-        )
-      : null;
-
   /* ====================================================
      CORAZÓN DETALLADO
   ==================================================== */
@@ -339,7 +321,8 @@ const handleStructureSelect = useCallback((
     !studyMode &&
     cardiovascularView ===
       "overview" &&
-    selectedAnatomyId !== null && selectedCardiovascularCategory === "heart";
+    selectedAnatomyEntry?.system === "cardiovascular" &&
+    selectedAnatomyEntry.layer === "heart";
 
   /* ====================================================
      NOMBRE DE VISTA
@@ -405,7 +388,7 @@ const handleStructureSelect = useCallback((
       null
     );
 
-    handleStructureSelect(null, null, null);
+    handleStructureSelect(null);
 
     setViewerAction(
       null
@@ -436,7 +419,7 @@ const handleStructureSelect = useCallback((
       null
     );
 
-    handleStructureSelect(null, null, null);
+    handleStructureSelect(null);
 
     setViewerAction(
       null
@@ -448,68 +431,40 @@ const handleStructureSelect = useCallback((
   };
 
   /* ====================================================
-     CAPA PARA MODO ESTUDIO
-  ==================================================== */
-
-  const getLayerForStudyStructure =
-    (
-      structureName:
-        string
-    ): AnatomyLayerId => {
-      const category =
-        getStructureCategory(
-          structureName
-        );
-
-      if (
-        category ===
-        "heart"
-      ) {
-        return "heart";
-      }
-
-      if (
-        category ===
-        "artery"
-      ) {
-        return "arteries";
-      }
-
-      if (
-        category ===
-        "vein"
-      ) {
-        return "veins";
-      }
-
-      return "complete";
-    };
-
-  /* ====================================================
      ENFOCAR ESTRUCTURA
   ==================================================== */
 
   const focusStructure = (
     anatomyId:
-      string
+      string,
+    preferredModelKey?: AnatomyModelKey
   ) => {
     setViewerAction(
       null
     );
 
     const entry = getAnatomyEntryById(anatomyId);
-    const originalName = entry?.modelBindings[0]?.originalName ?? anatomyId;
+    if (!entry) return;
+
+    const binding = preferredModelKey
+      ? entry.modelBindings.find((candidate) => candidate.modelKey === preferredModelKey)
+      : entry.modelBindings.find((candidate) => candidate.modelKey === "overview")
+        ?? entry.modelBindings[0];
+    if (!binding) return;
+
+    if (entry.system === "cardiovascular") {
+      setCardiovascularView(binding.modelKey);
+    }
+
+    handleStructureSelect(anatomyId);
 
     setActiveLayer(
-      getLayerForStudyStructure(
-        originalName
-      )
+      entry.layer ?? "complete"
     );
 
     setFocusRequest(
       (previous) => ({
         anatomyId,
-        originalName,
 
         id:
           (previous?.id ??
@@ -562,7 +517,7 @@ const handleStructureSelect = useCallback((
       nextIndex
     );
 
-    focusStructure(step.anatomyId);
+    focusStructure(step.anatomyId, "overview");
   };
 
   /* ====================================================
@@ -589,7 +544,7 @@ const handleStructureSelect = useCallback((
         true
       );
 
-      handleStructureSelect(null, null, null);
+      handleStructureSelect(null);
 
       setFocusRequest(
         null
@@ -626,7 +581,7 @@ const handleStructureSelect = useCallback((
         null
       );
 
-      handleStructureSelect(null, null, null);
+      handleStructureSelect(null);
 
       setActiveLayer(
         "general"
@@ -665,7 +620,7 @@ const handleStructureSelect = useCallback((
         null
       );
 
-      handleStructureSelect(null, null, null);
+      handleStructureSelect(null);
 
       setViewerAction(
         null
@@ -686,7 +641,7 @@ const handleStructureSelect = useCallback((
         null
       );
 
-      handleStructureSelect(null, null, null);
+      handleStructureSelect(null);
 
       setViewerAction(
         null
@@ -730,11 +685,7 @@ const handleStructureSelect = useCallback((
               if (system !== activeSystem) {
                 changeSystem(system);
               }
-              handleStructureSelect(anatomyId, null, anatomyId);
-              const target = getAnatomyEntryById(anatomyId);
-              if (target) {
-                setFocusRequest({ anatomyId, originalName: target.modelBindings[0]?.originalName ?? anatomyId, id: Date.now() });
-              }
+              focusStructure(anatomyId);
             }}
             currentSystem={activeSystem}
             className="flex-1 max-w-md"
@@ -878,6 +829,7 @@ const handleStructureSelect = useCallback((
             layer={
               currentLayer
             }
+            modelKey={currentModelKey}
             onStructureSelect={
               handleStructureSelect
             }
@@ -1245,7 +1197,7 @@ const handleStructureSelect = useCallback((
                 </div>
 
                 <h2 className="text-title font-semibold tracking-tight text-ink [overflow-wrap:anywhere]">
-                  {selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}
+                  {selectedDisplayName}
                 </h2>
 
                 <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -1275,14 +1227,14 @@ const handleStructureSelect = useCallback((
                     {selectedAnatomyIdData
                       ? selectedAnatomyIdData.description
                       : activeSystem === "nervous"
-                        ? `Has seleccionado ${selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}. La información educativa del sistema nervioso se añadirá en la siguiente fase.`
+                        ? `Has seleccionado ${selectedDisplayName}. La información educativa del sistema nervioso se añadirá en la siguiente fase.`
                         : activeSystem === "skeletal"
-                          ? `Has seleccionado ${selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}. La información educativa del sistema esquelético se añadirá en la siguiente fase.`
+                          ? `Has seleccionado ${selectedDisplayName}. La información educativa del sistema esquelético se añadirá en la siguiente fase.`
                           : activeSystem === "muscular"
-                            ? `Has seleccionado ${selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}. La información educativa del sistema muscular se añadirá en la siguiente fase.`
+                            ? `Has seleccionado ${selectedDisplayName}. La información educativa del sistema muscular se añadirá en la siguiente fase.`
                             : activeSystem === "digestive"
-                              ? `Has seleccionado ${selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}. La información educativa del sistema digestivo se añadirá en la siguiente fase.`
-                              : `Has seleccionado ${selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}. Todavía estamos agregando información educativa específica para esta estructura.`}
+                              ? `Has seleccionado ${selectedDisplayName}. La información educativa del sistema digestivo se añadirá en la siguiente fase.`
+                              : `Has seleccionado ${selectedDisplayName}. Todavía estamos agregando información educativa específica para esta estructura.`}
                   </p>
                 </InfoSection>
 
