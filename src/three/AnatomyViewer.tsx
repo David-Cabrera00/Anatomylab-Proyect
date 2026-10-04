@@ -22,6 +22,7 @@ import {
   attachOriginalAnatomyNames,
   findStructureMesh,
   getSelectableStructureName,
+  getAnatomyIdFromMesh,
 } from "./anatomyOriginalNames";
 
 import {
@@ -29,6 +30,8 @@ import {
   type AnatomyLayerId,
   type AnatomySystemId,
 } from "../config/anatomySystems";
+
+import type { AnatomyModelKey } from "../anatomy";
 
 import {
   getStructureCategory as getCardiovascularCategory,
@@ -107,9 +110,11 @@ type AnatomyViewerProps = {
   system: AnatomySystemId;
   modelPath: string;
   layer: AnatomyLayerId;
+  modelKey?: AnatomyModelKey;
   onStructureSelect?: (
     structureName: string | null,
-    threeName?: string | null
+    threeName?: string | null,
+    anatomyId?: string | null
   ) => void;
   action?: ViewerAction | null;
   focusRequest?: StructureFocusRequest | null;
@@ -532,6 +537,7 @@ function AnatomyModel({
   system,
   modelPath,
   layer,
+  modelKey = "overview",
   onStructureSelect,
   action,
   focusRequest,
@@ -965,14 +971,17 @@ function AnatomyModel({
     setMeshRendered(selectedTarget, true);
     selectedMeshRef.current = selectedTarget;
     highlightMesh(selectedTarget);
+    const anatomyId = getAnatomyIdFromMesh(selectedTarget, system, modelKey);
     onStructureSelect?.(
       getSelectableStructureName(system, selectedTarget),
-      selectedTarget.name
+      selectedTarget.name,
+      anatomyId
     );
   }, [
     focusRequest,
     model,
     system,
+    modelKey,
     onStructureSelect,
   ]);
 
@@ -1020,9 +1029,11 @@ function AnatomyModel({
 
     selectedMeshRef.current = object;
     highlightMesh(object);
+    const anatomyId = getAnatomyIdFromMesh(object, system, modelKey);
     onStructureSelect?.(
       getSelectableStructureName(system, object),
-      object.name
+      object.name,
+      anatomyId
     );
   };
 
@@ -1242,6 +1253,7 @@ export default function AnatomyViewer({
             system={system}
             modelPath={modelPath}
             layer={layer}
+            modelKey="overview"
             onStructureSelect={
               onStructureSelect
             }

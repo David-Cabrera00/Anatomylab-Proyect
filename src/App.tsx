@@ -14,6 +14,8 @@ import {
   SegmentedControl,
 } from "./components/ui";
 
+import { SearchBar } from "./components/SearchBar";
+
 import AnatomyViewer, {
   type ViewerAction,
   type ViewerActionType,
@@ -36,6 +38,7 @@ import {
 } from "./utils/systemNames";
 
 import { getAnatomyStructureData } from "./data/anatomyStructureData";
+import { getAnatomyEntryById } from "./anatomy";
 
 import {
   cardiovascularStudyGuide,
@@ -146,13 +149,13 @@ function App() {
       "general"
     );
 
-  /* ====================================================
+/* ======================================================
      ESTRUCTURA SELECCIONADA
   ==================================================== */
 
   const [
-    selectedStructure,
-    setSelectedStructure,
+    selectedAnatomyId,
+    setSelectedAnatomyId,
   ] =
     useState<
       string | null
@@ -160,13 +163,16 @@ function App() {
       null
     );
 
+  const [selectedOriginalName, setSelectedOriginalName] = useState<string | null>(null);
   const [selectedThreeName, setSelectedThreeName] = useState<string | null>(null);
 
-  const handleStructureSelect = useCallback((
+const handleStructureSelect = useCallback((
     originalName: string | null,
-    threeName: string | null = null
+    threeName: string | null = null,
+    anatomyId: string | null = null
   ) => {
-    setSelectedStructure(originalName);
+    setSelectedAnatomyId(anatomyId);
+    setSelectedOriginalName(originalName);
     setSelectedThreeName(threeName);
   }, []);
 
@@ -293,25 +299,12 @@ function App() {
      NOMBRE DE ESTRUCTURA
   ==================================================== */
 
-  const selectedStructureName =
-    selectedStructure
-      ? getSystemStructureName(
-          activeSystem,
-          selectedStructure
-        )
-      : null;
-
   /* ====================================================
      INFORMACIÓN EDUCATIVA
   ==================================================== */
 
-  const selectedStructureData =
-    selectedStructure
-      ? getAnatomyStructureData(
-          activeSystem,
-          selectedStructure,
-          activeSystem === "cardiovascular" ? cardiovascularView : "overview"
-        )
+  const selectedAnatomyIdData =
+    selectedAnatomyId ? getAnatomyStructureData(activeSystem, selectedAnatomyId ?? "", activeSystem === "cardiovascular" ? cardiovascularView : "overview")
       : null;
 
   /* ====================================================
@@ -321,9 +314,9 @@ function App() {
   const selectedCardiovascularCategory =
     activeSystem ===
       "cardiovascular" &&
-    selectedStructure
+    selectedAnatomyId
       ? getStructureCategory(
-          selectedThreeName ?? selectedStructure
+          (selectedThreeName ?? selectedOriginalName ?? "")
         )
       : null;
 
@@ -337,10 +330,7 @@ function App() {
     !studyMode &&
     cardiovascularView ===
       "overview" &&
-    selectedStructure !==
-      null &&
-    selectedCardiovascularCategory ===
-      "heart";
+    selectedAnatomyId !== null && selectedCardiovascularCategory === "heart";
 
   /* ====================================================
      NOMBRE DE VISTA
@@ -406,9 +396,7 @@ function App() {
       null
     );
 
-    handleStructureSelect(
-      null
-    );
+    handleStructureSelect(null, null, null);
 
     setViewerAction(
       null
@@ -439,9 +427,7 @@ function App() {
       null
     );
 
-    handleStructureSelect(
-      null
-    );
+    handleStructureSelect(null, null, null);
 
     setViewerAction(
       null
@@ -563,9 +549,7 @@ function App() {
       nextIndex
     );
 
-    focusStructure(
-      step.structureId
-    );
+    focusStructure(step.structureId);
   };
 
   /* ====================================================
@@ -592,9 +576,7 @@ function App() {
         true
       );
 
-      handleStructureSelect(
-        null
-      );
+      handleStructureSelect(null, null, null);
 
       setFocusRequest(
         null
@@ -631,9 +613,7 @@ function App() {
         null
       );
 
-      handleStructureSelect(
-        null
-      );
+      handleStructureSelect(null, null, null);
 
       setActiveLayer(
         "general"
@@ -672,9 +652,7 @@ function App() {
         null
       );
 
-      handleStructureSelect(
-        null
-      );
+      handleStructureSelect(null, null, null);
 
       setViewerAction(
         null
@@ -695,9 +673,7 @@ function App() {
         null
       );
 
-      handleStructureSelect(
-        null
-      );
+      handleStructureSelect(null, null, null);
 
       setViewerAction(
         null
@@ -723,15 +699,33 @@ function App() {
       ================================================= */}
 
       <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">
-            AnatomyLab AI
-          </h1>
+        <div className="flex items-center gap-6 min-w-0">
+          <div>
+            <h1 className="text-xl font-semibold tracking-tight">
+              AnatomyLab AI
+            </h1>
 
-          <p className="text-xs text-slate-500">
-            Plataforma interactiva
-            de aprendizaje
-          </p>
+            <p className="text-xs text-slate-500">
+              Plataforma interactiva
+              de aprendizaje
+            </p>
+          </div>
+
+          <SearchBar
+            onSelect={(entry) => {
+              const { anatomyId, system } = entry;
+              if (system !== activeSystem) {
+                changeSystem(system);
+              }
+              handleStructureSelect(anatomyId, null, anatomyId);
+              const target = getAnatomyEntryById(anatomyId);
+              if (target) {
+                setFocusRequest({ structureName: anatomyId, id: Date.now() });
+              }
+            }}
+            currentSystem={activeSystem}
+            className="flex-1 max-w-md"
+          />
         </div>
 
         <div className="flex items-center gap-3">
@@ -1163,7 +1157,7 @@ function App() {
                   )
                 }
                 disabled={
-                  !selectedStructure
+                  !selectedAnatomyId
                 }
               >
                 Aislar
@@ -1178,7 +1172,7 @@ function App() {
                   )
                 }
                 disabled={
-                  !selectedStructure
+                  !selectedAnatomyId
                 }
               >
                 Ocultar
@@ -1193,7 +1187,7 @@ function App() {
                   )
                 }
                 disabled={
-                  !selectedStructure
+                  !selectedAnatomyId
                 }
               >
                 Transparencia
@@ -1223,7 +1217,7 @@ function App() {
             Información anatómica
           </p>
 
-          {selectedStructure ? (
+          {selectedAnatomyId ? (
             <>
               <div className="mt-5 min-w-0">
                 <div
@@ -1238,12 +1232,12 @@ function App() {
                 </div>
 
                 <h2 className="text-title font-semibold tracking-tight text-ink [overflow-wrap:anywhere]">
-                  {selectedStructureName}
+                  {selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}
                 </h2>
 
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {selectedStructureData && (
-                    <Badge>{selectedStructureData.type}</Badge>
+                  {selectedAnatomyIdData && (
+                    <Badge>{selectedAnatomyIdData.type}</Badge>
                   )}
                   <span className="text-caption text-ink-muted">
                     {activeConfig.fullName}
@@ -1265,36 +1259,36 @@ function App() {
               <div className="mt-6 space-y-6 border-t border-line pt-5">
                 <InfoSection title="Descripción">
                   <p className="break-words">
-                    {selectedStructureData
-                      ? selectedStructureData.description
+                    {selectedAnatomyIdData
+                      ? selectedAnatomyIdData.description
                       : activeSystem === "nervous"
-                        ? `Has seleccionado ${selectedStructureName}. La información educativa del sistema nervioso se añadirá en la siguiente fase.`
+                        ? `Has seleccionado ${selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}. La información educativa del sistema nervioso se añadirá en la siguiente fase.`
                         : activeSystem === "skeletal"
-                          ? `Has seleccionado ${selectedStructureName}. La información educativa del sistema esquelético se añadirá en la siguiente fase.`
+                          ? `Has seleccionado ${selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}. La información educativa del sistema esquelético se añadirá en la siguiente fase.`
                           : activeSystem === "muscular"
-                            ? `Has seleccionado ${selectedStructureName}. La información educativa del sistema muscular se añadirá en la siguiente fase.`
+                            ? `Has seleccionado ${selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}. La información educativa del sistema muscular se añadirá en la siguiente fase.`
                             : activeSystem === "digestive"
-                              ? `Has seleccionado ${selectedStructureName}. La información educativa del sistema digestivo se añadirá en la siguiente fase.`
-                              : `Has seleccionado ${selectedStructureName}. Todavía estamos agregando información educativa específica para esta estructura.`}
+                              ? `Has seleccionado ${selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}. La información educativa del sistema digestivo se añadirá en la siguiente fase.`
+                              : `Has seleccionado ${selectedOriginalName ? getSystemStructureName(activeSystem, selectedOriginalName) : null}. Todavía estamos agregando información educativa específica para esta estructura.`}
                   </p>
                 </InfoSection>
 
-                {selectedStructureData && (
+                {selectedAnatomyIdData && (
                   <>
-                    {selectedStructureData.function && (
+                    {selectedAnatomyIdData.function && (
                       <InfoSection title="Función">
-                        <p>{selectedStructureData.function}</p>
+                        <p>{selectedAnatomyIdData.function}</p>
                       </InfoSection>
                     )}
-                    {selectedStructureData.location && (
+                    {selectedAnatomyIdData.location && (
                       <InfoSection title="Ubicación">
-                        <p>{selectedStructureData.location}</p>
+                        <p>{selectedAnatomyIdData.location}</p>
                       </InfoSection>
                     )}
-                    {selectedStructureData.relationships && selectedStructureData.relationships.length > 0 && (
+                    {selectedAnatomyIdData.relationships && selectedAnatomyIdData.relationships.length > 0 && (
                       <InfoSection title="Relaciones anatómicas">
                         <ul className="list-disc space-y-1 pl-5 marker:text-ink-subtle">
-                          {selectedStructureData.relationships.map((relationship) => (
+                          {selectedAnatomyIdData.relationships.map((relationship) => (
                             <li key={relationship} className="break-words">
                               {relationship}
                             </li>
@@ -1321,7 +1315,7 @@ function App() {
 
           <div className="mt-auto pt-6">
             <div className="border-t border-line pt-5">
-              {selectedStructure && (
+              {selectedAnatomyId && (
                 <p className="mb-3 text-caption font-semibold uppercase tracking-wider text-ink-subtle">
                   Acciones
                 </p>
@@ -1337,8 +1331,8 @@ function App() {
                   </Button>
                 )}
                 <Button
-                  variant={selectedStructure ? "primary" : "secondary"}
-                  disabled={!selectedStructure}
+                  variant={selectedAnatomyId ? "primary" : "secondary"}
+                  disabled={!selectedAnatomyId}
                   className="w-full whitespace-normal"
                 >
                   Preguntar a Anatomy AI
