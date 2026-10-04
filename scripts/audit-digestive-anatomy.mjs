@@ -22,6 +22,9 @@ const { classifyDigestiveHierarchy } = await import("../src/utils/digestive/dige
 
 const entries = anatomyIndex.filter((entry) => entry.system === "digestive");
 const catalogByName = new Map(digestiveModelCatalog.map((entry) => [entry.originalName, entry]));
+const indexedEntryByOriginalName = new Map(entries.flatMap((entry) =>
+  entry.modelBindings.map((binding) => [binding.originalName, entry])
+));
 const bindings = entries.flatMap((entry) => entry.modelBindings.map((binding) => ({
   key: `${binding.modelKey}:${binding.originalName}`,
   originalName: binding.originalName,
@@ -73,6 +76,21 @@ const changedIdsWhenCatalogReversed = bindings
     before: binding.anatomyId,
     after: reversedIdByOriginalName.get(binding.originalName),
   }));
+const stableIdsForIndexedBindingsMissing = bindings
+  .filter((binding) => !digestiveStableIdByOriginalName[binding.originalName])
+  .map((binding) => binding.originalName);
+const indexedBindingsWithMismatchedStableId = bindings
+  .filter((binding) => digestiveStableIdByOriginalName[binding.originalName] !== binding.anatomyId)
+  .map((binding) => ({
+    originalName: binding.originalName,
+    anatomyId: binding.anatomyId,
+    registeredId: digestiveStableIdByOriginalName[binding.originalName],
+  }));
+const stableRegistryNamesMissingFromCatalog = Object.keys(digestiveStableIdByOriginalName)
+  .filter((originalName) => !catalogByName.has(originalName));
+const catalogNamesMissingFromStableRegistry = digestiveModelCatalog
+  .filter((entry) => !digestiveStableIdByOriginalName[entry.originalName])
+  .map((entry) => entry.originalName);
 
 const buffer = fs.readFileSync("public/models/digestive/digestive_overview.glb");
 const jsonLength = buffer.readUInt32LE(12);
@@ -99,22 +117,21 @@ for (const nodeIndex of activeIndexes) {
   if (node.mesh === undefined) continue;
   const primitiveCount = meshes[node.mesh]?.primitives?.length ?? 0;
   primitiveStats.total += primitiveCount;
-  const catalogEntry = catalogByName.get(node.name);
-  if (!catalogEntry) {
+  const indexedEntry = indexedEntryByOriginalName.get(node.name);
+  if (!indexedEntry) {
     primitiveStats.ignored += primitiveCount;
     technicalNodesExcluded.push(node.name);
     continue;
   }
-  primitiveStats[catalogEntry.layer] += primitiveCount;
+  primitiveStats[indexedEntry.layer] += primitiveCount;
 }
 
 let hierarchyResult = { stats: { tract: 0, accessory: 0, other: 0, total: 0 } };
 try {
-  const THREE = await import("three");
   const gltfLoader = await import("three/examples/jsm/loaders/GLTFLoader.js");
   const loader = new gltfLoader.GLTFLoader();
-  const gltfScene = await loader.parseAsync(buffer, "public/models/digestive/");
-  const { classifyDigestiveHierarchy } = await import("../src/utils/digestive/digestiveHierarchy.ts");
+  const glbArrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+  const gltfScene = await loader.parseAsync(glbArrayBuffer, "public/models/digestive/");
   hierarchyResult = classifyDigestiveHierarchy(gltfScene.scene);
 } catch (e) {
   console.warn("Could not load GLB for hierarchy classification:", e.message);
@@ -156,7 +173,7 @@ function example(originalName) {
 const indexedNames = new Set(bindings.map((binding) => binding.originalName));
 const multiBindingEntries = entries.filter((entry) => entry.modelBindings.length > 1);
 
-console.log(JSON.stringify({
+const report = {
   glb: {
     nodes: nodes.length,
     meshNodes: activeIndexes.filter((index) => nodes[index].mesh !== undefined).length,
@@ -189,6 +206,10 @@ console.log(JSON.stringify({
     nodesWithoutStableAnatomyId,
     explicitlyRegisteredModelNodeIds: Object.keys(digestiveStableIdByOriginalName).length,
     duplicateStableIds: duplicates(Object.values(digestiveStableIdByOriginalName)),
+    stableIdsForIndexedBindingsMissing,
+    indexedBindingsWithMismatchedStableId,
+    stableRegistryNamesMissingFromCatalog,
+    catalogNamesMissingFromStableRegistry,
     reversedCatalog: {
       changedIdCount: changedIdsWhenCatalogReversed.length,
       changedIds: changedIdsWhenCatalogReversed,
@@ -211,4 +232,30 @@ console.log(JSON.stringify({
     organ: example("Hígado"),
     withoutEducationalId: example("Gingiva"),
   },
-}, null, 2));
+};
+
+console.log(JSON.stringify(report, null, 2));
+
+const failures = [
+  report.stability.positionDependentIds,
+  report.stability.nodeIndexDependentIds,
+  report.stability.groupIndexDependentIds,
+  report.stability.nodesWithoutStableAnatomyId,
+  report.stability.duplicateStableIds,
+  report.stability.stableIdsForIndexedBindingsMissing,
+  report.stability.indexedBindingsWithMismatchedStableId,
+  report.stability.stableRegistryNamesMissingFromCatalog,
+  report.stability.catalogNamesMissingFromStableRegistry,
+  report.stability.reversedCatalog.changedIds,
+  report.duplicateIds,
+  report.duplicateBindings,
+  report.educationalBindingsMissingFromCatalog,
+  report.catalogNamesNotIndexed,
+  report.utf8Problems,
+].some((items) => items.length > 0)
+  || report.catalogNodes !== report.anatomyEntries
+  || report.modelBindings !== report.catalogNodes
+  || report.hierarchy.classifiedStats.other !== 0
+  || report.hierarchy.classifiedStats.total !== report.glb.primitives.total;
+
+if (failures) process.exitCode = 1;
