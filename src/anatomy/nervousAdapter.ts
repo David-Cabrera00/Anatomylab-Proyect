@@ -21,7 +21,12 @@ function layer(n: string): "nervous-central" | "nervous-peripheral" | "nervous-s
       : "nervous-central";
 }
 
-export function createNervousAnatomyEntries(): readonly AnatomyStructureIndexEntry[] {
+export function createNervousAnatomyEntries(
+  catalogEntries: readonly (typeof nervousModelCatalog)[number][] = nervousModelCatalog
+): readonly AnatomyStructureIndexEntry[] {
+  const catalogEntriesByName = new Map(
+    catalogEntries.map((item) => [item.originalName, item])
+  );
   const bindings: Array<{ originalName: string; data: AnatomyStructureData | undefined }> = [
     ...Object.values(nervousEducationalGroups).flat(),
     { originalNames: ["Plexo coroideo.l", "Plexo coroideo.r"], data: undefined } as any,
@@ -42,7 +47,7 @@ export function createNervousAnatomyEntries(): readonly AnatomyStructureIndexEnt
   }
 
   return [...byOriginalName.values()].map(({ originalName, data }) => {
-    const modelBinding = catalogByName.get(originalName);
+    const modelBinding = catalogEntriesByName.get(originalName);
     if (!modelBinding) {
       throw new Error(`OriginalName nervioso ausente del catálogo: ${originalName}`);
     }
@@ -81,6 +86,12 @@ export function validateNervousAnatomyEntries(entries: readonly AnatomyStructure
       const k = b.modelKey + ":" + b.originalName;
       if (bs.has(k) || !catalogByName.has(b.originalName)) {
         throw new Error(`Binding nervioso inválido: ${k}`);
+      }
+      const registeredId = (
+        nervousStableIdByOriginalName as Record<string, string | undefined>
+      )[b.originalName];
+      if (registeredId !== e.id) {
+        throw new Error(`ID persistente nervioso incoherente: ${b.originalName}`);
       }
       bs.add(k);
       if (b.originalName.endsWith(".l") && e.laterality !== "left" || b.originalName.endsWith(".r") && e.laterality !== "right") {

@@ -362,6 +362,23 @@ function findExactRepair(value) {
   return [...matches][0];
 }
 
+/*
+ * Los textos educativos no siempre coinciden con un originalName del catálogo.
+ * En esos casos sólo aceptamos una reparación si una recodificación completa
+ * elimina todos los marcadores conocidos de mojibake y no introduce U+FFFD.
+ */
+function findSafeTextRepair(value) {
+  if (!/Ã|Â|â|ð|�/.test(value)) {
+    return null;
+  }
+
+  const repaired = buildRepairCandidates(value)
+    .slice(1)
+    .find((candidate) => !/Ã|Â|â|ð|�/.test(candidate));
+
+  return repaired && repaired !== value ? repaired : null;
+}
+
 const files =
   collectTsFiles(DATA_DIR);
 
@@ -407,7 +424,7 @@ function processQuotedStrings(
       }
 
       const repaired =
-        findExactRepair(rawValue);
+        findExactRepair(rawValue) ?? findSafeTextRepair(rawValue);
 
       if (
         repaired &&
@@ -487,6 +504,14 @@ for (const filePath of files) {
       filePath,
       "'"
     );
+
+  updated.split(/\r?\n/).forEach((line, index) => {
+    if (/Ã|Â|â|ð|�/.test(line)) {
+      unresolvedSuspicious.add(
+        `${path.relative(ROOT, filePath).replaceAll("\\", "/")}:${index + 1}: ${line.trim()}`
+      );
+    }
+  });
 
   if (
     WRITE &&

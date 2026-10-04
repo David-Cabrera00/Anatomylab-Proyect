@@ -18,8 +18,6 @@ const { nervousModelCatalog } = await import(
 const { nervousEducationalGroups } = await import("../src/data/nervous.ts");
 const { createNervousAnatomyEntries } = await import("../src/anatomy/nervousAdapter.ts");
 const { nervousStableIdByOriginalName } = await import("../src/anatomy/metadata/nervousStableIds.ts");
-const { classifyNervousHierarchy } = await import("../src/utils/nervous/nervousHierarchy.ts");
-
 const entries = anatomyIndex.filter((entry) => entry.system === "nervous");
 const catalogByName = new Map(nervousModelCatalog.map((entry) => [entry.originalName, entry]));
 const bindings = entries.flatMap((entry) => entry.modelBindings.map((binding) => ({
@@ -54,6 +52,18 @@ const nodesWithoutStableAnatomyId = nervousModelCatalog
   .map((entry) => entry.originalName);
 
 const positionDependentIds = entries.map((entry) => entry.id).filter((id) => /\.member-\d+(?:\.|$)/.test(id));
+const stableIdsForIndexedBindingsMissing = bindings
+  .filter((binding) => !nervousStableIdByOriginalName[binding.originalName])
+  .map((binding) => binding.originalName);
+const indexedBindingsWithMismatchedStableId = bindings
+  .filter((binding) => nervousStableIdByOriginalName[binding.originalName] !== binding.anatomyId)
+  .map((binding) => ({
+    originalName: binding.originalName,
+    anatomyId: binding.anatomyId,
+    registeredId: nervousStableIdByOriginalName[binding.originalName],
+  }));
+const stableRegistryNamesMissingFromCatalog = Object.keys(nervousStableIdByOriginalName)
+  .filter((originalName) => !catalogByName.has(originalName));
 
 const identitySourceLines = [
   ...fs.readFileSync("src/anatomy/nervousAdapter.ts", "utf8").split(/\r?\n/),
@@ -90,41 +100,44 @@ const visit = (index) => {
 };
 for (const rootIndex of sceneDefinition?.nodes ?? []) visit(rootIndex);
 
-const primitiveStats = {
-  "nervous-central": 0,
-  "nervous-peripheral": 0,
-  "nervous-sense": 0,
-  ignored: 0,
-  total: 0,
-};
 const technicalNodesExcluded = [];
 for (const nodeIndex of activeIndexes) {
   const node = nodes[nodeIndex];
   if (node.mesh === undefined) continue;
-  const primitiveCount = meshes[node.mesh]?.primitives?.length ?? 0;
-  primitiveStats.total += primitiveCount;
   const catalogEntry = catalogByName.get(node.name);
   if (!catalogEntry) {
-    primitiveStats.ignored += primitiveCount;
     technicalNodesExcluded.push(node.name);
-    continue;
   }
-  primitiveStats[catalogEntry.layer] += primitiveCount;
 }
 
 let hierarchyResult = { stats: { central: 0, peripheral: 0, sense: 0, other: 0, total: 0 }, rootName: "Scene", topLevelObjects: 0, markersFound: { centralEnd: false, peripheralEnd: false } };
+let hierarchyError = null;
 try {
   const THREE = await import("three");
   const gltfLoader = await import("three/examples/jsm/loaders/GLTFLoader.js");
   const loader = new gltfLoader.GLTFLoader();
-  const gltfScene = await loader.parseAsync(buffer, "public/models/nervous/");
+  const arrayBuffer = buffer.buffer.slice(
+    buffer.byteOffset,
+    buffer.byteOffset + buffer.byteLength
+  );
+  const gltfScene = await loader.parseAsync(arrayBuffer, "public/models/nervous/");
   const { classifyNervousHierarchy } = await import("../src/utils/nervous/nervousHierarchy.ts");
   hierarchyResult = classifyNervousHierarchy(gltfScene.scene);
 } catch (e) {
-  console.warn("Could not load GLB for hierarchy classification:", e.message);
+  hierarchyError = e instanceof Error ? e.message : String(e);
 }
 
 const mojibakePattern = /\u00c3|\u00c2|\ufffd|\u00ef\u00bf\u00bd/;
+const nervousDataSourceFiles = [
+  "src/data/nervous/central.ts",
+  "src/data/nervous/peripheral.ts",
+  "src/data/nervous/senses.ts",
+];
+const sourceUtf8Problems = nervousDataSourceFiles.flatMap((file) =>
+  fs.readFileSync(file, "utf8").split(/\r?\n/).flatMap((line, index) =>
+    mojibakePattern.test(line) ? [`${file}:${index + 1}`] : []
+  )
+);
 const utf8Problems = [
   ...nervousModelCatalog.map((entry) => entry.originalName),
   ...entries.flatMap((entry) => [
@@ -164,9 +177,10 @@ console.log(JSON.stringify({
   glb: {
     nodes: nodes.length,
     meshNodes: activeIndexes.filter((index) => nodes[index].mesh !== undefined).length,
-    primitives: primitiveStats,
+    primitives: meshes.reduce((total, mesh) => total + (mesh.primitives?.length ?? 0), 0),
   },
   hierarchy: {
+    error: hierarchyError,
     rootName: hierarchyResult.rootName,
     topLevelObjects: hierarchyResult.topLevelObjects,
     markersFound: hierarchyResult.markersFound,
@@ -195,6 +209,9 @@ console.log(JSON.stringify({
     nodeIndexDependentIds,
     groupIndexDependentIds,
     nodesWithoutStableAnatomyId,
+    stableIdsForIndexedBindingsMissing,
+    indexedBindingsWithMismatchedStableId,
+    stableRegistryNamesMissingFromCatalog,
     explicitlyRegisteredModelNodeIds: Object.keys(nervousStableIdByOriginalName).length,
     duplicateStableIds: duplicates(Object.values(nervousStableIdByOriginalName)),
     reversedCatalog: {
@@ -211,6 +228,7 @@ console.log(JSON.stringify({
     .filter((entry) => !indexedNames.has(entry.originalName))
     .map((entry) => entry.originalName),
   utf8Problems,
+  sourceUtf8Problems,
   technicalNodesExcluded,
   examples: {
     centralLeft: example("Tálamo.l"),
@@ -223,3 +241,25 @@ console.log(JSON.stringify({
     withoutEducationalId: example("Plexo coroideo.l"),
   },
 }, null, 2));
+
+const failures = [
+  positionDependentIds,
+  nodeIndexDependentIds,
+  groupIndexDependentIds,
+  stableIdsForIndexedBindingsMissing,
+  indexedBindingsWithMismatchedStableId,
+  stableRegistryNamesMissingFromCatalog,
+  duplicates(Object.values(nervousStableIdByOriginalName)),
+  changedIdsWhenCatalogReversed,
+  duplicates(entries.map((entry) => entry.id)),
+  duplicates(bindings.map((binding) => binding.key)),
+  educationalBindings.filter((binding) => !catalogByName.has(binding.originalName)),
+  utf8Problems,
+  sourceUtf8Problems,
+].some((items) => items.length > 0)
+  || hierarchyError !== null
+  || !hierarchyResult.markersFound.centralEnd
+  || !hierarchyResult.markersFound.peripheralEnd
+  || hierarchyResult.stats.other !== 0;
+
+if (failures) process.exitCode = 1;
