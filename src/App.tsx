@@ -1,6 +1,7 @@
 import {
   useCallback,
   useState,
+  useEffect,
 } from "react";
 
 import "./App.css";
@@ -39,6 +40,7 @@ import {
 
 import { getAnatomyStructureData } from "./data/anatomyStructureData";
 import { getAnatomyEntryById } from "./anatomy";
+import type { AnatomyStructureData } from "./data/anatomyStructureData";
 
 import {
   cardiovascularStudyGuide,
@@ -303,9 +305,16 @@ const handleStructureSelect = useCallback((
      INFORMACIÓN EDUCATIVA
   ==================================================== */
 
-  const selectedAnatomyIdData =
-    selectedAnatomyId ? getAnatomyStructureData(activeSystem, selectedAnatomyId ?? "", activeSystem === "cardiovascular" ? cardiovascularView : "overview")
-      : null;
+  const [selectedAnatomyIdData, setSelectedAnatomyIdData] = useState<AnatomyStructureData | null>(null);
+
+  useEffect(() => {
+    if (!selectedAnatomyId) {
+      setSelectedAnatomyIdData(null);
+      return;
+    }
+    const modelKey = activeSystem === "cardiovascular" ? cardiovascularView : "overview";
+    getAnatomyStructureData(activeSystem, selectedAnatomyId, modelKey).then(setSelectedAnatomyIdData);
+  }, [selectedAnatomyId, activeSystem, cardiovascularView]);
 
   /* ====================================================
      CATEGORÍA CARDIOVASCULAR
@@ -481,22 +490,26 @@ const handleStructureSelect = useCallback((
   ==================================================== */
 
   const focusStructure = (
-    structureName:
+    anatomyId:
       string
   ) => {
     setViewerAction(
       null
     );
 
+    const entry = getAnatomyEntryById(anatomyId);
+    const originalName = entry?.modelBindings[0]?.originalName ?? anatomyId;
+
     setActiveLayer(
       getLayerForStudyStructure(
-        structureName
+        originalName
       )
     );
 
     setFocusRequest(
       (previous) => ({
-        structureName,
+        anatomyId,
+        originalName,
 
         id:
           (previous?.id ??
@@ -549,7 +562,7 @@ const handleStructureSelect = useCallback((
       nextIndex
     );
 
-    focusStructure(step.structureId);
+    focusStructure(step.anatomyId);
   };
 
   /* ====================================================
@@ -720,7 +733,7 @@ const handleStructureSelect = useCallback((
               handleStructureSelect(anatomyId, null, anatomyId);
               const target = getAnatomyEntryById(anatomyId);
               if (target) {
-                setFocusRequest({ structureName: anatomyId, id: Date.now() });
+                setFocusRequest({ anatomyId, originalName: target.modelBindings[0]?.originalName ?? anatomyId, id: Date.now() });
               }
             }}
             currentSystem={activeSystem}

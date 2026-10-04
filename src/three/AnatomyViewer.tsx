@@ -98,7 +98,8 @@ export type ViewerAction = {
 ====================================================== */
 
 export type StructureFocusRequest = {
-  structureName: string;
+  anatomyId: string;
+  originalName: string;
   id: number;
 };
 
@@ -948,13 +949,13 @@ function AnatomyModel({
     const selectedTarget = findStructureMesh(
       model,
       system,
-      focusRequest.structureName
+      focusRequest.originalName
     );
 
     if (!selectedTarget) {
       console.warn(
         "No se encontró la estructura:",
-        focusRequest.structureName
+        focusRequest.originalName
       );
       return;
     }

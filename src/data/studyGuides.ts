@@ -1,6 +1,6 @@
 export type StudyStep = {
   id: string;
-  structureId: string;
+  anatomyId: string;
   title: string;
   instruction: string;
   hint: string;
@@ -24,12 +24,12 @@ export const cardiovascularStudyGuide: StudyGuide = {
   description:
     "Estudia las principales estructuras del sistema cardiovascular siguiendo el recorrido general de la sangre a través del corazón y los grandes vasos.",
 
-  steps: [
+steps: [
     {
       id: "cv-study-01",
 
-      structureId:
-        "Superior_vena_cava",
+      anatomyId:
+        "cardiovascular.superior-vena-cava",
 
       title:
         "Vena cava superior",
@@ -44,8 +44,8 @@ export const cardiovascularStudyGuide: StudyGuide = {
     {
       id: "cv-study-02",
 
-      structureId:
-        "Inferior_vena_cava_(thoracic_part)",
+      anatomyId:
+        "cardiovascular.inferior-vena-cava.thoracic",
 
       title:
         "Vena cava inferior",
@@ -60,8 +60,8 @@ export const cardiovascularStudyGuide: StudyGuide = {
     {
       id: "cv-study-03",
 
-      structureId:
-        "Right_atrium",
+      anatomyId:
+        "cardiovascular.right-atrium",
 
       title:
         "Aurícula derecha",
@@ -76,8 +76,8 @@ export const cardiovascularStudyGuide: StudyGuide = {
     {
       id: "cv-study-04",
 
-      structureId:
-        "Right_ventricle",
+      anatomyId:
+        "cardiovascular.right-ventricle",
 
       title:
         "Ventrículo derecho",
@@ -92,8 +92,8 @@ export const cardiovascularStudyGuide: StudyGuide = {
     {
       id: "cv-study-05",
 
-      structureId:
-        "Pulmonary_trunk",
+      anatomyId:
+        "cardiovascular.pulmonary-trunk",
 
       title:
         "Tronco pulmonar",
@@ -108,8 +108,8 @@ export const cardiovascularStudyGuide: StudyGuide = {
     {
       id: "cv-study-06",
 
-      structureId:
-        "Right_pulmonary_artery",
+      anatomyId:
+        "cardiovascular.pulmonary-artery.right",
 
       title:
         "Arteria pulmonar derecha",
@@ -124,8 +124,8 @@ export const cardiovascularStudyGuide: StudyGuide = {
     {
       id: "cv-study-07",
 
-      structureId:
-        "Left_atrium",
+      anatomyId:
+        "cardiovascular.left-atrium",
 
       title:
         "Aurícula izquierda",
@@ -140,8 +140,8 @@ export const cardiovascularStudyGuide: StudyGuide = {
     {
       id: "cv-study-08",
 
-      structureId:
-        "Left_ventricle",
+      anatomyId:
+        "cardiovascular.left-ventricle",
 
       title:
         "Ventrículo izquierdo",
@@ -156,8 +156,8 @@ export const cardiovascularStudyGuide: StudyGuide = {
     {
       id: "cv-study-09",
 
-      structureId:
-        "Ascending_aorta",
+      anatomyId:
+        "cardiovascular.ascending-aorta",
 
       title:
         "Aorta ascendente",
@@ -172,8 +172,8 @@ export const cardiovascularStudyGuide: StudyGuide = {
     {
       id: "cv-study-10",
 
-      structureId:
-        "Aortic_arch",
+      anatomyId:
+        "cardiovascular.aortic-arch",
 
       title:
         "Arco aórtico",
