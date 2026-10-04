@@ -1,5 +1,5 @@
 import { anatomyIndex } from "../anatomy/anatomyIndex";
-import type { AnatomySystemId } from "../config/anatomySystems";
+import { anatomySystems, type AnatomySystemId } from "../config/anatomySystems";
 
 export interface SearchEntry {
   anatomyId: string;
@@ -9,6 +9,7 @@ export interface SearchEntry {
   laterality: "left" | "right" | "midline" | null;
   region: string;
   subregion: string | null;
+  structureType: string;
   keywords: string[];
   educationalId: string | undefined;
   hasEducationalCard: boolean;
@@ -28,12 +29,27 @@ function normalize(value: string | undefined): string {
 
 function buildSearchIndex(): SearchEntry[] {
   return anatomyIndex.map((entry) => {
+    const system = anatomySystems[entry.system];
+    const layerLabel = system.layers.find((layer) => layer.id === entry.layer)?.label;
+    const lateralityKeywords = entry.laterality === "left"
+      ? ["left", "izquierda", "izquierdo"]
+      : entry.laterality === "right"
+        ? ["right", "derecha", "derecho"]
+        : entry.laterality === "midline"
+          ? ["midline", "línea media"]
+          : [];
     const baseKeywords = [
       entry.displayName,
       entry.id,
       entry.system,
+      system.label,
+      system.fullName,
       entry.layer,
+      layerLabel,
       entry.region,
+      entry.subregion,
+      entry.structureType,
+      ...lateralityKeywords,
       ...entry.keywords,
     ];
 
@@ -50,6 +66,7 @@ function buildSearchIndex(): SearchEntry[] {
       laterality: entry.laterality ?? null,
       region: ensureString(entry.region),
       subregion: entry.subregion ?? null,
+      structureType: ensureString(entry.structureType),
       keywords: uniqueKeywords,
       educationalId: entry.educationalId,
       hasEducationalCard: entry.system === "cardiovascular" || !!entry.educationalId,

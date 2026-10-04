@@ -5,14 +5,14 @@ import { searchAnatomy, getSearchEntriesBySystem } from "../search/anatomySearch
 import type { SearchEntry } from "../search/anatomySearchIndex";
 
 interface SearchBarProps {
-  onSelect: (entry: { anatomyId: string; displayName: string; system: AnatomySystemId }) => void;
+  onSelect: (entry: Pick<SearchEntry, "anatomyId" | "system">) => void;
   currentSystem?: AnatomySystemId;
   className?: string;
 }
 
 export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -38,7 +38,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         close();
       }
     };
@@ -71,25 +71,23 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
       setHighlightedIndex((i) => (i - 1 + items.length) % items.length);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (highlightedIndex >= 0 && highlightedIndex < items.length) {
-        const selected = items[highlightedIndex];
-        onSelect({ anatomyId: selected.anatomyId, displayName: selected.displayName, system: selected.system });
-        close();
-      }
+      const selected = items[highlightedIndex >= 0 ? highlightedIndex : 0];
+      onSelect({ anatomyId: selected.anatomyId, system: selected.system });
+      close();
     } else if (e.key === "Escape") {
       close();
     }
   }, [items, highlightedIndex, onSelect, close]);
 
   const handleSelect = useCallback((entry: SearchEntry) => {
-    onSelect({ anatomyId: entry.anatomyId, displayName: entry.displayName, system: entry.system });
+    onSelect({ anatomyId: entry.anatomyId, system: entry.system });
     close();
   }, [onSelect, close]);
 
-  const showDropdown = isOpen && (query.trim() || systemSuggestions.length > 0);
+  const showDropdown = isOpen && (!!query.trim() || systemSuggestions.length > 0);
 
   return (
-    <div className={`relative ${className}`}>
+    <div ref={containerRef} className={`relative ${className}`}>
       <div className="flex items-center gap-2">
         <label htmlFor="anatomy-search" className="sr-only">
           Buscar estructura anatómica
@@ -106,7 +104,11 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
             onChange={(e) => { setQuery(e.target.value); setHighlightedIndex(-1); }}
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
-            placeholder={currentSystem ? `Buscar en ${anatomySystems[currentSystem]?.label}...` : "Buscar estructura..."}
+            placeholder="Buscar en toda la anatomía..."
+            role="combobox"
+            aria-expanded={showDropdown}
+            aria-controls="anatomy-search-results"
+            aria-autocomplete="list"
             className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
             autoComplete="off"
             autoCorrect="off"
@@ -129,7 +131,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
 
       {showDropdown && (
         <div
-          ref={dropdownRef}
+          id="anatomy-search-results"
           className="absolute top-full left-0 right-0 mt-2 z-50 max-h-96 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg divide-y divide-slate-100"
           role="listbox"
         >
