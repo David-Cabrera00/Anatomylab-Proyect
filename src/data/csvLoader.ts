@@ -1,6 +1,5 @@
 import type { AnatomyStructureData } from "./educationalCollection";
 import { cardiovascularStableIdByOriginalName } from "../anatomy/metadata/cardiovascularStableIds";
-import { cardiovascularData } from "../data/cardiovascular";
 
 /**
  * Carga datos educativos desde CSV en tiempo de ejecución.
@@ -12,25 +11,11 @@ export class CSVEducationalLoader {
   static async loadCardiovascularData(): Promise<Map<string, AnatomyStructureData>> {
     if (this.cache) return this.cache;
 
-    // 1. Primero cargar las 18 estructuras originales de cardiovascularData
     const map = new Map<string, AnatomyStructureData>();
-    
-    for (const [id, data] of Object.entries(cardiovascularData)) {
-      const originalName = id.replace(/_/g, " ");
-      
-      map.set(`cardiovascular.${id}`, {
-        id: `cardiovascular.${id}`,
-        name: originalName,
-        type: data.type,
-        description: data.description,
-        function: data.function,
-        location: data.location,
-        relationships: data.relationships || [],
-      });
-    }
-
-    // 2. Luego cargar las 668 estructuras del CSV
     const response = await fetch('/data/csv/cardiovascular_missing_educational_filled.csv');
+    if (!response.ok) {
+      throw new Error(`No se pudo cargar el contenido cardiovascular: ${response.status}`);
+    }
     const text = await response.text();
     const lines = text.trim().split('\n');
     const dataLines = lines.slice(1);
@@ -42,7 +27,9 @@ export class CSVEducationalLoader {
       const match = line.match(/"([^"]+)","([^"]+)","([^"]*)","([^"]*)","([^"]*)","([^"]*)"/);
       if (match) {
         const [, originalName, , description, func, location, relationshipsStr] = match;
-        const relationships = relationshipsStr ? relationshipsStr.split('; ').filter(r => r.trim()) : [];
+        const relationships = relationshipsStr
+          ? relationshipsStr.split(/\s*[;,]\s*/).filter((relationship) => relationship.trim())
+          : [];
         
         // Use the stable ID from the stable IDs map
         const stableId = stableIds[originalName];

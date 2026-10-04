@@ -2,6 +2,7 @@ import type { AnatomySystemId } from "../config/anatomySystems";
 import { getAnatomyEntryById, getAnatomyEntryByOriginalName } from "../anatomy";
 import type { AnatomyModelKey } from "../anatomy";
 import { getRespiratoryStructure } from "./respiratory";
+import { getCardiovascularStructure } from "./cardiovascular";
 import { nervousStructures } from "./nervous";
 import { skeletalStructures } from "./skeletal";
 import { muscularStructures } from "./muscular";
@@ -23,11 +24,6 @@ export async function getAnatomyStructureData(
   structureIdentifier: string,
   modelKey: AnatomyModelKey = "overview"
 ): Promise<AnatomyStructureData | null> {
-  // Para cardiovascular, usar el loader CSV que tiene 668+ estructuras
-  if (system === "cardiovascular") {
-    return CSVEducationalLoader.getStructureData(structureIdentifier);
-  }
-
   // Primero intentar buscar por anatomyId (estable)
   const indexEntryById = getAnatomyEntryById(structureIdentifier);
   const indexEntry = (indexEntryById?.system === system ? indexEntryById : null)
@@ -37,6 +33,17 @@ export async function getAnatomyStructureData(
   const originalName = indexEntry?.system === system
     ? indexEntry.modelBindings.find((binding) => binding.modelKey === modelKey)?.originalName
     : structureIdentifier;
+
+  if (system === "cardiovascular") {
+    const curated = educationalId
+      ? getCardiovascularStructure(educationalId)
+      : null;
+    if (curated) return curated;
+
+    return CSVEducationalLoader.getStructureData(
+      indexEntry?.system === system ? indexEntry.id : structureIdentifier
+    );
+  }
 
   if (system === "respiratory") {
     return (educationalId && getRespiratoryStructure(educationalId))

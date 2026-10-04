@@ -52,7 +52,7 @@ function buildSearchIndex(): SearchEntry[] {
       subregion: entry.subregion ?? null,
       keywords: uniqueKeywords,
       educationalId: entry.educationalId,
-      hasEducationalCard: !!entry.educationalId,
+      hasEducationalCard: entry.system === "cardiovascular" || !!entry.educationalId,
     };
   });
 }
