@@ -721,6 +721,125 @@ export const muscularEducationalIdentityGroupsByEducationalId = {
     anatomyIdBase: "muscular.flexor-digitorum-longus",
     originalBaseNames: ["Músculo flexor largo de los dedos"],
   }],
+  "muscular.suboccipital-group": [
+    { stableKey: "obliquus-capitis-inferior", anatomyIdBase: "muscular.suboccipital-group.obliquus-capitis-inferior", originalBaseNames: ["Músculo oblicuo inferior de la cabeza"] },
+    { stableKey: "obliquus-capitis-superior", anatomyIdBase: "muscular.suboccipital-group.obliquus-capitis-superior", originalBaseNames: ["Músculo oblicuo superior de la cabeza"] },
+    { stableKey: "rectus-capitis-posterior-major", anatomyIdBase: "muscular.suboccipital-group.rectus-capitis-posterior-major", originalBaseNames: ["Músculo recto posterior mayor de la cabeza"] },
+    { stableKey: "rectus-capitis-posterior-minor", anatomyIdBase: "muscular.suboccipital-group.rectus-capitis-posterior-minor", originalBaseNames: ["Músculo recto posterior menor de la cabeza"] },
+  ],
+  "muscular.splenius-group": [
+    { stableKey: "splenius-capitis", anatomyIdBase: "muscular.splenius-group.splenius-capitis", originalBaseNames: ["Músculo esplenio de la cabeza"] },
+    { stableKey: "splenius-cervicis", anatomyIdBase: "muscular.splenius-group.splenius-cervicis", originalBaseNames: ["Músculo esplenio del cuello"] },
+  ],
+  "muscular.gemelli": [
+    { stableKey: "gemellus-superior", anatomyIdBase: "muscular.gemelli.gemellus-superior", originalBaseNames: ["Músculo gemelo superior"] },
+    { stableKey: "gemellus-inferior", anatomyIdBase: "muscular.gemelli.gemellus-inferior", originalBaseNames: ["Músculo gemelo inferior"] },
+  ],
+  "muscular.splenius-capitis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.splenius-capitis",
+    originalBaseNames: ["Músculo esplenio de la cabeza"],
+  }],
+  "muscular.splenius-cervicis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.splenius-cervicis",
+    originalBaseNames: ["Músculo esplenio del cuello"],
+  }],
+  "muscular.obliquus-capitis-inferior": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.obliquus-capitis-inferior",
+    originalBaseNames: ["Músculo oblicuo inferior de la cabeza"],
+  }],
+  "muscular.obliquus-capitis-superior": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.obliquus-capitis-superior",
+    originalBaseNames: ["Músculo oblicuo superior de la cabeza"],
+  }],
+  "muscular.rectus-capitis-posterior-major": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.rectus-capitis-posterior-major",
+    originalBaseNames: ["Músculo recto posterior mayor de la cabeza"],
+  }],
+  "muscular.rectus-capitis-posterior-minor": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.rectus-capitis-posterior-minor",
+    originalBaseNames: ["Músculo recto posterior menor de la cabeza"],
+  }],
+  "muscular.interspinales-cervicis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.interspinales-cervicis",
+    originalBaseNames: ["Músculos interespinosos del cuello"],
+  }],
+  "muscular.interspinales-thoracis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.interspinales-thoracis",
+    originalBaseNames: ["Músculos interespinosos del tórax"],
+  }],
+  "muscular.interspinales-lumborum": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.interspinales-lumborum",
+    originalBaseNames: ["Músculos interespinosos lumbares"],
+  }],
+  "muscular.abductor-digiti-minimi-pedis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.abductor-digiti-minimi-pedis",
+    originalBaseNames: ["Abductor del dedo mínimo del pie"],
+  }],
+  "muscular.abductor-hallucis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.abductor-hallucis",
+    originalBaseNames: ["Abductor del hállux"],
+  }],
+  "muscular.extensor-digitorum-brevis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.extensor-digitorum-brevis",
+    originalBaseNames: ["Extensor corto de los dedos"],
+  }],
+  "muscular.extensor-hallucis-brevis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.extensor-hallucis-brevis",
+    originalBaseNames: ["Extensor corto del hállux"],
+  }],
+  "muscular.extensor-digitorum-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.extensor-digitorum-longus",
+    originalBaseNames: ["Extensor largo de los dedos"],
+  }],
+  "muscular.extensor-hallucis-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.extensor-hallucis-longus",
+    originalBaseNames: ["Extensor largo del hállux"],
+  }],
+  "muscular.flexor-digiti-minimi-brevis-pedis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-digiti-minimi-brevis-pedis",
+    originalBaseNames: ["Flexor del dedo mínimo del pie"],
+  }],
+  "muscular.quadratus-plantae": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.quadratus-plantae",
+    originalBaseNames: ["Músculo cuadrado plantar"],
+  }],
+  "muscular.gemellus-inferior": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.gemellus-inferior",
+    originalBaseNames: ["Músculo gemelo inferior"],
+  }],
+  "muscular.gemellus-superior": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.gemellus-superior",
+    originalBaseNames: ["Músculo gemelo superior"],
+  }],
+  "muscular.opponens-digiti-minimi-pedis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.opponens-digiti-minimi-pedis",
+    originalBaseNames: ["(Músculo oponente del dedo mínimo del pie)"],
+  }],
+  "muscular.obturator-externus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.obturator-externus",
+    originalBaseNames: ["Obturador externo"],
+  }],
 } as const satisfies Readonly<
   Record<string, readonly MuscularEducationalIdentityGroup[]>
 >;

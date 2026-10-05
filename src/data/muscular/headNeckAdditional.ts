@@ -187,5 +187,29 @@ export const headNeckAdditionalEntries: readonly EducationalStructureBinding[] =
       function: "Depresores: bajan labios/comisuras. Elevadores: suben labios/ala nasal. Corrugador: frunce ceño.",
       location: "Tejido subcutáneo facial.",
     }
-  )
+  ),
+
+  // Suboccipitales
+  bilateralGroup(["Músculo oblicuo inferior de la cabeza", "Músculo oblicuo superior de la cabeza", "Músculo recto posterior mayor de la cabeza", "Músculo recto posterior menor de la cabeza"], {
+    id: "muscular.suboccipital-group", name: "Músculos suboccipitales", type: "Músculo esquelético",
+    description: "Cuatro músculos profundos entre el occipital, atlas y axis que controlan movimientos finos de la cabeza.",
+    function: "Oblicuo inferior: rota la cabeza ipsilateral. Oblicuo superior: extiende y flexiona lateralmente. Recto posterior mayor: extiende y rota. Recto posterior menor: extiende.",
+    location: "Región suboccipital, profundo al semiespinoso de la cabeza."
+  }),
+
+  // Esplenios
+  bilateralGroup(["Músculo esplenio de la cabeza", "Músculo esplenio del cuello"], {
+    id: "muscular.splenius-group", name: "Músculos esplenios", type: "Músculo esquelético",
+    description: "Músculos anchos y planos que cubren la región posterior del cuello y se insertan en la base del cráneo y vértebras cervicales.",
+    function: "Extienden la cabeza y el cuello; de forma unilateral rotan la cabeza hacia el mismo lado.",
+    location: "Región posterior del cuello, profundo al trapecio y esternocleidomastoideo."
+  }),
+
+  // Interespinosos cervicales
+  bilateralGroup(["Músculos interespinosos del cuello"], {
+    id: "muscular.interspinales-cervicis", name: "Interespinosos cervicales", type: "Músculo esquelético",
+    description: "Músculos cortos que unen apófisis espinosas adyacentes en la región cervical.",
+    function: "Estabilizan la columna cervical y asisten en la extensión.",
+    location: "Región cervical profunda, entre apófisis espinosas."
+  })
 ];
