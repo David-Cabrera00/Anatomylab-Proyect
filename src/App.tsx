@@ -1,4 +1,4 @@
-import {
+﻿import {
   useCallback,
   useState,
   useEffect,
@@ -40,6 +40,7 @@ import {
 
 import { QuizPanel } from "./components/quiz/QuizPanel";
 import type { QuizState } from "./data/quiz/types";
+import { HistoryTab, FavoritesTab, ProgressTab } from "./components/learning";
 
 /* ======================================================
    VISTA CARDIOVASCULAR
@@ -118,9 +119,9 @@ function App() {
     activeSystem,
     setActiveSystem,
   ] =
-    useState<AnatomySystemId>(
-      "cardiovascular"
-    );
+  useState<AnatomySystemId>(
+    "cardiovascular"
+  );
 
   /* ====================================================
      CARDIOVASCULAR
@@ -130,9 +131,9 @@ function App() {
     cardiovascularView,
     setCardiovascularView,
   ] =
-    useState<CardiovascularView>(
-      "overview"
-    );
+  useState<CardiovascularView>(
+    "overview"
+  );
 
   /* ====================================================
      CAPA
@@ -142,23 +143,23 @@ function App() {
     activeLayer,
     setActiveLayer,
   ] =
-    useState<AnatomyLayerId>(
-      "general"
-    );
+  useState<AnatomyLayerId>(
+    "general"
+  );
 
 /* ======================================================
-     ESTRUCTURA SELECCIONADA
-  ==================================================== */
+   ESTRUCTURA SELECCIONADA
+====================================================== */
 
   const [
     selectedAnatomyId,
     setSelectedAnatomyId,
   ] =
-    useState<
-      string | null
-    >(
-      null
-    );
+  useState<
+    string | null
+  >(
+    null
+  );
 
 const handleStructureSelect = useCallback((anatomyId: string | null) => {
     setSelectedAnatomyId(anatomyId);
@@ -170,35 +171,35 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   const selectedDisplayName = selectedAnatomyEntry?.displayName ?? null;
 
   /* ====================================================
-     ACCIÓN DEL VISOR
+   ACCIÓN DEL VISOR
   ==================================================== */
 
   const [
     viewerAction,
     setViewerAction,
   ] =
-    useState<
-      ViewerAction | null
-    >(
-      null
-    );
+  useState<
+    ViewerAction | null
+  >(
+    null
+  );
 
   /* ====================================================
-     ENFOQUE
+   ENFOQUE
   ==================================================== */
 
   const [
     focusRequest,
     setFocusRequest,
   ] =
-    useState<
-      StructureFocusRequest | null
-    >(
-      null
-    );
+  useState<
+    StructureFocusRequest | null
+  >(
+    null
+  );
 
-/* ====================================================
-     MODO ESTUDIO
+  /* ====================================================
+   MODO ESTUDIO
   ==================================================== */
 
   const [
@@ -218,7 +219,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   );
 
   /* ====================================================
-     QUIZ
+   QUIZ
   ==================================================== */
 
   const [quizState, setQuizState] = useState<QuizState>({ status: "closed" });
@@ -232,7 +233,15 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   }, []);
 
   /* ====================================================
-     CONFIGURACIÓN ACTUAL
+   LEARNING TABS
+  ==================================================== */
+
+  type LearningTab = "quiz" | "history" | "favorites" | "progress";
+
+  const [learningTab, setLearningTab] = useState<LearningTab>("quiz");
+
+  /* ====================================================
+   CONFIGURACIÓN ACTUAL
   ==================================================== */
 
   const activeConfig =
@@ -241,14 +250,14 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     ];
 
   /* ====================================================
-     CAPAS
+   CAPAS
   ==================================================== */
 
   const activeLayers =
     activeConfig.layers;
 
   /* ====================================================
-     GUÍA ACTUAL
+   GUÍA ACTUAL
   ==================================================== */
 
   const activeStudyGuide =
@@ -272,7 +281,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       : 0;
 
   /* ====================================================
-     MODELO ACTUAL
+   MODELO ACTUAL
   ==================================================== */
 
   const heartDetailModel =
@@ -300,7 +309,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     activeSystem === "cardiovascular" ? cardiovascularView : "overview";
 
   /* ====================================================
-     CAPA ACTUAL
+   CAPA ACTUAL
   ==================================================== */
 
   const currentLayer:
@@ -313,11 +322,11 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       : activeLayer;
 
   /* ====================================================
-     NOMBRE DE ESTRUCTURA
+   NOMBRE DE ESTRUCTURA
   ==================================================== */
 
   /* ====================================================
-     INFORMACIÓN EDUCATIVA
+   INFORMACIÓN EDUCATIVA
   ==================================================== */
 
   const [selectedAnatomyIdData, setSelectedAnatomyIdData] = useState<AnatomyStructureData | null>(null);
@@ -332,11 +341,11 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   }, [selectedAnatomyId, activeSystem, cardiovascularView]);
 
   /* ====================================================
-     CATEGORÍA CARDIOVASCULAR
+   CATEGORÍA CARDIOVASCULAR
   ==================================================== */
 
   /* ====================================================
-     CORAZÓN DETALLADO
+   CORAZÓN DETALLADO
   ==================================================== */
 
   const canExploreHeart =
@@ -349,7 +358,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     selectedAnatomyEntry.layer === "heart";
 
   /* ====================================================
-     NOMBRE DE VISTA
+   NOMBRE DE VISTA
   ==================================================== */
 
   const activeViewName =
@@ -366,7 +375,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
         "General";
 
   /* ====================================================
-     EJECUTAR ACCIÓN
+   EJECUTAR ACCIÓN
   ==================================================== */
 
   const runViewerAction = (
@@ -386,7 +395,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   /* ====================================================
-     CAMBIAR SISTEMA
+   CAMBIAR SISTEMA
   ==================================================== */
 
   const changeSystem = (
@@ -432,7 +441,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   /* ====================================================
-     CAMBIAR CAPA
+   CAMBIAR CAPA
   ==================================================== */
 
   const changeLayer = (
@@ -455,7 +464,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   /* ====================================================
-     ENFOCAR ESTRUCTURA
+   ENFOCAR ESTRUCTURA
   ==================================================== */
 
   const focusStructure = (
@@ -499,7 +508,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   /* ====================================================
-     IR A PASO
+   IR A PASO
   ==================================================== */
 
   const goToStudyStep = (
@@ -547,7 +556,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   /* ====================================================
-     INICIAR ESTUDIO
+   INICIAR ESTUDIO
   ==================================================== */
 
   const startStudyMode =
@@ -589,7 +598,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     };
 
   /* ====================================================
-     FINALIZAR ESTUDIO
+   FINALIZAR ESTUDIO
   ==================================================== */
 
   const finishStudyMode =
@@ -626,7 +635,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     };
 
   /* ====================================================
-     ABRIR CORAZÓN
+   ABRIR CORAZÓN
   ==================================================== */
 
   const openHeartDetail =
@@ -657,7 +666,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     };
 
   /* ====================================================
-     VOLVER AL SISTEMA CARDIOVASCULAR
+   VOLVER AL SISTEMA CARDIOVASCULAR
   ==================================================== */
 
   const returnToOverview =
@@ -682,7 +691,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     };
 
   /* ====================================================
-     RENDER
+   RENDER
   ==================================================== */
 
   return (
@@ -787,47 +796,84 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               Aprendizaje
             </p>
 
-            <button
-              type="button"
-              disabled={
-                !activeConfig
-                  .studyAvailable &&
-                !studyMode
-              }
-              onClick={
-                studyMode
-                  ? finishStudyMode
-                  : startStudyMode
-              }
-              className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
-                studyMode
-                  ? "bg-amber-50 text-amber-800"
-                  : activeConfig
-                        .studyAvailable
-                    ? "text-slate-600 hover:bg-slate-100"
-                    : "cursor-not-allowed text-slate-300"
-              }`}
-            >
-              {studyMode
-                ? "Salir del estudio"
-                : "Modo estudio"}
-            </button>
+            {/* Tabs */}
+            <div className="mb-3 flex gap-1" role="tablist">
+              {[
+                { id: "quiz", label: "Quiz", icon: "❓" },
+                { id: "history", label: "Historial", icon: "📜" },
+                { id: "favorites", label: "Favoritos", icon: "⭐" },
+                { id: "progress", label: "Progreso", icon: "📈" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={learningTab === tab.id}
+                  onClick={() => setLearningTab(tab.id as LearningTab)}
+                  className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    learningTab === tab.id
+                      ? "bg-slate-100 text-slate-900"
+                      : "text-slate-500 hover:bg-slate-50"
+                  }`}
+                >
+                  <span>{tab.icon}</span>
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </div>
 
-            <button
-              type="button"
-              onClick={openQuiz}
-              className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition hover:bg-slate-100"
-            >
-              Quiz anatómico
-            </button>
+            {/* Tab Content */}
+            <div className="space-y-2">
+              {learningTab === "quiz" && (
+                <>
+                  <button
+                    type="button"
+                    disabled={
+                      !activeConfig.studyAvailable && !studyMode
+                    }
+                    onClick={studyMode ? finishStudyMode : startStudyMode}
+                    className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
+                      studyMode
+                        ? "bg-amber-50 text-amber-800"
+                        : activeConfig.studyAvailable
+                        ? "text-slate-600 hover:bg-slate-100"
+                        : "cursor-not-allowed text-slate-300"
+                    }`}
+                  >
+                    {studyMode
+                      ? "Salir del estudio"
+                      : "Modo estudio"}
+                  </button>
 
-            <button
-              type="button"
-              disabled
-              className="w-full cursor-not-allowed rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-300"
-            >
-              Tutor IA
-            </button>
+                  <button
+                    type="button"
+                    onClick={openQuiz}
+                    className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition hover:bg-slate-100"
+                  >
+                    Quiz anatómico
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full cursor-not-allowed rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-300"
+                  >
+                    Tutor IA
+                  </button>
+                </>
+              )}
+
+              {learningTab === "history" && (
+                <HistoryTab system={activeSystem} />
+              )}
+
+              {learningTab === "favorites" && (
+                <FavoritesTab system={activeSystem} onFocus={focusStructure} />
+              )}
+
+              {learningTab === "progress" && (
+                <ProgressTab system={activeSystem} />
+              )}
+            </div>
           </div>
         </aside>
 
