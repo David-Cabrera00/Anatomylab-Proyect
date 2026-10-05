@@ -289,9 +289,110 @@ export const respiratoryStudyGuide: StudyGuide = {
   ],
 };
 
+export const nervousStudyGuide: StudyGuide = {
+  id: "nervous-system-overview",
+  system: "nervous",
+  title: "Panorama del sistema nervioso",
+  description:
+    "Reconoce estructuras de los sentidos, centros de integración y vías que comunican el encéfalo con la periferia.",
+  steps: [
+    {
+      id: "nerv-study-01",
+      anatomyId: "nervous.retina.left",
+      title: "Retina izquierda",
+      instruction:
+        "Comienza en la retina, donde la luz se transforma en señales nerviosas que pueden ser procesadas por el encéfalo.",
+      hint:
+        "Busca la capa interna situada en la región posterior del globo ocular izquierdo.",
+    },
+    {
+      id: "nerv-study-02",
+      anatomyId: "nervous.optic-nerve.left",
+      title: "Nervio óptico izquierdo",
+      instruction:
+        "Sigue las señales visuales desde la retina por el nervio óptico en dirección a la base del encéfalo.",
+      hint:
+        "Es el cordón nervioso que emerge de la parte posterior del ojo izquierdo.",
+    },
+    {
+      id: "nerv-study-03",
+      anatomyId: "nervous.thalamus.left",
+      title: "Tálamo izquierdo",
+      instruction:
+        "Identifica el tálamo como un centro profundo que integra y retransmite gran parte de la información sensitiva hacia la corteza.",
+      hint:
+        "Se encuentra profundo en el encéfalo, a un lado del tercer ventrículo.",
+    },
+    {
+      id: "nerv-study-04",
+      anatomyId: "nervous.postcentral-gyrus.left",
+      title: "Giro poscentral izquierdo",
+      instruction:
+        "Observa el giro poscentral y relaciónalo con la recepción cortical de información somatosensitiva.",
+      hint:
+        "Está inmediatamente detrás del surco central, en el lóbulo parietal.",
+    },
+    {
+      id: "nerv-study-05",
+      anatomyId: "nervous.precentral-gyrus.left",
+      title: "Giro precentral izquierdo",
+      instruction:
+        "Localiza el giro precentral, una referencia esencial para comprender el control cortical del movimiento voluntario.",
+      hint:
+        "Está inmediatamente delante del surco central, en el lóbulo frontal.",
+    },
+    {
+      id: "nerv-study-06",
+      anatomyId: "nervous.midbrain.left",
+      title: "Mesencéfalo izquierdo",
+      instruction:
+        "Desciende al mesencéfalo y reconoce la porción superior del tronco encefálico, atravesada por numerosas vías nerviosas.",
+      hint:
+        "Se ubica entre el diencéfalo y el puente.",
+    },
+    {
+      id: "nerv-study-07",
+      anatomyId: "nervous.pons.left",
+      title: "Puente troncoencefálico izquierdo",
+      instruction:
+        "Identifica el puente y observa su posición como conexión entre el mesencéfalo, el bulbo y el cerebelo.",
+      hint:
+        "Busca la prominencia anterior del tronco encefálico situada delante del cerebelo.",
+    },
+    {
+      id: "nerv-study-08",
+      anatomyId: "nervous.medulla-oblongata.left",
+      title: "Bulbo raquídeo izquierdo",
+      instruction:
+        "Continúa hacia el bulbo raquídeo, donde el tronco encefálico se hace continuo con la médula espinal.",
+      hint:
+        "Es la porción inferior del tronco encefálico, justo debajo del puente.",
+    },
+    {
+      id: "nerv-study-09",
+      anatomyId: "nervous.spinal-white-matter",
+      title: "Sustancia blanca de la médula espinal",
+      instruction:
+        "Observa la sustancia blanca medular y relaciónala con las vías ascendentes sensitivas y descendentes motoras.",
+      hint:
+        "En un corte de la médula, rodea externamente a la sustancia gris.",
+    },
+    {
+      id: "nerv-study-10",
+      anatomyId: "nervous.sciatic-nerve.left",
+      title: "Nervio ciático izquierdo",
+      instruction:
+        "Finaliza en un gran nervio periférico y reconoce cómo las fibras nerviosas se distribuyen desde el eje central hacia el miembro inferior.",
+      hint:
+        "Busca un nervio grueso que desciende desde la región glútea por la cara posterior del muslo izquierdo.",
+    },
+  ],
+};
+
 export const studyGuidesBySystem: Partial<
   Record<AnatomySystemId, StudyGuide>
 > = {
   cardiovascular: cardiovascularStudyGuide,
   respiratory: respiratoryStudyGuide,
+  nervous: nervousStudyGuide,
 };

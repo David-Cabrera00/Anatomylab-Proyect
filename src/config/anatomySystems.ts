@@ -116,7 +116,7 @@ export const anatomySystems: Record<
     color: "#d6a84b",
     accentColor: "#fef3c7",
     viewerSize: 5.8,
-    studyAvailable: false,
+    studyAvailable: true,
     layers: [
       { id: "general", label: "General" },
       { id: "nervous-central", label: "Central" },
