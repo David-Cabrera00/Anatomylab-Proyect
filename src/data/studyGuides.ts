@@ -389,10 +389,111 @@ export const nervousStudyGuide: StudyGuide = {
   ],
 };
 
+export const skeletalStudyGuide: StudyGuide = {
+  id: "skeletal-axis-to-limbs",
+  system: "skeletal",
+  title: "Del eje a las extremidades",
+  description:
+    "Distingue el esqueleto axial del apendicular siguiendo estructuras clave desde el cráneo hasta el miembro inferior.",
+  steps: [
+    {
+      id: "skel-study-01",
+      anatomyId: "skeletal.frontal-bone",
+      title: "Hueso frontal",
+      instruction:
+        "Comienza en el hueso frontal y observa cómo forma la frente y parte de la protección anterior del encéfalo.",
+      hint:
+        "Busca el hueso amplio situado en la región anterior del cráneo, por encima de las órbitas.",
+    },
+    {
+      id: "skel-study-02",
+      anatomyId: "skeletal.atlas",
+      title: "Atlas (C1)",
+      instruction:
+        "Identifica el atlas, la primera vértebra cervical, y relaciónalo con el soporte y los movimientos de la cabeza.",
+      hint:
+        "Se encuentra inmediatamente debajo del cráneo y por encima del axis.",
+    },
+    {
+      id: "skel-study-03",
+      anatomyId: "skeletal.thoracic-vertebrae.vertebra-t1",
+      title: "Primera vértebra torácica",
+      instruction:
+        "Localiza T1 como transición entre las regiones cervical y torácica de la columna vertebral.",
+      hint:
+        "Busca la primera vértebra que se articula con una costilla, debajo de C7.",
+    },
+    {
+      id: "skel-study-04",
+      anatomyId: "skeletal.sacrum",
+      title: "Hueso sacro",
+      instruction:
+        "Observa el sacro y reconoce su papel en la transmisión del peso de la columna hacia la pelvis.",
+      hint:
+        "Es el hueso triangular de la línea media situado entre ambos huesos coxales.",
+    },
+    {
+      id: "skel-study-05",
+      anatomyId: "skeletal.clavicle.left",
+      title: "Clavícula izquierda",
+      instruction:
+        "Inicia el recorrido apendicular en la clavícula, que mantiene el hombro separado del tórax y transmite fuerzas al esqueleto axial.",
+      hint:
+        "Busca el hueso curvo y horizontal ubicado en la base anterior del cuello izquierdo.",
+    },
+    {
+      id: "skel-study-06",
+      anatomyId: "skeletal.scapula.left",
+      title: "Escápula izquierda",
+      instruction:
+        "Identifica la escápula y observa su relación con la clavícula, el tórax y la articulación del hombro.",
+      hint:
+        "Es el hueso plano y triangular de la región posterior del hombro izquierdo.",
+    },
+    {
+      id: "skel-study-07",
+      anatomyId: "skeletal.humerus.left",
+      title: "Húmero izquierdo",
+      instruction:
+        "Sigue la extremidad superior hasta el húmero y relaciónalo con las articulaciones del hombro y del codo.",
+      hint:
+        "Es el único hueso largo del brazo, entre la escápula y el antebrazo.",
+    },
+    {
+      id: "skel-study-08",
+      anatomyId: "skeletal.hip-bone.left",
+      title: "Hueso coxal izquierdo",
+      instruction:
+        "Localiza el hueso coxal y reconoce la cintura pélvica como unión entre el esqueleto axial y el miembro inferior.",
+      hint:
+        "Busca el gran hueso lateral de la pelvis que se articula con el sacro y el fémur.",
+    },
+    {
+      id: "skel-study-09",
+      anatomyId: "skeletal.femur.left",
+      title: "Fémur izquierdo",
+      instruction:
+        "Observa el fémur, principal hueso del muslo, y su función en la transmisión de carga entre la cadera y la rodilla.",
+      hint:
+        "Es el hueso más largo del cuerpo y ocupa todo el muslo izquierdo.",
+    },
+    {
+      id: "skel-study-10",
+      anatomyId: "skeletal.tibia.left",
+      title: "Tibia izquierda",
+      instruction:
+        "Finaliza en la tibia y reconoce su papel como principal hueso portador de carga de la pierna.",
+      hint:
+        "Busca el hueso medial y más robusto de la pierna izquierda, entre la rodilla y el tobillo.",
+    },
+  ],
+};
+
 export const studyGuidesBySystem: Partial<
   Record<AnatomySystemId, StudyGuide>
 > = {
   cardiovascular: cardiovascularStudyGuide,
   respiratory: respiratoryStudyGuide,
   nervous: nervousStudyGuide,
+  skeletal: skeletalStudyGuide,
 };

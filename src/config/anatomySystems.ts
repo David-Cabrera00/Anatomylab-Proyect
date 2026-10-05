@@ -139,7 +139,7 @@ export const anatomySystems: Record<
     color: "#d8d1c4",
     accentColor: "#f1f5f9",
     viewerSize: 5.8,
-    studyAvailable: false,
+    studyAvailable: true,
     layers: [
       { id: "general", label: "General" },
       { id: "skeletal-axial", label: "Axial" },
