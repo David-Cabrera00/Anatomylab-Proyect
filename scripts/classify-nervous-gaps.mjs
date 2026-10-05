@@ -19,8 +19,14 @@ const [{ anatomyIndex }, classification] = await Promise.all([
 const pending = anatomyIndex.filter(
   (entry) => entry.system === "nervous" && !entry.educationalId
 );
-const pendingById = new Map(pending.map((entry) => [entry.id, entry]));
-const groups = classification.nervousCentralBatch1Candidates;
+const nervousById = new Map(
+  anatomyIndex.filter((entry) => entry.system === "nervous").map((entry) => [entry.id, entry])
+);
+const groups = [
+  ...classification.nervousCentralBatch1Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
+  ...classification.nervousCentralBatch2Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
+  ...classification.nervousPeripheralBatch1Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
+];
 const candidateIds = groups.flatMap((group) => [...group.anatomyIds]);
 const uniqueCandidateIds = new Set(candidateIds);
 const errors = [];
@@ -33,16 +39,24 @@ if (uniqueCandidateIds.size !== candidateIds.length) {
 }
 
 for (const anatomyId of uniqueCandidateIds) {
-  const entry = pendingById.get(anatomyId);
+  const entry = nervousById.get(anatomyId);
   if (!entry) {
-    errors.push(`Candidato inexistente o ya documentado: ${anatomyId}.`);
-  } else if (entry.layer !== "nervous-central") {
-    errors.push(`${anatomyId} no pertenece a la capa nervous-central.`);
+    errors.push(`Candidato inexistente: ${anatomyId}.`);
+  } else {
+    const expectedLayer = groups.find((group) => group.anatomyIds.includes(anatomyId))?.layer;
+    if (entry.layer !== expectedLayer) {
+      errors.push(`${anatomyId} no pertenece a la capa ${expectedLayer}.`);
+    }
   }
 }
 
 for (const group of groups) {
-  const entries = group.anatomyIds.map((id) => pendingById.get(id)).filter(Boolean);
+  const entries = group.anatomyIds.map((id) => nervousById.get(id)).filter(Boolean);
+  for (const entry of entries) {
+    if (entry.educationalId !== group.educationalId) {
+      errors.push(`${entry.id}: ficha educativa incorrecta o ausente.`);
+    }
+  }
   if (entries.length === 2) {
     const sides = new Set(entries.map((entry) => entry.laterality));
     if (!sides.has("left") || !sides.has("right")) {
@@ -58,9 +72,9 @@ const actual = {
   centralEntriesWithoutEducationalContent: pending.filter((entry) => entry.layer === "nervous-central").length,
   peripheralEntriesWithoutEducationalContent: pending.filter((entry) => entry.layer === "nervous-peripheral").length,
   senseEntriesWithoutEducationalContent: pending.filter((entry) => entry.layer === "nervous-sense").length,
-  reviewedCandidateConcepts: groups.length,
-  reviewedCandidateEntries: uniqueCandidateIds.size,
-  entriesPendingReview: pending.length - uniqueCandidateIds.size,
+  completedConcepts: groups.length,
+  completedEntries: uniqueCandidateIds.size,
+  entriesPendingReview: pending.length,
 };
 
 for (const [key, expected] of Object.entries(
@@ -76,6 +90,6 @@ if (errors.length) {
   process.exitCode = 1;
 } else {
   console.log("Clasificación nerviosa incremental validada.");
-  console.log(`- Lote SNC 1: ${actual.reviewedCandidateConcepts} conceptos / ${actual.reviewedCandidateEntries} entradas.`);
+  console.log(`- Lotes SNC completados: ${actual.completedConcepts} conceptos / ${actual.completedEntries} entradas con ficha.`);
   console.log(`- Pendientes de revisión: ${actual.entriesPendingReview} entradas.`);
 }

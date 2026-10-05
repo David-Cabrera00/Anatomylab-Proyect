@@ -343,4 +343,25 @@ export const peripheralEntries: readonly EducationalStructureBinding[] = [
     location: "Planta del pie, lateral al nervio plantar medial.",
     relationships: ["Nervio tibial", "Nervio plantar medial"],
   }),
+  bilateral("Tronco superior del plexo braquial", {
+    id: "nervous.superior-brachial-plexus-trunk", name: "Tronco superior del plexo braquial", type: "Plexo nervioso",
+    description: "Tronco formado principalmente por la unión de las raíces cervicales C5 y C6.",
+    function: "Conduce fibras motoras y sensitivas destinadas sobre todo a regiones proximales del miembro superior.",
+    location: "Región lateral del cuello, entre las raíces y las divisiones del plexo braquial.",
+    relationships: ["Raíces C5-C6", "Nervio supraescapular", "Divisiones del plexo braquial"],
+  }),
+  bilateral("Tronco medio del plexo braquial", {
+    id: "nervous.middle-brachial-plexus-trunk", name: "Tronco medio del plexo braquial", type: "Plexo nervioso",
+    description: "Continuación principal de la raíz cervical C7 dentro del plexo braquial.",
+    function: "Distribuye fibras de C7 hacia los fascículos y nervios terminales del miembro superior.",
+    location: "Región lateral del cuello, entre los troncos superior e inferior.",
+    relationships: ["Raíz C7", "Divisiones del plexo braquial", "Fascículos del plexo braquial"],
+  }),
+  bilateral("Tronco inferior del plexo braquial", {
+    id: "nervous.inferior-brachial-plexus-trunk", name: "Tronco inferior del plexo braquial", type: "Plexo nervioso",
+    description: "Tronco formado principalmente por la unión de las raíces C8 y T1.",
+    function: "Conduce fibras destinadas en gran parte al antebrazo y la mano.",
+    location: "Porción inferior del plexo braquial, superior a la primera costilla.",
+    relationships: ["Raíces C8-T1", "Divisiones del plexo braquial", "Fascículo medial"],
+  }),
 ];
