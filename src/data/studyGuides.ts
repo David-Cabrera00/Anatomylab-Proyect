@@ -489,6 +489,224 @@ export const skeletalStudyGuide: StudyGuide = {
   ],
 };
 
+export const muscularStudyGuide: StudyGuide = {
+  id: "muscular-regional-overview",
+  system: "muscular",
+  title: "Músculos por regiones",
+  description:
+    "Recorre músculos representativos de cabeza y cuello, tronco, miembro superior y miembro inferior.",
+  steps: [
+    {
+      id: "mus-study-01",
+      anatomyId: "muscular.temporalis.left",
+      title: "Músculo temporal izquierdo",
+      instruction:
+        "Comienza en el músculo temporal y relaciónalo con la elevación y retracción de la mandíbula durante la masticación.",
+      hint:
+        "Busca un músculo amplio en forma de abanico sobre la región lateral del cráneo.",
+    },
+    {
+      id: "mus-study-02",
+      anatomyId: "muscular.sternocleidomastoid.left",
+      title: "Esternocleidomastoideo izquierdo",
+      instruction:
+        "Identifica el esternocleidomastoideo y observa su recorrido oblicuo entre el tórax superior y la región mastoidea.",
+      hint:
+        "Es un músculo superficial y alargado de la cara anterolateral del cuello.",
+    },
+    {
+      id: "mus-study-03",
+      anatomyId: "muscular.pectoralis-minor.left",
+      title: "Pectoral menor izquierdo",
+      instruction:
+        "Localiza el pectoral menor y relaciónalo con la estabilización y el desplazamiento anterior de la escápula.",
+      hint:
+        "Se encuentra profundo al pectoral mayor, desde las costillas hacia la escápula.",
+    },
+    {
+      id: "mus-study-04",
+      anatomyId: "muscular.rectus-abdominis.left",
+      title: "Recto del abdomen izquierdo",
+      instruction:
+        "Observa el recto del abdomen y reconoce su participación en la flexión del tronco y la compresión abdominal.",
+      hint:
+        "Busca la banda muscular vertical situada a un lado de la línea media anterior del abdomen.",
+    },
+    {
+      id: "mus-study-05",
+      anatomyId: "muscular.latissimus-dorsi.left",
+      title: "Dorsal ancho izquierdo",
+      instruction:
+        "Identifica el dorsal ancho y relaciónalo con la extensión, aducción y rotación medial del brazo.",
+      hint:
+        "Es una lámina muscular extensa que cubre la región inferior y lateral del dorso.",
+    },
+    {
+      id: "mus-study-06",
+      anatomyId: "muscular.supraspinatus.left",
+      title: "Supraespinoso izquierdo",
+      instruction:
+        "Localiza el supraespinoso como parte del manguito rotador y observa su relación con el inicio de la abducción del brazo.",
+      hint:
+        "Está sobre la espina de la escápula, profundo al músculo deltoides.",
+    },
+    {
+      id: "mus-study-07",
+      anatomyId: "muscular.brachialis.left",
+      title: "Braquial izquierdo",
+      instruction:
+        "Observa el músculo braquial y reconoce su función como flexor principal del antebrazo en el codo.",
+      hint:
+        "Se encuentra en la cara anterior del brazo, profundo al bíceps braquial.",
+    },
+    {
+      id: "mus-study-08",
+      anatomyId: "muscular.gluteus-medius.left",
+      title: "Glúteo medio izquierdo",
+      instruction:
+        "Identifica el glúteo medio y relaciónalo con la abducción del muslo y la estabilización de la pelvis durante la marcha.",
+      hint:
+        "Busca un músculo en abanico sobre la superficie lateral del ilion.",
+    },
+    {
+      id: "mus-study-09",
+      anatomyId: "muscular.rectus-femoris.left",
+      title: "Recto femoral izquierdo",
+      instruction:
+        "Localiza el recto femoral, componente del cuádriceps que participa en la extensión de la rodilla y la flexión de la cadera.",
+      hint:
+        "Ocupa la región anterior y superficial del muslo.",
+    },
+    {
+      id: "mus-study-10",
+      anatomyId: "muscular.vastus-lateralis.left",
+      title: "Vasto lateral izquierdo",
+      instruction:
+        "Finaliza en el vasto lateral y reconoce su contribución a la extensión de la pierna en la articulación de la rodilla.",
+      hint:
+        "Busca la gran masa muscular situada en la cara lateral del muslo.",
+    },
+  ],
+};
+
+export const digestiveStudyGuide: StudyGuide = {
+  id: "digestive-tract-and-accessory-organs",
+  system: "digestive",
+  title: "Recorrido del sistema digestivo",
+  description:
+    "Sigue el tubo digestivo desde la cavidad oral hasta el colon e identifica los principales órganos accesorios.",
+  steps: [
+    {
+      id: "dig-study-01",
+      anatomyId: "digestive.tongue",
+      title: "Lengua",
+      instruction:
+        "Comienza en la lengua y relaciónala con la manipulación del alimento, la formación del bolo y el inicio de la deglución.",
+      hint:
+        "Busca la estructura muscular que ocupa el suelo de la cavidad oral.",
+    },
+    {
+      id: "dig-study-02",
+      anatomyId: "digestive.esophagus",
+      title: "Esófago",
+      instruction:
+        "Sigue el bolo alimenticio por el esófago y observa su trayecto desde el cuello hasta el estómago.",
+      hint:
+        "Es un tubo que desciende posterior a la tráquea y atraviesa el diafragma.",
+    },
+    {
+      id: "dig-study-03",
+      anatomyId: "digestive.stomach",
+      title: "Estómago",
+      instruction:
+        "Identifica el estómago y reconoce su función en el almacenamiento, la mezcla y el inicio de la digestión del contenido alimentario.",
+      hint:
+        "Busca el órgano con forma de saco en la región superior izquierda del abdomen.",
+    },
+    {
+      id: "dig-study-04",
+      anatomyId: "digestive.liver",
+      title: "Hígado",
+      instruction:
+        "Observa el hígado como órgano accesorio y relaciónalo con la producción de bilis y el procesamiento de nutrientes.",
+      hint:
+        "Es el gran órgano situado principalmente en la parte superior derecha del abdomen.",
+    },
+    {
+      id: "dig-study-05",
+      anatomyId: "digestive.gallbladder",
+      title: "Vesícula biliar",
+      instruction:
+        "Localiza la vesícula biliar y relaciónala con el almacenamiento y la concentración de la bilis producida por el hígado.",
+      hint:
+        "Busca un pequeño saco adherido a la cara inferior del hígado.",
+    },
+    {
+      id: "dig-study-06",
+      anatomyId: "digestive.pancreas",
+      title: "Páncreas",
+      instruction:
+        "Identifica el páncreas y observa su proximidad al duodeno, donde vierte secreciones digestivas.",
+      hint:
+        "Es una glándula alargada situada posterior al estómago.",
+    },
+    {
+      id: "dig-study-07",
+      anatomyId: "digestive.duodenum",
+      title: "Duodeno",
+      instruction:
+        "Continúa hacia el duodeno, primera porción del intestino delgado y punto de llegada de secreciones biliares y pancreáticas.",
+      hint:
+        "Busca el segmento curvo que rodea parcialmente la cabeza del páncreas.",
+    },
+    {
+      id: "dig-study-08",
+      anatomyId: "digestive.jejunum",
+      title: "Yeyuno",
+      instruction:
+        "Sigue el recorrido hasta el yeyuno y relaciónalo con la digestión y absorción de nutrientes en el intestino delgado.",
+      hint:
+        "Forma asas móviles en la región central y superior izquierda del abdomen.",
+    },
+    {
+      id: "dig-study-09",
+      anatomyId: "digestive.ascending-colon",
+      title: "Colon ascendente",
+      instruction:
+        "Identifica el colon ascendente como el segmento del intestino grueso que asciende por el lado derecho del abdomen.",
+      hint:
+        "Busca el tramo vertical derecho que se dirige hacia el hígado.",
+    },
+    {
+      id: "dig-study-10",
+      anatomyId: "digestive.transverse-colon",
+      title: "Colon transverso",
+      instruction:
+        "Sigue el intestino grueso a través del colon transverso y observa su recorrido de derecha a izquierda.",
+      hint:
+        "Es el segmento aproximadamente horizontal que cruza la parte superior del abdomen.",
+    },
+    {
+      id: "dig-study-11",
+      anatomyId: "digestive.descending-colon",
+      title: "Colon descendente",
+      instruction:
+        "Continúa por el colon descendente y reconoce su trayecto hacia la región inferior izquierda del abdomen.",
+      hint:
+        "Busca el tramo vertical situado en el lado izquierdo del abdomen.",
+    },
+    {
+      id: "dig-study-12",
+      anatomyId: "digestive.sigmoid-colon",
+      title: "Colon sigmoide",
+      instruction:
+        "Finaliza en el colon sigmoide y observa cómo el intestino grueso se curva antes de continuar hacia el recto.",
+      hint:
+        "Busca el segmento curvo en forma de S dentro de la región inferior izquierda de la pelvis.",
+    },
+  ],
+};
+
 export const studyGuidesBySystem: Partial<
   Record<AnatomySystemId, StudyGuide>
 > = {
@@ -496,4 +714,6 @@ export const studyGuidesBySystem: Partial<
   respiratory: respiratoryStudyGuide,
   nervous: nervousStudyGuide,
   skeletal: skeletalStudyGuide,
+  muscular: muscularStudyGuide,
+  digestive: digestiveStudyGuide,
 };

@@ -160,7 +160,7 @@ export const anatomySystems: Record<
     color: "#a64b4b",
     accentColor: "#fee2e2",
     viewerSize: 5.8,
-    studyAvailable: false,
+    studyAvailable: true,
     layers: [
       { id: "general", label: "General" },
       { id: "muscular-head-neck", label: "Cabeza y cuello" },
@@ -185,7 +185,7 @@ export const anatomySystems: Record<
     color: "#a87544",
     accentColor: "#ffedd5",
     viewerSize: 6,
-    studyAvailable: false,
+    studyAvailable: true,
     layers: [
       { id: "general", label: "General" },
       { id: "digestive-tract", label: "Tubo digestivo" },
