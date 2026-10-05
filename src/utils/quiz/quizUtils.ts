@@ -1,24 +1,5 @@
-import type { QuizSession, QuizConfig, QuizProgress, QuizQuestion } from "../../data/quiz/types";
+import type { QuizSession, QuizConfig, QuizQuestion } from "../../data/quiz/types";
 import { getQuizConfig, getRandomQuizQuestions } from "../../data/quiz";
-
-const STORAGE_KEY_PREFIX = "anatomylab_quiz_";
-
-export function saveQuizProgress(progress: QuizProgress): void {
-  try {
-    localStorage.setItem(`${STORAGE_KEY_PREFIX}${progress.system}`, JSON.stringify(progress));
-  } catch {
-    // Ignore storage errors (private browsing, quota exceeded, etc.)
-  }
-}
-
-export function loadQuizProgress(system: string): QuizProgress | null {
-  try {
-    const data = localStorage.getItem(`${STORAGE_KEY_PREFIX}${system}`);
-    return data ? JSON.parse(data) : null;
-  } catch {
-    return null;
-  }
-}
 
 export function createQuizSession(configId: string): QuizSession | null {
   const config = getQuizConfig(configId);
@@ -64,54 +45,10 @@ export function answerQuestion(
   };
 }
 
-export function finishQuizSession(session: QuizSession, config: QuizConfig): { session: QuizSession; progress: QuizProgress } {
-  const completedSession = {
+export function finishQuizSession(session: QuizSession): QuizSession {
+  return {
     ...session,
     completedAt: Date.now(),
-  };
-
-  const progress = loadQuizProgress(session.system) ?? {
-    system: session.system,
-    sessionsCompleted: 0,
-    totalScore: 0,
-    bestScore: 0,
-    masteryByAnatomyId: {},
-  };
-
-  const updatedProgress = updateQuizProgress(progress, completedSession, config);
-  saveQuizProgress(updatedProgress);
-
-  return { session: completedSession, progress: updatedProgress };
-}
-
-function updateQuizProgress(
-  progress: QuizProgress,
-  session: QuizSession,
-  config: QuizConfig
-): QuizProgress {
-  const correctCount = Object.values(session.answers).filter((a) => a.correct).length;
-  const score = Math.round((correctCount / config.questionsPerSession) * 100);
-
-  const newMastery = { ...progress.masteryByAnatomyId };
-  for (const [questionId, answer] of Object.entries(session.answers)) {
-    const question = config.questionPool.find((q) => q.id === questionId);
-    if (!question) continue;
-    const key = question.anatomyId;
-    const current = newMastery[key] ?? { correct: 0, total: 0, lastSeen: 0 };
-    newMastery[key] = {
-      correct: current.correct + (answer.correct ? 1 : 0),
-      total: current.total + 1,
-      lastSeen: Date.now(),
-    };
-  }
-
-  return {
-    ...progress,
-    sessionsCompleted: progress.sessionsCompleted + 1,
-    totalScore: progress.totalScore + score,
-    bestScore: Math.max(progress.bestScore, score),
-    masteryByAnatomyId: newMastery,
-    lastSessionAt: Date.now(),
   };
 }
 

@@ -2,18 +2,21 @@ import { useCallback, useState } from "react";
 
 import { Button, Card } from "../ui";
 import type { QuizState } from "../../data/quiz/types";
+import type { AnatomySystemId } from "../../config/anatomySystems";
 import { getQuizConfig, getQuizConfigsBySystem } from "../../data/quiz";
 import { createQuizSession, answerQuestion, finishQuizSession, formatTime } from "../../utils/quiz/quizUtils";
+import { dbSaveQuizSession } from "../../utils/db";
 
 interface QuizPanelProps {
-  activeSystem: string;
+  activeSystem: AnatomySystemId;
   quizState: QuizState;
   onStateChange: (state: QuizState) => void;
   onClose: () => void;
 }
 
 export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: QuizPanelProps) {
-  const [configs] = useState(() => getQuizConfigsBySystem(activeSystem as any));
+  const [configs] = useState(() => getQuizConfigsBySystem(activeSystem));
+  const [persistenceError, setPersistenceError] = useState<string | null>(null);
 
   const handleStartQuiz = useCallback((configId: string) => {
     const session = createQuizSession(configId);
@@ -67,7 +70,35 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
       const updatedSession = answerQuestion(session, config, selectedIndex, timeMs);
 
       if (updatedSession.currentIndex >= config.questionsPerSession) {
-        const { session: completedSession } = finishQuizSession(updatedSession, config);
+        const completedSession = finishQuizSession(updatedSession);
+        const correctCount = Object.values(completedSession.answers).filter((answer) => answer.correct).length;
+        const completedAt = completedSession.completedAt ?? Date.now();
+        setPersistenceError(null);
+        void dbSaveQuizSession({
+          system: completedSession.system,
+          configId: config.id,
+          score: Math.round((correctCount / completedSession.questionIds.length) * 100),
+          totalQuestions: completedSession.questionIds.length,
+          correctCount,
+          startedAt: new Date(completedSession.startedAt).toISOString(),
+          completedAt: new Date(completedAt).toISOString(),
+          timeSpentMs: completedAt - completedSession.startedAt,
+          answers: completedSession.questionIds.flatMap((questionId) => {
+            const completedQuestion = config.questionPool.find((item) => item.id === questionId);
+            const answer = completedSession.answers[questionId];
+            return completedQuestion && answer ? [{
+              questionId,
+              anatomyId: completedQuestion.anatomyId,
+              selectedIndex: answer.selectedIndex,
+              correctIndex: completedQuestion.correctIndex,
+              isCorrect: answer.correct,
+              timeMs: answer.timeMs,
+            }] : [];
+          }),
+        }).catch((error) => {
+          console.error("Error saving quiz session:", error);
+          setPersistenceError("No se pudo guardar esta sesión en el historial.");
+        });
         onStateChange({ status: "reviewing", session: completedSession, config });
       } else {
         onStateChange({ status: "active", session: updatedSession, config });
@@ -129,6 +160,7 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
         </div>
 
         <div className="p-4 flex-1 overflow-y-auto space-y-4">
+          {persistenceError && <p className="rounded-lg bg-red-50 p-3 text-xs text-red-700">{persistenceError}</p>}
           {session.questionIds.map((qId, index) => {
             const question = config.questionPool.find((q) => q.id === qId);
             const answer = session.answers[qId];

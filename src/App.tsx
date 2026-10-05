@@ -2,6 +2,7 @@
   useCallback,
   useState,
   useEffect,
+  useRef,
 } from "react";
 
 import "./App.css";
@@ -41,6 +42,7 @@ import {
 import { QuizPanel } from "./components/quiz/QuizPanel";
 import type { QuizState } from "./data/quiz/types";
 import { HistoryTab, FavoritesTab, ProgressTab } from "./components/learning";
+import { dbAddFavorite, dbAddSearchHistory, dbSaveStudyProgress, dbSaveStudySession } from "./utils/db";
 
 /* ======================================================
    VISTA CARDIOVASCULAR
@@ -239,6 +241,9 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   type LearningTab = "quiz" | "history" | "favorites" | "progress";
 
   const [learningTab, setLearningTab] = useState<LearningTab>("quiz");
+  const [favoritesRevision, setFavoritesRevision] = useState(0);
+  const [favoriteSaved, setFavoriteSaved] = useState(false);
+  const studyStartedAtRef = useRef<number | null>(null);
 
   /* ====================================================
    CONFIGURACIÓN ACTUAL
@@ -279,6 +284,28 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
             .steps.length) *
         100
       : 0;
+
+  const persistStudySession = (completed: boolean) => {
+    const guide = activeStudyGuide;
+    const startedAt = studyStartedAtRef.current;
+    const finishedAt = Date.now();
+    if (!guide || !startedAt) return;
+
+    void dbSaveStudySession({
+      system: activeSystem,
+      guideId: guide.id,
+      currentStep: studyStepIndex,
+      startedAt: new Date(startedAt).toISOString(),
+      completedAt: new Date(finishedAt).toISOString(),
+      completed,
+    }).catch((error) => console.error("Error saving study session:", error));
+
+    if (completed) {
+      const timePerStep = Math.round((finishedAt - startedAt) / guide.steps.length);
+      void Promise.all(guide.steps.map((step) => dbSaveStudyProgress(activeSystem, step.anatomyId, null, timePerStep)))
+        .catch((error) => console.error("Error saving study progress:", error));
+    }
+  };
 
   /* ====================================================
    MODELO ACTUAL
@@ -339,6 +366,10 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     const modelKey = activeSystem === "cardiovascular" ? cardiovascularView : "overview";
     getAnatomyStructureData(activeSystem, selectedAnatomyId, modelKey).then(setSelectedAnatomyIdData);
   }, [selectedAnatomyId, activeSystem, cardiovascularView]);
+
+  useEffect(() => {
+    setFavoriteSaved(false);
+  }, [selectedAnatomyId]);
 
   /* ====================================================
    CATEGORÍA CARDIOVASCULAR
@@ -408,6 +439,9 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     ) {
       return;
     }
+
+    if (studyMode) persistStudySession(false);
+    studyStartedAtRef.current = null;
 
     setStudyMode(
       false
@@ -573,6 +607,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
         true
       );
 
+      studyStartedAtRef.current = Date.now();
+
       handleStructureSelect(null);
 
       setFocusRequest(
@@ -602,7 +638,9 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   ==================================================== */
 
   const finishStudyMode =
-    () => {
+    (completed: boolean) => {
+      persistStudySession(completed);
+      studyStartedAtRef.current = null;
       setStudyMode(
         false
       );
@@ -714,8 +752,12 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           </div>
 
           <SearchBar
-            onSelect={(entry) => {
+            onSelect={(entry, context) => {
               const { anatomyId, system } = entry;
+              if (context.query) {
+                void dbAddSearchHistory(context.query, system, context.resultsCount, anatomyId)
+                  .catch((error) => console.error("Error saving search history:", error));
+              }
               if (system !== activeSystem) {
                 changeSystem(system);
               }
@@ -830,7 +872,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                     disabled={
                       !activeConfig.studyAvailable && !studyMode
                     }
-                    onClick={studyMode ? finishStudyMode : startStudyMode}
+                    onClick={studyMode ? () => finishStudyMode(false) : startStudyMode}
                     className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
                       studyMode
                         ? "bg-amber-50 text-amber-800"
@@ -867,7 +909,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               )}
 
               {learningTab === "favorites" && (
-                <FavoritesTab system={activeSystem} onFocus={focusStructure} />
+                <FavoritesTab system={activeSystem} onFocus={focusStructure} refreshKey={favoritesRevision} />
               )}
 
               {learningTab === "progress" && (
@@ -1048,9 +1090,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
 
                 <button
                   type="button"
-                  onClick={
-                    finishStudyMode
-                  }
+                  onClick={() => finishStudyMode(false)}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-lg text-slate-400 hover:bg-slate-100"
                 >
                   ×
@@ -1153,9 +1193,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                   1 ? (
                   <button
                     type="button"
-                    onClick={
-                      finishStudyMode
-                    }
+                    onClick={() => finishStudyMode(true)}
                     className="flex-1 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white"
                   >
                     Finalizar
@@ -1381,6 +1419,22 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                     Explorar corazón en detalle →
                   </Button>
                 )}
+                <Button
+                  variant="secondary"
+                  disabled={!selectedAnatomyId || favoriteSaved}
+                  onClick={() => {
+                    if (!selectedAnatomyId) return;
+                    void dbAddFavorite(activeSystem, selectedAnatomyId)
+                      .then(() => {
+                        setFavoriteSaved(true);
+                        setFavoritesRevision((revision) => revision + 1);
+                      })
+                      .catch((error) => console.error("Error saving favorite:", error));
+                  }}
+                  className="w-full whitespace-normal"
+                >
+                  {favoriteSaved ? "Guardado en favoritos" : "Guardar en favoritos"}
+                </Button>
                 <Button
                   variant={selectedAnatomyId ? "primary" : "secondary"}
                   disabled={!selectedAnatomyId}

@@ -7,6 +7,7 @@ const auditScripts = [
   "audit-digestive-anatomy.mjs",
   "audit-anatomy-search.mjs",
   "audit-study-guides.mjs",
+  "audit-quiz.mjs",
 ];
 
 for (const scriptName of auditScripts) {
@@ -42,4 +43,4 @@ for (const scriptName of auditScripts) {
   console.log(`PASS ${scriptName}`);
 }
 
-console.log("Anatomía validada: 6/6 sistemas + búsqueda global + guías de estudio.");
+console.log("Anatomía validada: 6/6 sistemas + búsqueda global + guías de estudio + quiz.");

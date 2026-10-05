@@ -1,20 +1,8 @@
 ﻿import { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/core';
+import { dbGetQuizHistory, type QuizHistory } from '../../utils/db';
 
 export interface HistoryTabProps {
   system: string;
-}
-
-interface Session {
-  id: string;
-  system: string;
-  config_id: string;
-  score: number;
-  total_questions: number;
-  correct_count: number;
-  started_at: string;
-  completed_at: string;
-  time_spent_ms: number | null;
 }
 
 const formatDate = (iso: string): string => {
@@ -35,7 +23,7 @@ const formatTime = (ms: number | null): string => {
 };
 
 export function HistoryTab({ system }: HistoryTabProps) {
-  const [sessions, setSessions] = useState<Session[]>([]);
+  const [sessions, setSessions] = useState<QuizHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -46,8 +34,7 @@ export function HistoryTab({ system }: HistoryTabProps) {
   async function loadHistory() {
     setLoading(true);
     try {
-      const data = await invoke('db_get_quiz_history', { system, limit: 50 });
-      setSessions(data as Session[]);
+      setSessions(await dbGetQuizHistory(system, 50));
     } catch (e) {
       console.error('Error loading history:', e);
     } finally {

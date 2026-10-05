@@ -4,7 +4,7 @@ export const muscularQuizQuestions: QuizQuestion[] = [
   {
     id: "mus-q-001",
     type: "identify-by-description",
-    anatomyId: "muscular.sternocleidomastoid",
+    anatomyId: "muscular.sternocleidomastoid.left",
     system: "muscular",
     prompt: "Músculo superficial del cuello con dos cabezas (esternal y clavicular) que se insertan en la apófisis mastoides; bilateral flexiona el cuello, unilateral rota contralateral.",
     options: [
@@ -21,7 +21,7 @@ export const muscularQuizQuestions: QuizQuestion[] = [
   {
     id: "mus-q-002",
     type: "identify-by-function",
-    anatomyId: "muscular.deltoid",
+    anatomyId: "muscular.deltoid.left",
     system: "muscular",
     prompt: "Principal abductor del brazo (fibras acromiales/medias); fibras anteriores flexionan/rotan medial, posteriores extienden/rotan lateral.",
     options: [
@@ -38,7 +38,7 @@ export const muscularQuizQuestions: QuizQuestion[] = [
   {
     id: "mus-q-003",
     type: "identify-by-location",
-    anatomyId: "muscular.biceps-brachii",
+    anatomyId: "muscular.biceps-brachii.left",
     system: "muscular",
     prompt: "Músculo del compartimento anterior del brazo con dos cabezas (larga: tubérculo supraglenoideo; corta: apófisis coracoides); potente supinador.",
     options: [
@@ -55,7 +55,7 @@ export const muscularQuizQuestions: QuizQuestion[] = [
   {
     id: "mus-q-004",
     type: "identify-by-description",
-    anatomyId: "muscular.gluteus-maximus",
+    anatomyId: "muscular.gluteus-maximus.muscle.left",
     system: "muscular",
     prompt: "Músculo más grande y superficial de la región glútea; principal extensor y rotador lateral del muslo; define la forma de la nalga.",
     options: [
@@ -72,7 +72,7 @@ export const muscularQuizQuestions: QuizQuestion[] = [
   {
     id: "mus-q-005",
     type: "identify-by-function",
-    anatomyId: "muscular.gluteus-medius",
+    anatomyId: "muscular.gluteus-medius.left",
     system: "muscular",
     prompt: "Abductor principal del muslo; esencial para mantener la pelvis nivelada durante la marcha monopodal (signo de Trendelenburg si falla).",
     options: [
@@ -89,7 +89,7 @@ export const muscularQuizQuestions: QuizQuestion[] = [
   {
     id: "mus-q-006",
     type: "identify-by-description",
-    anatomyId: "muscular.rectus-femoris",
+    anatomyId: "muscular.rectus-femoris.left",
     system: "muscular",
     prompt: "Único músculo del cuádriceps que cruza dos articulaciones: flexiona cadera y extiende rodilla; parte del tendón cuádriceps/rotuliano.",
     options: [
@@ -106,7 +106,7 @@ export const muscularQuizQuestions: QuizQuestion[] = [
   {
     id: "mus-q-007",
     type: "identify-by-relationship",
-    anatomyId: "muscular.gastrocnemius",
+    anatomyId: "muscular.gastrocnemius.muscle.left",
     system: "muscular",
     prompt: "Músculo superficial de la pantorrilla con dos cabezas (medial y lateral) que se unen al sóleo en el tendón calcáneo (Aquiles); flexiona rodilla y flexión plantar.",
     options: [
@@ -123,7 +123,7 @@ export const muscularQuizQuestions: QuizQuestion[] = [
   {
     id: "mus-q-008",
     type: "identify-by-function",
-    anatomyId: "muscular.tibialis-anterior",
+    anatomyId: "muscular.tibialis-anterior.muscle.left",
     system: "muscular",
     prompt: "Músculo del compartimento anterior de la pierna; principal dorsiflexor e invertidor del pie; inervado por nervio fibular profundo.",
     options: [
@@ -140,7 +140,7 @@ export const muscularQuizQuestions: QuizQuestion[] = [
   {
     id: "mus-q-009",
     type: "identify-by-description",
-    anatomyId: "muscular.pectoralis-major",
+    anatomyId: "muscular.pectoralis-major.left",
     system: "muscular",
     prompt: "Gran músculo en abanico del tórax anterior; porción clavicular flexiona brazo, esternocostal extiende desde flexión; aduce y rota medialmente.",
     options: [
@@ -169,24 +169,24 @@ export const muscularQuizQuestions: QuizQuestion[] = [
   {
     id: "mus-q-011",
     type: "identify-by-function",
-    anatomyId: "muscular.iliopsoas",
+    anatomyId: "muscular.iliopsoas.psoas-major.left",
     system: "muscular",
-    prompt: "Principal flexor de la cadera (ilíaco + psoas mayor); psoas también flexiona tronco si miembros inferiores fijos; inervación: L1-L3 (psoas) + nervio femoral (ilíaco).",
+    prompt: "Músculo profundo que nace en la columna lumbar, se une al ilíaco y participa de forma potente en la flexión de la cadera.",
     options: [
       "Recto femoral",
       "Sartorio",
-      "Ilíaco/Psoas (iliopsoas)",
+      "Psoas mayor",
       "Tensor fasciae latae",
     ],
     correctIndex: 2,
-    explanation: "Iliopsoas = flexor cadera más potente; psoas mayor = único músculo que une columna a miembro inferior.",
+    explanation: "El psoas mayor une la columna lumbar al fémur y, junto con el ilíaco, forma el iliopsoas.",
     difficulty: "medium",
     tags: ["cadera", "flexion", "psoas"],
   },
   {
     id: "mus-q-012",
     type: "identify-by-relationship",
-    anatomyId: "muscular.serratus-anterior",
+    anatomyId: "muscular.serratus-anterior.left",
     system: "muscular",
     prompt: "Músculo de la pared torácica lateral que protrae y rota hacia arriba la escápula; parálisis = 'ala de escápula' (winging); inervación: nervio torácico largo (C5-C7).",
     options: [

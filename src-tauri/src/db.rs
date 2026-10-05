@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection, Result};
+use rusqlite::{params, Connection, OptionalExtension, Result};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -179,10 +179,9 @@ pub struct QuizHistory {
     pub time_spent_ms: Option<i64>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct QuizAnswer {
-    pub id: String,
-    pub quiz_history_id: String,
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct QuizAnswerInput {
     pub question_id: String,
     pub anatomy_id: String,
     pub selected_index: i32,
@@ -246,7 +245,8 @@ pub fn db_get_preference(
     let conn = db.get_connection();
     let mut stmt = conn.prepare("SELECT value FROM preferences WHERE key = ?")
         .map_err(|e| e.to_string())?;
-    let value: Option<String> = stmt.query_row(params![key], |row| row.get(0))
+    let value = stmt.query_row(params![key], |row| row.get(0))
+        .optional()
         .map_err(|e| e.to_string())?;
     Ok(value)
 }
@@ -336,26 +336,28 @@ pub fn db_save_quiz_session(
     started_at: String,
     completed_at: String,
     time_spent_ms: Option<i64>,
-    answers: Vec<(String, String, i32, i32, bool, i64)>, // (question_id, anatomy_id, selected, correct, is_correct, time_ms)
+    answers: Vec<QuizAnswerInput>,
 ) -> Result<String, String> {
-    let conn = db.get_connection();
+    let mut conn = db.get_connection();
     let quiz_id = Uuid::new_v4().to_string();
-    
-    conn.execute(
+    let transaction = conn.transaction().map_err(|e| e.to_string())?;
+
+    transaction.execute(
         "INSERT INTO quiz_history (id, system, config_id, score, total_questions, correct_count, started_at, completed_at, time_spent_ms)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
         params![quiz_id, system, config_id, score, total_questions, correct_count, started_at, completed_at, time_spent_ms],
     ).map_err(|e| e.to_string())?;
     
-    for (question_id, anatomy_id, selected, correct, is_correct, time_ms) in answers {
+    for answer in answers {
         let ans_id = Uuid::new_v4().to_string();
-        conn.execute(
+        transaction.execute(
             "INSERT INTO quiz_answers (id, quiz_history_id, question_id, anatomy_id, selected_index, correct_index, is_correct, time_ms)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            params![ans_id, quiz_id, question_id, anatomy_id, selected, correct, is_correct as i32, time_ms],
+            params![ans_id, quiz_id, answer.question_id, answer.anatomy_id, answer.selected_index, answer.correct_index, answer.is_correct as i32, answer.time_ms],
         ).map_err(|e| e.to_string())?;
     }
-    
+
+    transaction.commit().map_err(|e| e.to_string())?;
     Ok(quiz_id)
 }
 

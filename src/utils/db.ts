@@ -92,7 +92,7 @@ export async function dbSaveStudyProgress(
   score: number | null = null,
   timeSpentMs: number | null = null
 ): Promise<void> {
-  return invoke("db_save_study_progress", { system, anatomy_id: anatomyId, score, time_spent_ms: timeSpentMs });
+  return invoke("db_save_study_progress", { system, anatomyId, score, timeSpentMs });
 }
 
 export async function dbGetStudyProgress(system: string): Promise<StudyProgress[]> {
@@ -102,33 +102,33 @@ export async function dbGetStudyProgress(system: string): Promise<StudyProgress[
 // Quiz History
 export interface SaveQuizSessionParams {
   system: string;
-  config_id: string;
+  configId: string;
   score: number;
-  total_questions: number;
-  correct_count: number;
-  started_at: string;
-  completed_at: string;
-  time_spent_ms: number | null;
+  totalQuestions: number;
+  correctCount: number;
+  startedAt: string;
+  completedAt: string;
+  timeSpentMs: number | null;
   answers: Array<{
-    question_id: string;
-    anatomy_id: string;
-    selected: number;
-    correct: number;
-    is_correct: boolean;
-    time_ms: number;
+    questionId: string;
+    anatomyId: string;
+    selectedIndex: number;
+    correctIndex: number;
+    isCorrect: boolean;
+    timeMs: number;
   }>;
 }
 
 export async function dbSaveQuizSession(params: SaveQuizSessionParams): Promise<string> {
   return invoke("db_save_quiz_session", {
     system: params.system,
-    config_id: params.config_id,
+    configId: params.configId,
     score: params.score,
-    total_questions: params.total_questions,
-    correct_count: params.correct_count,
-    started_at: params.started_at,
-    completed_at: params.completed_at,
-    time_spent_ms: params.time_spent_ms,
+    totalQuestions: params.totalQuestions,
+    correctCount: params.correctCount,
+    startedAt: params.startedAt,
+    completedAt: params.completedAt,
+    timeSpentMs: params.timeSpentMs,
     answers: params.answers,
   });
 }
@@ -143,11 +143,11 @@ export async function dbAddFavorite(
   anatomyId: string,
   notes?: string
 ): Promise<void> {
-  return invoke("db_add_favorite", { system, anatomy_id: anatomyId, notes });
+  return invoke("db_add_favorite", { system, anatomyId, notes });
 }
 
 export async function dbRemoveFavorite(system: string, anatomyId: string): Promise<void> {
-  return invoke("db_remove_favorite", { system, anatomy_id: anatomyId });
+  return invoke("db_remove_favorite", { system, anatomyId });
 }
 
 export async function dbGetFavorites(system?: string): Promise<Favorite[]> {
@@ -157,20 +157,20 @@ export async function dbGetFavorites(system?: string): Promise<Favorite[]> {
 // Study Sessions
 export interface SaveStudySessionParams {
   system: string;
-  guide_id: string;
-  current_step: number;
-  started_at: string;
-  completed_at?: string | null;
+  guideId: string;
+  currentStep: number;
+  startedAt: string;
+  completedAt?: string | null;
   completed: boolean;
 }
 
 export async function dbSaveStudySession(params: SaveStudySessionParams): Promise<string> {
   return invoke("db_save_study_session", {
     system: params.system,
-    guide_id: params.guide_id,
-    current_step: params.current_step,
-    started_at: params.started_at,
-    completed_at: params.completed_at,
+    guideId: params.guideId,
+    currentStep: params.currentStep,
+    startedAt: params.startedAt,
+    completedAt: params.completedAt,
     completed: params.completed,
   });
 }
@@ -189,8 +189,8 @@ export async function dbAddSearchHistory(
   return invoke("db_add_search_history", {
     query,
     system,
-    results_count: resultsCount,
-    selected_anatomy_id: selectedAnatomyId,
+    resultsCount,
+    selectedAnatomyId,
   });
 }
 

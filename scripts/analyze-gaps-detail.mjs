@@ -12,23 +12,39 @@ registerHooks({
 });
 
 const { anatomyIndex } = await import("../src/anatomy/anatomyIndex.ts");
+const { cardiovascularStableIdByOriginalName } = await import("../src/anatomy/metadata/cardiovascularStableIds.ts");
+
+const cardiovascularCsvIds = new Set(
+  fs.readFileSync("public/data/csv/cardiovascular_missing_educational_filled.csv", "utf8")
+    .trim()
+    .split(/\r?\n/)
+    .slice(1)
+    .flatMap((row) => {
+      const match = row.match(/^"([^"]+)",/);
+      const stableId = match ? cardiovascularStableIdByOriginalName[match[1]] : undefined;
+      return stableId ? [stableId] : [];
+    })
+);
+
+const lacksEducationalContent = (entry) => !entry.educationalId
+  && !(entry.system === "cardiovascular" && cardiovascularCsvIds.has(entry.id));
 
 // Skeletal: 19 sin ficha
-const skeletal = anatomyIndex.filter(e => e.system === "skeletal" && !e.educationalId);
+const skeletal = anatomyIndex.filter(e => e.system === "skeletal" && lacksEducationalContent(e));
 console.log("=== SKELETAL (19 sin ficha) ===");
 for (const e of skeletal) {
   console.log(`  - ${e.id} | ${e.displayName} | layer:${e.layer} | lat:${e.laterality} | bindings:${e.modelBindings.map(b=>b.originalName).join(",")}`);
 }
 
 // Nervous: 2 sin ficha
-const nervous = anatomyIndex.filter(e => e.system === "nervous" && !e.educationalId);
+const nervous = anatomyIndex.filter(e => e.system === "nervous" && lacksEducationalContent(e));
 console.log("\n=== NERVOUS (2 sin ficha) ===");
 for (const e of nervous) {
   console.log(`  - ${e.id} | ${e.displayName} | layer:${e.layer} | lat:${e.laterality} | bindings:${e.modelBindings.map(b=>b.originalName).join(",")}`);
 }
 
 // Muscular: analizar patrones
-const muscular = anatomyIndex.filter(e => e.system === "muscular" && !e.educationalId);
+const muscular = anatomyIndex.filter(e => e.system === "muscular" && lacksEducationalContent(e));
 console.log("\n=== MUSCULAR - ANÁLISIS DE PATRONES ===");
 const byLayer = {};
 for (const e of muscular) {
@@ -54,7 +70,7 @@ for (const [layer, entries] of Object.entries(byLayer)) {
 }
 
 // Respiratory: analizar patrones
-const respiratory = anatomyIndex.filter(e => e.system === "respiratory" && !e.educationalId);
+const respiratory = anatomyIndex.filter(e => e.system === "respiratory" && lacksEducationalContent(e));
 console.log("\n=== RESPIRATORY (26 sin ficha) ===");
 for (const e of respiratory) {
   console.log(`  - ${e.id} | ${e.displayName} | layer:${e.layer} | lat:${e.laterality} | bindings:${e.modelBindings.map(b=>b.originalName).join(",")}`);

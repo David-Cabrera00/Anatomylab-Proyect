@@ -1,6 +1,7 @@
 mod db;
 
 use db::DbConnection;
+use tauri::Manager;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -12,7 +13,11 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .manage(DbConnection::new)
+        .setup(|app| {
+            let db = DbConnection::new(app.handle())?;
+            app.manage(db);
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             greet,
             // Preferences
