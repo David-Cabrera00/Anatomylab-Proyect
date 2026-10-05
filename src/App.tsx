@@ -38,6 +38,9 @@ import {
   studyGuidesBySystem,
 } from "./data/studyGuides";
 
+import { QuizPanel } from "./components/quiz/QuizPanel";
+import type { QuizState } from "./data/quiz/types";
+
 /* ======================================================
    VISTA CARDIOVASCULAR
 ====================================================== */
@@ -194,7 +197,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       null
     );
 
-  /* ====================================================
+/* ====================================================
      MODO ESTUDIO
   ==================================================== */
 
@@ -202,17 +205,31 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     studyMode,
     setStudyMode,
   ] =
-    useState(
-      false
-    );
+  useState(
+    false
+  );
 
   const [
     studyStepIndex,
     setStudyStepIndex,
   ] =
-    useState(
-      0
-    );
+  useState(
+    0
+  );
+
+  /* ====================================================
+     QUIZ
+  ==================================================== */
+
+  const [quizState, setQuizState] = useState<QuizState>({ status: "closed" });
+
+  const openQuiz = useCallback(() => {
+    setQuizState({ status: "idle" });
+  }, []);
+
+  const closeQuiz = useCallback(() => {
+    setQuizState({ status: "closed" });
+  }, []);
 
   /* ====================================================
      CONFIGURACIÓN ACTUAL
@@ -798,8 +815,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
 
             <button
               type="button"
-              disabled
-              className="w-full cursor-not-allowed rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-300"
+              onClick={openQuiz}
+              className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition hover:bg-slate-100"
             >
               Quiz anatómico
             </button>
@@ -1112,6 +1129,21 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                   </button>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* =================================================
+              QUIZ
+          ================================================= */}
+
+          {quizState.status !== "closed" && (
+            <div className="absolute left-5 top-5 z-20 w-[380px] max-h-[calc(100%-40px)] overflow-hidden">
+              <QuizPanel
+                activeSystem={activeSystem}
+                quizState={quizState}
+                onStateChange={setQuizState}
+                onClose={closeQuiz}
+              />
             </div>
           )}
 

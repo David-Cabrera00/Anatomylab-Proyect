@@ -512,6 +512,215 @@ export const muscularEducationalIdentityGroupsByEducationalId = {
     { stableKey: "plantar-interossei", anatomyIdBase: "muscular.foot-intrinsics.plantar-interossei", originalBaseNames: ["Músculos interóseos plantares"] },
     { stableKey: "flexor-digitorum-brevis", anatomyIdBase: "muscular.foot-intrinsics.flexor-digitorum-brevis", originalBaseNames: ["Flexor corto de los dedos"] },
   ],
+  "muscular.prevertebral-group": [{
+    stableKey: "muscle-group",
+    anatomyIdBase: "muscular.prevertebral-group",
+    originalBaseNames: ["Músculo largo de la cabeza", "Músculo largo del cuello", "Músculo recto anterior de la cabeza", "Músculo recto lateral de la cabeza"],
+  }],
+  "muscular.pharyngeal-constrictors": [{
+    stableKey: "muscle-group",
+    anatomyIdBase: "muscular.pharyngeal-constrictors",
+    originalBaseNames: ["Constrictor superior de la faringe", "Constrictor medio de la faringe", "Constrictor inferior de la faringe"],
+  }],
+  "muscular.stylopharyngeus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.stylopharyngeus",
+    originalBaseNames: ["Músculo estilofaríngeo"],
+  }],
+  "muscular.sternothyroid": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.sternothyroid",
+    originalBaseNames: ["Músculo esternotiroideo"],
+  }],
+  "muscular.laryngeal-abductors-adductors": [
+    { stableKey: "posterior-cricoarytenoid", anatomyIdBase: "muscular.laryngeal-abductors-adductors.posterior-cricoarytenoid", originalBaseNames: ["Músculo cricoaritenoideo posterior"] },
+    { stableKey: "lateral-cricoarytenoid", anatomyIdBase: "muscular.laryngeal-abductors-adductors.lateral-cricoarytenoid", originalBaseNames: ["Músculo cricoaritenoideo lateral"] },
+    { stableKey: "transverse-arytenoid", anatomyIdBase: "muscular.laryngeal-abductors-adductors.transverse-arytenoid", originalBaseNames: ["Músculo aritenoideo transverso"] },
+  ],
+  "muscular.suprahyoid-additional": [
+    { stableKey: "stylohyoid", anatomyIdBase: "muscular.suprahyoid-additional.stylohyoid", originalBaseNames: ["Músculo estilohioideo"] },
+    { stableKey: "geniohyoid", anatomyIdBase: "muscular.suprahyoid-additional.geniohyoid", originalBaseNames: ["Músculo geniohioideo"] },
+  ],
+  "muscular.tongue-muscles": [
+    { stableKey: "genioglossus", anatomyIdBase: "muscular.tongue-muscles.genioglossus", originalBaseNames: ["Músculo geniogloso"] },
+    { stableKey: "hyoglossus", anatomyIdBase: "muscular.tongue-muscles.hyoglossus", originalBaseNames: ["Músculo hiogloso"] },
+  ],
+  "muscular.palatopharyngeus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.palatopharyngeus",
+    originalBaseNames: ["Músculo palatofaríngeo"],
+  }],
+  "muscular.extraocular-group": [
+    { stableKey: "levator-palpebrae", anatomyIdBase: "muscular.extraocular-group.levator-palpebrae", originalBaseNames: ["Elevador del párpado superior"] },
+    { stableKey: "superior-rectus", anatomyIdBase: "muscular.extraocular-group.superior-rectus", originalBaseNames: ["Músculo recto superior"] },
+    { stableKey: "inferior-rectus", anatomyIdBase: "muscular.extraocular-group.inferior-rectus", originalBaseNames: ["Músculo recto inferior"] },
+    { stableKey: "medial-rectus", anatomyIdBase: "muscular.extraocular-group.medial-rectus", originalBaseNames: ["Músculo recto medial"] },
+    { stableKey: "lateral-rectus", anatomyIdBase: "muscular.extraocular-group.lateral-rectus", originalBaseNames: ["Músculo recto lateral"] },
+    { stableKey: "superior-oblique", anatomyIdBase: "muscular.extraocular-group.superior-oblique", originalBaseNames: ["Músculo oblicuo superior del bulbo ocular"] },
+    { stableKey: "inferior-oblique", anatomyIdBase: "muscular.extraocular-group.inferior-oblique", originalBaseNames: ["Músculo oblicuo inferior del bulbo ocular"] },
+  ],
+  "muscular.pterygoid-group": [
+    { stableKey: "medial-pterygoid", anatomyIdBase: "muscular.pterygoid-group.medial-pterygoid", originalBaseNames: ["Músculo pterigoideo medial"] },
+    { stableKey: "inferior-head-lateral-pterygoid", anatomyIdBase: "muscular.pterygoid-group.inferior-head-lateral-pterygoid", originalBaseNames: ["Cabeza inferior del músculo pterigoideo lateral"] },
+    { stableKey: "superior-head-lateral-pterygoid", anatomyIdBase: "muscular.pterygoid-group.superior-head-lateral-pterygoid", originalBaseNames: ["Cabeza superior del músculo pterigoideo lateral"] },
+  ],
+  "muscular.epicranial-group": [
+    { stableKey: "frontalis", anatomyIdBase: "muscular.epicranial-group.frontalis", originalBaseNames: ["Músculo frontal"] },
+    { stableKey: "occipitalis", anatomyIdBase: "muscular.epicranial-group.occipitalis", originalBaseNames: ["Músculo occipital"] },
+    { stableKey: "temporoparietalis", anatomyIdBase: "muscular.epicranial-group.temporoparietalis", originalBaseNames: ["Músculo temporoparietal"] },
+  ],
+  "muscular.facial-expression-detailed": [
+    { stableKey: "depressor-labii-inferioris", anatomyIdBase: "muscular.facial-expression-detailed.depressor-labii-inferioris", originalBaseNames: ["Depresor del labio inferior"] },
+    { stableKey: "depressor-anguli-oris", anatomyIdBase: "muscular.facial-expression-detailed.depressor-anguli-oris", originalBaseNames: ["Depresor del ángulo oral"] },
+    { stableKey: "depressor-septi-nasi", anatomyIdBase: "muscular.facial-expression-detailed.depressor-septi-nasi", originalBaseNames: ["Depresor del septo nasal"] },
+    { stableKey: "levator-anguli-oris", anatomyIdBase: "muscular.facial-expression-detailed.levator-anguli-oris", originalBaseNames: ["Elevador del angulo de la boca"] },
+    { stableKey: "levator-labii-superioris", anatomyIdBase: "muscular.facial-expression-detailed.levator-labii-superioris", originalBaseNames: ["Elevador del labio superior"] },
+    { stableKey: "levator-labii-superioris-alaeque-nasi", anatomyIdBase: "muscular.facial-expression-detailed.levator-labii-superioris-alaeque-nasi", originalBaseNames: ["Elevador nasolabial"] },
+    { stableKey: "corrugator-supercilii", anatomyIdBase: "muscular.facial-expression-detailed.corrugator-supercilii", originalBaseNames: ["Músculo corrugador del supercilio"] },
+  ],
+  "muscular.quadratus-lumborum": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.quadratus-lumborum",
+    originalBaseNames: ["Músculo cuadrado lumbar"],
+  }],
+  "muscular.pyramidalis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.pyramidalis",
+    originalBaseNames: ["Músculo piramidal"],
+  }],
+  "muscular.spinalis-group": [
+    { stableKey: "spinalis-capitis", anatomyIdBase: "muscular.spinalis-group.spinalis-capitis", originalBaseNames: ["Músculo espinal de la cabeza"] },
+    { stableKey: "spinalis-cervicis", anatomyIdBase: "muscular.spinalis-group.spinalis-cervicis", originalBaseNames: ["Músculo espinal del cuello"] },
+    { stableKey: "spinalis-thoracis", anatomyIdBase: "muscular.spinalis-group.spinalis-thoracis", originalBaseNames: ["Músculo espinal del tórax"] },
+  ],
+  "muscular.longissimus-group": [
+    { stableKey: "longissimus-capitis", anatomyIdBase: "muscular.longissimus-group.longissimus-capitis", originalBaseNames: ["Músculo longísimo de la cabeza"] },
+    { stableKey: "longissimus-cervicis", anatomyIdBase: "muscular.longissimus-group.longissimus-cervicis", originalBaseNames: ["Músculo longísmo del cuello"] },
+    { stableKey: "longissimus-thoracis", anatomyIdBase: "muscular.longissimus-group.longissimus-thoracis", originalBaseNames: ["Músculo longísimo del tórax"] },
+  ],
+  "muscular.iliocostalis-group": [
+    { stableKey: "iliocostalis-cervicis", anatomyIdBase: "muscular.iliocostalis-group.iliocostalis-cervicis", originalBaseNames: ["Músculo iliocostal del cuello"] },
+    { stableKey: "iliocostalis-thoracis", anatomyIdBase: "muscular.iliocostalis-group.iliocostalis-thoracis", originalBaseNames: ["Músculo iliocostal del tórax"] },
+    { stableKey: "iliocostalis-lumborum", anatomyIdBase: "muscular.iliocostalis-group.iliocostalis-lumborum", originalBaseNames: ["Músculo iliocostal lumbar"] },
+  ],
+  "muscular.semispinalis-group": [
+    { stableKey: "semispinalis-cervicis", anatomyIdBase: "muscular.semispinalis-group.semispinalis-cervicis", originalBaseNames: ["Músculo semiespinoso del cuello"] },
+    { stableKey: "semispinalis-thoracis", anatomyIdBase: "muscular.semispinalis-group.semispinalis-thoracis", originalBaseNames: ["Músculo semiespinoso del tórax"] },
+  ],
+  "muscular.rotatores": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.rotatores",
+    originalBaseNames: ["Rotadores"],
+  }],
+  "muscular.levator-scapulae": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.levator-scapulae",
+    originalBaseNames: ["Elevador de la escápula"],
+  }],
+  "muscular.rhomboids": [
+    { stableKey: "rhomboid-major", anatomyIdBase: "muscular.rhomboids.rhomboid-major", originalBaseNames: ["Músculo romboides mayor"] },
+    { stableKey: "rhomboid-minor", anatomyIdBase: "muscular.rhomboids.rhomboid-minor", originalBaseNames: ["Músculo romboides menor"] },
+  ],
+  "muscular.serratus-posterior": [
+    { stableKey: "serratus-posterior-superior", anatomyIdBase: "muscular.serratus-posterior.serratus-posterior-superior", originalBaseNames: ["Músculo serrato posterior superior"] },
+    { stableKey: "serratus-posterior-inferior", anatomyIdBase: "muscular.serratus-posterior.serratus-posterior-inferior", originalBaseNames: ["Músculo serrato posterior inferior"] },
+  ],
+  "muscular.levator-ani": [
+    { stableKey: "iliococcygeus", anatomyIdBase: "muscular.levator-ani.iliococcygeus", originalBaseNames: ["Músculo iliococcígeo"] },
+    { stableKey: "puborectalis", anatomyIdBase: "muscular.levator-ani.puborectalis", originalBaseNames: ["Músculo puboanal"] },
+    { stableKey: "pubococcygeus", anatomyIdBase: "muscular.levator-ani.pubococcygeus", originalBaseNames: ["Músculo pubococcígeo"] },
+  ],
+  "muscular.coccygeus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.coccygeus",
+    originalBaseNames: ["Músculo coccígeo"],
+  }],
+  "muscular.external-anal-sphincter": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.external-anal-sphincter",
+    originalBaseNames: ["Esfínter anal externo"],
+  }],
+  "muscular.levatores-costarum": [
+    { stableKey: "levatores-costarum-breves", anatomyIdBase: "muscular.levatores-costarum.levatores-costarum-breves", originalBaseNames: ["Elevadores cortos de las costillas"] },
+    { stableKey: "levatores-costarum-longi", anatomyIdBase: "muscular.levatores-costarum.levatores-costarum-longi", originalBaseNames: ["Elevadores largos de las costillas"] },
+  ],
+  "muscular.subclavius": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.subclavius",
+    originalBaseNames: ["Músculo subclavio"],
+  }],
+  "muscular.transversus-thoracis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.transversus-thoracis",
+    originalBaseNames: ["Músculo transverso del tórax"],
+  }],
+  "muscular.flexor-pollicis-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-pollicis-longus",
+    originalBaseNames: ["Flexor largo del pulgar"],
+  }],
+  "muscular.flexor-digitorum-profundus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-digitorum-profundus",
+    originalBaseNames: ["Flexor profundo de los dedos"],
+  }],
+  "muscular.flexor-carpi-radialis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-carpi-radialis",
+    originalBaseNames: ["Flexor radial del carpo"],
+  }],
+  "muscular.palmaris-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.palmaris-longus",
+    originalBaseNames: ["Músculo palmar largo"],
+  }],
+  "muscular.thumb-extensors-abductors": [
+    { stableKey: "abductor-pollicis-longus", anatomyIdBase: "muscular.thumb-extensors-abductors.abductor-pollicis-longus", originalBaseNames: ["Abductor largo del pulgar"] },
+    { stableKey: "extensor-pollicis-brevis", anatomyIdBase: "muscular.thumb-extensors-abductors.extensor-pollicis-brevis", originalBaseNames: ["Extensor corto del pulgar"] },
+  ],
+  "muscular.extensor-pollicis-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.extensor-pollicis-longus",
+    originalBaseNames: ["Extensor largo del pulgar"],
+  }],
+  "muscular.extensor-carpi-radialis": [
+    { stableKey: "extensor-carpi-radialis-brevis", anatomyIdBase: "muscular.extensor-carpi-radialis.extensor-carpi-radialis-brevis", originalBaseNames: ["Extensor radial corto del carpo"] },
+    { stableKey: "extensor-carpi-radialis-longus", anatomyIdBase: "muscular.extensor-carpi-radialis.extensor-carpi-radialis-longus", originalBaseNames: ["Extensor radial largo del carpo"] },
+  ],
+  "muscular.anconeus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.anconeus",
+    originalBaseNames: ["Músculo ancóneo"],
+  }],
+  "muscular.pectineus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.pectineus",
+    originalBaseNames: ["Músculo pectíneo"],
+  }],
+  "muscular.popliteus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.popliteus",
+    originalBaseNames: ["Músculo poplíteo"],
+  }],
+  "muscular.plantaris": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.plantaris",
+    originalBaseNames: ["Músculo plantar"],
+  }],
+  "muscular.iliopsoas": [
+    { stableKey: "iliacus", anatomyIdBase: "muscular.iliopsoas.iliacus", originalBaseNames: ["Músculo ilíaco"] },
+    { stableKey: "psoas-major", anatomyIdBase: "muscular.iliopsoas.psoas-major", originalBaseNames: ["Psoas mayor"] },
+  ],
+  "muscular.flexor-hallucis-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-hallucis-longus",
+    originalBaseNames: ["Flexor largo del hállux"],
+  }],
+  "muscular.flexor-digitorum-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-digitorum-longus",
+    originalBaseNames: ["Músculo flexor largo de los dedos"],
+  }],
 } as const satisfies Readonly<
   Record<string, readonly MuscularEducationalIdentityGroup[]>
 >;

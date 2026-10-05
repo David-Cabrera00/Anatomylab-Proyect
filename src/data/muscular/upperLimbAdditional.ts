@@ -36,5 +36,49 @@ export const upperLimbAdditionalEntries: readonly EducationalStructureBinding[] 
     id: "muscular.hypothenar", name: "Eminencia hipotenar", type: "Músculo esquelético",
     description: "Conjunto de músculos cortos situado en la base del quinto dedo.",
     function: "Abduce, flexiona y opone el dedo mínimo para adaptar la mano a objetos curvos.", location: "Región medial de la palma."
+  }),
+
+  // Flexores profundos del antebrazo y mano
+  bilateralGroup(["Flexor largo del pulgar"], {
+    id: "muscular.flexor-pollicis-longus", name: "Flexor largo del pulgar", type: "Músculo esquelético",
+    description: "Músculo del compartimento anterior profundo del antebrazo que flexiona el pulgar.",
+    function: "Flexiona la falange distal del pulgar; ayuda en la oposición.", location: "Compartimento anterior profundo del antebrazo."
+  }),
+  bilateralGroup(["Flexor profundo de los dedos"], {
+    id: "muscular.flexor-digitorum-profundus", name: "Flexor profundo de los dedos", type: "Músculo esquelético",
+    description: "Músculo grande y profundo del antebrazo anterior que flexiona las falanges distales de los dedos 2-5.",
+    function: "Flexiona las interfalángicas distales; único flexor de la falange distal.", location: "Compartimento anterior profundo del antebrazo."
+  }),
+  bilateralGroup(["Flexor radial del carpo"], {
+    id: "muscular.flexor-carpi-radialis", name: "Flexor radial del carpo", type: "Músculo esquelético",
+    description: "Músculo superficial del compartimento anterior del antebrazo, lateral al palmar largo.",
+    function: "Flexiona y abduce la muñeca (desviación radial).", location: "Compartimento anterior superficial del antebrazo."
+  }),
+  bilateralGroup(["Músculo palmar largo"], {
+    id: "muscular.palmaris-longus", name: "Músculo palmar largo", type: "Músculo esquelético",
+    description: "Músculo delgado y fusiforme situado entre el flexor radial y el flexor ulnar del carpo (ausente en ~14% de personas).",
+    function: "Tensa la aponeurosis palmar y flexiona débilmente la muñeca.", location: "Compartimento anterior superficial del antebrazo."
+  }),
+
+  // Extensores del pulgar y muñeca
+  bilateralGroup(["Abductor largo del pulgar", "Extensor corto del pulgar"], {
+    id: "muscular.thumb-extensors-abductors", name: "Extensores y abductores del pulgar", type: "Músculo esquelético",
+    description: "Músculos del compartimento posterior del antebrazo que mueven el pulgar (primer compartimento dorsal).",
+    function: "Abductor largo: abduce y extiende el pulgar. Extensor corto: extiende la falange proximal del pulgar.", location: "Compartimento posterior del antebrazo (primer compartimento dorsal)."
+  }),
+  bilateralGroup(["Extensor largo del pulgar"], {
+    id: "muscular.extensor-pollicis-longus", name: "Extensor largo del pulgar", type: "Músculo esquelético",
+    description: "Músculo del tercer compartimento dorsal que extiende la falange distal del pulgar.",
+    function: "Extiende la falange distal del pulgar y la articulación metacarpofalángica.", location: "Compartimento posterior del antebrazo (tercer compartimento dorsal)."
+  }),
+  bilateralGroup(["Extensor radial corto del carpo", "Extensor radial largo del carpo"], {
+    id: "muscular.extensor-carpi-radialis", name: "Extensores radiales del carpo", type: "Músculo esquelético",
+    description: "Dos músculos adyacentes del compartimento posterior que extienden y abducen la muñeca.",
+    function: "Extienden y desvían radialmente la muñeca.", location: "Compartimento posterior del antebrazo (segundo compartimento dorsal)."
+  }),
+  bilateralGroup(["Músculo ancóneo"], {
+    id: "muscular.anconeus", name: "Músculo ancóneo", type: "Músculo esquelético",
+    description: "Músculo triangular pequeño en la región posterior del codo, a veces considerado parte del tríceps.",
+    function: "Ayuda a extender el antebrazo y estabiliza la articulación del codo.", location: "Región posterior del codo, lateral al olécranon."
   })
 ];
