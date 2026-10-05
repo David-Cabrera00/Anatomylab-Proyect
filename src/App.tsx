@@ -35,7 +35,7 @@ import { getAnatomyEntryById, type AnatomyModelKey } from "./anatomy";
 import type { AnatomyStructureData } from "./data/anatomyStructureData";
 
 import {
-  cardiovascularStudyGuide,
+  studyGuidesBySystem,
 } from "./data/studyGuides";
 
 /* ======================================================
@@ -234,18 +234,25 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
      GUÍA ACTUAL
   ==================================================== */
 
+  const activeStudyGuide =
+    studyGuidesBySystem[
+      activeSystem
+    ];
+
   const currentStudyStep =
-    cardiovascularStudyGuide
-      .steps[
+    activeStudyGuide
+      ?.steps[
       studyStepIndex
     ];
 
   const studyProgress =
-    ((studyStepIndex +
-      1) /
-      cardiovascularStudyGuide
-        .steps.length) *
-    100;
+    activeStudyGuide
+      ? ((studyStepIndex +
+          1) /
+          activeStudyGuide
+            .steps.length) *
+        100
+      : 0;
 
   /* ====================================================
      MODELO ACTUAL
@@ -482,15 +489,12 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     index:
       number
   ) => {
-    if (
-      activeSystem !==
-      "cardiovascular"
-    ) {
+    if (!activeStudyGuide) {
       return;
     }
 
     const maxIndex =
-      cardiovascularStudyGuide
+      activeStudyGuide
         .steps.length -
       1;
 
@@ -504,14 +508,19 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       );
 
     const step =
-      cardiovascularStudyGuide
+      activeStudyGuide
         .steps[
         nextIndex
       ];
 
-    setCardiovascularView(
-      "overview"
-    );
+    if (
+      activeSystem ===
+      "cardiovascular"
+    ) {
+      setCardiovascularView(
+        "overview"
+      );
+    }
 
     setStudyStepIndex(
       nextIndex
@@ -528,14 +537,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     () => {
       if (
         !activeConfig
-          .studyAvailable
-      ) {
-        return;
-      }
-
-      if (
-        activeSystem !==
-        "cardiovascular"
+          .studyAvailable ||
+        !activeStudyGuide
       ) {
         return;
       }
@@ -554,9 +557,14 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
         null
       );
 
-      setCardiovascularView(
-        "overview"
-      );
+      if (
+        activeSystem ===
+        "cardiovascular"
+      ) {
+        setCardiovascularView(
+          "overview"
+        );
+      }
 
       goToStudyStep(
         0
@@ -959,7 +967,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               MODO ESTUDIO
           ================================================= */}
 
-          {studyMode && (
+          {studyMode && activeStudyGuide && currentStudyStep && (
             <div className="absolute left-5 top-5 z-20 w-[340px] max-h-[calc(100%-40px)] overflow-y-auto rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-lg backdrop-blur">
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -969,7 +977,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
 
                   <h3 className="mt-1 text-base font-semibold">
                     {
-                      cardiovascularStudyGuide
+                      activeStudyGuide
                         .title
                     }
                   </h3>
@@ -998,7 +1006,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                       1}{" "}
                     de{" "}
                     {
-                      cardiovascularStudyGuide
+                      activeStudyGuide
                         .steps.length
                     }
                   </span>
@@ -1077,7 +1085,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                 </button>
 
                 {studyStepIndex ===
-                cardiovascularStudyGuide
+                activeStudyGuide
                   .steps.length -
                   1 ? (
                   <button
@@ -1213,10 +1221,10 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                   Vista: {activeViewName}
                 </p>
 
-                {studyMode && (
+                {studyMode && activeStudyGuide && (
                   <Badge variant="warning" className="mt-3">
                     Estudio {studyStepIndex + 1}/
-                    {cardiovascularStudyGuide.steps.length}
+                    {activeStudyGuide.steps.length}
                   </Badge>
                 )}
               </div>

@@ -93,7 +93,7 @@ export const anatomySystems: Record<
     color: "#b97882",
     accentColor: "#fce7f3",
     viewerSize: 6,
-    studyAvailable: false,
+    studyAvailable: true,
     layers: [
       { id: "general", label: "General" },
       { id: "lungs", label: "Pulmones" },
