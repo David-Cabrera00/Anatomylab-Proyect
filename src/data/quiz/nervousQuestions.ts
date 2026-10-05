@@ -4,41 +4,41 @@ export const nervousQuizQuestions: QuizQuestion[] = [
   {
     id: "nerv-q-001",
     type: "identify-by-description",
-    anatomyId: "nervous.cerebrum",
+    anatomyId: "nervous.telencephalic-white-matter.left",
     system: "nervous",
-    prompt: "Parte más grande del encéfalo, dividida en dos hemisferios, responsable de funciones cognitivas superiores.",
+    prompt: "Tejido profundo del telencéfalo compuesto principalmente por axones que conectan regiones corticales y subcorticales.",
     options: [
+      "Sustancia gris cortical",
+      "Sustancia blanca telencefálica",
+      "Tálamo",
       "Cerebelo",
-      "Tronco encefálico",
-      "Cerebro (telencéfalo)",
-      "Diencéfalo",
     ],
-    correctIndex: 2,
-    explanation: "El cerebro (telencéfalo) incluye corteza, sustancia blanca y núcleos basales.",
+    correctIndex: 1,
+    explanation: "La sustancia blanca telencefálica contiene fibras de asociación, comisurales y de proyección.",
     difficulty: "easy",
     tags: ["encefalo", "division-basica"],
   },
   {
     id: "nerv-q-002",
     type: "identify-by-function",
-    anatomyId: "nervous.cerebellum",
+    anatomyId: "nervous.cerebellar-central-lobule",
     system: "nervous",
-    prompt: "Estructura posterior al tronco encefálico que coordina el movimiento, el equilibrio y la postura.",
+    prompt: "Lobulillo del vermis cerebeloso anterior que participa en la coordinación postural y motora.",
     options: [
-      "Cerebro",
-      "Cerebelo",
-      "Puente",
-      "Bulbo raquídeo",
+      "Flóculo",
+      "Lóbulo central del cerebelo",
+      "Amígdala cerebral",
+      "Giro precentral",
     ],
     correctIndex: 1,
-    explanation: "El cerebelo integra información propioceptiva y vestibular para ajustar la motricidad.",
+    explanation: "El lóbulo central forma parte del vermis del lóbulo anterior del cerebelo.",
     difficulty: "easy",
     tags: ["cerebelo", "control-motor"],
   },
   {
     id: "nerv-q-003",
     type: "identify-by-location",
-    anatomyId: "nervous.thalamus",
+    anatomyId: "nervous.thalamus.left",
     system: "nervous",
     prompt: "Núcleo diencefálico bilateral que actúa como estación de relevo para casi todas las vías sensitivas hacia la corteza cerebral.",
     options: [
@@ -55,7 +55,7 @@ export const nervousQuizQuestions: QuizQuestion[] = [
   {
     id: "nerv-q-004",
     type: "identify-by-description",
-    anatomyId: "nervous.precentral-gyrus",
+    anatomyId: "nervous.precentral-gyrus.left",
     system: "nervous",
     prompt: "Giro frontal anterior al surco central que contiene la corteza motora primaria (área 4 de Brodmann).",
     options: [
@@ -72,7 +72,7 @@ export const nervousQuizQuestions: QuizQuestion[] = [
   {
     id: "nerv-q-005",
     type: "identify-by-function",
-    anatomyId: "nervous.postcentral-gyrus",
+    anatomyId: "nervous.postcentral-gyrus.left",
     system: "nervous",
     prompt: "Giro parietal posterior al surco central que recibe información somatosensitiva (tacto, propiocepción, dolor, temperatura).",
     options: [
@@ -89,24 +89,24 @@ export const nervousQuizQuestions: QuizQuestion[] = [
   {
     id: "nerv-q-006",
     type: "identify-by-relationship",
-    anatomyId: "nervous.internal-capsule",
+    anatomyId: "nervous.telencephalic-white-matter.right",
     system: "nervous",
-    prompt: "Estructura de sustancia blanca entre tálamo y núcleos basales que concentra vías ascendentes y descendentes (incluyendo corticoespinal).",
+    prompt: "Componente profundo de los hemisferios formado por fibras de asociación, comisurales y de proyección.",
     options: [
-      "Cuerpo calloso",
-      "Cápsula interna",
-      "Cápsula externa",
-      "Fórnix",
+      "Sustancia gris cortical",
+      "Sustancia blanca telencefálica",
+      "Núcleo caudado",
+      "Tálamo",
     ],
     correctIndex: 1,
-    explanation: "La cápsula interna es el 'cuello de botella' de las vías motoras y sensitivas.",
+    explanation: "La sustancia blanca conecta áreas corticales entre sí y con estructuras profundas.",
     difficulty: "hard",
     tags: ["sustancia-blanca", "vias-motoras"],
   },
   {
     id: "nerv-q-007",
     type: "identify-by-description",
-    anatomyId: "nervous.medulla-oblongata",
+    anatomyId: "nervous.medulla-oblongata.left",
     system: "nervous",
     prompt: "Porción inferior del tronco encefálico que contiene centros vitales (cardiovascular, respiratorio) y continúa con la médula espinal.",
     options: [
@@ -123,7 +123,7 @@ export const nervousQuizQuestions: QuizQuestion[] = [
   {
     id: "nerv-q-008",
     type: "identify-by-function",
-    anatomyId: "nervous.hippocampus",
+    anatomyId: "nervous.hippocampus.left",
     system: "nervous",
     prompt: "Estructura del lóbulo temporal medial esencial para la consolidación de la memoria declarativa y la navegación espacial.",
     options: [
@@ -140,7 +140,7 @@ export const nervousQuizQuestions: QuizQuestion[] = [
   {
     id: "nerv-q-009",
     type: "identify-by-location",
-    anatomyId: "nervous.optic-nerve",
+    anatomyId: "nervous.optic-nerve.left",
     system: "nervous",
     prompt: "Par craneal II; emerge de la retina, cruza en el quiasma óptico y continúa como tracto óptico hacia el cuerpo geniculado lateral.",
     options: [
@@ -157,7 +157,7 @@ export const nervousQuizQuestions: QuizQuestion[] = [
   {
     id: "nerv-q-010",
     type: "identify-by-description",
-    anatomyId: "nervous.sciatic-nerve",
+    anatomyId: "nervous.sciatic-nerve.left",
     system: "nervous",
     prompt: "Nervio más grueso del cuerpo, formado por raíces L4-S3; inerva la cara posterior del muslo y se divide en tibial y fibular común.",
     options: [

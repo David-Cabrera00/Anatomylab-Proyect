@@ -5,7 +5,7 @@ import { searchAnatomy, getSearchEntriesBySystem } from "../search/anatomySearch
 import type { SearchEntry } from "../search/anatomySearchIndex";
 
 interface SearchBarProps {
-  onSelect: (entry: Pick<SearchEntry, "anatomyId" | "system">) => void;
+  onSelect: (entry: Pick<SearchEntry, "anatomyId" | "system">, context: { query: string; resultsCount: number }) => void;
   currentSystem?: AnatomySystemId;
   className?: string;
 }
@@ -72,17 +72,17 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
     } else if (e.key === "Enter") {
       e.preventDefault();
       const selected = items[highlightedIndex >= 0 ? highlightedIndex : 0];
-      onSelect({ anatomyId: selected.anatomyId, system: selected.system });
+      onSelect({ anatomyId: selected.anatomyId, system: selected.system }, { query: query.trim(), resultsCount: items.length });
       close();
     } else if (e.key === "Escape") {
       close();
     }
-  }, [items, highlightedIndex, onSelect, close]);
+  }, [items, highlightedIndex, onSelect, close, query]);
 
   const handleSelect = useCallback((entry: SearchEntry) => {
-    onSelect({ anatomyId: entry.anatomyId, system: entry.system });
+    onSelect({ anatomyId: entry.anatomyId, system: entry.system }, { query: query.trim(), resultsCount: items.length });
     close();
-  }, [onSelect, close]);
+  }, [onSelect, close, query, items.length]);
 
   const showDropdown = isOpen && (!!query.trim() || systemSuggestions.length > 0);
 

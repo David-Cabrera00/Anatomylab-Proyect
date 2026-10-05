@@ -1,7 +1,8 @@
-import {
+﻿import {
   useCallback,
   useState,
   useEffect,
+  useRef,
 } from "react";
 
 import "./App.css";
@@ -40,6 +41,8 @@ import {
 
 import { QuizPanel } from "./components/quiz/QuizPanel";
 import type { QuizState } from "./data/quiz/types";
+import { HistoryTab, FavoritesTab, ProgressTab } from "./components/learning";
+import { dbAddFavorite, dbAddSearchHistory, dbSaveStudyProgress, dbSaveStudySession } from "./utils/db";
 
 /* ======================================================
    VISTA CARDIOVASCULAR
@@ -118,9 +121,9 @@ function App() {
     activeSystem,
     setActiveSystem,
   ] =
-    useState<AnatomySystemId>(
-      "cardiovascular"
-    );
+  useState<AnatomySystemId>(
+    "cardiovascular"
+  );
 
   /* ====================================================
      CARDIOVASCULAR
@@ -130,9 +133,9 @@ function App() {
     cardiovascularView,
     setCardiovascularView,
   ] =
-    useState<CardiovascularView>(
-      "overview"
-    );
+  useState<CardiovascularView>(
+    "overview"
+  );
 
   /* ====================================================
      CAPA
@@ -142,23 +145,23 @@ function App() {
     activeLayer,
     setActiveLayer,
   ] =
-    useState<AnatomyLayerId>(
-      "general"
-    );
+  useState<AnatomyLayerId>(
+    "general"
+  );
 
 /* ======================================================
-     ESTRUCTURA SELECCIONADA
-  ==================================================== */
+   ESTRUCTURA SELECCIONADA
+====================================================== */
 
   const [
     selectedAnatomyId,
     setSelectedAnatomyId,
   ] =
-    useState<
-      string | null
-    >(
-      null
-    );
+  useState<
+    string | null
+  >(
+    null
+  );
 
 const handleStructureSelect = useCallback((anatomyId: string | null) => {
     setSelectedAnatomyId(anatomyId);
@@ -170,35 +173,35 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   const selectedDisplayName = selectedAnatomyEntry?.displayName ?? null;
 
   /* ====================================================
-     ACCIÓN DEL VISOR
+   ACCIÓN DEL VISOR
   ==================================================== */
 
   const [
     viewerAction,
     setViewerAction,
   ] =
-    useState<
-      ViewerAction | null
-    >(
-      null
-    );
+  useState<
+    ViewerAction | null
+  >(
+    null
+  );
 
   /* ====================================================
-     ENFOQUE
+   ENFOQUE
   ==================================================== */
 
   const [
     focusRequest,
     setFocusRequest,
   ] =
-    useState<
-      StructureFocusRequest | null
-    >(
-      null
-    );
+  useState<
+    StructureFocusRequest | null
+  >(
+    null
+  );
 
-/* ====================================================
-     MODO ESTUDIO
+  /* ====================================================
+   MODO ESTUDIO
   ==================================================== */
 
   const [
@@ -218,7 +221,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   );
 
   /* ====================================================
-     QUIZ
+   QUIZ
   ==================================================== */
 
   const [quizState, setQuizState] = useState<QuizState>({ status: "closed" });
@@ -232,7 +235,18 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   }, []);
 
   /* ====================================================
-     CONFIGURACIÓN ACTUAL
+   LEARNING TABS
+  ==================================================== */
+
+  type LearningTab = "quiz" | "history" | "favorites" | "progress";
+
+  const [learningTab, setLearningTab] = useState<LearningTab>("quiz");
+  const [favoritesRevision, setFavoritesRevision] = useState(0);
+  const [favoriteSaved, setFavoriteSaved] = useState(false);
+  const studyStartedAtRef = useRef<number | null>(null);
+
+  /* ====================================================
+   CONFIGURACIÓN ACTUAL
   ==================================================== */
 
   const activeConfig =
@@ -241,14 +255,14 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     ];
 
   /* ====================================================
-     CAPAS
+   CAPAS
   ==================================================== */
 
   const activeLayers =
     activeConfig.layers;
 
   /* ====================================================
-     GUÍA ACTUAL
+   GUÍA ACTUAL
   ==================================================== */
 
   const activeStudyGuide =
@@ -271,8 +285,30 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
         100
       : 0;
 
+  const persistStudySession = (completed: boolean) => {
+    const guide = activeStudyGuide;
+    const startedAt = studyStartedAtRef.current;
+    const finishedAt = Date.now();
+    if (!guide || !startedAt) return;
+
+    void dbSaveStudySession({
+      system: activeSystem,
+      guideId: guide.id,
+      currentStep: studyStepIndex,
+      startedAt: new Date(startedAt).toISOString(),
+      completedAt: new Date(finishedAt).toISOString(),
+      completed,
+    }).catch((error) => console.error("Error saving study session:", error));
+
+    if (completed) {
+      const timePerStep = Math.round((finishedAt - startedAt) / guide.steps.length);
+      void Promise.all(guide.steps.map((step) => dbSaveStudyProgress(activeSystem, step.anatomyId, null, timePerStep)))
+        .catch((error) => console.error("Error saving study progress:", error));
+    }
+  };
+
   /* ====================================================
-     MODELO ACTUAL
+   MODELO ACTUAL
   ==================================================== */
 
   const heartDetailModel =
@@ -300,7 +336,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     activeSystem === "cardiovascular" ? cardiovascularView : "overview";
 
   /* ====================================================
-     CAPA ACTUAL
+   CAPA ACTUAL
   ==================================================== */
 
   const currentLayer:
@@ -313,11 +349,11 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       : activeLayer;
 
   /* ====================================================
-     NOMBRE DE ESTRUCTURA
+   NOMBRE DE ESTRUCTURA
   ==================================================== */
 
   /* ====================================================
-     INFORMACIÓN EDUCATIVA
+   INFORMACIÓN EDUCATIVA
   ==================================================== */
 
   const [selectedAnatomyIdData, setSelectedAnatomyIdData] = useState<AnatomyStructureData | null>(null);
@@ -331,12 +367,16 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     getAnatomyStructureData(activeSystem, selectedAnatomyId, modelKey).then(setSelectedAnatomyIdData);
   }, [selectedAnatomyId, activeSystem, cardiovascularView]);
 
+  useEffect(() => {
+    setFavoriteSaved(false);
+  }, [selectedAnatomyId]);
+
   /* ====================================================
-     CATEGORÍA CARDIOVASCULAR
+   CATEGORÍA CARDIOVASCULAR
   ==================================================== */
 
   /* ====================================================
-     CORAZÓN DETALLADO
+   CORAZÓN DETALLADO
   ==================================================== */
 
   const canExploreHeart =
@@ -349,7 +389,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     selectedAnatomyEntry.layer === "heart";
 
   /* ====================================================
-     NOMBRE DE VISTA
+   NOMBRE DE VISTA
   ==================================================== */
 
   const activeViewName =
@@ -366,7 +406,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
         "General";
 
   /* ====================================================
-     EJECUTAR ACCIÓN
+   EJECUTAR ACCIÓN
   ==================================================== */
 
   const runViewerAction = (
@@ -386,7 +426,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   /* ====================================================
-     CAMBIAR SISTEMA
+   CAMBIAR SISTEMA
   ==================================================== */
 
   const changeSystem = (
@@ -399,6 +439,9 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     ) {
       return;
     }
+
+    if (studyMode) persistStudySession(false);
+    studyStartedAtRef.current = null;
 
     setStudyMode(
       false
@@ -432,7 +475,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   /* ====================================================
-     CAMBIAR CAPA
+   CAMBIAR CAPA
   ==================================================== */
 
   const changeLayer = (
@@ -455,7 +498,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   /* ====================================================
-     ENFOCAR ESTRUCTURA
+   ENFOCAR ESTRUCTURA
   ==================================================== */
 
   const focusStructure = (
@@ -499,7 +542,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   /* ====================================================
-     IR A PASO
+   IR A PASO
   ==================================================== */
 
   const goToStudyStep = (
@@ -547,7 +590,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   /* ====================================================
-     INICIAR ESTUDIO
+   INICIAR ESTUDIO
   ==================================================== */
 
   const startStudyMode =
@@ -563,6 +606,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       setStudyMode(
         true
       );
+
+      studyStartedAtRef.current = Date.now();
 
       handleStructureSelect(null);
 
@@ -589,11 +634,13 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     };
 
   /* ====================================================
-     FINALIZAR ESTUDIO
+   FINALIZAR ESTUDIO
   ==================================================== */
 
   const finishStudyMode =
-    () => {
+    (completed: boolean) => {
+      persistStudySession(completed);
+      studyStartedAtRef.current = null;
       setStudyMode(
         false
       );
@@ -626,7 +673,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     };
 
   /* ====================================================
-     ABRIR CORAZÓN
+   ABRIR CORAZÓN
   ==================================================== */
 
   const openHeartDetail =
@@ -657,7 +704,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     };
 
   /* ====================================================
-     VOLVER AL SISTEMA CARDIOVASCULAR
+   VOLVER AL SISTEMA CARDIOVASCULAR
   ==================================================== */
 
   const returnToOverview =
@@ -682,7 +729,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     };
 
   /* ====================================================
-     RENDER
+   RENDER
   ==================================================== */
 
   return (
@@ -705,8 +752,12 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           </div>
 
           <SearchBar
-            onSelect={(entry) => {
+            onSelect={(entry, context) => {
               const { anatomyId, system } = entry;
+              if (context.query) {
+                void dbAddSearchHistory(context.query, system, context.resultsCount, anatomyId)
+                  .catch((error) => console.error("Error saving search history:", error));
+              }
               if (system !== activeSystem) {
                 changeSystem(system);
               }
@@ -787,47 +838,84 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               Aprendizaje
             </p>
 
-            <button
-              type="button"
-              disabled={
-                !activeConfig
-                  .studyAvailable &&
-                !studyMode
-              }
-              onClick={
-                studyMode
-                  ? finishStudyMode
-                  : startStudyMode
-              }
-              className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
-                studyMode
-                  ? "bg-amber-50 text-amber-800"
-                  : activeConfig
-                        .studyAvailable
-                    ? "text-slate-600 hover:bg-slate-100"
-                    : "cursor-not-allowed text-slate-300"
-              }`}
-            >
-              {studyMode
-                ? "Salir del estudio"
-                : "Modo estudio"}
-            </button>
+            {/* Tabs */}
+            <div className="mb-3 flex gap-1" role="tablist">
+              {[
+                { id: "quiz", label: "Quiz", icon: "❓" },
+                { id: "history", label: "Historial", icon: "📜" },
+                { id: "favorites", label: "Favoritos", icon: "⭐" },
+                { id: "progress", label: "Progreso", icon: "📈" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={learningTab === tab.id}
+                  onClick={() => setLearningTab(tab.id as LearningTab)}
+                  className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    learningTab === tab.id
+                      ? "bg-slate-100 text-slate-900"
+                      : "text-slate-500 hover:bg-slate-50"
+                  }`}
+                >
+                  <span>{tab.icon}</span>
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </div>
 
-            <button
-              type="button"
-              onClick={openQuiz}
-              className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition hover:bg-slate-100"
-            >
-              Quiz anatómico
-            </button>
+            {/* Tab Content */}
+            <div className="space-y-2">
+              {learningTab === "quiz" && (
+                <>
+                  <button
+                    type="button"
+                    disabled={
+                      !activeConfig.studyAvailable && !studyMode
+                    }
+                    onClick={studyMode ? () => finishStudyMode(false) : startStudyMode}
+                    className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
+                      studyMode
+                        ? "bg-amber-50 text-amber-800"
+                        : activeConfig.studyAvailable
+                        ? "text-slate-600 hover:bg-slate-100"
+                        : "cursor-not-allowed text-slate-300"
+                    }`}
+                  >
+                    {studyMode
+                      ? "Salir del estudio"
+                      : "Modo estudio"}
+                  </button>
 
-            <button
-              type="button"
-              disabled
-              className="w-full cursor-not-allowed rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-300"
-            >
-              Tutor IA
-            </button>
+                  <button
+                    type="button"
+                    onClick={openQuiz}
+                    className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition hover:bg-slate-100"
+                  >
+                    Quiz anatómico
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full cursor-not-allowed rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-300"
+                  >
+                    Tutor IA
+                  </button>
+                </>
+              )}
+
+              {learningTab === "history" && (
+                <HistoryTab system={activeSystem} />
+              )}
+
+              {learningTab === "favorites" && (
+                <FavoritesTab system={activeSystem} onFocus={focusStructure} refreshKey={favoritesRevision} />
+              )}
+
+              {learningTab === "progress" && (
+                <ProgressTab system={activeSystem} />
+              )}
+            </div>
           </div>
         </aside>
 
@@ -1002,9 +1090,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
 
                 <button
                   type="button"
-                  onClick={
-                    finishStudyMode
-                  }
+                  onClick={() => finishStudyMode(false)}
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-lg text-slate-400 hover:bg-slate-100"
                 >
                   ×
@@ -1107,9 +1193,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                   1 ? (
                   <button
                     type="button"
-                    onClick={
-                      finishStudyMode
-                    }
+                    onClick={() => finishStudyMode(true)}
                     className="flex-1 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white"
                   >
                     Finalizar
@@ -1335,6 +1419,22 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                     Explorar corazón en detalle →
                   </Button>
                 )}
+                <Button
+                  variant="secondary"
+                  disabled={!selectedAnatomyId || favoriteSaved}
+                  onClick={() => {
+                    if (!selectedAnatomyId) return;
+                    void dbAddFavorite(activeSystem, selectedAnatomyId)
+                      .then(() => {
+                        setFavoriteSaved(true);
+                        setFavoritesRevision((revision) => revision + 1);
+                      })
+                      .catch((error) => console.error("Error saving favorite:", error));
+                  }}
+                  className="w-full whitespace-normal"
+                >
+                  {favoriteSaved ? "Guardado en favoritos" : "Guardar en favoritos"}
+                </Button>
                 <Button
                   variant={selectedAnatomyId ? "primary" : "secondary"}
                   disabled={!selectedAnatomyId}

@@ -12,6 +12,23 @@ registerHooks({
 });
 
 const { anatomyIndex } = await import("../src/anatomy/anatomyIndex.ts");
+const { cardiovascularStableIdByOriginalName } = await import("../src/anatomy/metadata/cardiovascularStableIds.ts");
+
+const cardiovascularCsvIds = new Set(
+  fs.readFileSync("public/data/csv/cardiovascular_missing_educational_filled.csv", "utf8")
+    .trim()
+    .split(/\r?\n/)
+    .slice(1)
+    .flatMap((row) => {
+      const match = row.match(/^"([^"]+)",/);
+      const stableId = match ? cardiovascularStableIdByOriginalName[match[1]] : undefined;
+      return stableId ? [stableId] : [];
+    })
+);
+
+const hasEducationalContent = (entry) => Boolean(
+  entry.educationalId || (entry.system === "cardiovascular" && cardiovascularCsvIds.has(entry.id))
+);
 
 const systems = [
   "cardiovascular",
@@ -27,7 +44,7 @@ const results = {};
 for (const system of systems) {
   const entries = anatomyIndex.filter(e => e.system === system);
   const total = entries.length;
-  const withEducational = entries.filter(e => e.educationalId).length;
+  const withEducational = entries.filter(hasEducationalContent).length;
   const withoutEducational = total - withEducational;
   const coverage = ((withEducational / total) * 100).toFixed(1);
 
@@ -50,7 +67,7 @@ console.log(`Total: ${grandWith}/${grandTotal} (${((grandWith/grandTotal)*100).t
 // Detalle de estructuras sin ficha por sistema
 console.log("\n--- ESTRUCTURAS SIN FICHA (por sistema) ---");
 for (const system of systems) {
-  const entries = anatomyIndex.filter(e => e.system === system && !e.educationalId);
+  const entries = anatomyIndex.filter(e => e.system === system && !hasEducationalContent(e));
   if (entries.length > 0) {
     console.log(`\n${system.toUpperCase()} (${entries.length}):`);
     for (const e of entries) {
