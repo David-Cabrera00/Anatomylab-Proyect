@@ -4,6 +4,7 @@ const auditScripts = [
   "audit-nervous-anatomy.mjs",
   "audit-skeletal-anatomy.mjs",
   "audit-muscular-anatomy.mjs",
+  "classify-muscular-gaps.mjs",
   "audit-digestive-anatomy.mjs",
   "audit-anatomy-search.mjs",
   "audit-study-guides.mjs",
@@ -43,4 +44,4 @@ for (const scriptName of auditScripts) {
   console.log(`PASS ${scriptName}`);
 }
 
-console.log("Anatomía validada: 6/6 sistemas + búsqueda global + guías de estudio + quiz.");
+console.log("Anatomía validada: 6/6 sistemas + clasificación muscular + búsqueda global + guías de estudio + quiz.");

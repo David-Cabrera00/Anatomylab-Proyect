@@ -11,58 +11,58 @@ registerHooks({
   },
 });
 
-const { anatomyIndex } = await import("../src/anatomy/anatomyIndex.ts");
+const [{ createMuscularAnatomyEntries }, classification] = await Promise.all([
+  import("../src/anatomy/muscularAdapter.ts"),
+  import("../src/anatomy/metadata/muscularEducationalClassification.ts"),
+]);
 
-const muscular = anatomyIndex.filter(e => e.system === "muscular" && !e.educationalId);
+const entriesWithoutCard = createMuscularAnatomyEntries().filter((entry) => !entry.educationalId);
+const entryById = new Map(entriesWithoutCard.map((entry) => [entry.id, entry]));
+const candidateIds = new Set(classification.muscularEducationalCandidateIds);
+const snapshot = classification.muscularEducationalClassificationSnapshot;
+const errors = [];
 
-console.log("=== ANÁLISIS DE MÚSCULOS SIN FICHA ===\n");
+if (candidateIds.size !== classification.muscularEducationalCandidateIds.length) {
+  errors.push("La lista de candidatos contiene Anatomy IDs duplicados.");
+}
 
-const mainMuscles = [];
-const technicalGeometry = [];
+for (const anatomyId of candidateIds) {
+  if (!entryById.has(anatomyId)) errors.push(`Candidato inexistente o ya documentado: ${anatomyId}.`);
+}
 
-for (const e of muscular) {
-  const name = e.displayName;
-  const binding = e.modelBindings[0]?.originalName || "";
-  
-  // Patrones de geometría técnica
-  const isTechnical = 
-    name.includes("Porción ") ||
-    name.includes("Cabeza ") ||
-    name.includes("Vientre ") ||
-    name.includes("Tendón ") ||
-    name.includes("Bolsa ") ||
-    name.includes("Vaina ") ||
-    name.includes("Retináculo ") ||
-    name.includes("Arco tendinoso") ||
-    name.includes("Ligamento ") ||
-    name.includes("Aponeurosis ") ||
-    name.includes("Tarso ") ||
-    name.includes("Tróclea ") ||
-    name.includes("Anillo tendinoso") ||
-    name.includes("Partes dorsales") ||
-    name.includes("Partes ventrales") ||
-    name.includes("Cruciform") ||
-    name.includes("Subfacial") ||
-    name.includes("Trochanteric bursa") ||
-    binding.includes("Subfacial") ||
-    binding.includes("Trochanteric");
-  
-  if (isTechnical) {
-    technicalGeometry.push({ id: e.id, name, binding });
-  } else {
-    mainMuscles.push({ id: e.id, name, binding, layer: e.layer, laterality: e.laterality });
+const educationalCandidates = entriesWithoutCard.filter((entry) => candidateIds.has(entry.id));
+const technicalGeometry = entriesWithoutCard.filter((entry) => !candidateIds.has(entry.id));
+const conceptKey = (entry) => entry.displayName.replace(/\s+(izquierd[oa]s?|derech[oa]s?)$/i, "");
+const candidateConcepts = new Set(educationalCandidates.map(conceptKey));
+const entriesByConcept = Map.groupBy(educationalCandidates, conceptKey);
+
+for (const [concept, entries] of entriesByConcept) {
+  const sides = new Set(entries.map((entry) => entry.laterality));
+  if (entries.length !== 2 || !sides.has("left") || !sides.has("right")) {
+    errors.push(`${concept}: se esperaba un par bilateral completo.`);
   }
 }
 
-console.log(`MÚSCULOS PRINCIPALES SIN FICHA (${mainMuscles.length}):`);
-for (const m of mainMuscles) {
-  console.log(`  - ${m.id} | ${m.name} | ${m.layer} | ${m.laterality} | ${m.binding}`);
+const actual = {
+  entriesWithoutEducationalContent: entriesWithoutCard.length,
+  educationalCandidateEntries: educationalCandidates.length,
+  educationalCandidateConcepts: candidateConcepts.size,
+  technicalGeometryEntries: technicalGeometry.length,
+};
+
+for (const [key, expected] of Object.entries(snapshot)) {
+  if (actual[key] !== expected) errors.push(`${key}: esperado ${expected}, obtenido ${actual[key]}.`);
 }
 
-console.log(`\nGEOMETRÍA TÉCNICA (${technicalGeometry.length}):`);
-for (const t of technicalGeometry.slice(0, 20)) {
-  console.log(`  - ${t.id} | ${t.name} | ${t.binding}`);
+if (errors.length) {
+  for (const error of errors) console.error(`- ${error}`);
+  process.exitCode = 1;
+} else {
+  console.log("Clasificación muscular validada.");
+  console.log(`- ${actual.educationalCandidateConcepts} conceptos / ${actual.educationalCandidateEntries} entradas requieren ficha.`);
+  console.log(`- ${actual.technicalGeometryEntries} entradas corresponden a geometría técnica o de apoyo.`);
+  console.log("\nConceptos candidatos:");
+  for (const name of [...candidateConcepts].sort((a, b) => a.localeCompare(b, "es"))) {
+    console.log(`- ${name}`);
+  }
 }
-if (technicalGeometry.length > 20) console.log(`  ... y ${technicalGeometry.length - 20} más`);
-
-console.log(`\nTOTAL: ${mainMuscles.length} principales + ${technicalGeometry.length} técnicos = ${muscular.length}`);
