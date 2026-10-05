@@ -16,6 +16,12 @@ const { skeletalModelCatalog } = await import(
   "../src/anatomy/catalogs/skeletalModelCatalog.ts"
 );
 const { skeletalEducationalGroups } = await import("../src/data/skeletal.ts");
+const { createSkeletalAnatomyEntries } = await import(
+  "../src/anatomy/skeletalAdapter.ts"
+);
+const { skeletalStableIdByOriginalName } = await import(
+  "../src/anatomy/metadata/skeletalStableIds.ts"
+);
 
 const entries = anatomyIndex.filter((entry) => entry.system === "skeletal");
 const catalogNames = new Set(skeletalModelCatalog.map((entry) => entry.originalName));
@@ -67,6 +73,32 @@ const requestedCases = [
 const byOriginalName = new Map(entries.flatMap((entry) =>
   entry.modelBindings.map((binding) => [binding.originalName, entry])
 ));
+const stableIdsForIndexedBindingsMissing = [...byOriginalName.keys()]
+  .filter((originalName) => !skeletalStableIdByOriginalName[originalName]);
+const indexedBindingsWithMismatchedStableId = [...byOriginalName].flatMap(([originalName, entry]) =>
+  skeletalStableIdByOriginalName[originalName] === entry.id
+    ? []
+    : [{ originalName, anatomyId: entry.id, registeredId: skeletalStableIdByOriginalName[originalName] }]
+);
+const stableRegistryNamesMissingFromCatalog = Object.keys(skeletalStableIdByOriginalName)
+  .filter((originalName) => !catalogNames.has(originalName));
+const catalogNamesMissingFromStableRegistry = [...catalogNames]
+  .filter((originalName) => !skeletalStableIdByOriginalName[originalName]);
+const indexedNames = new Set(byOriginalName.keys());
+const catalogNamesNotIndexed = [...catalogNames]
+  .filter((originalName) => !indexedNames.has(originalName));
+const reversedEntries = createSkeletalAnatomyEntries([...skeletalModelCatalog].reverse());
+const reversedIdByOriginalName = new Map(reversedEntries.flatMap((entry) =>
+  entry.modelBindings.map((binding) => [binding.originalName, entry.id])
+));
+const changedIdsWhenCatalogReversed = [...byOriginalName].flatMap(([originalName, entry]) =>
+  reversedIdByOriginalName.get(originalName) === entry.id
+    ? []
+    : [{ originalName, before: entry.id, after: reversedIdByOriginalName.get(originalName) }]
+);
+const positionDependentIds = entries
+  .map((entry) => entry.id)
+  .filter((id) => /\.member-\d+(?:\.|$)/.test(id));
 
 const examples = requestedCases.map((originalName) => {
   const entry = byOriginalName.get(originalName);
@@ -81,7 +113,7 @@ const examples = requestedCases.map((originalName) => {
   };
 });
 
-console.log(JSON.stringify({
+const report = {
   catalogNodes: skeletalModelCatalog.length,
   anatomyEntries: entries.length,
   modelBindings: bindingKeys.length,
@@ -99,6 +131,20 @@ console.log(JSON.stringify({
   },
   duplicateIds: duplicates(entries.map((entry) => entry.id)),
   duplicateBindings: duplicates(bindingKeys),
+  stability: {
+    explicitlyRegisteredIds: Object.keys(skeletalStableIdByOriginalName).length,
+    duplicateStableIds: duplicates(Object.values(skeletalStableIdByOriginalName)),
+    positionDependentIds,
+    stableIdsForIndexedBindingsMissing,
+    indexedBindingsWithMismatchedStableId,
+    stableRegistryNamesMissingFromCatalog,
+    catalogNamesMissingFromStableRegistry,
+    catalogNamesNotIndexed,
+    reversedCatalog: {
+      changedIdCount: changedIdsWhenCatalogReversed.length,
+      changedIds: changedIdsWhenCatalogReversed,
+    },
+  },
   educationalBindingsMissingFromCatalog: educationalBindings
     .filter((binding) => !catalogNames.has(binding.originalName))
     .map((binding) => binding.originalName),
@@ -112,4 +158,25 @@ console.log(JSON.stringify({
     "Fémur.r": "Hueso Fémur.r",
   },
   examples,
-}, null, 2));
+};
+
+console.log(JSON.stringify(report, null, 2));
+
+const failures = [
+  report.duplicateIds,
+  report.duplicateBindings,
+  report.educationalBindingsMissingFromCatalog,
+  report.utf8Problems,
+  report.stability.duplicateStableIds,
+  report.stability.positionDependentIds,
+  report.stability.stableIdsForIndexedBindingsMissing,
+  report.stability.indexedBindingsWithMismatchedStableId,
+  report.stability.stableRegistryNamesMissingFromCatalog,
+  report.stability.catalogNamesMissingFromStableRegistry,
+  report.stability.catalogNamesNotIndexed,
+  report.stability.reversedCatalog.changedIds,
+].some((items) => items.length > 0)
+  || report.catalogNodes !== report.anatomyEntries
+  || report.modelBindings !== report.catalogNodes;
+
+if (failures) process.exitCode = 1;

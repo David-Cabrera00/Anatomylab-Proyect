@@ -21,7 +21,7 @@ import * as THREE from "three";
 import {
   attachOriginalAnatomyNames,
   findStructureMesh,
-  getSelectableStructureName,
+  getAnatomyIdFromMesh,
 } from "./anatomyOriginalNames";
 
 import {
@@ -29,6 +29,9 @@ import {
   type AnatomyLayerId,
   type AnatomySystemId,
 } from "../config/anatomySystems";
+
+import type { AnatomyModelKey } from "../anatomy";
+import { getAnatomyEntryById } from "../anatomy";
 
 import {
   getStructureCategory as getCardiovascularCategory,
@@ -95,7 +98,7 @@ export type ViewerAction = {
 ====================================================== */
 
 export type StructureFocusRequest = {
-  structureName: string;
+  anatomyId: string;
   id: number;
 };
 
@@ -107,10 +110,8 @@ type AnatomyViewerProps = {
   system: AnatomySystemId;
   modelPath: string;
   layer: AnatomyLayerId;
-  onStructureSelect?: (
-    structureName: string | null,
-    threeName?: string | null
-  ) => void;
+  modelKey?: AnatomyModelKey;
+  onStructureSelect?: (anatomyId: string | null) => void;
   action?: ViewerAction | null;
   focusRequest?: StructureFocusRequest | null;
 };
@@ -532,6 +533,7 @@ function AnatomyModel({
   system,
   modelPath,
   layer,
+  modelKey = "overview",
   onStructureSelect,
   action,
   focusRequest,
@@ -574,7 +576,8 @@ function AnatomyModel({
           "cardiovascular_bodyparts"
         )
       ) {
-        desiredSize = 6;
+        // El panel del visor es estrecho; el corazón necesita margen horizontal.
+        desiredSize = 1.8;
       }
 
       clone.scale.setScalar(
@@ -880,7 +883,7 @@ function AnatomyModel({
     }
 
     selectedMeshRef.current = null;
-    onStructureSelect?.(null, null);
+    onStructureSelect?.(null);
 
     model.traverse((object) => {
       if (!(object instanceof THREE.Mesh)) {
@@ -938,16 +941,26 @@ function AnatomyModel({
       return;
     }
 
+    const entry = getAnatomyEntryById(focusRequest.anatomyId);
+    const binding = entry?.system === system
+      ? entry.modelBindings.find((candidate) => candidate.modelKey === modelKey)
+      : undefined;
+
+    if (!binding) {
+      console.warn("No existe binding para la estructura:", focusRequest.anatomyId, modelKey);
+      return;
+    }
+
     const selectedTarget = findStructureMesh(
       model,
       system,
-      focusRequest.structureName
+      binding.originalName
     );
 
     if (!selectedTarget) {
       console.warn(
         "No se encontró la estructura:",
-        focusRequest.structureName
+        binding.originalName
       );
       return;
     }
@@ -964,14 +977,12 @@ function AnatomyModel({
     setMeshRendered(selectedTarget, true);
     selectedMeshRef.current = selectedTarget;
     highlightMesh(selectedTarget);
-    onStructureSelect?.(
-      getSelectableStructureName(system, selectedTarget),
-      selectedTarget.name
-    );
+    onStructureSelect?.(focusRequest.anatomyId);
   }, [
     focusRequest,
     model,
     system,
+    modelKey,
     onStructureSelect,
   ]);
 
@@ -1017,12 +1028,12 @@ function AnatomyModel({
       );
     }
 
+    const anatomyId = getAnatomyIdFromMesh(object, system, modelKey);
+    if (!anatomyId) return;
+
     selectedMeshRef.current = object;
     highlightMesh(object);
-    onStructureSelect?.(
-      getSelectableStructureName(system, object),
-      object.name
-    );
+    onStructureSelect?.(anatomyId);
   };
 
   /* ====================================================
@@ -1071,7 +1082,7 @@ function AnatomyModel({
       setMeshRendered(selected, false);
       restoreHighlight(selected);
       selectedMeshRef.current = null;
-      onStructureSelect?.(null, null);
+      onStructureSelect?.(null);
       return;
     }
 
@@ -1147,7 +1158,7 @@ function AnatomyModel({
       });
 
       selectedMeshRef.current = null;
-      onStructureSelect?.(null, null);
+      onStructureSelect?.(null);
     }
   }, [
     action,
@@ -1192,6 +1203,7 @@ export default function AnatomyViewer({
   system,
   modelPath,
   layer,
+  modelKey = "overview",
   onStructureSelect,
   action,
   focusRequest,
@@ -1241,6 +1253,7 @@ export default function AnatomyViewer({
             system={system}
             modelPath={modelPath}
             layer={layer}
+            modelKey={modelKey}
             onStructureSelect={
               onStructureSelect
             }

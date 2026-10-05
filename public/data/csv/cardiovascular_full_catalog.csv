@@ -1,0 +1,692 @@
+originalName,layer,hasEdu
+"Left coronary artery","",false
+"Anterior interventricular artery","arteries",false
+"Septal branches of anterior interventricular artery","heart",false
+"Circumflex artery of heart","heart",false
+"Right coronary artery","heart",false
+"Right inferolateral branch of right coronary artery","arteries",false
+"Left atrium","arteries",true
+"Left ventricle","heart",true
+"Inferior papillary muscle of left ventricle","heart",false
+"Right atrium","heart",true
+"Right ventricle","heart",true
+"Anterior papillary muscle of right ventricle","heart",false
+"Inferior papillary muscle of right ventricle","heart",false
+"Septal papillary muscle of right ventricle","heart",false
+"Inferior leaflet of right atrioventricular valve","heart",false
+"Posterior leaflet of left atrioventricular valve","heart",false
+"Septal leaflet of right atrioventricular valve","heart",false
+"Left coronary leaflet","heart",false
+"Non-coronary leaflet","heart",false
+"Right coronary leaflet","heart",false
+"Anterior semilunar leaflet of pulmonary valve","heart",false
+"Left semilunar leaflet of pulmonary valve","heart",false
+"Right semilunar leaflet of pulmonary valve","heart",false
+"Left pulmonary artery","heart",true
+"Anterior basal segmental artery of left lung","arteries",false
+"Lateral basal segmental artery of left lung","arteries",false
+"Medial basal segmental artery of left lung","arteries",false
+"Posterior basal segmental artery of left lung","arteries",false
+"Superior segmental artery of left lung","arteries",false
+"Anterior segmental artery of left lung","arteries",false
+"Apical segmental artery of left lung","arteries",false
+"Inferior lingular artery of left lung","arteries",false
+"Posterior segmental artery of left lung","arteries",false
+"Superior lingular artery of left lung","arteries",false
+"Pulmonary trunk","arteries",true
+"Bifurcation of pulmonary trunk","arteries",false
+"Right pulmonary artery","arteries",true
+"Inferior lobar artery of right lung","arteries",false
+"Anterior basal segmental artery of right lung","arteries",false
+"Lateral basal segmental artery of right lung","arteries",false
+"Medial basal segmental artery of right lung","arteries",false
+"Posterior basal segmental artery of right lung","arteries",false
+"Superior segmental artery of right lung","arteries",false
+"Middle lobar artery of right lung","arteries",false
+"Lateral segmental artery of right lung","arteries",false
+"Medial segmental artery of right lung","arteries",false
+"Superior lobar artery of right lung","arteries",false
+"Anterior segmental artery of right lung","arteries",false
+"Apical segmental artery of right lung","arteries",false
+"Posterior segmental artery of right lung","arteries",false
+"Abdominal aorta","arteries",false
+"Coeliac trunk","arteries",true
+"Common hepatic artery","arteries",false
+"Gastroduodenal artery","arteries",false
+"Proper hepatic artery","arteries",false
+"Left gastric artery","arteries",false
+"Splenic artery","arteries",false
+"Inferior mesenteric artery","arteries",false
+"Left colic artery","arteries",false
+"Ascending branch of left colic artery","arteries",false
+"Descending branch of left colic artery","arteries",false
+"Sigmoid arteries","arteries",false
+"Superior anorectal artery","arteries",false
+"Inferior phrenic artery","arteries",false
+"Left renal artery","arteries",false
+"Anterior branch of renal artery.l","arteries",false
+"Inferior suprarenal artery.l","arteries",false
+"Intrarenal arteries of left kidney","arteries",false
+"Posterior branch of renal artery.l","arteries",false
+"Left testicular artery","arteries",false
+"Lumbar arteries.l","arteries",false
+"Lumbar arteries.r","arteries",false
+"Right renal artery","arteries",false
+"Anterior branch of renal artery.r","arteries",false
+"Inferior suprarenal artery.r","arteries",false
+"Intrarenal arteries of right kidney","arteries",false
+"Posterior branch of renal artery.r","arteries",false
+"Right testicular artery.r","arteries",false
+"Superior mesenteric artery","arteries",false
+"Ileocolic artery","arteries",false
+"Appendicular artery","arteries",false
+"Colic branch of ileocolic artery","arteries",false
+"Ileal branch of ileocolic artery","arteries",false
+"Inferior pancreaticoduodenal artery","arteries",false
+"Anterior inferior pancreaticoduodenal artery","arteries",false
+"Marginal artery","arteries",false
+"Middle colic artery","arteries",false
+"Right colic artery","arteries",false
+"Aortic arch","arteries",true
+"Brachiocephalic trunk","arteries",true
+"Common iliac artery.l","arteries",false
+"External iliac artery.l","arteries",false
+"Inferior epigastric artery.l","arteries",false
+"Internal iliac artery.l","arteries",false
+"Anterior division of internal iliac artery.l","arteries",false
+"Inferior gluteal artery.l","arteries",false
+"Internal pudendal artery.l","arteries",false
+"Deep artery of penis.l","arteries",false
+"Dorsal artery of penis.l","arteries",false
+"Posterior division of internal iliac artery.l","arteries",false
+"Iliolumbar artery.l","arteries",false
+"Iliacus branch of iliolumbar artery.l","arteries",false
+"Lumbar branch of iliolumbar artery.l","arteries",false
+"Spinal branch of iliolumbar artery.l","arteries",false
+"Superior gluteal artery.l","arteries",false
+"Common iliac artery.r","arteries",false
+"External iliac artery.r","arteries",false
+"Inferior epigastric artery.r","arteries",false
+"Internal iliac artery.r","arteries",false
+"Anterior division of internal iliac artery.r","arteries",false
+"Inferior gluteal artery.r","arteries",false
+"Internal pudendal artery.r","arteries",false
+"Deep artery of penis.r","arteries",false
+"Dorsal artery of penis.r","arteries",false
+"Obturator artery.l","arteries",false
+"Obturator artery.r","arteries",false
+"Posterior division of internal iliac artery.r","arteries",false
+"Iliolumbar artery.r","arteries",false
+"Iliacus branch of iliolumbar artery.r","arteries",false
+"Lumbar branch of iliolumbar artery.r","arteries",false
+"Spinal branch of iliolumbar artery.r","arteries",false
+"Superior gluteal artery.r","arteries",false
+"Median sacral artery","arteries",false
+"Ascending aorta","arteries",true
+"Thoracic aorta","arteries",true
+"Posterior intercostal arteries.l","arteries",false
+"Posterior intercostal arteries.r","arteries",false
+"Subcostal artery.l","arteries",false
+"Subcostal artery.r","arteries",false
+"Superior phrenic arteries","arteries",false
+"Anterior spinal artery.l","arteries",false
+"Anterior spinal artery.r","arteries",false
+"Anterior communicating artery","arteries",false
+"Posterior communicating artery.l","arteries",false
+"Posterior communicating artery.r","arteries",false
+"Femoral artery.l","arteries",false
+"Deep external pudendal artery.l","arteries",false
+"Deep femoral artery.l","arteries",false
+"Lateral circumflex femoral artery.l","arteries",false
+"Descending branch of lateral circumflex femoral artery.l","arteries",false
+"Medial circumflex femoral artery.l","arteries",false
+"Perforating femoral arteries.l","arteries",false
+"Popliteal artery.l","arteries",false
+"Anterior tibial artery.l","arteries",false
+"Dorsalis pedis artery.l","arteries",false
+"Arcuate artery.l","arteries",false
+"Dorsal metatarsal arteries.l","arteries",false
+"Dorsal digital arteries of foot.l","arteries",false
+"Deep plantar artery.l","arteries",false
+"Lateral tarsal artery.l","arteries",false
+"Inferior lateral genicular artery.l","arteries",false
+"Inferior medial genicular artery.l","arteries",false
+"Middle genicular artery.l","arteries",false
+"Patellar anastomosis.l","arteries",false
+"Posterior tibial artery.l","arteries",false
+"Calcaneal branches of posterior tibial artery.l","arteries",false
+"Fibular artery.l","arteries",false
+"Calcaneal branches of fibular artery.l","arteries",false
+"Lateral plantar artery.l","arteries",false
+"Plantar arch.l","arteries",false
+"Plantar metatarsal arteries.l","arteries",false
+"Common plantar digital arteries.l","arteries",false
+"Proper plantar digital arteries.l","arteries",false
+"Perforating branches of plantar metatarsal arteries.l","arteries",false
+"Medial plantar artery.l","arteries",false
+"Superficial branch of medial plantar artery.l","arteries",false
+"Superior lateral genicular artery.l","arteries",false
+"Superior medial genicular artery.l","arteries",false
+"Superficial epigastric artery.l","arteries",false
+"Superficial external pudendal artery.l","arteries",false
+"Femoral artery.r","arteries",false
+"Deep external pudendal artery.r","arteries",false
+"Deep femoral artery.r","arteries",false
+"Lateral circumflex femoral artery.r","arteries",false
+"Descending branch of lateral circumflex femoral artery","arteries",false
+"Medial circumflex femoral artery.r","arteries",false
+"Perforating femoral arteries.r","arteries",false
+"Popliteal artery.r","arteries",false
+"Anterior tibial artery.r","arteries",false
+"Dorsalis pedis artery.r","arteries",false
+"Arcuate artery.r","arteries",false
+"Dorsal metatarsal arteries.r","arteries",false
+"Dorsal digital arteries of foot.r","arteries",false
+"Deep plantar artery.r","arteries",false
+"Lateral tarsal artery.r","arteries",false
+"Inferior lateral genicular artery.r","arteries",false
+"Inferior medial genicular artery.r","arteries",false
+"Middle genicular artery.r","arteries",false
+"Patellar anastomosis.r","arteries",false
+"Posterior tibial artery.r","arteries",false
+"Calcaneal branches of posterior tibial artery.r","arteries",false
+"Fibular artery.r","arteries",false
+"Calcaneal branches of fibular artery.r","arteries",false
+"Lateral plantar artery.r","arteries",false
+"Plantar arch.r","arteries",false
+"Plantar metatarsal arteries.r","arteries",false
+"Common plantar digital arteries.r","arteries",false
+"Proper plantar digital arteries.r","arteries",false
+"Perforating branches of plantar metatarsal arteries.r","arteries",false
+"Medial plantar artery.r","arteries",false
+"Superficial branch of medial plantar artery.r","arteries",false
+"Superior lateral genicular artery.r","arteries",false
+"Superior medial genicular artery.r","arteries",false
+"Superficial epigastric artery.r","arteries",false
+"Superficial external pudendal artery.r","arteries",false
+"Left common carotid artery","arteries",false
+"External carotid artery.l","arteries",false
+"Ascending pharyngeal artery.l","arteries",false
+"Facial artery.l","arteries",false
+"Angular artery.l","arteries",false
+"Inferior labial artery.l","arteries",false
+"Submental artery.l","arteries",false
+"Superior labial artery.l","arteries",false
+"Maxillary artery.l","arteries",false
+"Anterior deep temporal artery.l","arteries",false
+"Artery of pterygoid canal.l","arteries",false
+"Buccal artery.l","arteries",false
+"Descending palatine artery.l","arteries",false
+"Greater palatine artery.l","arteries",false
+"Inferior alveolar artery.l","arteries",false
+"Mental branch of inferior alveolar artery.l","arteries",false
+"Mylohyoid branch of inferior alveolar artery.l","arteries",false
+"Infra-orbital artery.l","arteries",false
+"Middle meningeal artery.l","arteries",false
+"Accessory branch of middle meningeal artery.l","arteries",false
+"Posterior deep temporal artery.l","arteries",false
+"Posterior lateral nasal branches of sphenopalatine artery..l","arteries",false
+"Posterior septal branches of sphenopalatine artery.l","arteries",false
+"Posterior superior alveolar artery.l","arteries",false
+"Occipital artery.l","arteries",false
+"Superficial temporal artery.l","arteries",false
+"Frontal branch of superficial temporal artery.l","arteries",false
+"Transverse facial artery.l","arteries",false
+"Internal carotid artery.l","arteries",false
+"Middle cerebral artery (M1-segment).l","arteries",false
+"Distal lateral striate branches.l","arteries",false
+"Insular branches of middle cerebral artery (M2-segment).l","arteries",false
+"Anterior temporal branch.l","arteries",false
+"Artery of precentral sulcus.l","arteries",false
+"Middle cerebral artery (M3 segment).l","arteries",false
+"Artery of central sulcus.l","arteries",false
+"Parietal branches of middle cerebral artery.l","arteries",false
+"Postcentral arterial branch.l","arteries",false
+"Posterior parietal artery.l","arteries",false
+"Posterior temporal branch.l","arteries",false
+"Temporal branches of middle cerebral artery.l","arteries",false
+"Temporo-occipital branch.l","arteries",false
+"Branch to angular gyrus.l","arteries",false
+"Prefrontal artery.l","arteries",false
+"Lateral frontobasal artery.l","arteries",false
+"Proximal lateral striate branches.l","arteries",false
+"Ophthalmic artery.l","arteries",false
+"Anterior ethmoidal artery.l","arteries",false
+"Anterior septal branches of anterior ethmoidal artery.l","arteries",false
+"Central retinal artery.l","arteries",false
+"Lacrimal artery.l","arteries",false
+"Long posterior ciliary arteries.l","arteries",false
+"Posterior ethmoidal artery.l","arteries",false
+"Septal branches of posterior ethmoidal artery.l","arteries",false
+"Short posterior ciliary arteries.l","arteries",false
+"Supra-orbital artery.l","arteries",false
+"Supratrochlear artery.l","arteries",false
+"Left subclavian artery","arteries",false
+"Axillary artery.l","arteries",false
+"Anterior circumflex humeral artery.l","arteries",false
+"Brachial artery.l","arteries",false
+"Deep brachial artery.l","arteries",false
+"Middle collateral artery.l","arteries",false
+"Radial collateral artery.l","arteries",false
+"Inferior ulnar collateral artery.l","arteries",false
+"Radial artery.l","arteries",false
+"Deep palmar arch.l","arteries",false
+"Palmar metacarpal arteries.l","arteries",false
+"Dorsal carpal anastomosis.l","arteries",false
+"Dorsal metacarpal arteries.l","arteries",false
+"Dorsal digital arteries of hand.l","arteries",false
+"Palmar carpal branch of radial artery.l","arteries",false
+"Superior ulnar collateral artery.l","arteries",false
+"Ulnar artery.l","arteries",false
+"(Ulnar recurrent artery).l","arteries",false
+"Common interosseous artery.l","arteries",false
+"Posterior interosseous artery.l","arteries",false
+"Recurrent interosseous artery.l","arteries",false
+"Dorsal carpal branch of ulnar artery.l","arteries",false
+"Superficial palmar arch.l","arteries",false
+"Common palmar digital arteries.l","arteries",false
+"Proper palmar digital arteries.l","arteries",false
+"Lateral thoracic artery.l","arteries",false
+"Posterior circumflex humeral artery.l","arteries",false
+"Subscapular artery.l","arteries",false
+"Circumflex scapular artery.l","arteries",false
+"Thoracodorsal artery.l","arteries",false
+"Thoraco-acromial artery.l","arteries",false
+"Pectoral branches of thoraco-acromial artery.l","arteries",false
+"Costocervical trunk.l","arteries",false
+"Deep cervical artery.l","arteries",false
+"Supreme intercostal artery.l","arteries",false
+"First posterior intercostal artery.l","arteries",false
+"Second posterior intercostal artery.l","arteries",false
+"Internal thoracic artery.l","arteries",false
+"Musculophrenic artery.l","arteries",false
+"Superior epigastric artery.l","arteries",false
+"Thyrocervical trunk.l","arteries",false
+"Inferior thyroid artery.l","arteries",false
+"Suprascapular artery.l","arteries",false
+"Transverse cervical artery.l","arteries",false
+"(Deep branch of transverse cervical artery).l","arteries",false
+"(Superficial branch of transverse cervical artery).l","arteries",false
+"Vertebral artery.l","arteries",false
+"Posterior inferior cerebellar artery.l","arteries",false
+"Right common carotid artery","arteries",false
+"External carotid artery.r","arteries",false
+"Ascending pharyngeal artery.r","arteries",false
+"Facial artery.r","arteries",false
+"Angular artery.r","arteries",false
+"Inferior labial artery.r","arteries",false
+"Submental artery.r","arteries",false
+"Superior labial artery.r","arteries",false
+"Maxillary artery.r","arteries",false
+"Anterior deep temporal artery.r","arteries",false
+"Artery of pterygoid canal.r","arteries",false
+"Buccal artery.r","arteries",false
+"Descending palatine artery.r","arteries",false
+"Greater palatine artery.r","arteries",false
+"Inferior alveolar artery.r","arteries",false
+"Mental branch of inferior alveolar artery.r","arteries",false
+"Mylohyoid branch of inferior alveolar artery.r","arteries",false
+"Infra-orbital artery.r","arteries",false
+"Middle meningeal artery.r","arteries",false
+"Accessory branch of middle meningeal artery.r","arteries",false
+"Posterior deep temporal artery.r","arteries",false
+"Posterior lateral nasal branches of sphenopalatine artery..r","arteries",false
+"Posterior septal branches of sphenopalatine artery.r","arteries",false
+"Posterior superior alveolar artery.r","arteries",false
+"Occipital artery.r","arteries",false
+"Superficial temporal artery.r","arteries",false
+"Frontal branch of superficial temporal artery.r","arteries",false
+"Transverse facial artery.r","arteries",false
+"Internal carotid artery.r","arteries",false
+"Anterior cerebral artery.l","arteries",false
+"Callosomarginal artery.l","arteries",false
+"Frontal branches of callosomarginal artery.l","arteries",false
+"Orbitofrontal branches of anterior cerebral artery.l","arteries",false
+"Pericallosal artery.l","arteries",false
+"Anterior cerebral artery.r","arteries",false
+"Callosomarginal artery.r","arteries",false
+"Frontal branches of callosomarginal artery.r","arteries",false
+"Orbitofrontal branches of anterior cerebral artery.r","arteries",false
+"Pericallosal artery.r","arteries",false
+"Middle cerebral artery (M1-segment).r","arteries",false
+"Distal lateral striate branches.r","arteries",false
+"Insular branches of middle cerebral artery (M2).r","arteries",false
+"Anterior temporal branch.r","arteries",false
+"Artery of precentral sulcus.r","arteries",false
+"Middle cerebral artery (M3-segment).r","arteries",false
+"Artery of central sulcus.r","arteries",false
+"Parietal branches of middle cerebral artery.r","arteries",false
+"Postcentral arterial branch.r","arteries",false
+"Posterior parietal artery.r","arteries",false
+"Posterior temporal branch.r","arteries",false
+"Temporal branches of middle cerebral artery.r","arteries",false
+"Temporo-occipital branch.r","arteries",false
+"Branch to angular gyrus.r","arteries",false
+"Prefrontal artery.r","arteries",false
+"Lateral frontobasal artery.r","arteries",false
+"Proximal lateral striate branches.r","arteries",false
+"Ophthalmic artery.r","arteries",false
+"Anterior ethmoidal artery.r","arteries",false
+"Anterior septal branches of anterior ethmoidal artery.r","arteries",false
+"Central retinal artery.r","arteries",false
+"Lacrimal artery.r","arteries",false
+"Long posterior ciliary arteries.r","arteries",false
+"Posterior ethmoidal artery.r","arteries",false
+"Septal branches of posterior ethmoidal artery.r","arteries",false
+"Short posterior ciliary arteries.r","arteries",false
+"Supra-orbital artery.r","arteries",false
+"Supratrochlear artery.r","arteries",false
+"Right subclavian artery","arteries",false
+"Axillary artery.r","arteries",false
+"Anterior circumflex humeral artery.r","arteries",false
+"Brachial artery.r","arteries",false
+"Deep brachial artery.r","arteries",false
+"Middle collateral artery.r","arteries",false
+"Radial collateral artery.r","arteries",false
+"Inferior ulnar collateral artery.r","arteries",false
+"Radial artery.r","arteries",false
+"Deep palmar arch.r","arteries",false
+"Palmar metacarpal arteries.r","arteries",false
+"Dorsal carpal anastomosis.r","arteries",false
+"Dorsal metacarpal arteries.r","arteries",false
+"Dorsal digital arteries of hand.r","arteries",false
+"Palmar carpal branch of radial artery.r","arteries",false
+"Superior ulnar collateral artery.r","arteries",false
+"Ulnar artery.r","arteries",false
+"(Ulnar recurrent artery).r","arteries",false
+"Common interosseous artery.r","arteries",false
+"Posterior interosseous artery.r","arteries",false
+"Recurrent interosseous artery.r","arteries",false
+"Dorsal carpal branch of ulnar artery.r","arteries",false
+"Superficial palmar arch.r","arteries",false
+"Common palmar digital arteries.r","arteries",false
+"Proper palmar digital arteries.r","arteries",false
+"Lateral thoracic artery.r","arteries",false
+"Posterior circumflex humeral artery.r","arteries",false
+"Subscapular artery.r","arteries",false
+"Circumflex scapular artery.r","arteries",false
+"Thoracodorsal artery.r","arteries",false
+"Thoraco-acromial artery.r","arteries",false
+"Pectoral branches of thoraco-acromial artery.r","arteries",false
+"Costocervical trunk.r","arteries",false
+"Deep cervical artery.r","arteries",false
+"Supreme intercostal artery.r","arteries",false
+"First posterior intercostal artery.r","arteries",false
+"Second posterior intercostal artery.r","arteries",false
+"Internal thoracic artery.r","arteries",false
+"Musculophrenic artery.r","arteries",false
+"Superior epigastric artery.r","arteries",false
+"Thyrocervical trunk.r","arteries",false
+"Inferior thyroid artery.r","arteries",false
+"Suprascapular artery.r","arteries",false
+"Transverse cervical artery.r","arteries",false
+"(Deep branch of transverse cervical artery).r","arteries",false
+"(Superficial branch of transverse cervical artery).r","arteries",false
+"Vertebral artery.r","arteries",false
+"Basilar artery","arteries",false
+"Anterior inferior cerebellar artery.l","arteries",false
+"Anterior inferior cerebellar artery.r","arteries",false
+"Lateral pontine branches of basilar artery.l","arteries",false
+"Lateral pontine branches of basilar artery.r","arteries",false
+"Medial pontine branches of basilar artery.l","arteries",false
+"Medial pontine branches of basilar artery.r","arteries",false
+"Posterior cerebral artery.l","arteries",false
+"Lateral occipital artery.l","arteries",false
+"Medial occipital artery.l","arteries",false
+"Parieto-occipital artery.l","arteries",false
+"Posterior cerebral artery.r","arteries",false
+"Medial occipital artery.r","arteries",false
+"Lateral occipital artery.r","arteries",false
+"Parieto-occipital artery.r","arteries",false
+"Superior cerebellar artery.l","arteries",false
+"Superior cerebellar artery.r","arteries",false
+"Posterior inferior cerebellar artery.r","arteries",false
+"Coronary sinus","arteries",false
+"Great cardiac vein","veins",false
+"Inferior vein of left ventricle","veins",false
+"Inferior vein of left ventricle (//Posterior '')","heart",false
+"Middle cardiac vein","heart",false
+"Left inferior pulmonary vein","veins",true
+"Inferior basal vein of left lung","veins",false
+"Superior basal vein of left lung","veins",false
+"Superior vein of left lung","veins",false
+"Left superior pulmonary vein","veins",true
+"Anterior vein of left lung","veins",false
+"Apicoposterior vein of left lung","veins",false
+"Lingular vein of left lung","veins",false
+"Inferior lingular vein of left lung","veins",false
+"Superior lingular vein of left lung","veins",false
+"Right inferior pulmonary vein","veins",true
+"Inferior basal vein of right lung","veins",false
+"Superior basal vein of right lung","veins",false
+"Superior vein of right lung","veins",false
+"Right superior pulmonary vein","veins",true
+"Anterior vein of right lung","veins",false
+"Apical vein of right lung","veins",false
+"Lateral vein of right lung","veins",false
+"Medial vein of right lung","veins",false
+"Posterior vein of right lung","veins",false
+"Inferior petrosal sinus.l","veins",false
+"Inferior petrosal sinus.r","veins",false
+"Basilar venous plexus","veins",false
+"Anterior intercavernous sinus","veins",false
+"Posterior intercavernous sinus","veins",false
+"Cavernous sinus.l","veins",false
+"Cavernous sinus.r","veins",false
+"Sigmoid sinus.l","veins",false
+"Transverse sinus.l","veins",false
+"Superior petrosal sinus.l","veins",false
+"Sigmoid sinus.r","veins",false
+"Transverse sinus.r","veins",false
+"Superior petrosal sinus.r","veins",false
+"Inferior sagittal sinus","veins",false
+"Occipital sinus","veins",false
+"Straight sinus","veins",false
+"Superior sagittal sinus","veins",false
+"Inferior ophthalmic vein.l","veins",false
+"Inferior ophthalmic vein.r","veins",false
+"Superior ophthalmic vein.l","veins",false
+"Superior ophthalmic vein.r","veins",false
+"Femoral vein.l","veins",false
+"Deep femoral vein.l","veins",false
+"Perforating veins.l","veins",false
+"Great saphenous vein.l","veins",false
+"External pudendal veins.l","veins",false
+"Superficial epigastric vein.l","veins",false
+"Lateral circumflex femoral veins.l","veins",false
+"Medial circumflex femoral veins.l","veins",false
+"Popliteal vein.l","veins",false
+"Anterior tibial veins.l","veins",false
+"Genicular veins.l","veins",false
+"Posterior tibial veins.l","veins",false
+"Fibular veins.l","veins",false
+"Lateral plantar veins.l","veins",false
+"Plantar venous arch.l","veins",false
+"Plantar metatarsal veins.l","veins",false
+"Plantar digital veins.l","veins",false
+"Medial plantar veins.l","veins",false
+"Small saphenous vein.l","veins",false
+"Dorsal venous arch of foot.l","veins",false
+"Dorsal metatarsal veins.l","veins",false
+"Dorsal digital veins of foot.l","veins",false
+"Intercapitular veins of foot.l","veins",false
+"Femoral vein.r","veins",false
+"Deep femoral vein.r","veins",false
+"Perforating veins.r","veins",false
+"Great saphenous vein.r","veins",false
+"External pudendal veins.r","veins",false
+"Superficial dorsal veins of penis","veins",false
+"Superficial epigastric vein.r","veins",false
+"Lateral circumflex femoral veins.r","veins",false
+"Medial circumflex femoral veins.r","veins",false
+"Popliteal vein.r","veins",false
+"Anterior tibial veins.r","veins",false
+"Genicular veins.r","veins",false
+"Posterior tibial veins.r","veins",false
+"Fibular veins.r","veins",false
+"Lateral plantar veins.r","veins",false
+"Plantar venous arch.r","veins",false
+"Plantar metatarsal veins.r","veins",false
+"Plantar digital veins.r","veins",false
+"Medial plantar veins.r","veins",false
+"Small saphenous vein.r","veins",false
+"Dorsal venous arch of foot.r","veins",false
+"Dorsal metatarsal veins.r","veins",false
+"Dorsal digital veins of foot.r","veins",false
+"Intercapitular veins of foot.r","veins",false
+"Hepatic portal vein","veins",false
+"Splenic vein","veins",false
+"Inferior mesenteric vein","veins",false
+"Sigmoid veins","veins",false
+"Left gastro-omental vein","veins",false
+"Superior mesenteric vein","veins",false
+"Middle colic vein","veins",false
+"Right colic vein","veins",false
+"Right gastro-omental vein","veins",false
+"Inferior vena cava (thoracic part)","veins",true
+"Hepatic veins","veins",false
+"Inferior vena cava (abdominal part)","veins",false
+"Common iliac vein.l","veins",false
+"External iliac vein.l","veins",false
+"Inferior epigastric vein.l","veins",false
+"Iliolumbar vein.l","veins",false
+"Internal iliac vein.l","veins",false
+"Inferior gluteal veins.l","veins",false
+"Internal pudendal vein.l","veins",false
+"Lateral sacral veins.l","veins",false
+"Superior gluteal veins.l","veins",false
+"Common iliac vein.r","veins",false
+"External iliac vein.r","veins",false
+"Inferior epigastric vein.r","veins",false
+"Iliolumbar vein.r","veins",false
+"Internal iliac vein.r","veins",false
+"Deep dorsal vein of penis","veins",false
+"Inferior gluteal veins.r","veins",false
+"Internal pudendal vein.r","veins",false
+"Lateral sacral veins.r","veins",false
+"Superior gluteal veins.r","veins",false
+"Left renal vein","veins",false
+"Intrarenal veins of left kidney","veins",false
+"Left testicular vein","veins",false
+"Lumbar veins.l","veins",false
+"Lumbar veins.r","veins",false
+"Right renal vein","veins",false
+"Intrarenal veins of right kidney","veins",false
+"Right testicular vein","veins",false
+"Internal jugular vein.l","veins",false
+"Common facial vein.l","veins",false
+"Anterior division of retromandibular vein.l","veins",false
+"Retromandibular vein.l","veins",false
+"Maxillary veins.l","veins",false
+"Superficial temporal veins.l","veins",false
+"Facial vein.l","veins",false
+"Angular vein.l","veins",false
+"Inferior labial veins.l","veins",false
+"Submental vein.l","veins",false
+"Superior labial vein.l","veins",false
+"Lingual vein.l","veins",false
+"Superior thyroid vein.l","veins",false
+"Internal jugular vein.r","veins",false
+"Common facial vein.r","veins",false
+"Anterior division of retromandibular vein.r","veins",false
+"Retromandibular vein.r","veins",false
+"Maxillary veins.r","veins",false
+"Superficial temporal veins.r","veins",false
+"Facial vein.r","veins",false
+"Angular vein.r","veins",false
+"Inferior labial veins.r","veins",false
+"Submental vein.r","veins",false
+"Superior labial vein.r","veins",false
+"Lingual vein.r","veins",false
+"Superior thyroid vein.r","veins",false
+"Left subclavian vein","veins",false
+"Axillary vein.l","veins",false
+"Anterior circumflex humeral vein.l","veins",false
+"Basilic vein.l","veins",false
+"Median cubital vein.l","veins",false
+"Median antebrachial vein.l","veins",false
+"Brachial veins.l","veins",false
+"Radial veins.l","veins",false
+"Deep venous palmar arch.l","veins",false
+"Ulnar veins.l","veins",false
+"Superficial venous palmar arch.l","veins",false
+"Palmar digital veins.l","veins",false
+"Cephalic vein.l","veins",false
+"Dorsal venous network of hand.l","veins",false
+"Dorsal digital veins of hand.l","veins",false
+"Lateral thoracic vein.l","veins",false
+"Posterior circumflex humeral vein.l","veins",false
+"Subscapular vein.l","veins",false
+"Circumflex scapular vein.l","veins",false
+"Thoracodorsal vein.l","veins",false
+"External jugular vein.l","veins",false
+"Anterior jugular vein.l","veins",false
+"Posterior auricular vein.l","veins",false
+"Posterior division of retromandibular vein.l","veins",false
+"Suprascapular vein.l","veins",false
+"Right subclavian vein","veins",false
+"Axillary vein.r","veins",false
+"Anterior circumflex humeral vein.r","veins",false
+"Basilic vein.r","veins",false
+"Median cubital vein.r","veins",false
+"Median antebrachial vein.r","veins",false
+"Brachial veins.r","veins",false
+"Radial veins.r","veins",false
+"Deep venous palmar arch.r","veins",false
+"Ulnar veins.r","veins",false
+"Superficial venous palmar arch.r","veins",false
+"Palmar digital veins.r","veins",false
+"Cephalic vein.r","veins",false
+"Dorsal venous network of hand.r","veins",false
+"Dorsal digital veins of hand.r","veins",false
+"Lateral thoracic vein.r","veins",false
+"Posterior circumflex humeral vein.r","veins",false
+"Subscapular vein.r","veins",false
+"Circumflex scapular vein.r","veins",false
+"Thoracodorsal vein.r","veins",false
+"External jugular vein.r","veins",false
+"Anterior jugular vein.r","veins",false
+"Posterior auricular vein.r","veins",false
+"Posterior division of retromandibular vein.r","veins",false
+"Suprascapular vein.r","veins",false
+"Superior vena cava","veins",true
+"Azygos vein","veins",false
+"Accessory hemi-azygos vein","veins",false
+"Hemi-azygos vein","veins",false
+"Left ascending lumbar vein","veins",false
+"Left subcostal vein","veins",false
+"Right ascending lumbar vein","veins",false
+"Right subcostal vein","veins",false
+"Right superior intercostal vein","veins",false
+"Right superior phrenic vein","veins",false
+"Left brachiocephalic vein","veins",false
+"Internal thoracic veins.l","veins",false
+"Musculophrenic veins.l","veins",false
+"Superior epigastric veins.l","veins",false
+"Left superior intercostal vein","veins",false
+"Vertebral vein.l","veins",false
+"Occipital vein.l","veins",false
+"Right brachiocephalic vein","veins",false
+"Internal thoracic veins.r","veins",false
+"Musculophrenic veins.r","veins",false
+"Superior epigastric veins.r","veins",false
+"Vertebral vein.r","veins",false
+"Occipital vein.r","veins",false
+"Left atrium","veins",true
+"Left ventricle","heart",true
+"Inferior papillary muscle of left ventricle","heart",false
+"Right atrium","heart",true
+"Right ventricle","heart",true
+"Anterior papillary muscle of right ventricle","heart",false
+"Inferior papillary muscle of right ventricle","heart",false
+"Septal papillary muscle of right ventricle","heart",false
+"Inferior leaflet of right atrioventricular valve","heart",false
+"Posterior leaflet of left atrioventricular valve","heart",false
+"Septal leaflet of right atrioventricular valve","heart",false
+"Left coronary leaflet","heart",false
+"Non-coronary leaflet","heart",false
+"Right coronary leaflet","heart",false
+"Anterior semilunar leaflet of pulmonary valve","heart",false
+"Left semilunar leaflet of pulmonary valve","heart",false
+"Right semilunar leaflet of pulmonary valve","heart",false
+"Pulmonary trunk","heart",true

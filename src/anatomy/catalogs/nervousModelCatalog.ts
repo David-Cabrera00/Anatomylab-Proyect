@@ -1,5 +1,5 @@
 import type { AnatomyModelBinding } from "../types";
-export type NervousModelCatalogEntry = AnatomyModelBinding & { hasSelectableGeometry: true };
+export type NervousModelCatalogEntry = AnatomyModelBinding & { hasSelectableGeometry: boolean };
 export const nervousModelCatalog: readonly NervousModelCatalogEntry[] = [
   {
     "modelKey": "overview",
@@ -124,7 +124,7 @@ export const nervousModelCatalog: readonly NervousModelCatalogEntry[] = [
   {
     "modelKey": "overview",
     "originalName": "Ciliary body-curve.r",
-    "hasSelectableGeometry": true
+    "hasSelectableGeometry": false
   },
   {
     "modelKey": "overview",
@@ -429,17 +429,17 @@ export const nervousModelCatalog: readonly NervousModelCatalogEntry[] = [
   {
     "modelKey": "overview",
     "originalName": "Ecuador del globo ocular.r",
-    "hasSelectableGeometry": true
+    "hasSelectableGeometry": false
   },
   {
     "modelKey": "overview",
     "originalName": "Eje externo del globo ocular",
-    "hasSelectableGeometry": true
+    "hasSelectableGeometry": false
   },
   {
     "modelKey": "overview",
     "originalName": "Eje interno del globo ocular.r",
-    "hasSelectableGeometry": true
+    "hasSelectableGeometry": false
   },
   {
     "modelKey": "overview",
@@ -944,7 +944,7 @@ export const nervousModelCatalog: readonly NervousModelCatalogEntry[] = [
   {
     "modelKey": "overview",
     "originalName": "Meridianos del globo ocular.r",
-    "hasSelectableGeometry": true
+    "hasSelectableGeometry": false
   },
   {
     "modelKey": "overview",

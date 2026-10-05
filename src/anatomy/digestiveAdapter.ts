@@ -5,9 +5,9 @@ import { createAnatomyEntry } from "./createAnatomyEntry";
 import type { AnatomyStructureIndexEntry } from "./types";
 import type { AnatomyStructureData } from "../data/educationalCollection";
 import { digestiveModelCatalog } from "./catalogs/digestiveModelCatalog";
+import { digestiveStableIdByOriginalName } from "./metadata/digestiveStableIds";
 
 const catalogNames = new Set(digestiveModelCatalog.map((item) => item.originalName));
-const catalogByName = new Map(digestiveModelCatalog.map((item) => [item.originalName, item]));
 
 const regionByName: Record<string, string> = {
   "Glándula parótida.l": "Cabeza", "Glándula parótida.r": "Cabeza",
@@ -19,28 +19,36 @@ const regionByName: Record<string, string> = {
 function laterality(originalName: string): "left" | "right" | "midline" {
   return originalName.endsWith(".l") ? "left" : originalName.endsWith(".r") ? "right" : "midline";
 }
-function stableSlug(originalName: string): string {
-  return originalName.replace(/\.(l|r)$/i, "").replace(/[()]/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
 function layerFor(originalName: string): "digestive-tract" | "digestive-accessory" {
   return /^(Glándula|Hígado|Vesícula|Páncreas|Conducto|Lengua|Gingiva)/.test(originalName) ? "digestive-accessory" : "digestive-tract";
 }
 
-export function createDigestiveAnatomyEntries(): readonly AnatomyStructureIndexEntry[] {
+export function createDigestiveAnatomyEntries(
+  catalogEntries: readonly (typeof digestiveModelCatalog)[number][] = digestiveModelCatalog
+): readonly AnatomyStructureIndexEntry[] {
+  const catalogEntriesByName = new Map<string, (typeof digestiveModelCatalog)[number]>(
+    catalogEntries.map((item) => [item.originalName, item])
+  );
   const bindings: Array<{ originalName: string; data: AnatomyStructureData | undefined }> = [...digestivePilotEntries, ...digestiveEducationalGroups.tract, ...digestiveEducationalGroups.accessory].flatMap((entry) => {
     const names = entry.originalNames ?? [entry.originalName];
     return names.map((originalName) => ({ originalName, data: entry.data }));
   });
   bindings.push({ originalName: "Gingiva", data: undefined });
   return bindings.map(({ originalName, data }) => {
-    const catalog = catalogByName.get(originalName);
+    const catalog = catalogEntriesByName.get(originalName);
     if (!catalog) throw new Error(`Nombre digestivo ausente del catálogo: ${originalName}`);
     const side = laterality(originalName);
     const displayName = originalName === "Colon sigmoideo"
       ? "Colon sigmoide"
       : getSystemStructureName("digestive", originalName);
+
+    const stableId = (digestiveStableIdByOriginalName as Record<string, string | undefined>)[originalName];
+    if (!stableId) {
+      throw new Error(`ID persistente digestivo no encontrado para: ${originalName}`);
+    }
+
     return createAnatomyEntry({
-      id: `digestive.${stableSlug(originalName)}${side === "midline" ? "" : `.${side}`}`,
+      id: stableId,
       system: "digestive", modelBindings: [catalog],
       displayName,
       layer: layerFor(originalName), region: regionByName[originalName] ?? "Abdomen",
@@ -58,6 +66,9 @@ export function validateDigestiveAnatomyEntries(entries: readonly AnatomyStructu
     for (const binding of entry.modelBindings) {
       const key = `${binding.modelKey}:${binding.originalName}`;
       if (bindings.has(key) || !catalogNames.has(binding.originalName)) throw new Error(`Binding digestivo inválido: ${key}`); bindings.add(key);
+      const registeredId = (digestiveStableIdByOriginalName as Record<string, string | undefined>)[binding.originalName];
+      if (registeredId !== entry.id) throw new Error(`ID persistente digestivo incoherente: ${binding.originalName}`);
+      if (entry.layer !== layerFor(binding.originalName)) throw new Error(`Layer digestiva incoherente: ${binding.originalName}`);
       if (binding.originalName.endsWith(".l") && entry.laterality !== "left") throw new Error(`Lateralidad inválida: ${entry.id}`);
       if (binding.originalName.endsWith(".r") && entry.laterality !== "right") throw new Error(`Lateralidad inválida: ${entry.id}`);
     }

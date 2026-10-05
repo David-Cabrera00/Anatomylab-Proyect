@@ -9,18 +9,17 @@ import {
 import { getSystemStructureName } from "../utils/systemNames";
 import { skeletalModelCatalog } from "./catalogs/skeletalModelCatalog";
 import { createAnatomyEntry } from "./createAnatomyEntry";
+import { skeletalStableIdByOriginalName } from "./metadata/skeletalStableIds";
 import type {
   AnatomyLaterality,
   AnatomyStructureIndexEntry,
 } from "./types";
 
 type EducationalMetadata = Readonly<{
-  anatomyId: string;
   data: AnatomyStructureData;
 }>;
 
 type UnmappedMetadata = Readonly<{
-  anatomyId: string;
   region: string;
   structureType: string;
 }>;
@@ -32,30 +31,25 @@ const catalogByName = new Map<string, (typeof skeletalModelCatalog)[number]>(
 
 /** Identidades explícitas para estructuras reales que todavía no tienen ficha. */
 const unmappedMetadataByName: Readonly<Record<string, UnmappedMetadata>> = {
-  "Cartílago aritenoides.l": { anatomyId: "skeletal.arytenoid-cartilage.left", region: "Laringe", structureType: "Cartílago" },
-  "Cartílago aritenoides.r": { anatomyId: "skeletal.arytenoid-cartilage.right", region: "Laringe", structureType: "Cartílago" },
-  "Cartílago corniculado.l": { anatomyId: "skeletal.corniculate-cartilage.left", region: "Laringe", structureType: "Cartílago" },
-  "Cartílago corniculado.r": { anatomyId: "skeletal.corniculate-cartilage.right", region: "Laringe", structureType: "Cartílago" },
-  "Cartílago cricoides": { anatomyId: "skeletal.cricoid-cartilage", region: "Laringe", structureType: "Cartílago" },
-  "Cartílago tiroideo": { anatomyId: "skeletal.thyroid-cartilage", region: "Laringe", structureType: "Cartílago" },
-  "Cartílago alar mayor.l": { anatomyId: "skeletal.major-alar-cartilage.left", region: "Nariz", structureType: "Cartílago" },
-  "Cartílago alar mayor.r": { anatomyId: "skeletal.major-alar-cartilage.right", region: "Nariz", structureType: "Cartílago" },
-  "Cartílago del septo nasal": { anatomyId: "skeletal.nasal-septal-cartilage", region: "Nariz", structureType: "Cartílago" },
-  "Proceso lateral del cartílago septal nasal.l": { anatomyId: "skeletal.lateral-nasal-cartilage.left", region: "Nariz", structureType: "Cartílago" },
-  "Proceso lateral del cartílago septal nasal.r": { anatomyId: "skeletal.lateral-nasal-cartilage.right", region: "Nariz", structureType: "Cartílago" },
-  "Seno del hueso esfenoidal": { anatomyId: "skeletal.sphenoidal-sinus", region: "Cráneo", structureType: "Seno paranasal" },
-  "Células óseas etmoidales etmoidales anteriores.l": { anatomyId: "skeletal.anterior-ethmoidal-air-cells.left", region: "Cráneo", structureType: "Celdillas etmoidales" },
-  "Células óseas etmoidales etmoidales anteriores.r": { anatomyId: "skeletal.anterior-ethmoidal-air-cells.right", region: "Cráneo", structureType: "Celdillas etmoidales" },
-  "Células óseas etmoidales etmoidales medias.l": { anatomyId: "skeletal.middle-ethmoidal-air-cells.left", region: "Cráneo", structureType: "Celdillas etmoidales" },
-  "Células óseas etmoidales etmoidales medias.r": { anatomyId: "skeletal.middle-ethmoidal-air-cells.right", region: "Cráneo", structureType: "Celdillas etmoidales" },
-  "Células óseas etmoidales etmoidales posteriores.l": { anatomyId: "skeletal.posterior-ethmoidal-air-cells.left", region: "Cráneo", structureType: "Celdillas etmoidales" },
-  "Células óseas etmoidales etmoidales posteriores.r": { anatomyId: "skeletal.posterior-ethmoidal-air-cells.right", region: "Cráneo", structureType: "Celdillas etmoidales" },
-  "Seno del hueso frontal": { anatomyId: "skeletal.frontal-sinus", region: "Cráneo", structureType: "Seno paranasal" },
-};
-
-const preservedPilotIds: Readonly<Record<string, string>> = {
-  "Escápula.l": "skeletal.scapula.left",
-  "Hueso coxal.r": "skeletal.hip-bone.right",
+  "Cartílago aritenoides.l": { region: "Laringe", structureType: "Cartílago" },
+  "Cartílago aritenoides.r": { region: "Laringe", structureType: "Cartílago" },
+  "Cartílago corniculado.l": { region: "Laringe", structureType: "Cartílago" },
+  "Cartílago corniculado.r": { region: "Laringe", structureType: "Cartílago" },
+  "Cartílago cricoides": { region: "Laringe", structureType: "Cartílago" },
+  "Cartílago tiroideo": { region: "Laringe", structureType: "Cartílago" },
+  "Cartílago alar mayor.l": { region: "Nariz", structureType: "Cartílago" },
+  "Cartílago alar mayor.r": { region: "Nariz", structureType: "Cartílago" },
+  "Cartílago del septo nasal": { region: "Nariz", structureType: "Cartílago" },
+  "Proceso lateral del cartílago septal nasal.l": { region: "Nariz", structureType: "Cartílago" },
+  "Proceso lateral del cartílago septal nasal.r": { region: "Nariz", structureType: "Cartílago" },
+  "Seno del hueso esfenoidal": { region: "Cráneo", structureType: "Seno paranasal" },
+  "Células óseas etmoidales etmoidales anteriores.l": { region: "Cráneo", structureType: "Celdillas etmoidales" },
+  "Células óseas etmoidales etmoidales anteriores.r": { region: "Cráneo", structureType: "Celdillas etmoidales" },
+  "Células óseas etmoidales etmoidales medias.l": { region: "Cráneo", structureType: "Celdillas etmoidales" },
+  "Células óseas etmoidales etmoidales medias.r": { region: "Cráneo", structureType: "Celdillas etmoidales" },
+  "Células óseas etmoidales etmoidales posteriores.l": { region: "Cráneo", structureType: "Celdillas etmoidales" },
+  "Células óseas etmoidales etmoidales posteriores.r": { region: "Cráneo", structureType: "Celdillas etmoidales" },
+  "Seno del hueso frontal": { region: "Cráneo", structureType: "Seno paranasal" },
 };
 
 function lateralityFor(originalName: string): AnatomyLaterality {
@@ -68,45 +62,35 @@ function withoutLaterality(originalName: string): string {
   return originalName.replace(/\.(?:l|r)$/i, "");
 }
 
-function memberNumber(value: number): string {
-  return String(value).padStart(2, "0");
-}
-
 /**
- * Construye IDs desde la identidad educativa y el orden declarativo de sus
- * miembros. Nunca deriva la identidad aplicando slug al nombre del mesh.
+ * Construye metadata educativa usando IDs persistentes de skeletalStableIds.ts
+ * en lugar de generarlos desde el orden declarativo.
  */
-function createEducationalMetadata(): Map<string, EducationalMetadata> {
+function createEducationalMetadata(
+  catalogEntries: readonly (typeof skeletalModelCatalog)[number][]
+): Map<string, EducationalMetadata> {
   const result = new Map<string, EducationalMetadata>();
+  const catalogEntriesByName = new Map<string, (typeof skeletalModelCatalog)[number]>(
+    catalogEntries.map((entry) => [entry.originalName, entry])
+  );
   const groups = Object.values(skeletalEducationalGroups).flat() as readonly EducationalStructureBinding[];
 
   for (const binding of groups) {
     const originalNames = binding.originalNames ?? [binding.originalName];
-    const memberByBaseName = new Map<string, number>();
-    for (const originalName of originalNames) {
-      const baseName = withoutLaterality(originalName);
-      if (!memberByBaseName.has(baseName)) {
-        memberByBaseName.set(baseName, memberByBaseName.size + 1);
-      }
-    }
 
     for (const originalName of originalNames) {
-      if (!catalogByName.has(originalName)) {
+      if (!catalogEntriesByName.has(originalName)) {
         throw new Error(`OriginalName esquelético ausente del catálogo: ${originalName}`);
       }
       if (result.has(originalName)) {
         throw new Error(`Binding educativo esquelético duplicado: overview:${originalName}`);
       }
 
-      const side = lateralityFor(originalName);
-      const member = memberByBaseName.get(withoutLaterality(originalName));
-      if (!member) throw new Error(`Identidad esquelética vacía: ${originalName}`);
-      const memberSuffix = memberByBaseName.size === 1
-        ? ""
-        : `.member-${memberNumber(member)}`;
-      const sideSuffix = side ? `.${side}` : "";
+      if (!(originalName in skeletalStableIdByOriginalName)) {
+        throw new Error(`ID persistente esquelético no encontrado para: ${originalName}`);
+      }
+
       result.set(originalName, {
-        anatomyId: preservedPilotIds[originalName] ?? `${binding.data.id}${memberSuffix}${sideSuffix}`,
         data: binding.data,
       });
     }
@@ -133,19 +117,27 @@ function uniqueKeywords(values: readonly (string | undefined)[]): string[] {
   return result;
 }
 
-export function createSkeletalAnatomyEntries(): readonly AnatomyStructureIndexEntry[] {
-  const educationalByName = createEducationalMetadata();
+export function createSkeletalAnatomyEntries(
+  catalogEntries: readonly (typeof skeletalModelCatalog)[number][] = skeletalModelCatalog
+): readonly AnatomyStructureIndexEntry[] {
+  const educationalByName = createEducationalMetadata(catalogEntries);
 
-  return skeletalModelCatalog.map((catalogEntry) => {
+  return catalogEntries.map((catalogEntry) => {
     const educational = educationalByName.get(catalogEntry.originalName);
     const unmapped = unmappedMetadataByName[catalogEntry.originalName];
     if (!educational && !unmapped) {
       throw new Error(`Metadata esquelética ausente: ${catalogEntry.originalName}`);
     }
+    const stableId = (
+      skeletalStableIdByOriginalName as Record<string, string | undefined>
+    )[catalogEntry.originalName];
+    if (!stableId) {
+      throw new Error(`ID persistente esquelético no encontrado para: ${catalogEntry.originalName}`);
+    }
 
     const displayName = getSystemStructureName("skeletal", catalogEntry.originalName);
     return createAnatomyEntry({
-      id: educational?.anatomyId ?? unmapped.anatomyId,
+      id: stableId,
       system: "skeletal",
       modelBindings: [{
         modelKey: catalogEntry.modelKey,
@@ -205,6 +197,15 @@ export function validateSkeletalAnatomyEntries(
       if (!catalogEntry.hasSelectableGeometry) {
         throw new Error(`Geometría esquelética no seleccionable: ${binding.originalName}`);
       }
+      const registeredId = (
+        skeletalStableIdByOriginalName as Record<string, string | undefined>
+      )[binding.originalName];
+      if (registeredId !== entry.id) {
+        throw new Error(`ID persistente esquelético incoherente: ${binding.originalName}`);
+      }
+      if (entry.layer !== catalogEntry.layer) {
+        throw new Error(`Layer esquelética incoherente: ${binding.originalName}`);
+      }
       if (MOJIBAKE_PATTERN.test(binding.originalName)) {
         throw new Error(`Mojibake en originalName esquelético: ${binding.originalName}`);
       }
@@ -223,7 +224,12 @@ export function validateSkeletalAnatomyEntries(
     }
   }
 
-  for (const [originalName, anatomyId] of Object.entries(preservedPilotIds)) {
+  const pilotChecks: Readonly<Record<string, string>> = {
+    "Escápula.l": "skeletal.scapula.left",
+    "Hueso coxal.r": "skeletal.hip-bone.right",
+  };
+
+  for (const [originalName, anatomyId] of Object.entries(pilotChecks)) {
     const entry = entries.find((candidate) =>
       candidate.modelBindings.some((binding) => binding.originalName === originalName)
     );

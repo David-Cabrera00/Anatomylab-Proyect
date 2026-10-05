@@ -22,6 +22,7 @@ const { cardiovascularStableIdByOriginalName } = await import(
   "../src/anatomy/metadata/cardiovascularStableIds.ts"
 );
 const { cardiovascularData } = await import("../src/data/cardiovascular.ts");
+const { cardiovascularStudyGuide } = await import("../src/data/studyGuides.ts");
 const { getUnknownAnatomyWords, isInvalidStructureName } = await import(
   "../src/utils/cardiovascular/cardiovascularNames.ts"
 );
@@ -30,6 +31,19 @@ const MODELS = [
   { modelKey: "overview", path: "public/models/cardiovascular/cardiovascular_overview_v2.glb" },
   { modelKey: "heart-detail", path: "public/models/cardiovascular/cardiovascular_bodyparts.glb" },
 ];
+
+const anatomyEntryById = new Map(anatomyIndex.map((entry) => [entry.id, entry]));
+const invalidStudySteps = cardiovascularStudyGuide.steps.flatMap((step) => {
+  const entry = anatomyEntryById.get(step.anatomyId);
+  if (!entry) return [{ stepId: step.id, anatomyId: step.anatomyId, reason: "missing-anatomy-id" }];
+  if (entry.system !== "cardiovascular") {
+    return [{ stepId: step.id, anatomyId: step.anatomyId, reason: "wrong-system" }];
+  }
+  if (!entry.modelBindings.some((binding) => binding.modelKey === "overview")) {
+    return [{ stepId: step.id, anatomyId: step.anatomyId, reason: "missing-overview-binding" }];
+  }
+  return [];
+});
 
 function readGlbJson(path) {
   const buffer = fs.readFileSync(path);
@@ -99,6 +113,35 @@ const changedIdsAfterReorder = [...idByBinding].flatMap(([key, id]) =>
 const educationalIds = new Set(Object.keys(cardiovascularData));
 const stableIds = Object.values(cardiovascularStableIdByOriginalName);
 const mojibakePattern = /\u00c3|\u00c2|\ufffd|\u00ef\u00bf\u00bd/;
+const csvText = fs.readFileSync(
+  "public/data/csv/cardiovascular_missing_educational_filled.csv",
+  "utf8"
+);
+const csvRows = csvText.trim().split(/\r?\n/).slice(1);
+const csvStableIds = new Set();
+const invalidCsvRows = [];
+const csvNamesMissingStableId = [];
+for (const [index, row] of csvRows.entries()) {
+  const match = row.match(/^"([^"]+)","([^"]+)","([^"]*)","([^"]*)","([^"]*)","([^"]*)"$/);
+  if (!match) {
+    invalidCsvRows.push(index + 2);
+    continue;
+  }
+  const [, originalName, , description, func, location] = match;
+  const stableId = cardiovascularStableIdByOriginalName[originalName];
+  if (!stableId) {
+    csvNamesMissingStableId.push(originalName);
+    continue;
+  }
+  if (![description, func, location].every((value) => value.trim())) {
+    invalidCsvRows.push(index + 2);
+    continue;
+  }
+  csvStableIds.add(stableId);
+}
+const entriesWithoutEducationalContent = entries
+  .filter((entry) => !entry.educationalId && !csvStableIds.has(entry.id))
+  .map((entry) => entry.id);
 
 const report = {
   glb: { geometry, totalMeshNodes: Object.values(geometry).reduce((sum, count) => sum + count, 0) },
@@ -106,6 +149,14 @@ const report = {
   anatomyEntries: entries.length,
   indexBindings: indexBindings.length,
   entriesWithEducationalId: entries.filter((entry) => entry.educationalId).length,
+  educationalCoverage: {
+    csvRows: csvRows.length,
+    csvStableIds: csvStableIds.size,
+    coveredEntries: entries.length - entriesWithoutEducationalContent.length,
+    entriesWithoutEducationalContent,
+    invalidCsvRows,
+    csvNamesMissingStableId,
+  },
   entriesWithMultipleBindings: entries.filter((entry) => entry.modelBindings.length > 1).length,
   layers: {
     heart: entries.filter((entry) => entry.layer === "heart").length,
@@ -133,6 +184,11 @@ const report = {
   ),
   unknownTranslationWords: [...unknownWords].sort(),
   invalidDisplayNames: entries.map((entry) => entry.displayName).filter((name) => name === "Estructura sin identificar"),
+  studyGuide: {
+    steps: cardiovascularStudyGuide.steps.length,
+    duplicateStepIds: duplicates(cardiovascularStudyGuide.steps.map((step) => step.id)),
+    invalidSteps: invalidStudySteps,
+  },
   utf8Problems: [
     ...cardiovascularModelCatalog.map((entry) => entry.originalName),
     ...entries.flatMap((entry) => [entry.id, entry.displayName, entry.region, entry.subregion, entry.structureType]),
@@ -152,8 +208,13 @@ const failures = [
   report.catalogBindingsMissingFromModel,
   report.catalogBindingsMissingFromIndex,
   report.invalidEducationalIds,
+  report.educationalCoverage.entriesWithoutEducationalContent,
+  report.educationalCoverage.invalidCsvRows,
+  report.educationalCoverage.csvNamesMissingStableId,
   report.unknownTranslationWords,
   report.invalidDisplayNames,
+  report.studyGuide.duplicateStepIds,
+  report.studyGuide.invalidSteps,
   report.utf8Problems,
 ].some((items) => items.length > 0)
   || report.catalogBindings !== modelBindings.length

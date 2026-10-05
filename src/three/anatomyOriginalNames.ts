@@ -5,6 +5,9 @@ import {
   type AnatomySystemId,
 } from "../config/anatomySystems";
 
+import { getAnatomyEntryByOriginalName } from "../anatomy";
+import type { AnatomyModelKey } from "../anatomy";
+
 type NameParser = {
   associations: {
     get(object: THREE.Object3D): { nodes?: number } | undefined;
@@ -117,4 +120,26 @@ export function findStructureMesh(
   });
 
   return target;
+}
+
+/** Obtiene el anatomyId estable desde un mesh usando anatomyIndex. Camina hacia padres si el mesh no tiene nombre. */
+export function getAnatomyIdFromMesh(
+  mesh: THREE.Mesh,
+  system: AnatomySystemId,
+  modelKey: AnatomyModelKey = "overview"
+): string | null {
+  let object: THREE.Object3D | null = mesh;
+
+  while (object) {
+    if (object.userData.anatomyIgnore !== true) {
+      const originalName = object.userData.anatomyOriginalName;
+      if (typeof originalName === "string" && originalName.trim()) {
+        const entry = getAnatomyEntryByOriginalName(system, originalName, modelKey);
+        if (entry) return entry.id;
+      }
+    }
+    object = object.parent;
+  }
+
+  return null;
 }
