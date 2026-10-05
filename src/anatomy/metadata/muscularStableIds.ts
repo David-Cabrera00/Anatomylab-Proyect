@@ -512,6 +512,72 @@ export const muscularEducationalIdentityGroupsByEducationalId = {
     { stableKey: "plantar-interossei", anatomyIdBase: "muscular.foot-intrinsics.plantar-interossei", originalBaseNames: ["Músculos interóseos plantares"] },
     { stableKey: "flexor-digitorum-brevis", anatomyIdBase: "muscular.foot-intrinsics.flexor-digitorum-brevis", originalBaseNames: ["Flexor corto de los dedos"] },
   ],
+  "muscular.prevertebral-group": [{
+    stableKey: "muscle-group",
+    anatomyIdBase: "muscular.prevertebral-group",
+    originalBaseNames: ["Músculo largo de la cabeza", "Músculo largo del cuello", "Músculo recto anterior de la cabeza", "Músculo recto lateral de la cabeza"],
+  }],
+  "muscular.pharyngeal-constrictors": [{
+    stableKey: "muscle-group",
+    anatomyIdBase: "muscular.pharyngeal-constrictors",
+    originalBaseNames: ["Constrictor superior de la faringe", "Constrictor medio de la faringe", "Constrictor inferior de la faringe"],
+  }],
+  "muscular.stylopharyngeus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.stylopharyngeus",
+    originalBaseNames: ["Músculo estilofaríngeo"],
+  }],
+  "muscular.sternothyroid": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.sternothyroid",
+    originalBaseNames: ["Músculo esternotiroideo"],
+  }],
+  "muscular.laryngeal-abductors-adductors": [
+    { stableKey: "posterior-cricoarytenoid", anatomyIdBase: "muscular.laryngeal-abductors-adductors.posterior-cricoarytenoid", originalBaseNames: ["Músculo cricoaritenoideo posterior"] },
+    { stableKey: "lateral-cricoarytenoid", anatomyIdBase: "muscular.laryngeal-abductors-adductors.lateral-cricoarytenoid", originalBaseNames: ["Músculo cricoaritenoideo lateral"] },
+    { stableKey: "transverse-arytenoid", anatomyIdBase: "muscular.laryngeal-abductors-adductors.transverse-arytenoid", originalBaseNames: ["Músculo aritenoideo transverso"] },
+  ],
+  "muscular.suprahyoid-additional": [
+    { stableKey: "stylohyoid", anatomyIdBase: "muscular.suprahyoid-additional.stylohyoid", originalBaseNames: ["Músculo estilohioideo"] },
+    { stableKey: "geniohyoid", anatomyIdBase: "muscular.suprahyoid-additional.geniohyoid", originalBaseNames: ["Músculo geniohioideo"] },
+  ],
+  "muscular.tongue-muscles": [
+    { stableKey: "genioglossus", anatomyIdBase: "muscular.tongue-muscles.genioglossus", originalBaseNames: ["Músculo geniogloso"] },
+    { stableKey: "hyoglossus", anatomyIdBase: "muscular.tongue-muscles.hyoglossus", originalBaseNames: ["Músculo hiogloso"] },
+  ],
+  "muscular.palatopharyngeus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.palatopharyngeus",
+    originalBaseNames: ["Músculo palatofaríngeo"],
+  }],
+  "muscular.extraocular-group": [
+    { stableKey: "levator-palpebrae", anatomyIdBase: "muscular.extraocular-group.levator-palpebrae", originalBaseNames: ["Elevador del párpado superior"] },
+    { stableKey: "superior-rectus", anatomyIdBase: "muscular.extraocular-group.superior-rectus", originalBaseNames: ["Músculo recto superior"] },
+    { stableKey: "inferior-rectus", anatomyIdBase: "muscular.extraocular-group.inferior-rectus", originalBaseNames: ["Músculo recto inferior"] },
+    { stableKey: "medial-rectus", anatomyIdBase: "muscular.extraocular-group.medial-rectus", originalBaseNames: ["Músculo recto medial"] },
+    { stableKey: "lateral-rectus", anatomyIdBase: "muscular.extraocular-group.lateral-rectus", originalBaseNames: ["Músculo recto lateral"] },
+    { stableKey: "superior-oblique", anatomyIdBase: "muscular.extraocular-group.superior-oblique", originalBaseNames: ["Músculo oblicuo superior del bulbo ocular"] },
+    { stableKey: "inferior-oblique", anatomyIdBase: "muscular.extraocular-group.inferior-oblique", originalBaseNames: ["Músculo oblicuo inferior del bulbo ocular"] },
+  ],
+  "muscular.pterygoid-group": [
+    { stableKey: "medial-pterygoid", anatomyIdBase: "muscular.pterygoid-group.medial-pterygoid", originalBaseNames: ["Músculo pterigoideo medial"] },
+    { stableKey: "inferior-head-lateral-pterygoid", anatomyIdBase: "muscular.pterygoid-group.inferior-head-lateral-pterygoid", originalBaseNames: ["Cabeza inferior del músculo pterigoideo lateral"] },
+    { stableKey: "superior-head-lateral-pterygoid", anatomyIdBase: "muscular.pterygoid-group.superior-head-lateral-pterygoid", originalBaseNames: ["Cabeza superior del músculo pterigoideo lateral"] },
+  ],
+  "muscular.epicranial-group": [
+    { stableKey: "frontalis", anatomyIdBase: "muscular.epicranial-group.frontalis", originalBaseNames: ["Músculo frontal"] },
+    { stableKey: "occipitalis", anatomyIdBase: "muscular.epicranial-group.occipitalis", originalBaseNames: ["Músculo occipital"] },
+    { stableKey: "temporoparietalis", anatomyIdBase: "muscular.epicranial-group.temporoparietalis", originalBaseNames: ["Músculo temporoparietal"] },
+  ],
+  "muscular.facial-expression-detailed": [
+    { stableKey: "depressor-labii-inferioris", anatomyIdBase: "muscular.facial-expression-detailed.depressor-labii-inferioris", originalBaseNames: ["Depresor del labio inferior"] },
+    { stableKey: "depressor-anguli-oris", anatomyIdBase: "muscular.facial-expression-detailed.depressor-anguli-oris", originalBaseNames: ["Depresor del ángulo oral"] },
+    { stableKey: "depressor-septi-nasi", anatomyIdBase: "muscular.facial-expression-detailed.depressor-septi-nasi", originalBaseNames: ["Depresor del septo nasal"] },
+    { stableKey: "levator-anguli-oris", anatomyIdBase: "muscular.facial-expression-detailed.levator-anguli-oris", originalBaseNames: ["Elevador del angulo de la boca"] },
+    { stableKey: "levator-labii-superioris", anatomyIdBase: "muscular.facial-expression-detailed.levator-labii-superioris", originalBaseNames: ["Elevador del labio superior"] },
+    { stableKey: "levator-labii-superioris-alaeque-nasi", anatomyIdBase: "muscular.facial-expression-detailed.levator-labii-superioris-alaeque-nasi", originalBaseNames: ["Elevador nasolabial"] },
+    { stableKey: "corrugator-supercilii", anatomyIdBase: "muscular.facial-expression-detailed.corrugator-supercilii", originalBaseNames: ["Músculo corrugador del supercilio"] },
+  ],
 } as const satisfies Readonly<
   Record<string, readonly MuscularEducationalIdentityGroup[]>
 >;

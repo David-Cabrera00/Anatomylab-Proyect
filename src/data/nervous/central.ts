@@ -427,6 +427,17 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
     relationships: ["Nervios facial, glosofaríngeo y vago", "Bulbo raquídeo"],
   }),
 
+// Sistema ventricular - Plexo coroideo.
+  bilateral("Plexo coroideo", {
+    id: "nervous.choroid-plexus",
+    name: "Plexo coroideo",
+    type: "Sistema ventricular",
+    description: "Red de capilares cubiertos por epitelio cuboidal que produce líquido cefalorraquídeo.",
+    function: "Secreta la mayor parte del líquido cefalorraquídeo que circula por el sistema ventricular y el espacio subaracnoideo; también actúa como barrera hematoencefálica en los ventrículos.",
+    location: "Presente en los cuatro ventrículos cerebrales: laterales, tercero y cuarto.",
+    relationships: ["Ventrículos laterales", "Tercer ventrículo", "Cuarto ventrículo", "Líquido cefalorraquídeo", "Barrera hematoencefálica"],
+  }),
+
   // Hitos adicionales del encéfalo y la médula con valor docente propio.
   bilateral("Precuneus", {
     id: "nervous.precuneus", name: "Precúneo", type: "Corteza cerebral",
