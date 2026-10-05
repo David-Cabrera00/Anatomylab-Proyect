@@ -578,6 +578,149 @@ export const muscularEducationalIdentityGroupsByEducationalId = {
     { stableKey: "levator-labii-superioris-alaeque-nasi", anatomyIdBase: "muscular.facial-expression-detailed.levator-labii-superioris-alaeque-nasi", originalBaseNames: ["Elevador nasolabial"] },
     { stableKey: "corrugator-supercilii", anatomyIdBase: "muscular.facial-expression-detailed.corrugator-supercilii", originalBaseNames: ["Músculo corrugador del supercilio"] },
   ],
+  "muscular.quadratus-lumborum": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.quadratus-lumborum",
+    originalBaseNames: ["Músculo cuadrado lumbar"],
+  }],
+  "muscular.pyramidalis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.pyramidalis",
+    originalBaseNames: ["Músculo piramidal"],
+  }],
+  "muscular.spinalis-group": [
+    { stableKey: "spinalis-capitis", anatomyIdBase: "muscular.spinalis-group.spinalis-capitis", originalBaseNames: ["Músculo espinal de la cabeza"] },
+    { stableKey: "spinalis-cervicis", anatomyIdBase: "muscular.spinalis-group.spinalis-cervicis", originalBaseNames: ["Músculo espinal del cuello"] },
+    { stableKey: "spinalis-thoracis", anatomyIdBase: "muscular.spinalis-group.spinalis-thoracis", originalBaseNames: ["Músculo espinal del tórax"] },
+  ],
+  "muscular.longissimus-group": [
+    { stableKey: "longissimus-capitis", anatomyIdBase: "muscular.longissimus-group.longissimus-capitis", originalBaseNames: ["Músculo longísimo de la cabeza"] },
+    { stableKey: "longissimus-cervicis", anatomyIdBase: "muscular.longissimus-group.longissimus-cervicis", originalBaseNames: ["Músculo longísmo del cuello"] },
+    { stableKey: "longissimus-thoracis", anatomyIdBase: "muscular.longissimus-group.longissimus-thoracis", originalBaseNames: ["Músculo longísimo del tórax"] },
+  ],
+  "muscular.iliocostalis-group": [
+    { stableKey: "iliocostalis-cervicis", anatomyIdBase: "muscular.iliocostalis-group.iliocostalis-cervicis", originalBaseNames: ["Músculo iliocostal del cuello"] },
+    { stableKey: "iliocostalis-thoracis", anatomyIdBase: "muscular.iliocostalis-group.iliocostalis-thoracis", originalBaseNames: ["Músculo iliocostal del tórax"] },
+    { stableKey: "iliocostalis-lumborum", anatomyIdBase: "muscular.iliocostalis-group.iliocostalis-lumborum", originalBaseNames: ["Músculo iliocostal lumbar"] },
+  ],
+  "muscular.semispinalis-group": [
+    { stableKey: "semispinalis-cervicis", anatomyIdBase: "muscular.semispinalis-group.semispinalis-cervicis", originalBaseNames: ["Músculo semiespinoso del cuello"] },
+    { stableKey: "semispinalis-thoracis", anatomyIdBase: "muscular.semispinalis-group.semispinalis-thoracis", originalBaseNames: ["Músculo semiespinoso del tórax"] },
+  ],
+  "muscular.rotatores": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.rotatores",
+    originalBaseNames: ["Rotadores"],
+  }],
+  "muscular.levator-scapulae": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.levator-scapulae",
+    originalBaseNames: ["Elevador de la escápula"],
+  }],
+  "muscular.rhomboids": [
+    { stableKey: "rhomboid-major", anatomyIdBase: "muscular.rhomboids.rhomboid-major", originalBaseNames: ["Músculo romboides mayor"] },
+    { stableKey: "rhomboid-minor", anatomyIdBase: "muscular.rhomboids.rhomboid-minor", originalBaseNames: ["Músculo romboides menor"] },
+  ],
+  "muscular.serratus-posterior": [
+    { stableKey: "serratus-posterior-superior", anatomyIdBase: "muscular.serratus-posterior.serratus-posterior-superior", originalBaseNames: ["Músculo serrato posterior superior"] },
+    { stableKey: "serratus-posterior-inferior", anatomyIdBase: "muscular.serratus-posterior.serratus-posterior-inferior", originalBaseNames: ["Músculo serrato posterior inferior"] },
+  ],
+  "muscular.levator-ani": [
+    { stableKey: "iliococcygeus", anatomyIdBase: "muscular.levator-ani.iliococcygeus", originalBaseNames: ["Músculo iliococcígeo"] },
+    { stableKey: "puborectalis", anatomyIdBase: "muscular.levator-ani.puborectalis", originalBaseNames: ["Músculo puboanal"] },
+    { stableKey: "pubococcygeus", anatomyIdBase: "muscular.levator-ani.pubococcygeus", originalBaseNames: ["Músculo pubococcígeo"] },
+  ],
+  "muscular.coccygeus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.coccygeus",
+    originalBaseNames: ["Músculo coccígeo"],
+  }],
+  "muscular.external-anal-sphincter": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.external-anal-sphincter",
+    originalBaseNames: ["Esfínter anal externo"],
+  }],
+  "muscular.levatores-costarum": [
+    { stableKey: "levatores-costarum-breves", anatomyIdBase: "muscular.levatores-costarum.levatores-costarum-breves", originalBaseNames: ["Elevadores cortos de las costillas"] },
+    { stableKey: "levatores-costarum-longi", anatomyIdBase: "muscular.levatores-costarum.levatores-costarum-longi", originalBaseNames: ["Elevadores largos de las costillas"] },
+  ],
+  "muscular.subclavius": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.subclavius",
+    originalBaseNames: ["Músculo subclavio"],
+  }],
+  "muscular.transversus-thoracis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.transversus-thoracis",
+    originalBaseNames: ["Músculo transverso del tórax"],
+  }],
+  "muscular.flexor-pollicis-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-pollicis-longus",
+    originalBaseNames: ["Flexor largo del pulgar"],
+  }],
+  "muscular.flexor-digitorum-profundus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-digitorum-profundus",
+    originalBaseNames: ["Flexor profundo de los dedos"],
+  }],
+  "muscular.flexor-carpi-radialis": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-carpi-radialis",
+    originalBaseNames: ["Flexor radial del carpo"],
+  }],
+  "muscular.palmaris-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.palmaris-longus",
+    originalBaseNames: ["Músculo palmar largo"],
+  }],
+  "muscular.thumb-extensors-abductors": [
+    { stableKey: "abductor-pollicis-longus", anatomyIdBase: "muscular.thumb-extensors-abductors.abductor-pollicis-longus", originalBaseNames: ["Abductor largo del pulgar"] },
+    { stableKey: "extensor-pollicis-brevis", anatomyIdBase: "muscular.thumb-extensors-abductors.extensor-pollicis-brevis", originalBaseNames: ["Extensor corto del pulgar"] },
+  ],
+  "muscular.extensor-pollicis-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.extensor-pollicis-longus",
+    originalBaseNames: ["Extensor largo del pulgar"],
+  }],
+  "muscular.extensor-carpi-radialis": [
+    { stableKey: "extensor-carpi-radialis-brevis", anatomyIdBase: "muscular.extensor-carpi-radialis.extensor-carpi-radialis-brevis", originalBaseNames: ["Extensor radial corto del carpo"] },
+    { stableKey: "extensor-carpi-radialis-longus", anatomyIdBase: "muscular.extensor-carpi-radialis.extensor-carpi-radialis-longus", originalBaseNames: ["Extensor radial largo del carpo"] },
+  ],
+  "muscular.anconeus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.anconeus",
+    originalBaseNames: ["Músculo ancóneo"],
+  }],
+  "muscular.pectineus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.pectineus",
+    originalBaseNames: ["Músculo pectíneo"],
+  }],
+  "muscular.popliteus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.popliteus",
+    originalBaseNames: ["Músculo poplíteo"],
+  }],
+  "muscular.plantaris": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.plantaris",
+    originalBaseNames: ["Músculo plantar"],
+  }],
+  "muscular.iliopsoas": [
+    { stableKey: "iliacus", anatomyIdBase: "muscular.iliopsoas.iliacus", originalBaseNames: ["Músculo ilíaco"] },
+    { stableKey: "psoas-major", anatomyIdBase: "muscular.iliopsoas.psoas-major", originalBaseNames: ["Psoas mayor"] },
+  ],
+  "muscular.flexor-hallucis-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-hallucis-longus",
+    originalBaseNames: ["Flexor largo del hállux"],
+  }],
+  "muscular.flexor-digitorum-longus": [{
+    stableKey: "muscle",
+    anatomyIdBase: "muscular.flexor-digitorum-longus",
+    originalBaseNames: ["Músculo flexor largo de los dedos"],
+  }],
 } as const satisfies Readonly<
   Record<string, readonly MuscularEducationalIdentityGroup[]>
 >;

@@ -41,5 +41,39 @@ export const lowerLimbAdditionalEntries: readonly EducationalStructureBinding[] 
     id: "muscular.foot-intrinsics", name: "Músculos intrínsecos del pie", type: "Músculo esquelético",
     description: "Músculos cortos que ocupan la planta y los espacios interóseos del pie.",
     function: "Mueven los dedos y ayudan a sostener y adaptar los arcos plantares durante la marcha.", location: "Planta y dorso profundo del pie."
+  }),
+
+  // Músculos de la cadera y muslo
+  bilateralGroup(["Músculo pectíneo"], {
+    id: "muscular.pectineus", name: "Músculo pectíneo", type: "Músculo esquelético",
+    description: "Músculo plano y cuadrangular en la unión muslo-pelve, parte del compartimento medial.",
+    function: "Aduce, flexiona y rota medialmente el muslo.", location: "Región inguinal, medial al femoral."
+  }),
+  bilateralGroup(["Músculo poplíteo"], {
+    id: "muscular.popliteus", name: "Músculo poplíteo", type: "Músculo esquelético",
+    description: "Músculo triangular profundo en la fosa poplítea.",
+    function: "Desbloquea la rodilla iniciando la rotación medial de la tibia; flexiona la rodilla.", location: "Fosa poplítea, profundo al gastrocnemio."
+  }),
+  bilateralGroup(["Músculo plantar"], {
+    id: "muscular.plantaris", name: "Músculo plantar", type: "Músculo esquelético",
+    description: "Músculo pequeño con tendón muy largo, situado entre el gastrocnemio y el sóleo.",
+    function: "Ayuda a flexionar la rodilla y a la flexión plantar (acción débil).", location: "Compartimento posterior superficial de la pierna."
+  }),
+  bilateralGroup(["Músculo ilíaco", "Psoas mayor"], {
+    id: "muscular.iliopsoas", name: "Músculo ilíaco y psoas mayor (iliopsoas)", type: "Músculo esquelético",
+    description: "El ilíaco recubre la fosa ilíaca; el psoas mayor se origina en vértebras lumbares. Se unen en el tendón común.",
+    function: "Principal flexor del muslo en la cadera; el psoas también flexiona el tronco.", location: "Región ilíaca y lumbar, insertándose en el trocánter menor."
+  }),
+
+  // Flexores del pie
+  bilateralGroup(["Flexor largo del hállux"], {
+    id: "muscular.flexor-hallucis-longus", name: "Flexor largo del primer dedo (hállux)", type: "Músculo esquelético",
+    description: "Músculo profundo posterior de la pierna que flexiona el primer dedo.",
+    function: "Flexiona la falange distal del hállux; sostiene el arco longitudinal medial.", location: "Compartimento posterior profundo de la pierna."
+  }),
+  bilateralGroup(["Músculo flexor largo de los dedos"], {
+    id: "muscular.flexor-digitorum-longus", name: "Flexor largo de los dedos", type: "Músculo esquelético",
+    description: "Músculo profundo posterior de la pierna que flexiona los dedos laterales (2-5).",
+    function: "Flexiona las falanges distales de los dedos 2-5; sostiene el arco longitudinal medial.", location: "Compartimento posterior profundo de la pierna."
   })
 ];
