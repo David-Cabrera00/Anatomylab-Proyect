@@ -524,5 +524,149 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
       relationships: ["Médula espinal", "Cerebelo"],
     },
   },
+
+  // ========== CEREBELO: Lóbulos y vermis faltantes ==========
+  bilateral("Lóbulo biventral", {
+    id: "nervous.biventral-lobule", name: "Lóbulo biventral", type: "Cerebelo",
+    description: "Lóbulo cerebeloso situado en la superficie inferior, entre el lóbulo grácil y el lóbulo semilunar inferior.",
+    function: "Participa en la coordinación de movimientos de los miembros inferiores.",
+    location: "Superficie inferior del cerebelo, entre el lóbulo grácil y el semilunar inferior.",
+    relationships: ["Lóbulo grácil", "Lóbulo semilunar inferior", "Vermis"],
+  }),
+  bilateral("Lóbulo cuadrangular anterior", {
+    id: "nervous.anterior-quadrangular-lobule", name: "Lóbulo cuadrangular anterior", type: "Cerebelo",
+    description: "Lóbulo de la superficie superior del cerebelo, anterior al lóbulo cuadrangular posterior.",
+    function: "Participa en el control de la marcha y el equilibrio.",
+    location: "Región anterior de la superficie superior del cerebelo.",
+    relationships: ["Lóbulo cuadrangular posterior", "Lóbulo simple"],
+  }),
+  bilateral("Lóbulo cuadrangular posterior", {
+    id: "nervous.posterior-quadrangular-lobule", name: "Lóbulo cuadrangular posterior", type: "Cerebelo",
+    description: "Lóbulo de la superficie superior del cerebelo, posterior al lóbulo cuadrangular anterior.",
+    function: "Participa en la coordinación motora fina.",
+    location: "Región posterior de la superficie superior del cerebelo.",
+    relationships: ["Lóbulo cuadrangular anterior", "Lóbulo simple"],
+  }),
+  bilateral("Lóbulo grácil", {
+    id: "nervous.gracile-lobule", name: "Lóbulo grácil", type: "Cerebelo",
+    description: "Lóbulo delgado y alargado en la superficie inferior del cerebelo.",
+    function: "Contribuye al control de la musculatura axial y proximal.",
+    location: "Superficie inferior del cerebelo, medial al lóbulo biventral.",
+    relationships: ["Lóbulo biventral", "Lóbulo semilunar inferior"],
+  }),
+  bilateral("Lóbulo semilunar inferior", {
+    id: "nervous.inferior-semilunar-lobule", name: "Lóbulo semilunar inferior", type: "Cerebelo",
+    description: "Lóbulo grande de la superficie inferior del cerebelo, con forma de media luna.",
+    function: "Coordina movimientos de los miembros inferiores y la marcha.",
+    location: "Porción lateral de la superficie inferior del cerebelo.",
+    relationships: ["Lóbulo grácil", "Lóbulo biventral", "Lóbulo semilunar superior"],
+  }),
+  bilateral("Lóbulo semilunar superior", {
+    id: "nervous.superior-semilunar-lobule", name: "Lóbulo semilunar superior", type: "Cerebelo",
+    description: "Lobulillo del hemisferio cerebeloso situado en la superficie superior del lóbulo posterior.",
+    function: "Contribuye a la planificación y coordinación de los movimientos voluntarios.",
+    location: "Superficie superior del hemisferio cerebeloso, lateral al declive del vermis.",
+    relationships: ["Declive", "Lóbulo cuadrangular posterior", "Lóbulo semilunar inferior"],
+  }),
+  {
+    originalName: "Folio del vermis",
+    data: {
+      id: "nervous.folium-vermis", name: "Folio del vermis", type: "Cerebelo",
+      description: "Lámina estrecha del vermis posterior situada entre el declive y el tubérculo.",
+      function: "Participa en la coordinación de la marcha y el equilibrio.",
+      location: "Vermis cerebeloso, región posterior.",
+      relationships: ["Declive", "Tubérculo del vermis"],
+    },
+  },
+  {
+    originalName: "Lingula del cerebelo",
+    data: {
+      id: "nervous.lingula-cerebelli", name: "Língula del cerebelo", type: "Cerebelo",
+      description: "Porción más anterior del vermis cerebeloso.",
+      function: "Participa en el ajuste de la musculatura axial y el equilibrio.",
+      location: "Porción más anterior del vermis cerebeloso.",
+      relationships: ["Lóbulo central", "Culmen"],
+    },
+  },
+  {
+    originalName: "Culmen",
+    data: {
+      id: "nervous.culmen", name: "Culmen", type: "Cerebelo",
+      description: "Elevación principal del vermis anterior, situada entre el lóbulo central y el declive.",
+      function: "Participa en la regulación del tono muscular y la postura.",
+      location: "Región anterior del vermis cerebeloso.",
+      relationships: ["Lóbulo central", "Declive"],
+    },
+  },
+  {
+    originalName: "Declive",
+    data: {
+      id: "nervous.declive", name: "Declive", type: "Cerebelo",
+      description: "Porción inclinada del vermis posterior situada entre el culmen y el folio.",
+      function: "Contribuye a la coordinación de la musculatura axial.",
+      location: "Vermis cerebeloso, región media.",
+      relationships: ["Culmen", "Folio del vermis"],
+    },
+  },
+  {
+    originalName: "Pirámide del vermis",
+    data: {
+      id: "nervous.pyramid-vermis", name: "Pirámide del vermis", type: "Cerebelo",
+      description: "Elevación cónica del vermis cerebeloso posterior.",
+      function: "Participa en el control de la musculatura axial y el equilibrio.",
+      location: "Región posterior del vermis cerebeloso.",
+      relationships: ["Tubérculo del vermis", "Úvula del vermis"],
+    },
+  },
+  {
+    originalName: "Tubérculo del vermis",
+    data: {
+      id: "nervous.tuber-vermis", name: "Tubérculo del vermis", type: "Cerebelo",
+      description: "Elevación redondeada del vermis cerebeloso, anterior a la pirámide.",
+      function: "Participa en el control postural y la coordinación motora.",
+      location: "Región posterior del vermis cerebeloso.",
+      relationships: ["Declive", "Pirámide del vermis"],
+    },
+  },
+  {
+    originalName: "Úvula del vermis",
+    data: {
+      id: "nervous.uvula-vermis", name: "Úvula del vermis", type: "Cerebelo",
+      description: "Lobulillo del vermis posterior situado entre la pirámide y el nódulo.",
+      function: "Contribuye al control de la postura y de la musculatura axial.",
+      location: "Cara inferior del vermis, rostral al nódulo.",
+      relationships: ["Pirámide del vermis", "Nódulo del vermis"],
+    },
+  },
+  {
+    originalName: "Tienda del cerebello.l",
+    data: {
+      id: "nervous.tentorium-cerebelli.left", name: "Tienda del cerebelo", type: "Duramadre",
+      description: "Pliegue de duramadre que separa el cerebelo de los lóbulos occipitales.",
+      function: "Soporta el peso de los lóbulos occipitales y protege el cerebelo.",
+      location: "Entre el cerebelo y los lóbulos occipitales.",
+      relationships: ["Cerebelo", "Lóbulos occipitales"],
+    },
+  },
+  {
+    originalName: "Tienda del cerebello.r",
+    data: {
+      id: "nervous.tentorium-cerebelli.right", name: "Tienda del cerebelo", type: "Duramadre",
+      description: "Pliegue de duramadre que separa el cerebelo de los lóbulos occipitales.",
+      function: "Soporta el peso de los lóbulos occipitales y protege el cerebelo.",
+      location: "Entre el cerebelo y los lóbulos occipitales.",
+      relationships: ["Cerebelo", "Lóbulos occipitales"],
+    },
+  },
+  {
+    originalName: "Tracto espinocerebeloso anterior",
+    data: {
+      id: "nervous.anterior-spinocerebellar-tract", name: "Tracto espinocerebeloso anterior", type: "Tracto sensitivo",
+      description: "Vía ascendente que transporta información propioceptiva desde la médula espinal al cerebelo.",
+      function: "Transmite información propioceptiva inconsciente desde extremidades y tronco al cerebelo.",
+      location: "Cordón lateral de la médula espinal.",
+      relationships: ["Médula espinal", "Cerebelo", "Tracto espinocerebeloso posterior"],
+    },
+  },
 ];
 
