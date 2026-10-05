@@ -1,57 +1,47 @@
 ﻿import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+
+import { dbGetQuizHistory, type QuizHistory } from "../../utils/db";
 
 export interface HistoryTabProps {
   system: string;
 }
 
+const formatDate = (iso: string): string =>
+  new Date(iso).toLocaleString("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+const formatTime = (ms: number | null): string => {
+  if (!ms) return "—";
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  return `${m}:${(s % 60).toString().padStart(2, "0")}`;
+};
+
 export function HistoryTab({ system }: HistoryTabProps) {
-  const [sessions, setSessions] = useState<Array<{
-    id: string;
-    system: string;
-    config_id: string;
-    score: number;
-    total_questions: number;
-    correct_count: number;
-    started_at: string;
-    completed_at: string;
-    time_spent_ms: number | null;
-  }>>([]);
+  const [sessions, setSessions] = useState<QuizHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    loadHistory();
-  }, [system]);
-
-  async function loadHistory() {
+    let cancelled = false;
     setLoading(true);
-    try {
-      const data = await invoke("db_get_quiz_history", { system, limit: 50 });
-      setSessions(data);
-    } catch (e) {
-      console.error("Error loading history:", e);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function formatDate(iso: string) {
-    return new Date(iso).toLocaleString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
-
-  function formatTime(ms: number | null) {
-    if (!ms) return "—";
-    const s = Math.floor(ms / 1000);
-    const m = Math.floor(s / 60);
-    return `${m}:${(s % 60).toString().padStart(2, "0")}`;
-  }
+    dbGetQuizHistory(system, 50)
+      .then((data) => {
+        if (!cancelled) setSessions(data);
+      })
+      .catch((error) => console.error("Error loading history:", error))
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [system]);
 
   if (loading) {
     return (
@@ -112,27 +102,10 @@ export function HistoryTab({ system }: HistoryTabProps) {
                   Ver respuestas detalladas (próximamente)
                 </span>
               </div>
-            )
+            )}
           </div>
         );
       })}
     </div>
   );
-
-  function formatDate(iso: string) {
-    return new Date(iso).toLocaleString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
-
-  function formatTime(ms: number | null) {
-    if (!ms) return "—";
-    const s = Math.floor(ms / 1000);
-    const m = Math.floor(s / 60);
-    return `${m}:${(s % 60).toString().padStart(2, "0")}`;
-  }
 }
