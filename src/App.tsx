@@ -221,14 +221,14 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
      QUIZ
   ==================================================== */
 
-  const [quizState, setQuizState] = useState<QuizState>({ status: "idle" });
+  const [quizState, setQuizState] = useState<QuizState>({ status: "closed" });
 
   const openQuiz = useCallback(() => {
     setQuizState({ status: "idle" });
   }, []);
 
   const closeQuiz = useCallback(() => {
-    setQuizState({ status: "idle" });
+    setQuizState({ status: "closed" });
   }, []);
 
   /* ====================================================
@@ -1136,13 +1136,15 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               QUIZ
           ================================================= */}
 
-          {quizState.status !== "idle" && (
-            <QuizPanel
-              activeSystem={activeSystem}
-              quizState={quizState}
-              onStateChange={setQuizState}
-              onClose={closeQuiz}
-            />
+          {quizState.status !== "closed" && (
+            <div className="absolute left-5 top-5 z-20 w-[380px] max-h-[calc(100%-40px)] overflow-hidden">
+              <QuizPanel
+                activeSystem={activeSystem}
+                quizState={quizState}
+                onStateChange={setQuizState}
+                onClose={closeQuiz}
+              />
+            </div>
           )}
 
           {/* =================================================

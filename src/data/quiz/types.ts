@@ -53,6 +53,7 @@ export type QuizProgress = {
 };
 
 export type QuizState =
+  | { status: "closed" }
   | { status: "idle" }
   | { status: "configuring"; configId: string }
   | { status: "active"; session: QuizSession; config: QuizConfig }
