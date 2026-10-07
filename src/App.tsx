@@ -248,6 +248,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   }, []);
 
   const [favoriteSaved, setFavoriteSaved] = useState(false);
+  const [favoritesRevision, setFavoritesRevision] = useState(0);
   const studyStartedAtRef = useRef<number | null>(null);
 
   /* ====================================================
@@ -1277,6 +1278,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                     void dbAddFavorite(activeSystem, selectedAnatomyId)
                       .then(() => {
                         setFavoriteSaved(true);
+                        setFavoritesRevision((revision) => revision + 1);
                       })
                       .catch((error) => console.error("Error saving favorite:", error));
                   }}
@@ -1315,7 +1317,14 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       ) : appView === "progress" ? (
         <ProgressView system={activeSystem} />
       ) : appView === "profile" ? (
-        <ProfileView />
+        <ProfileView
+          system={activeSystem}
+          onFocusFavorite={(anatomyId) => {
+            handleViewChange("anatomy");
+            focusStructure(anatomyId);
+          }}
+          refreshKey={favoritesRevision}
+        />
       ) : (
         <SettingsView />
       )}

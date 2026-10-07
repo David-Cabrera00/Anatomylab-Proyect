@@ -1,13 +1,30 @@
-export function ProfileView() {
-  return <PlaceholderView title="Perfil" description="La vista de perfil se incorporará en una tarea posterior." />;
-}
+import { FavoritesTab } from "../components/learning";
+import type { AnatomySystemId } from "../config/anatomySystems";
 
-function PlaceholderView({ title, description }: { title: string; description: string }) {
+type ProfileViewProps = {
+  system: AnatomySystemId;
+  onFocusFavorite: (anatomyId: string) => void;
+  refreshKey?: number;
+};
+
+export function ProfileView({ system, onFocusFavorite, refreshKey = 0 }: ProfileViewProps) {
   return (
-    <section className="flex h-full items-center justify-center p-8">
-      <div className="max-w-xl text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h1>
-        <p className="mt-3 text-slate-600">{description}</p>
+    <section className="h-full overflow-y-auto bg-slate-50 p-6 lg:p-8">
+      <div className="mx-auto max-w-5xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Perfil</h1>
+        <p className="mt-1 text-sm text-slate-500">Tus estructuras anatómicas guardadas.</p>
+
+        <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
+          <h2 className="text-lg font-semibold tracking-tight text-slate-900">Favoritos</h2>
+          <p className="mt-1 text-sm text-slate-500">Sistema activo: {system}</p>
+          <div className="mt-4">
+            <FavoritesTab
+              system={system}
+              onFocus={onFocusFavorite}
+              refreshKey={refreshKey}
+            />
+          </div>
+        </section>
       </div>
     </section>
   );
