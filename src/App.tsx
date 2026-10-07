@@ -48,11 +48,13 @@ import { HistoryTab, FavoritesTab, ProgressTab } from "./components/learning";
 import { dbAddFavorite, dbAddSearchHistory, dbSaveStudyProgress, dbSaveStudySession } from "./utils/db";
 import { AnatomyView } from "./views/AnatomyView";
 import { HomeView } from "./views/HomeView";
+import { LoginView } from "./views/LoginView";
 import { ProfileView } from "./views/ProfileView";
 import { ProgressView } from "./views/ProgressView";
 import { QuizView } from "./views/QuizView";
 import { SettingsView } from "./views/SettingsView";
 import { StudyView } from "./views/StudyView";
+import { RegisterView } from "./views/RegisterView";
 import type { AppView } from "./views/types";
 
 /* ======================================================
@@ -124,7 +126,8 @@ const systemDescriptions: Record<
 ====================================================== */
 
 function App() {
-  const [appView, setAppView] = useState<AppView>("anatomy");
+  const [appView, setAppView] = useState<AppView>("login");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   /* ====================================================
      SISTEMA ACTIVO
@@ -744,6 +747,19 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       className="flex-1 max-w-md"
     />
   );
+
+  const completeAuth = () => {
+    setIsAuthenticated(true);
+    setAppView("home");
+  };
+
+  if (!isAuthenticated) {
+    return appView === "register" ? (
+      <RegisterView onRegister={completeAuth} onLogin={() => setAppView("login")} />
+    ) : (
+      <LoginView onLogin={completeAuth} onRegister={() => setAppView("register")} />
+    );
+  }
 
   /* ====================================================
    RENDER

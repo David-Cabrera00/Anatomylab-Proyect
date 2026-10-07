@@ -1,4 +1,6 @@
 export type AppView =
+  | "login"
+  | "register"
   | "home"
   | "anatomy"
   | "study"

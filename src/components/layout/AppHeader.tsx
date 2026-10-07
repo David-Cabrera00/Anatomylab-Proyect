@@ -7,6 +7,8 @@ type AppHeaderProps = {
 };
 
 const viewTitles: Record<AppView, string> = {
+  login: "Iniciar sesi\u00f3n",
+  register: "Crear cuenta",
   home: "Inicio",
   anatomy: "Anatom\u00eda",
   study: "Estudio",
