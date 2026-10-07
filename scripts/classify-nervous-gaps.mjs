@@ -26,6 +26,7 @@ const groups = [
   ...classification.nervousCentralBatch1Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
   ...classification.nervousCentralBatch2Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
   ...classification.nervousPeripheralBatch1Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
+  ...classification.nervousPeripheralBatch2Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
 ];
 const candidateIds = groups.flatMap((group) => [...group.anatomyIds]);
 const uniqueCandidateIds = new Set(candidateIds);

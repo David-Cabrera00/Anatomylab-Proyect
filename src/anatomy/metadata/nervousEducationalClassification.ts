@@ -45,12 +45,21 @@ export const nervousPeripheralBatch1Candidates = [
   { concept: "Tronco inferior del plexo braquial", educationalId: "nervous.inferior-brachial-plexus-trunk", anatomyIds: ["nervous.model-node-0320", "nervous.model-node-0321"] },
 ] as const;
 
+export const nervousPeripheralBatch2Candidates = [
+  { concept: "División anterior del tronco superior", educationalId: "nervous.superior-trunk-anterior-division", anatomyIds: ["nervous.model-node-0037", "nervous.model-node-0038"] },
+  { concept: "División anterior del tronco medio", educationalId: "nervous.middle-trunk-anterior-division", anatomyIds: ["nervous.model-node-0035", "nervous.model-node-0036"] },
+  { concept: "División anterior del tronco inferior", educationalId: "nervous.inferior-trunk-anterior-division", anatomyIds: ["nervous.model-node-0033", "nervous.model-node-0034"] },
+  { concept: "División posterior del tronco superior", educationalId: "nervous.superior-trunk-posterior-division", anatomyIds: ["nervous.model-node-0045", "nervous.model-node-0046"] },
+  { concept: "División posterior del tronco medio", educationalId: "nervous.middle-trunk-posterior-division", anatomyIds: ["nervous.model-node-0043", "nervous.model-node-0044"] },
+  { concept: "División posterior del tronco inferior", educationalId: "nervous.inferior-trunk-posterior-division", anatomyIds: ["nervous.model-node-0041", "nervous.model-node-0042"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 279,
+  entriesWithoutEducationalContent: 267,
   centralEntriesWithoutEducationalContent: 113,
-  peripheralEntriesWithoutEducationalContent: 156,
+  peripheralEntriesWithoutEducationalContent: 144,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 29,
-  completedEntries: 48,
-  entriesPendingReview: 279,
+  completedConcepts: 35,
+  completedEntries: 60,
+  entriesPendingReview: 267,
 } as const;
