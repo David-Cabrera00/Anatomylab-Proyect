@@ -17,6 +17,9 @@ import {
 } from "./components/ui";
 
 import { SearchBar } from "./components/SearchBar";
+import { AppHeader } from "./components/layout/AppHeader";
+import { AppShell } from "./components/layout/AppShell";
+import { AppSidebar } from "./components/layout/AppSidebar";
 
 import AnatomyViewer, {
   type ViewerAction,
@@ -43,6 +46,14 @@ import { QuizPanel } from "./components/quiz/QuizPanel";
 import type { QuizState } from "./data/quiz/types";
 import { HistoryTab, FavoritesTab, ProgressTab } from "./components/learning";
 import { dbAddFavorite, dbAddSearchHistory, dbSaveStudyProgress, dbSaveStudySession } from "./utils/db";
+import { AnatomyView } from "./views/AnatomyView";
+import { HomeView } from "./views/HomeView";
+import { ProfileView } from "./views/ProfileView";
+import { ProgressView } from "./views/ProgressView";
+import { QuizView } from "./views/QuizView";
+import { SettingsView } from "./views/SettingsView";
+import { StudyView } from "./views/StudyView";
+import type { AppView } from "./views/types";
 
 /* ======================================================
    VISTA CARDIOVASCULAR
@@ -113,6 +124,8 @@ const systemDescriptions: Record<
 ====================================================== */
 
 function App() {
+  const [appView, setAppView] = useState<AppView>("anatomy");
+
   /* ====================================================
      SISTEMA ACTIVO
   ==================================================== */
@@ -589,49 +602,21 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     focusStructure(step.anatomyId, "overview");
   };
 
-  /* ====================================================
-   INICIAR ESTUDIO
-  ==================================================== */
+  const startStudyMode = () => {
+    if (!activeConfig.studyAvailable || !activeStudyGuide) return;
 
-  const startStudyMode =
-    () => {
-      if (
-        !activeConfig
-          .studyAvailable ||
-        !activeStudyGuide
-      ) {
-        return;
-      }
+    setStudyMode(true);
+    studyStartedAtRef.current = Date.now();
+    handleStructureSelect(null);
+    setFocusRequest(null);
+    setViewerAction(null);
 
-      setStudyMode(
-        true
-      );
+    if (activeSystem === "cardiovascular") {
+      setCardiovascularView("overview");
+    }
 
-      studyStartedAtRef.current = Date.now();
-
-      handleStructureSelect(null);
-
-      setFocusRequest(
-        null
-      );
-
-      setViewerAction(
-        null
-      );
-
-      if (
-        activeSystem ===
-        "cardiovascular"
-      ) {
-        setCardiovascularView(
-          "overview"
-        );
-      }
-
-      goToStudyStep(
-        0
-      );
-    };
+    goToStudyStep(0);
+  };
 
   /* ====================================================
    FINALIZAR ESTUDIO
@@ -728,200 +713,126 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       );
     };
 
+  const handleViewChange = (nextView: AppView) => {
+    if (nextView !== "anatomy") {
+      if (studyMode) {
+        persistStudySession(false);
+      }
+      studyStartedAtRef.current = null;
+      setStudyMode(false);
+      setQuizState({ status: "closed" });
+    }
+
+    setAppView(nextView);
+  };
+
+  const globalSearch = (
+    <SearchBar
+      onSelect={(entry, context) => {
+        const { anatomyId, system } = entry;
+        if (context.query) {
+          void dbAddSearchHistory(context.query, system, context.resultsCount, anatomyId)
+            .catch((error) => console.error("Error saving search history:", error));
+        }
+        if (system !== activeSystem) {
+          changeSystem(system);
+        }
+        handleViewChange("anatomy");
+        focusStructure(anatomyId);
+      }}
+      currentSystem={activeSystem}
+      className="flex-1 max-w-md"
+    />
+  );
+
   /* ====================================================
    RENDER
   ==================================================== */
 
   return (
-    <div className="flex h-screen flex-col bg-slate-50 text-slate-900">
-      {/* =================================================
-          HEADER
-      ================================================= */}
-
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
-        <div className="flex items-center gap-6 min-w-0">
-          <div>
-            <h1 className="text-xl font-semibold tracking-tight">
-              AnatomyLab AI
-            </h1>
-
-            <p className="text-xs text-slate-500">
-              Plataforma interactiva
-              de aprendizaje
-            </p>
-          </div>
-
-          <SearchBar
-            onSelect={(entry, context) => {
-              const { anatomyId, system } = entry;
-              if (context.query) {
-                void dbAddSearchHistory(context.query, system, context.resultsCount, anatomyId)
-                  .catch((error) => console.error("Error saving search history:", error));
-              }
-              if (system !== activeSystem) {
-                changeSystem(system);
-              }
-              focusStructure(anatomyId);
-            }}
-            currentSystem={activeSystem}
-            className="flex-1 max-w-md"
-          />
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium transition hover:bg-slate-50"
-          >
-            Progreso
-          </button>
-
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
-            DC
-          </div>
-        </div>
-      </header>
-
-      {/* =================================================
-          CONTENIDO
-      ================================================= */}
-
-      <main className="flex min-h-0 flex-1">
-        {/* =================================================
-            SIDEBAR
-        ================================================= */}
-
-        <aside className="w-55 shrink-0 overflow-y-auto border-r border-slate-200 bg-white p-4">
-          <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Sistemas anatómicos
-          </p>
-
-          <nav className="space-y-1">
-            {anatomySystemList.map(
-              (system) => {
-                const isActive =
-                  activeSystem ===
-                  system.id;
-
-                return (
-                  <Button
-                    key={
-                      system.id
-                    }
-                    variant="ghost"
-                    size="md"
-                    align="start"
-                    selected={isActive}
-                    aria-current={isActive ? "page" : undefined}
-                    onClick={() =>
-                      changeSystem(
-                        system.id
-                      )
-                    }
-                    className="w-full"
-                  >
-                    {
-                      system.label
-                    }
-                  </Button>
-                );
-              }
-            )}
-          </nav>
-
-          {/* =================================================
-              APRENDIZAJE
-          ================================================= */}
-
-          <div className="mt-6 border-t border-slate-300 pt-5">
-            <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Aprendizaje
-            </p>
-
-            {/* Tabs */}
-            <div className="mb-3 flex gap-1" role="tablist">
-              {[
-                { id: "quiz", label: "Quiz", icon: "❓" },
-                { id: "history", label: "Historial", icon: "📜" },
-                { id: "favorites", label: "Favoritos", icon: "⭐" },
-                { id: "progress", label: "Progreso", icon: "📈" },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  role="tab"
-                  aria-selected={learningTab === tab.id}
-                  onClick={() => setLearningTab(tab.id as LearningTab)}
-                  className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                    learningTab === tab.id
-                      ? "bg-slate-100 text-slate-900"
-                      : "text-slate-500 hover:bg-slate-50"
-                  }`}
-                >
-                  <span>{tab.icon}</span>
-                  <span>{tab.label}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* Tab Content */}
-            <div className="space-y-2">
-              {learningTab === "quiz" && (
-                <>
+    <AppShell
+      header={
+        <AppHeader
+          currentView={appView}
+          search={appView === "home" ? undefined : globalSearch}
+        />
+      }
+      sidebar={
+        <AppSidebar
+          currentView={appView}
+          onNavigate={handleViewChange}
+          systems={anatomySystemList}
+          activeSystem={activeSystem}
+          onSystemChange={changeSystem}
+          learningContent={
+            <div className="border-t border-slate-200 pt-5">
+              <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Aprendizaje
+              </p>
+              <div className="mb-3 grid grid-cols-2 gap-1" role="tablist">
+                {[
+                  { id: "quiz", label: "Quiz" },
+                  { id: "history", label: "Historial" },
+                  { id: "favorites", label: "Favoritos" },
+                  { id: "progress", label: "Progreso" },
+                ].map((tab) => (
                   <button
+                    key={tab.id}
                     type="button"
-                    disabled={
-                      !activeConfig.studyAvailable && !studyMode
-                    }
-                    onClick={studyMode ? () => finishStudyMode(false) : startStudyMode}
-                    className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
-                      studyMode
-                        ? "bg-amber-50 text-amber-800"
-                        : activeConfig.studyAvailable
-                        ? "text-slate-600 hover:bg-slate-100"
-                        : "cursor-not-allowed text-slate-300"
+                    role="tab"
+                    aria-selected={learningTab === tab.id}
+                    onClick={() => setLearningTab(tab.id as LearningTab)}
+                    className={`rounded-lg px-2 py-2 text-xs font-medium transition ${
+                      learningTab === tab.id
+                        ? "bg-slate-100 text-slate-900"
+                        : "text-slate-500 hover:bg-slate-50"
                     }`}
                   >
-                    {studyMode
-                      ? "Salir del estudio"
-                      : "Modo estudio"}
+                    {tab.label}
                   </button>
-
-                  <button
-                    type="button"
-                    onClick={openQuiz}
-                    className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition hover:bg-slate-100"
-                  >
-                    Quiz anatómico
-                  </button>
-
-                  <button
-                    type="button"
-                    disabled
-                    className="w-full cursor-not-allowed rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-300"
-                  >
-                    Tutor IA
-                  </button>
-                </>
-              )}
-
-              {learningTab === "history" && (
-                <HistoryTab system={activeSystem} />
-              )}
-
-              {learningTab === "favorites" && (
-                <FavoritesTab system={activeSystem} onFocus={focusStructure} refreshKey={favoritesRevision} />
-              )}
-
-              {learningTab === "progress" && (
-                <ProgressTab system={activeSystem} />
-              )}
+                ))}
+              </div>
+              <div className="space-y-2">
+                {learningTab === "quiz" && (
+                  <>
+                    <button
+                      type="button"
+                      disabled={!activeConfig.studyAvailable && !studyMode}
+                      onClick={studyMode ? () => finishStudyMode(false) : startStudyMode}
+                      className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-300"
+                    >
+                      {studyMode ? "Salir del estudio" : "Modo estudio"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={openQuiz}
+                      className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+                    >
+                      Quiz anatómico
+                    </button>
+                  </>
+                )}
+                {learningTab === "history" && <HistoryTab system={activeSystem} />}
+                {learningTab === "favorites" && (
+                  <FavoritesTab
+                    system={activeSystem}
+                    onFocus={focusStructure}
+                    refreshKey={favoritesRevision}
+                  />
+                )}
+                {learningTab === "progress" && <ProgressTab system={activeSystem} />}
+              </div>
             </div>
-          </div>
-        </aside>
-
-        {/* =================================================
-            VISOR 3D
-        ================================================= */}
+          }
+        />
+      }
+    >
+      {appView === "anatomy" ? (
+        <AnatomyView>
+          <main className="flex min-h-0 flex-1">
+            {/* =================================================
+                VISOR 3D
+            ================================================= */}
 
         <section className="relative min-w-0 flex-1 overflow-hidden bg-slate-100">
           <AnatomyViewer
@@ -1446,8 +1357,30 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
             </div>
           </div>
         </aside>
-      </main>
-    </div>
+          </main>
+        </AnatomyView>
+      ) : appView === "home" ? (
+        <HomeView
+          systems={anatomySystemList}
+          search={globalSearch}
+          onOpenAnatomy={() => handleViewChange("anatomy")}
+          onOpenSystem={(system) => {
+            handleViewChange("anatomy");
+            changeSystem(system);
+          }}
+        />
+      ) : appView === "study" ? (
+        <StudyView />
+      ) : appView === "quiz" ? (
+        <QuizView />
+      ) : appView === "progress" ? (
+        <ProgressView />
+      ) : appView === "profile" ? (
+        <ProfileView />
+      ) : (
+        <SettingsView />
+      )}
+    </AppShell>
   );
 }
 
