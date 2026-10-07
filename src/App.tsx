@@ -56,6 +56,7 @@ import { SettingsView } from "./views/SettingsView";
 import { StudyView } from "./views/StudyView";
 import { RegisterView } from "./views/RegisterView";
 import type { AppView } from "./views/types";
+import { useI18n } from "./i18n";
 
 /* ======================================================
    VISTA CARDIOVASCULAR
@@ -128,6 +129,7 @@ const systemDescriptions: Record<
 function App() {
   const [appView, setAppView] = useState<AppView>("login");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { t } = useI18n();
 
   /* ====================================================
      SISTEMA ACTIVO
@@ -783,14 +785,14 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           learningContent={
             <div className="border-t border-slate-200 pt-5">
               <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                Aprendizaje
+                {t("learningTitle")}
               </p>
               <div className="mb-3 grid grid-cols-2 gap-1" role="tablist">
                 {[
                   { id: "quiz", label: "Quiz" },
-                  { id: "history", label: "Historial" },
-                  { id: "favorites", label: "Favoritos" },
-                  { id: "progress", label: "Progreso" },
+                  { id: "history", label: t("learningHistory") },
+                  { id: "favorites", label: t("learningFavorites") },
+                  { id: "progress", label: t("navProgress") },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -817,14 +819,14 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                       onClick={studyMode ? () => finishStudyMode(false) : startStudyMode}
                       className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-300"
                     >
-                      {studyMode ? "Salir del estudio" : "Modo estudio"}
+                      {studyMode ? t("learningExitStudy") : t("learningStudyMode")}
                     </button>
                     <button
                       type="button"
                       onClick={openQuiz}
                       className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100"
                     >
-                      Quiz anatómico
+                      {t("learningAnatomyQuiz")}
                     </button>
                   </>
                 )}

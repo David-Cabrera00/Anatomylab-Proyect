@@ -1,4 +1,6 @@
 import { useState, type FormEvent, type ReactNode } from "react";
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { useI18n } from "../i18n";
 
 type LoginViewProps = {
   onLogin: () => void;
@@ -6,6 +8,7 @@ type LoginViewProps = {
 };
 
 export function LoginView({ onLogin, onRegister }: LoginViewProps) {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -13,7 +16,7 @@ export function LoginView({ onLogin, onRegister }: LoginViewProps) {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!email.trim() || !password) {
-      setError("Completa el correo y la contrase\u00f1a.");
+      setError(t("authRequiredLogin"));
       return;
     }
     setError("");
@@ -21,32 +24,30 @@ export function LoginView({ onLogin, onRegister }: LoginViewProps) {
   };
 
   return (
-    <AuthLayout eyebrow="AnatomyLab" title="Iniciar sesi\u00f3n">
+    <AuthLayout eyebrow={t("appName")} title={t("authLoginTitle")}>
       <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-        <Field label="Correo" type="email" value={email} onChange={setEmail} />
-        <Field label="Contrase\u00f1a" type="password" value={password} onChange={setPassword} />
+        <Field label={t("authEmail")} type="email" value={email} onChange={setEmail} />
+        <Field label={t("authPassword")} type="password" value={password} onChange={setPassword} />
 
         <div className="flex items-center justify-between gap-4 text-sm">
           <label className="flex items-center gap-2 text-slate-600">
             <input type="checkbox" className="h-4 w-4 rounded border-slate-300" />
-            Recordarme
+            {t("authRemember")}
           </label>
-          <button type="button" className="text-slate-500 hover:text-slate-900">
-            ES / EN
-          </button>
+          <LanguageSwitcher />
         </div>
 
         {error && <p className="text-sm text-rose-600" role="alert">{error}</p>}
 
         <button type="submit" className="w-full rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">
-          Iniciar sesi\u00f3n
+          {t("authLoginButton")}
         </button>
       </form>
 
       <p className="mt-6 text-center text-sm text-slate-500">
-        \u00bfNo tienes una cuenta?{" "}
+        {t("authCreateAccountPrompt")} {" "}
         <button type="button" onClick={onRegister} className="font-semibold text-slate-900 hover:underline">
-          Crear cuenta
+          {t("authRegisterButton")}
         </button>
       </p>
     </AuthLayout>

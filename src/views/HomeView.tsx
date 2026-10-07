@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 
 import type { AnatomySystemId } from "../config/anatomySystems";
+import { systemTranslationKeys, useI18n } from "../i18n";
 import { dbGetMasteryStats } from "../utils/db";
 
 type HomeSystem = {
@@ -23,6 +24,7 @@ type ProgressSummary = {
 };
 
 export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeViewProps) {
+  const { t } = useI18n();
   const [progress, setProgress] = useState<ProgressSummary | null>(null);
 
   useEffect(() => {
@@ -60,10 +62,10 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
     <section className="h-full overflow-y-auto bg-slate-50 p-6 lg:p-8">
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-wider text-slate-400">AnatomyLab</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">Bienvenido de nuevo</h1>
+          <p className="text-sm font-semibold uppercase tracking-wider text-slate-400">{t("appName")}</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">{t("homeWelcome")}</h1>
           <p className="mt-2 max-w-2xl text-slate-600">
-            Explora los sistemas anat\u00f3micos y contin\u00faa tu aprendizaje desde un solo lugar.
+            {t("homeIntro")}
           </p>
           <div className="mt-5 max-w-xl">{search}</div>
           <button
@@ -71,22 +73,22 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
             onClick={onOpenAnatomy}
             className="mt-4 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700"
           >
-            Abrir anatom\u00eda
+            {t("homeOpenAnatomy")}
           </button>
         </div>
 
         <section>
           <div className="mb-3 flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-semibold text-slate-900">Continuar estudiando</h2>
-              <p className="mt-1 text-sm text-slate-500">Elige un sistema para abrir el visor anat\u00f3mico.</p>
+              <h2 className="text-xl font-semibold text-slate-900">{t("homeContinue")}</h2>
+              <p className="mt-1 text-sm text-slate-500">{t("homeChooseSystem")}</p>
             </div>
             <button
               type="button"
               onClick={onOpenAnatomy}
               className="text-sm font-medium text-slate-700 hover:text-slate-900"
             >
-              Ver anatom\u00eda
+              {t("homeViewAnatomy")}
             </button>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -97,25 +99,24 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
                 onClick={() => onOpenSystem(system.id)}
                 className="rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-sm"
               >
-                <span className="text-base font-semibold text-slate-900">{system.label}</span>
-                <span className="mt-1 block text-sm text-slate-500">{system.fullName}</span>
-                <span className="mt-4 block text-sm font-medium text-slate-700">Abrir sistema \u2192</span>
+                <span className="text-base font-semibold text-slate-900">{t(systemTranslationKeys[system.id])}</span>
+                <span className="mt-4 block text-sm font-medium text-slate-700">{t("homeOpenSystem")} \u2192</span>
               </button>
             ))}
           </div>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-6">
-          <h2 className="text-xl font-semibold text-slate-900">Progreso general</h2>
+          <h2 className="text-xl font-semibold text-slate-900">{t("homeGeneralProgress")}</h2>
           {progress && progress.answered > 0 ? (
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <SummaryItem label="Preguntas respondidas" value={progress.answered.toString()} />
-              <SummaryItem label="Precisi\u00f3n" value={`${accuracy}%`} />
-              <SummaryItem label="Estructuras vistas" value={progress.structures.toString()} />
+              <SummaryItem label={t("homeAnswered")} value={progress.answered.toString()} />
+              <SummaryItem label={t("homeAccuracy")} value={`${accuracy}%`} />
+              <SummaryItem label={t("homeStructures")} value={progress.structures.toString()} />
             </div>
           ) : (
             <p className="mt-3 text-sm text-slate-500">
-              A\u00fan no hay progreso registrado. Completa una sesi\u00f3n para comenzar.
+              {t("homeNoProgress")}
             </p>
           )}
         </section>

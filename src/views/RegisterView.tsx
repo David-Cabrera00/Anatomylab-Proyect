@@ -1,4 +1,6 @@
 import { useState, type FormEvent, type ReactNode } from "react";
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { useI18n } from "../i18n";
 
 type RegisterViewProps = {
   onRegister: () => void;
@@ -6,6 +8,7 @@ type RegisterViewProps = {
 };
 
 export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
+  const { t } = useI18n();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,11 +18,11 @@ export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!name.trim() || !email.trim() || !password || !confirmation) {
-      setError("Completa todos los campos.");
+      setError(t("authRequiredRegister"));
       return;
     }
     if (password !== confirmation) {
-      setError("Las contrase\u00f1as no coinciden.");
+      setError(t("authPasswordsMismatch"));
       return;
     }
     setError("");
@@ -27,30 +30,28 @@ export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
   };
 
   return (
-    <AuthLayout eyebrow="AnatomyLab" title="Crear cuenta">
+    <AuthLayout eyebrow={t("appName")} title={t("authRegisterTitle")}>
       <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-        <Field label="Nombre" type="text" value={name} onChange={setName} />
-        <Field label="Correo" type="email" value={email} onChange={setEmail} />
-        <Field label="Contrase\u00f1a" type="password" value={password} onChange={setPassword} />
-        <Field label="Confirmar contrase\u00f1a" type="password" value={confirmation} onChange={setConfirmation} />
+        <Field label={t("authName")} type="text" value={name} onChange={setName} />
+        <Field label={t("authEmail")} type="email" value={email} onChange={setEmail} />
+        <Field label={t("authPassword")} type="password" value={password} onChange={setPassword} />
+        <Field label={t("authConfirmPassword")} type="password" value={confirmation} onChange={setConfirmation} />
 
         <div className="flex justify-end">
-          <button type="button" className="text-sm text-slate-500 hover:text-slate-900">
-            ES / EN
-          </button>
+          <LanguageSwitcher />
         </div>
 
         {error && <p className="text-sm text-rose-600" role="alert">{error}</p>}
 
         <button type="submit" className="w-full rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">
-          Crear cuenta
+          {t("authRegisterButton")}
         </button>
       </form>
 
       <p className="mt-6 text-center text-sm text-slate-500">
-        ¿Ya tienes una cuenta?{" "}
+        {t("authExistingAccountPrompt")} {" "}
         <button type="button" onClick={onLogin} className="font-semibold text-slate-900 hover:underline">
-          Volver a iniciar sesi\u00f3n
+          {t("authBackToLogin")}
         </button>
       </p>
     </AuthLayout>
