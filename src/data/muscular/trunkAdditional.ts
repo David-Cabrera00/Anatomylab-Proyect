@@ -143,5 +143,21 @@ export const trunkAdditionalEntries: readonly EducationalStructureBinding[] = [
     id: "muscular.transversus-thoracis", name: "Músculo transverso del tórax", type: "Músculo esquelético",
     description: "Músculo delgado en la cara interna de la pared torácica anterior.",
     function: "Deprime las costillas (espiración forzada).", location: "Cara interna del esternón y costillas adyacentes."
+  }),
+
+  // Interespinosos torácicos
+  bilateralGroup(["Músculos interespinosos del tórax"], {
+    id: "muscular.interspinales-thoracis", name: "Interespinosos torácicos", type: "Músculo esquelético",
+    description: "Músculos cortos que unen apófisis espinosas adyacentes en la región torácica.",
+    function: "Estabilizan la columna torácica y asisten en la extensión.",
+    location: "Región torácica profunda, entre apófisis espinosas."
+  }),
+
+  // Interespinosos lumbares
+  bilateralGroup(["Músculos interespinosos lumbares"], {
+    id: "muscular.interspinales-lumborum", name: "Interespinosos lumbares", type: "Músculo esquelético",
+    description: "Músculos cortos que unen apófisis espinosas adyacentes en la región lumbar.",
+    function: "Estabilizan la columna lumbar y asisten en la extensión.",
+    location: "Región lumbar profunda, entre apófisis espinosas."
   })
 ];
