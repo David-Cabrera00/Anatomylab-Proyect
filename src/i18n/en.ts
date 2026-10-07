@@ -12,6 +12,7 @@ export const en: { [Key in keyof typeof es]: string } = {
   navProfile: "Profile",
   navSettings: "Settings",
   navMain: "Main navigation",
+  navAccount: "Account",
   systemsTitle: "Anatomical systems",
   authLoginTitle: "Sign in",
   authRegisterTitle: "Create account",

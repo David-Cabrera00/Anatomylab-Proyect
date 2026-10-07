@@ -42,9 +42,7 @@ import {
   studyGuidesBySystem,
 } from "./data/studyGuides";
 
-import { QuizPanel } from "./components/quiz/QuizPanel";
 import type { QuizState } from "./data/quiz/types";
-import { HistoryTab, FavoritesTab, ProgressTab } from "./components/learning";
 import { dbAddFavorite, dbAddSearchHistory, dbSaveStudyProgress, dbSaveStudySession } from "./utils/db";
 import { AnatomyView } from "./views/AnatomyView";
 import { HomeView } from "./views/HomeView";
@@ -56,7 +54,7 @@ import { SettingsView } from "./views/SettingsView";
 import { StudyView } from "./views/StudyView";
 import { RegisterView } from "./views/RegisterView";
 import type { AppView } from "./views/types";
-import { useI18n } from "./i18n";
+import { systemTranslationKeys, useI18n } from "./i18n";
 
 /* ======================================================
    VISTA CARDIOVASCULAR
@@ -244,23 +242,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
 
   const [quizState, setQuizState] = useState<QuizState>({ status: "closed" });
 
-  const openQuiz = useCallback(() => {
-    setQuizState({ status: "idle" });
-  }, []);
-
-  const closeQuiz = useCallback(() => {
-    setQuizState({ status: "closed" });
-  }, []);
-
-  /* ====================================================
-   LEARNING TABS
-  ==================================================== */
-
-  type LearningTab = "quiz" | "history" | "favorites" | "progress";
-
-  const [learningTab, setLearningTab] = useState<LearningTab>("quiz");
-  const [favoritesRevision, setFavoritesRevision] = useState(0);
   const [favoriteSaved, setFavoriteSaved] = useState(false);
+  const [favoritesRevision, setFavoritesRevision] = useState(0);
   const studyStartedAtRef = useRef<number | null>(null);
 
   /* ====================================================
@@ -610,17 +593,19 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   const startStudyMode = () => {
     if (!activeConfig.studyAvailable || !activeStudyGuide) return;
 
+    const selectedStepIndex = selectedAnatomyId
+      ? activeStudyGuide.steps.findIndex((step) => step.anatomyId === selectedAnatomyId)
+      : -1;
+
     setStudyMode(true);
     studyStartedAtRef.current = Date.now();
-    handleStructureSelect(null);
-    setFocusRequest(null);
     setViewerAction(null);
 
     if (activeSystem === "cardiovascular") {
       setCardiovascularView("overview");
     }
 
-    goToStudyStep(0);
+    goToStudyStep(selectedStepIndex >= 0 ? selectedStepIndex : 0);
   };
 
   /* ====================================================
@@ -719,13 +704,18 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     };
 
   const handleViewChange = (nextView: AppView) => {
-    if (nextView !== "anatomy") {
-      if (studyMode) {
-        persistStudySession(false);
-      }
+    if (nextView !== "study" && studyMode) {
+      persistStudySession(false);
       studyStartedAtRef.current = null;
       setStudyMode(false);
+    }
+
+    if (nextView !== "quiz") {
       setQuizState({ status: "closed" });
+    }
+
+    if (nextView === "quiz" && quizState.status === "closed") {
+      setQuizState({ status: "idle" });
     }
 
     setAppView(nextView);
@@ -775,75 +765,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           search={appView === "home" ? undefined : globalSearch}
         />
       }
-      sidebar={
-        <AppSidebar
-          currentView={appView}
-          onNavigate={handleViewChange}
-          systems={anatomySystemList}
-          activeSystem={activeSystem}
-          onSystemChange={changeSystem}
-          learningContent={
-            <div className="border-t border-slate-200 pt-5">
-              <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                {t("learningTitle")}
-              </p>
-              <div className="mb-3 grid grid-cols-2 gap-1" role="tablist">
-                {[
-                  { id: "quiz", label: "Quiz" },
-                  { id: "history", label: t("learningHistory") },
-                  { id: "favorites", label: t("learningFavorites") },
-                  { id: "progress", label: t("navProgress") },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={learningTab === tab.id}
-                    onClick={() => setLearningTab(tab.id as LearningTab)}
-                    className={`rounded-lg px-2 py-2 text-xs font-medium transition ${
-                      learningTab === tab.id
-                        ? "bg-slate-100 text-slate-900"
-                        : "text-slate-500 hover:bg-slate-50"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-              <div className="space-y-2">
-                {learningTab === "quiz" && (
-                  <>
-                    <button
-                      type="button"
-                      disabled={!activeConfig.studyAvailable && !studyMode}
-                      onClick={studyMode ? () => finishStudyMode(false) : startStudyMode}
-                      className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-300"
-                    >
-                      {studyMode ? t("learningExitStudy") : t("learningStudyMode")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={openQuiz}
-                      className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100"
-                    >
-                      {t("learningAnatomyQuiz")}
-                    </button>
-                  </>
-                )}
-                {learningTab === "history" && <HistoryTab system={activeSystem} />}
-                {learningTab === "favorites" && (
-                  <FavoritesTab
-                    system={activeSystem}
-                    onFocus={focusStructure}
-                    refreshKey={favoritesRevision}
-                  />
-                )}
-                {learningTab === "progress" && <ProgressTab system={activeSystem} />}
-              </div>
-            </div>
-          }
-        />
-      }
+      sidebar={<AppSidebar currentView={appView} onNavigate={handleViewChange} />}
     >
       {appView === "anatomy" ? (
         <AnatomyView>
@@ -852,7 +774,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                 VISOR 3D
             ================================================= */}
 
-        <section className="relative min-w-0 flex-1 overflow-hidden bg-slate-100">
+        <section className="relative min-h-0 min-w-0 flex-1 overflow-hidden bg-slate-100">
           <AnatomyViewer
             /*
              * Esta key es importante.
@@ -881,7 +803,25 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
             focusRequest={
               focusRequest
             }
-          />
+           />
+
+          <Card variant="floating" className="absolute left-4 top-4 z-30 max-w-[calc(100%-2rem)] p-2">
+            <label className="flex min-w-0 items-center gap-2 text-xs font-semibold text-slate-600">
+              <span className="shrink-0">{t("systemsTitle")}</span>
+              <select
+                value={activeSystem}
+                onChange={(event) => changeSystem(event.target.value as AnatomySystemId)}
+                className="min-w-0 max-w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm font-medium text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                aria-label={t("systemsTitle")}
+              >
+                {anatomySystemList.map((system) => (
+                  <option key={system.id} value={system.id}>
+                    {t(systemTranslationKeys[system.id])}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </Card>
 
           {/* =================================================
               CAPAS
@@ -961,7 +901,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
             activeConfig
               .legend.length >
               0 && (
-              <div className="absolute left-5 top-5 z-10 rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-sm backdrop-blur">
+              <div className="absolute left-5 top-24 z-10 rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-sm backdrop-blur">
                 <p className="mb-2 font-semibold text-slate-700">
                   Capas anatómicas
                 </p>
@@ -998,174 +938,11 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
             )}
 
           {/* =================================================
-              MODO ESTUDIO
-          ================================================= */}
-
-          {studyMode && activeStudyGuide && currentStudyStep && (
-            <div className="absolute left-5 top-5 z-20 w-[340px] max-h-[calc(100%-40px)] overflow-y-auto rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-lg backdrop-blur">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-amber-600">
-                    Modo estudio
-                  </p>
-
-                  <h3 className="mt-1 text-base font-semibold">
-                    {
-                      activeStudyGuide
-                        .title
-                    }
-                  </h3>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => finishStudyMode(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-lg text-slate-400 hover:bg-slate-100"
-                >
-                  ×
-                </button>
-              </div>
-
-              {/* =================================================
-                  PROGRESO
-              ================================================= */}
-
-              <div className="mt-4">
-                <div className="mb-2 flex justify-between text-xs text-slate-500">
-                  <span>
-                    Paso{" "}
-                    {studyStepIndex +
-                      1}{" "}
-                    de{" "}
-                    {
-                      activeStudyGuide
-                        .steps.length
-                    }
-                  </span>
-
-                  <span>
-                    {Math.round(
-                      studyProgress
-                    )}
-                    %
-                  </span>
-                </div>
-
-                <div className="h-1.5 overflow-hidden rounded-full bg-slate-200">
-                  <div
-                    className="h-full rounded-full bg-amber-500 transition-all"
-                    style={{
-                      width: `${studyProgress}%`,
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* =================================================
-                  PASO
-              ================================================= */}
-
-              <div className="mt-5">
-                <h4 className="text-lg font-semibold">
-                  {
-                    currentStudyStep
-                      .title
-                  }
-                </h4>
-
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {
-                    currentStudyStep
-                      .instruction
-                  }
-                </p>
-
-                <div className="mt-4 rounded-xl bg-slate-50 p-3">
-                  <p className="text-xs font-semibold uppercase text-slate-400">
-                    Pista
-                  </p>
-
-                  <p className="mt-1 text-sm text-slate-600">
-                    {
-                      currentStudyStep
-                        .hint
-                    }
-                  </p>
-                </div>
-              </div>
-
-              {/* =================================================
-                  NAVEGACIÓN
-              ================================================= */}
-
-              <div className="mt-5 flex gap-2">
-                <button
-                  type="button"
-                  disabled={
-                    studyStepIndex ===
-                    0
-                  }
-                  onClick={() =>
-                    goToStudyStep(
-                      studyStepIndex -
-                        1
-                    )
-                  }
-                  className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm disabled:opacity-40"
-                >
-                  ← Anterior
-                </button>
-
-                {studyStepIndex ===
-                activeStudyGuide
-                  .steps.length -
-                  1 ? (
-                  <button
-                    type="button"
-                    onClick={() => finishStudyMode(true)}
-                    className="flex-1 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white"
-                  >
-                    Finalizar
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      goToStudyStep(
-                        studyStepIndex +
-                          1
-                      )
-                    }
-                    className="flex-1 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white"
-                  >
-                    Siguiente →
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* =================================================
-              QUIZ
-          ================================================= */}
-
-          {quizState.status !== "closed" && (
-            <div className="absolute left-5 top-5 z-20 w-[380px] max-h-[calc(100%-40px)] overflow-hidden">
-              <QuizPanel
-                activeSystem={activeSystem}
-                quizState={quizState}
-                onStateChange={setQuizState}
-                onClose={closeQuiz}
-              />
-            </div>
-          )}
-
-          {/* =================================================
               TOOLBAR
           ================================================= */}
 
-          {!studyMode && (
-            <Card variant="floating" className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 gap-1 p-2">
+          <div className="pointer-events-none absolute inset-x-4 bottom-4 z-30 flex justify-center">
+            <Card variant="floating" className="pointer-events-auto flex max-w-full flex-wrap justify-center gap-1 p-2">
               <Button
                 variant="ghost"
                 size="sm"
@@ -1223,7 +1000,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                 Restablecer
               </Button>
             </Card>
-          )}
+          </div>
         </section>
 
         {/* =================================================
@@ -1374,6 +1151,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               </div>
             </div>
           </div>
+
         </aside>
           </main>
         </AnatomyView>
@@ -1388,13 +1166,37 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           }}
         />
       ) : appView === "study" ? (
-        <StudyView />
+        <StudyView
+          system={activeSystem}
+          guide={activeStudyGuide}
+          currentStep={currentStudyStep}
+          stepIndex={studyStepIndex}
+          progress={studyProgress}
+          isActive={studyMode}
+          selectedStructureName={selectedDisplayName}
+          onStart={startStudyMode}
+          onPrevious={() => goToStudyStep(studyStepIndex - 1)}
+          onNext={() => goToStudyStep(studyStepIndex + 1)}
+          onFinish={finishStudyMode}
+        />
       ) : appView === "quiz" ? (
-        <QuizView />
+        <QuizView
+          activeSystem={activeSystem}
+          quizState={quizState}
+          onStateChange={setQuizState}
+          onClose={() => handleViewChange("home")}
+        />
       ) : appView === "progress" ? (
-        <ProgressView />
+        <ProgressView system={activeSystem} />
       ) : appView === "profile" ? (
-        <ProfileView />
+        <ProfileView
+          system={activeSystem}
+          onFocusFavorite={(anatomyId) => {
+            handleViewChange("anatomy");
+            focusStructure(anatomyId);
+          }}
+          refreshKey={favoritesRevision}
+        />
       ) : (
         <SettingsView />
       )}

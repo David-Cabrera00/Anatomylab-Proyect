@@ -1,13 +1,26 @@
-export function QuizView() {
-  return <PlaceholderView title="Quiz" description="La vista de quiz se incorporar\u00e1 en una tarea posterior." />;
-}
+import { QuizPanel } from "../components/quiz/QuizPanel";
+import type { AnatomySystemId } from "../config/anatomySystems";
+import type { QuizState } from "../data/quiz/types";
 
-function PlaceholderView({ title, description }: { title: string; description: string }) {
+type QuizViewProps = {
+  activeSystem: AnatomySystemId;
+  quizState: QuizState;
+  onStateChange: (state: QuizState) => void;
+  onClose: () => void;
+};
+
+export function QuizView({ activeSystem, quizState, onStateChange, onClose }: QuizViewProps) {
   return (
-    <section className="flex h-full items-center justify-center p-8">
-      <div className="max-w-xl text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h1>
-        <p className="mt-3 text-slate-600">{description}</p>
+    <section className="h-full overflow-y-auto bg-slate-50 p-6 lg:p-8">
+      <div className="mx-auto flex min-h-full max-w-3xl items-start justify-center">
+        <div className="w-full">
+          <QuizPanel
+            activeSystem={activeSystem}
+            quizState={quizState}
+            onStateChange={onStateChange}
+            onClose={onClose}
+          />
+        </div>
       </div>
     </section>
   );

@@ -100,7 +100,7 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
                 className="rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-sm"
               >
                 <span className="text-base font-semibold text-slate-900">{t(systemTranslationKeys[system.id])}</span>
-                <span className="mt-4 block text-sm font-medium text-slate-700">{t("homeOpenSystem")} \u2192</span>
+                <span className="mt-4 block text-sm font-medium text-slate-700">{t("homeOpenSystem")}</span>
               </button>
             ))}
           </div>
