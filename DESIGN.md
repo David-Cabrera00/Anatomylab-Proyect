@@ -6,14 +6,34 @@ No implica que todos los componentes actuales ya cumplan estas reglas.
 AnatomyLab es una aplicación desktop educativa de anatomía 3D para estudiantes
 de Medicina y Enfermería. La dirección visual oficial es:
 
-**Clinical + Scientific + Clean Minimal + Premium**
+**Fluent-inspired Scientific Spatial Interface**
 
-La interfaz debe sentirse como un atlas médico moderno, una herramienta
-científica profesional y un workspace académico claro. No debe convertirse en
-un dashboard SaaS genérico, portal administrativo hospitalario, aplicación
-gaming o interfaz infantil. Se evitarán el glassmorphism excesivo, el
-neumorphism, los colores neón, los gradientes AI morado/rosa y la acumulación de
-tarjetas.
+Esta dirección combina conceptualmente:
+
+- Fluent 2 inspired para estructura desktop, navegación, estados, accesibilidad
+  y controles.
+- Scientific Editorial para jerarquía, tipografía, composición académica y
+  presentación anatómica.
+- Spatial UI para el workspace 3D, profundidad visual y controles contextuales
+  alrededor del modelo.
+- Glassmorphism únicamente como recurso puntual en controles flotantes del
+  viewer.
+
+Fluent es una referencia conceptual, no una dependencia ni una copia literal.
+No se debe introducir Microsoft Fluent UI.
+
+La interfaz debe sentirse como un atlas anatómico digital moderno, software
+científico premium, aplicación educativa universitaria, workspace 3D
+profesional y producto tecnológico serio.
+
+Debe transmitir precisión, claridad, exploración, profundidad, conocimiento y
+confianza académica.
+
+No debe convertirse en un portal universitario administrativo, portal
+hospitalario, SaaS genérico, dashboard empresarial, aplicación gaming,
+interfaz futurista exagerada ni plantilla de login estándar. Se evitarán el
+glassmorphism excesivo, el neumorphism, los colores neón, los gradientes AI
+morados/rosas y la acumulación de tarjetas.
 
 El modelo anatómico 3D es el protagonista visual.
 
@@ -25,9 +45,59 @@ El modelo anatómico 3D es el protagonista visual.
 - El color se usa con moderación para indicar estado, selección y contexto.
 - Los paneles no deben competir visualmente con el viewer.
 - La estética debe ser académica, clínica y profesional.
-- La inspiración conceptual puede incluir la claridad de Figma, la jerarquía de
-  Linear, el refinamiento de Attio y atlas médicos digitales modernos, sin copiar
-  literalmente ninguna interfaz.
+- La composición debe tener titulares claros, bloques respirados, alineación
+  consistente, labels técnicos discretos y una jerarquía fuerte entre título,
+  metadata y contenido.
+- El contenido anatómico debe sentirse más cercano a un atlas moderno que a un
+  dashboard.
+- Se permiten ocasionalmente overlines, metadata, numeración, indicadores
+  científicos pequeños y separadores finos, siempre con moderación.
+- La claridad de Figma, la jerarquía de Linear, el refinamiento de Attio y los
+  atlas médicos digitales son referencias conceptuales, no interfaces para
+  copiar.
+
+## Fluent-inspired Foundation
+
+La base de interacción toma Fluent 2 como referencia conceptual:
+
+- navegación desktop clara;
+- componentes con estados definidos;
+- jerarquía mediante superficies;
+- bordes suaves;
+- hover, focus y selected perceptibles;
+- iconografía outline consistente;
+- buen comportamiento con teclado;
+- layouts adaptables.
+
+La implementación sigue usando React, Tailwind y los componentes propios de
+AnatomyLab. No se añade Microsoft Fluent UI ni otra dependencia equivalente.
+
+## Scientific Editorial
+
+Las vistas deben tratar el contenido como una publicación científica digital:
+
+- títulos con personalidad y propósito;
+- composición con espacio negativo;
+- metadata pequeña y legible;
+- alineación estable entre columnas y secciones;
+- pocas superficies, con jerarquía clara;
+- contenido educativo presentado como material de estudio, no como métricas de
+  un dashboard empresarial.
+
+## Spatial UI
+
+Anatomy Viewer es un workspace espacial. El modelo 3D es la capa principal y
+los controles viven alrededor de él como instrumentos contextuales:
+
+- toolbar flotante;
+- selector de capas;
+- selector de sistemas;
+- tooltip de estructura;
+- panel informativo;
+- popovers y controles pequeños.
+
+Estos elementos pueden tener profundidad visual, pero no deben competir con el
+modelo anatómico ni reducirlo a una zona secundaria.
 
 ## Colors
 
@@ -205,6 +275,66 @@ Todos los controles interactivos deben contemplar default, hover, active,
 selected, focus y disabled. Los componentes con operación asíncrona deben
 contemplar loading y error.
 
+Componentes espaciales y editoriales que deben prepararse para futuras
+extracciones:
+
+- `NavigationItem` con icono, label y estado activo;
+- `ContextSidebar` para navegación anatómica contextual;
+- `FloatingToolbar` para acciones del viewer;
+- `GlassPopover` para popovers flotantes sutiles;
+- `AnatomySystemItem` para sistemas dentro de Anatomy;
+- `MetadataLabel` para información técnica breve;
+- `PageHeader` y `SectionHeader` para jerarquía editorial;
+- `Field`/`Input`, `Tabs` y `Tooltip` para controles consistentes.
+
+## Component Depth
+
+La profundidad visual se organiza en niveles explícitos:
+
+| Nivel | Nombre | Superficie y uso |
+|---:|---|---|
+| 0 | Canvas | Fondo de la aplicación |
+| 1 | Surface / fixed panel | Sidebar, header y paneles fijos |
+| 2 | Raised card | Card o bloque elevado con separación leve |
+| 3 | Floating / glass control | Toolbar, popover y control contextual |
+| 4 | Modal | Interrupción temporal de máxima prioridad |
+
+Cada nivel debe definir superficie, borde, sombra y radius. No improvisar
+profundidad por componente.
+
+## Glass Usage
+
+Glassmorphism se permite únicamente en:
+
+- toolbar flotante del viewer;
+- selector contextual de capas;
+- controles flotantes pequeños;
+- popovers;
+- dropdowns sobre el modelo.
+
+Debe ser sutil y accesible:
+
+- fondo blanco translúcido entre 80% y 90%;
+- blur moderado de 12–16 px;
+- borde fino;
+- sombra Floating;
+- contraste AA para texto y controles.
+
+No usar glass como sistema principal ni en sidebar, header principal,
+formularios, Home completa, Progress, Profile o Login completo.
+
+## Motion
+
+Duraciones oficiales:
+
+- hover: 120–160 ms;
+- selección: 160–200 ms;
+- panels y popovers: 180–240 ms.
+
+Usar principalmente cambios de opacity, transform pequeño, background y border.
+Evitar rebotes, zoom exagerado y animación decorativa continua. Respetar
+`prefers-reduced-motion`.
+
 ## App Layout
 
 Las vistas independientes son:
@@ -250,10 +380,30 @@ la navegación global.
 ## Sidebar
 
 - Ancho desktop base: 224 px.
-- Contiene solo navegación global.
+- Debe evolucionar hacia una navegación tipo workspace.
+- Cada item debe poder contener icono outline, label y estado activo.
+- El estado activo debe usar un acento lateral o indicador teal, superficie
+  suave y texto fuerte; evitar grandes bloques negros.
 - Debe quedar preparado para una futura versión colapsable.
 - Los items necesitan estado activo, hover, focus y disabled si aplica.
 - No mezclar sistemas, capas ni estructuras anatómicas con navegación global.
+
+La navegación global es:
+
+- Inicio
+- Anatomía
+- Estudio
+- Quiz
+- Progreso
+
+Cuenta:
+
+- Perfil
+- Configuración
+
+La iconografía oficial debe ser outline, de geometría simple, con trazos
+consistentes y tamaño base de 18–20 px. Se prefiere Lucide si se incorpora en
+el futuro. No usar emojis ni mezclar arbitrariamente iconos filled y outline.
 
 ## Home
 
@@ -267,10 +417,30 @@ Home debe tener como máximo cuatro áreas principales:
 No debe convertirse en dashboard administrativo ni acumular tarjetas, gráficos,
 historial completo, quiz o configuración.
 
+Los seis sistemas pueden diferenciarse mediante accent de sistema, icono,
+microestado y acción de entrada. No convertirlos en una cuadrícula genérica de
+cards idénticas.
+
+## Login / Register
+
+Login y Register no deben verse como una card genérica centrada.
+
+En desktop deben usar una composición editorial de dos zonas:
+
+- zona visual: branding, headline, visual anatómico o composición relacionada
+  con anatomía 3D y como máximo tres beneficios;
+- zona de formulario: limpia, compacta y enfocada.
+
+La zona visual debe comunicar producto de anatomía 3D, no portal institucional.
+Si todavía no existe un render anatómico adecuado, se reserva una zona visual
+preparada para un asset futuro. Una composición abstracta puede ser temporal,
+pero no debe convertirse en círculos tecnológicos genéricos como identidad
+permanente.
+
 ## Anatomy Viewer
 
 Anatomy es la pantalla principal del producto. El modelo 3D debe ocupar el
-mayor porcentaje posible del espacio.
+mayor porcentaje posible del espacio, aproximadamente 65–75% del área útil.
 
 Layout conceptual:
 
@@ -279,14 +449,22 @@ Layout conceptual:
 - Centro: viewer 3D dominante.
 - Derecha: información de la estructura seleccionada.
 
+La navegación contextual debe ser compacta y puede incluir sistemas, regiones,
+capas y estructuras. No pertenece al sidebar global.
+
+El viewer debe tener fondo neutro, espacio negativo suficiente y controles
+contextuales discretos. El panel derecho debe permanecer controlado y limitarse
+a estructura, metadata, contenido educativo y acciones directas.
+
 El panel derecho puede contener nombre, sistema, región, descripción, función,
 ubicación, relaciones y acciones directas como favorito, estudiar estructura y
 Anatomy AI.
 
 No puede contener navegación global de Quiz, Progress, History, Study o Profile.
 
-La toolbar del viewer debe permanecer asociada al viewport 3D, visible para
-todos los sistemas y no depender de la altura del panel derecho.
+La toolbar del viewer debe ser flotante, usar glass sutil cuando corresponda,
+permanecer asociada al viewport 3D, visible para todos los sistemas y no
+depender de la altura del panel derecho ni romper el resize.
 
 ## Study
 
@@ -381,6 +559,10 @@ Los colores por sistema son únicamente acentos visuales. Nunca deben modificar:
 La identidad anatómica pertenece al dominio; el color solo comunica contexto de
 UI.
 
+Pueden aparecer en iconos, líneas laterales, pequeños indicadores, chips,
+progreso y estados hover/selected relacionados con el sistema. Nunca deben
+usarse como grandes fondos saturados.
+
 ## Anatomy Technical Rules
 
 - No usar `object.name` como identidad canónica.
@@ -402,18 +584,47 @@ Quedan prohibidos como dirección de diseño:
 - sistemas anatómicos dentro del sidebar global;
 - Quiz dentro de Anatomy;
 - Progress dentro de Anatomy;
+- card centrada genérica para Auth;
+- círculos abstractos tecnológicos sin relación anatómica como visual principal;
+- portal institucional o login con apariencia de portal universitario;
+- badges decorativos sin función;
+- exceso de microtexto técnico;
+- grandes bloques negros para selección;
+- sidebar únicamente textual cuando exista iconografía disponible;
+- grids de cards idénticas para todo;
 - tarjetas innecesarias o excesivamente anidadas;
 - colores Slate directos si existe un token DS equivalente;
 - botones HTML estilizados manualmente cuando `Button` es suficiente;
 - inputs manuales cuando existe `Input`/`Field`;
 - sombras excesivas;
 - glassmorphism;
+- glass aplicado a toda la aplicación;
+- blur excesivo;
+- colores saturados dominantes;
 - neon;
 - gradientes decorativos;
 - textos visibles hardcoded;
 - tamaños tipográficos arbitrarios;
 - layouts que solo funcionan en español;
+- layouts donde el 3D quede pequeño;
 - cambios visuales que alteren la identidad anatómica o el viewer.
+
+## Design Review Criteria
+
+Antes de aprobar una pantalla, revisar:
+
+1. ¿Tiene una jerarquía visual clara?
+2. ¿Se reconoce como AnatomyLab sin leer el nombre?
+3. ¿La anatomía es protagonista cuando corresponde?
+4. ¿Existe suficiente espacio negativo?
+5. ¿Hay navegación duplicada?
+6. ¿Se usaron componentes oficiales?
+7. ¿Se respetan los tokens?
+8. ¿ES/EN funciona sin romper el layout?
+9. ¿Focus y contraste son accesibles?
+10. ¿La pantalla parece diseñada o simplemente estilizada?
+11. ¿Se siente científica y moderna sin parecer institucional?
+12. ¿Hay algún elemento decorativo que no aporte función o identidad?
 
 ## Implementation Status Note
 
