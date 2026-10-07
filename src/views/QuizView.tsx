@@ -1,5 +1,5 @@
 export function QuizView() {
-  return <PlaceholderView title="Quiz" description="La vista de quiz se incorporar\u00e1 en una tarea posterior." />;
+  return <PlaceholderView title="Quiz" description="La vista de quiz se incorporará en una tarea posterior." />;
 }
 
 function PlaceholderView({ title, description }: { title: string; description: string }) {

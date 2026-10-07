@@ -1,5 +1,5 @@
 export function ProfileView() {
-  return <PlaceholderView title="Perfil" description="La vista de perfil se incorporar\u00e1 en una tarea posterior." />;
+  return <PlaceholderView title="Perfil" description="La vista de perfil se incorporará en una tarea posterior." />;
 }
 
 function PlaceholderView({ title, description }: { title: string; description: string }) {

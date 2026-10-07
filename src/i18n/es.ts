@@ -10,6 +10,7 @@ export const es = {
   navProfile: "Perfil",
   navSettings: "Configuraci\u00f3n",
   navMain: "Navegaci\u00f3n principal",
+  navAccount: "Cuenta",
   systemsTitle: "Sistemas anat\u00f3micos",
   authLoginTitle: "Iniciar sesi\u00f3n",
   authRegisterTitle: "Crear cuenta",

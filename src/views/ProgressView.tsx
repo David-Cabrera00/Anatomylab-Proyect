@@ -1,13 +1,11 @@
-export function ProgressView() {
-  return <PlaceholderView title="Progreso" description="La vista de progreso se incorporar\u00e1 en una tarea posterior." />;
-}
+import { ProgressTab } from "../components/learning";
+import type { AnatomySystemId } from "../config/anatomySystems";
 
-function PlaceholderView({ title, description }: { title: string; description: string }) {
+export function ProgressView({ system }: { system: AnatomySystemId }) {
   return (
-    <section className="flex h-full items-center justify-center p-8">
-      <div className="max-w-xl text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h1>
-        <p className="mt-3 text-slate-600">{description}</p>
+    <section className="h-full overflow-y-auto bg-slate-50 p-6 lg:p-8">
+      <div className="mx-auto max-w-5xl">
+        <ProgressTab system={system} />
       </div>
     </section>
   );

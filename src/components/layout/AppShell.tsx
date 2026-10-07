@@ -14,7 +14,7 @@ export function AppShell({ header, sidebar, children }: AppShellProps) {
         <aside className="w-56 shrink-0 overflow-y-auto border-r border-slate-200 bg-white">
           {sidebar}
         </aside>
-        <main className="min-w-0 min-h-0 flex-1">{children}</main>
+        <main className="min-h-0 min-w-0 flex-1 overflow-hidden">{children}</main>
       </div>
     </div>
   );

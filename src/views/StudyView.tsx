@@ -1,5 +1,5 @@
 export function StudyView() {
-  return <PlaceholderView title="Estudio" description="La vista de estudio se incorporar\u00e1 en una tarea posterior." />;
+  return <PlaceholderView title="Estudio" description="La vista de estudio se incorporará en una tarea posterior." />;
 }
 
 function PlaceholderView({ title, description }: { title: string; description: string }) {

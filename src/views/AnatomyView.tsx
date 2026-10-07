@@ -5,5 +5,5 @@ type AnatomyViewProps = {
 };
 
 export function AnatomyView({ children }: AnatomyViewProps) {
-  return <div className="h-full min-h-0">{children}</div>;
+  return <div className="flex h-full min-h-0 flex-col overflow-hidden">{children}</div>;
 }

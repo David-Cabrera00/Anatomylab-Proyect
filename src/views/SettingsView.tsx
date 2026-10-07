@@ -1,5 +1,5 @@
 export function SettingsView() {
-  return <PlaceholderView title="Configuraci\u00f3n" description="La vista de configuraci\u00f3n se incorporar\u00e1 en una tarea posterior." />;
+  return <PlaceholderView title="Configuración" description="La vista de configuración se incorporará en una tarea posterior." />;
 }
 
 function PlaceholderView({ title, description }: { title: string; description: string }) {

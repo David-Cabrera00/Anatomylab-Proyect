@@ -44,7 +44,6 @@ import {
 
 import { QuizPanel } from "./components/quiz/QuizPanel";
 import type { QuizState } from "./data/quiz/types";
-import { HistoryTab, FavoritesTab, ProgressTab } from "./components/learning";
 import { dbAddFavorite, dbAddSearchHistory, dbSaveStudyProgress, dbSaveStudySession } from "./utils/db";
 import { AnatomyView } from "./views/AnatomyView";
 import { HomeView } from "./views/HomeView";
@@ -56,7 +55,7 @@ import { SettingsView } from "./views/SettingsView";
 import { StudyView } from "./views/StudyView";
 import { RegisterView } from "./views/RegisterView";
 import type { AppView } from "./views/types";
-import { useI18n } from "./i18n";
+import { systemTranslationKeys, useI18n } from "./i18n";
 
 /* ======================================================
    VISTA CARDIOVASCULAR
@@ -244,22 +243,10 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
 
   const [quizState, setQuizState] = useState<QuizState>({ status: "closed" });
 
-  const openQuiz = useCallback(() => {
-    setQuizState({ status: "idle" });
-  }, []);
-
   const closeQuiz = useCallback(() => {
     setQuizState({ status: "closed" });
   }, []);
 
-  /* ====================================================
-   LEARNING TABS
-  ==================================================== */
-
-  type LearningTab = "quiz" | "history" | "favorites" | "progress";
-
-  const [learningTab, setLearningTab] = useState<LearningTab>("quiz");
-  const [favoritesRevision, setFavoritesRevision] = useState(0);
   const [favoriteSaved, setFavoriteSaved] = useState(false);
   const studyStartedAtRef = useRef<number | null>(null);
 
@@ -607,22 +594,6 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     focusStructure(step.anatomyId, "overview");
   };
 
-  const startStudyMode = () => {
-    if (!activeConfig.studyAvailable || !activeStudyGuide) return;
-
-    setStudyMode(true);
-    studyStartedAtRef.current = Date.now();
-    handleStructureSelect(null);
-    setFocusRequest(null);
-    setViewerAction(null);
-
-    if (activeSystem === "cardiovascular") {
-      setCardiovascularView("overview");
-    }
-
-    goToStudyStep(0);
-  };
-
   /* ====================================================
    FINALIZAR ESTUDIO
   ==================================================== */
@@ -775,75 +746,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           search={appView === "home" ? undefined : globalSearch}
         />
       }
-      sidebar={
-        <AppSidebar
-          currentView={appView}
-          onNavigate={handleViewChange}
-          systems={anatomySystemList}
-          activeSystem={activeSystem}
-          onSystemChange={changeSystem}
-          learningContent={
-            <div className="border-t border-slate-200 pt-5">
-              <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                {t("learningTitle")}
-              </p>
-              <div className="mb-3 grid grid-cols-2 gap-1" role="tablist">
-                {[
-                  { id: "quiz", label: "Quiz" },
-                  { id: "history", label: t("learningHistory") },
-                  { id: "favorites", label: t("learningFavorites") },
-                  { id: "progress", label: t("navProgress") },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={learningTab === tab.id}
-                    onClick={() => setLearningTab(tab.id as LearningTab)}
-                    className={`rounded-lg px-2 py-2 text-xs font-medium transition ${
-                      learningTab === tab.id
-                        ? "bg-slate-100 text-slate-900"
-                        : "text-slate-500 hover:bg-slate-50"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-              <div className="space-y-2">
-                {learningTab === "quiz" && (
-                  <>
-                    <button
-                      type="button"
-                      disabled={!activeConfig.studyAvailable && !studyMode}
-                      onClick={studyMode ? () => finishStudyMode(false) : startStudyMode}
-                      className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-300"
-                    >
-                      {studyMode ? t("learningExitStudy") : t("learningStudyMode")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={openQuiz}
-                      className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100"
-                    >
-                      {t("learningAnatomyQuiz")}
-                    </button>
-                  </>
-                )}
-                {learningTab === "history" && <HistoryTab system={activeSystem} />}
-                {learningTab === "favorites" && (
-                  <FavoritesTab
-                    system={activeSystem}
-                    onFocus={focusStructure}
-                    refreshKey={favoritesRevision}
-                  />
-                )}
-                {learningTab === "progress" && <ProgressTab system={activeSystem} />}
-              </div>
-            </div>
-          }
-        />
-      }
+      sidebar={<AppSidebar currentView={appView} onNavigate={handleViewChange} />}
     >
       {appView === "anatomy" ? (
         <AnatomyView>
@@ -852,7 +755,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                 VISOR 3D
             ================================================= */}
 
-        <section className="relative min-w-0 flex-1 overflow-hidden bg-slate-100">
+        <section className="relative min-h-0 min-w-0 flex-1 overflow-hidden bg-slate-100">
           <AnatomyViewer
             /*
              * Esta key es importante.
@@ -881,7 +784,25 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
             focusRequest={
               focusRequest
             }
-          />
+           />
+
+          <Card variant="floating" className="absolute left-4 top-4 z-30 max-w-[calc(100%-2rem)] p-2">
+            <label className="flex min-w-0 items-center gap-2 text-xs font-semibold text-slate-600">
+              <span className="shrink-0">{t("systemsTitle")}</span>
+              <select
+                value={activeSystem}
+                onChange={(event) => changeSystem(event.target.value as AnatomySystemId)}
+                className="min-w-0 max-w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm font-medium text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                aria-label={t("systemsTitle")}
+              >
+                {anatomySystemList.map((system) => (
+                  <option key={system.id} value={system.id}>
+                    {t(systemTranslationKeys[system.id])}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </Card>
 
           {/* =================================================
               CAPAS
@@ -961,7 +882,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
             activeConfig
               .legend.length >
               0 && (
-              <div className="absolute left-5 top-5 z-10 rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-sm backdrop-blur">
+              <div className="absolute left-5 top-24 z-10 rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-sm backdrop-blur">
                 <p className="mb-2 font-semibold text-slate-700">
                   Capas anatómicas
                 </p>
@@ -1164,8 +1085,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               TOOLBAR
           ================================================= */}
 
-          {!studyMode && (
-            <Card variant="floating" className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 gap-1 p-2">
+          <div className="pointer-events-none absolute inset-x-4 bottom-4 z-30 flex justify-center">
+            <Card variant="floating" className="pointer-events-auto flex max-w-full flex-wrap justify-center gap-1 p-2">
               <Button
                 variant="ghost"
                 size="sm"
@@ -1223,7 +1144,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                 Restablecer
               </Button>
             </Card>
-          )}
+          </div>
         </section>
 
         {/* =================================================
@@ -1356,7 +1277,6 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                     void dbAddFavorite(activeSystem, selectedAnatomyId)
                       .then(() => {
                         setFavoriteSaved(true);
-                        setFavoritesRevision((revision) => revision + 1);
                       })
                       .catch((error) => console.error("Error saving favorite:", error));
                   }}
@@ -1374,6 +1294,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               </div>
             </div>
           </div>
+
         </aside>
           </main>
         </AnatomyView>
@@ -1392,7 +1313,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       ) : appView === "quiz" ? (
         <QuizView />
       ) : appView === "progress" ? (
-        <ProgressView />
+        <ProgressView system={activeSystem} />
       ) : appView === "profile" ? (
         <ProfileView />
       ) : (
