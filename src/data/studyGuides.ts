@@ -1,18 +1,19 @@
 import type { AnatomySystemId } from "../config/anatomySystems";
+import type { LocalizableText } from "../i18n/localizedText";
 
 export type StudyStep = {
   id: string;
   anatomyId: string;
-  title: string;
-  instruction: string;
-  hint: string;
+  title: LocalizableText;
+  instruction: LocalizableText;
+  hint: LocalizableText;
 };
 
 export type StudyGuide = {
   id: string;
   system: AnatomySystemId;
-  title: string;
-  description: string;
+  title: LocalizableText;
+  description: LocalizableText;
   steps: StudyStep[];
 };
 

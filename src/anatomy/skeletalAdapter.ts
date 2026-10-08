@@ -10,6 +10,7 @@ import { getSystemStructureName } from "../utils/systemNames";
 import { skeletalModelCatalog } from "./catalogs/skeletalModelCatalog";
 import { createAnatomyEntry } from "./createAnatomyEntry";
 import { skeletalStableIdByOriginalName } from "./metadata/skeletalStableIds";
+import { getLocalizedText } from "../i18n/localizedText";
 import type {
   AnatomyLaterality,
   AnatomyStructureIndexEntry,
@@ -145,14 +146,14 @@ export function createSkeletalAnatomyEntries(
       }],
       displayName,
       layer: catalogEntry.layer,
-      region: educational?.data.location ?? unmapped.region,
+      region: educational ? getLocalizedText(educational.data.location ?? unmapped.region, "es") : unmapped.region,
       laterality: lateralityFor(catalogEntry.originalName),
-      structureType: educational?.data.type ?? unmapped.structureType,
+      structureType: educational ? getLocalizedText(educational.data.type, "es") : unmapped.structureType,
       keywords: uniqueKeywords([
         displayName,
-        educational?.data.name,
+        educational ? getLocalizedText(educational.data.name, "es") : undefined,
         withoutLaterality(catalogEntry.originalName),
-        ...(educational?.data.relationships ?? []),
+        ...(educational?.data.relationships ?? []).map((value) => getLocalizedText(value, "es")),
       ]),
       educationalId: educational?.data.id,
     });

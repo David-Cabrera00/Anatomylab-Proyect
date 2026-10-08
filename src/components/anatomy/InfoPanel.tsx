@@ -1,8 +1,9 @@
 import type { AnatomySystemConfig, AnatomySystemId } from "../../config/anatomySystems";
 import type { AnatomyStructureData } from "../../data/anatomyStructureData";
 import type { StudyGuide } from "../../data/studyGuides";
+import { anatomyLocalizedDisplayNames } from "../../data/anatomyLocalizedDisplayNames";
 import { Badge, Button, EmptyState, InfoSection } from "../ui";
-import { systemFullNameTranslationKeys, systemTranslationKeys, useI18n } from "../../i18n";
+import { getLocalizedText, systemFullNameTranslationKeys, systemTranslationKeys, useI18n } from "../../i18n";
 
 type InfoPanelProps = {
   activeSystem: AnatomySystemId;
@@ -38,7 +39,10 @@ export function InfoPanel({
   favoriteSaved,
   onSaveFavorite,
 }: InfoPanelProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
+  const localizedDisplayName = selectedAnatomyId
+    ? getLocalizedText(anatomyLocalizedDisplayNames[selectedAnatomyId] ?? selectedDisplayName ?? "", language)
+    : null;
   return (
     <aside className="flex w-[340px] min-w-0 shrink-0 flex-col overflow-y-auto border-l border-line bg-surface">
       <div className="border-b border-line px-5 pb-4 pt-4">
@@ -50,9 +54,9 @@ export function InfoPanel({
               {systemSymbol}
             </div>
             <p className="text-caption font-semibold uppercase tracking-[0.12em]" style={{ color: activeConfig.color }}>{t(systemTranslationKeys[activeConfig.id])}</p>
-            <h2 className="mt-1 text-title font-semibold tracking-tight text-ink [overflow-wrap:anywhere]">{selectedDisplayName}</h2>
+            <h2 className="mt-1 text-title font-semibold tracking-tight text-ink [overflow-wrap:anywhere]">{localizedDisplayName}</h2>
             <div className="mt-2.5 flex flex-wrap items-center gap-2">
-              {selectedData && <Badge>{selectedData.type}</Badge>}
+              {selectedData && <Badge>{getLocalizedText(selectedData.type, language)}</Badge>}
               <span className="text-caption text-ink-muted">{t(systemFullNameTranslationKeys[activeConfig.id])}</span>
             </div>
             <p className="mt-2 text-caption text-ink-subtle">{t("anatomyView")}: {activeViewName}</p>
@@ -64,14 +68,14 @@ export function InfoPanel({
       {selectedAnatomyId ? (
         <div className="flex flex-col gap-5 px-5 py-5">
           <InfoSection title={t("anatomyDescription")}>
-            <p className="break-words">{selectedData?.description ?? `${t("anatomySelectedPrefix")} ${selectedDisplayName}. ${emptyDescription}`}</p>
+            <p className="break-words">{selectedData ? getLocalizedText(selectedData.description, language) : `${t("anatomySelectedPrefix")} ${localizedDisplayName}. ${emptyDescription}`}</p>
           </InfoSection>
-          {selectedData?.function && <InfoSection title={t("anatomyFunction")}><p>{selectedData.function}</p></InfoSection>}
-          {selectedData?.location && <InfoSection title={t("anatomyLocation")}><p>{selectedData.location}</p></InfoSection>}
+          {selectedData?.function && <InfoSection title={t("anatomyFunction")}><p>{getLocalizedText(selectedData.function, language)}</p></InfoSection>}
+          {selectedData?.location && <InfoSection title={t("anatomyLocation")}><p>{getLocalizedText(selectedData.location, language)}</p></InfoSection>}
           {selectedData?.relationships && selectedData.relationships.length > 0 && (
             <InfoSection title={t("anatomyRelationships")}>
               <ul className="list-disc space-y-1 pl-5 marker:text-ink-subtle">
-                {selectedData.relationships.map((relationship) => <li key={relationship} className="break-words">{relationship}</li>)}
+                {selectedData.relationships.map((relationship, index) => <li key={`${index}-${getLocalizedText(relationship, language)}`} className="break-words">{getLocalizedText(relationship, language)}</li>)}
               </ul>
             </InfoSection>
           )}

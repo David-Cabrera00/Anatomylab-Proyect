@@ -2,6 +2,8 @@ import { createContext, createElement, useContext, useMemo, useState, type React
 
 import { en } from "./en";
 import { es } from "./es";
+export { getLocalizedText } from "./localizedText";
+export type { LocalizedLanguage, LocalizedText, LocalizableText } from "./localizedText";
 
 export type Language = "es" | "en";
 export type TranslationKey = keyof typeof es;

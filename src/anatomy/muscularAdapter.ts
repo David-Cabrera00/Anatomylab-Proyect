@@ -9,6 +9,7 @@ import {
   type MuscularEducationalIdentityGroup,
 } from "./metadata/muscularStableIds";
 import type { AnatomyLaterality, AnatomyStructureIndexEntry } from "./types";
+import { getLocalizedText } from "../i18n/localizedText";
 
 type MuscularLayer = MuscularModelCatalogEntry["layer"];
 type IdentityAssignment = Readonly<{ anatomyId: string; data?: AnatomyStructureData }>;
@@ -157,7 +158,7 @@ function displayNameFor(draft: EntryDraft, side: AnatomyLaterality): string {
     return getSystemStructureName("muscular", draft.originalNames[0]);
   }
   const sideSuffix = side === "left" ? ".l" : side === "right" ? ".r" : "";
-  return getSystemStructureName("muscular", `${draft.data.name}${sideSuffix}`);
+  return getSystemStructureName("muscular", `${getLocalizedText(draft.data.name, "es")}${sideSuffix}`);
 }
 
 export function createMuscularAnatomyEntries(
@@ -187,12 +188,13 @@ export function createMuscularAnatomyEntries(
       displayName,
       layer,
       region,
-      subregion: draft.data?.location,
+      subregion: draft.data ? getLocalizedText(draft.data.location ?? "", "es") : undefined,
       laterality: side,
-      structureType: draft.data?.type ?? "Estructura musculoesquelética",
+      structureType: draft.data ? getLocalizedText(draft.data.type, "es") : "Estructura musculoesquelética",
       keywords: uniqueKeywords([
-        displayName, draft.data?.name, region, draft.data?.location,
-        ...draft.originalNames.map(withoutLaterality), ...(draft.data?.relationships ?? []),
+        displayName, draft.data ? getLocalizedText(draft.data.name, "es") : undefined, region,
+        draft.data ? getLocalizedText(draft.data.location ?? "", "es") : undefined,
+        ...draft.originalNames.map(withoutLaterality), ...(draft.data?.relationships ?? []).map((value) => getLocalizedText(value, "es")),
       ]),
       educationalId: draft.data?.id,
     });

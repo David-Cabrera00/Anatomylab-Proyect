@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { anatomySystems, type AnatomySystemId } from "../config/anatomySystems";
-import { systemTranslationKeys, useI18n } from "../i18n";
+import { getLocalizedText, systemTranslationKeys, useI18n } from "../i18n";
 import type { StudyGuide, StudyStep } from "../data/studyGuides";
 import { Button } from "../components/ui";
 
@@ -36,7 +36,7 @@ export function StudyView({
   onNext,
   onFinish,
 }: StudyViewProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const config = anatomySystems[system];
 
   if (!guide || !currentStep) {
@@ -56,7 +56,7 @@ export function StudyView({
   const totalSteps = guide.steps.length;
   const isLastStep = stepIndex === totalSteps - 1;
   const systemLabel = t(systemTranslationKeys[system]);
-  const activeStructure = selectedStructureName ?? currentStep.title;
+  const activeStructure = selectedStructureName ?? getLocalizedText(currentStep.title, language);
 
   return (
     <section className="h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
@@ -71,8 +71,8 @@ export function StudyView({
           </div>
           <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] lg:items-end lg:gap-10">
             <div className="min-w-0">
-              <h1 className="max-w-3xl text-display font-semibold leading-tight tracking-[-0.025em] text-ink sm:text-[2.35rem] sm:leading-[1.08]">{guide.title}</h1>
-              <p className="mt-3 max-w-3xl text-body leading-7 text-ink-muted">{guide.description}</p>
+              <h1 className="max-w-3xl text-display font-semibold leading-tight tracking-[-0.025em] text-ink sm:text-[2.35rem] sm:leading-[1.08]">{getLocalizedText(guide.title, language)}</h1>
+              <p className="mt-3 max-w-3xl text-body leading-7 text-ink-muted">{getLocalizedText(guide.description, language)}</p>
             </div>
             <SessionProgress progress={currentProgress} stepNumber={stepNumber} totalSteps={totalSteps} label={t("studyStep")} ofLabel={t("studyOf")} />
           </div>
@@ -93,6 +93,7 @@ export function StudyView({
             systemLabel={systemLabel}
             structure={activeStructure}
             currentStep={currentStep}
+            language={language}
             stepNumber={stepNumber}
             totalSteps={totalSteps}
             progress={currentProgress}
@@ -155,7 +156,7 @@ function SessionProgress({ progress, stepNumber, totalSteps, label, ofLabel }: {
   );
 }
 
-function StudyContentPanel({ systemLabel, structure, currentStep, stepNumber, totalSteps, progress, isActive, color }: { systemLabel: string; structure: string; currentStep: StudyStep; stepNumber: number; totalSteps: number; progress: number; isActive: boolean; color: string }) {
+function StudyContentPanel({ systemLabel, structure, currentStep, stepNumber, totalSteps, progress, isActive, language, color }: { systemLabel: string; structure: string; currentStep: StudyStep; stepNumber: number; totalSteps: number; progress: number; isActive: boolean; language: "es" | "en"; color: string }) {
   const { t } = useI18n();
   return (
     <aside className="min-w-0 border border-line bg-surface p-5 shadow-ds-raised sm:p-6" aria-label={t("studyContent")}>
@@ -171,7 +172,7 @@ function StudyContentPanel({ systemLabel, structure, currentStep, stepNumber, to
           <InstructionIcon />
           {t("studyInstruction")}
         </div>
-        <p className="mt-2 text-body leading-6 text-ink">{currentStep.instruction}</p>
+        <p className="mt-2 text-body leading-6 text-ink">{getLocalizedText(currentStep.instruction, language)}</p>
       </div>
 
       {currentStep.hint ? (
@@ -179,7 +180,7 @@ function StudyContentPanel({ systemLabel, structure, currentStep, stepNumber, to
           <HintIcon />
           <div>
             <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("studyHint")}</p>
-            <p className="mt-1 text-label leading-5 text-ink-muted">{currentStep.hint}</p>
+            <p className="mt-1 text-label leading-5 text-ink-muted">{getLocalizedText(currentStep.hint, language)}</p>
           </div>
         </div>
       ) : null}

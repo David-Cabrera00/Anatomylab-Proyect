@@ -1,12 +1,15 @@
 /** Contenido académico; independiente de los IDs del índice y de Three.js. */
+import type { LocalizableText } from "../i18n/localizedText";
+import { getLocalizedText } from "../i18n/localizedText";
+
 export type AnatomyStructureData = {
   id: string;
-  name: string;
-  type: string;
-  description: string;
-  function?: string;
-  location?: string;
-  relationships?: readonly string[];
+  name: LocalizableText;
+  type: LocalizableText;
+  description: LocalizableText;
+  function?: LocalizableText;
+  location?: LocalizableText;
+  relationships?: readonly LocalizableText[];
 };
 
 export type EducationalStructureBinding = {
@@ -24,7 +27,7 @@ export function createEducationalCollection(entries: readonly EducationalStructu
     const { data } = entry;
     const originalNames = entry.originalNames ?? [entry.originalName];
     if (!originalNames.length || originalNames.some((name) => !name.trim()) ||
-        !data.id.trim() || !data.name.trim() || !data.description.trim()) {
+        !data.id.trim() || !getLocalizedText(data.name, "es").trim() || !getLocalizedText(data.description, "es").trim()) {
       throw new Error("Ficha educativa incompleta");
     }
     if (byId.has(data.id) || originalNames.some((name) => byOriginalName.has(name)) ||

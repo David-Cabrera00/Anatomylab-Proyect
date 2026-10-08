@@ -1,6 +1,7 @@
 import {
   getRespiratoryStructureName,
 } from "../utils/respiratory/respiratoryNames";
+import type { LocalizableText } from "../i18n/localizedText";
 
 /* ======================================================
    ANATOMYLAB AI
@@ -10,9 +11,10 @@ import {
 export type RespiratoryStructure = {
   id: string;
 
-  name: string;
+  name: LocalizableText;
 
   type:
+    | LocalizableText
     | "Pulmón"
     | "Lóbulo"
     | "Bronquio"
@@ -20,13 +22,13 @@ export type RespiratoryStructure = {
     | "Vía respiratoria"
     | "Vía aérea superior";
 
-  description: string;
+  description: LocalizableText;
 
-  function: string;
+  function: LocalizableText;
 
-  location: string;
+  location: LocalizableText;
 
-  relationships: string[];
+  relationships: LocalizableText[];
 };
 
 /* ======================================================
@@ -329,24 +331,36 @@ const rightLowerLobe: RespiratoryStructure = {
 const leftUpperLobe: RespiratoryStructure = {
   id: "left-upper-lobe",
 
-  name: "Lóbulo superior del pulmón izquierdo",
+  name: {
+    es: "Lóbulo superior del pulmón izquierdo",
+    en: "Superior lobe of the left lung",
+  },
 
-  type: "Lóbulo",
+  type: {
+    es: "Lóbulo",
+    en: "Lobe",
+  },
 
-  description:
-    "Porción superior del pulmón izquierdo que incluye la región de la língula.",
+  description: {
+    es: "Porción superior del pulmón izquierdo que incluye la región de la língula.",
+    en: "Upper portion of the left lung that includes the lingula region.",
+  },
 
-  function:
-    "Participa en la ventilación y en el intercambio gaseoso pulmonar.",
+  function: {
+    es: "Participa en la ventilación y en el intercambio gaseoso pulmonar.",
+    en: "Participates in ventilation and pulmonary gas exchange.",
+  },
 
-  location:
-    "Ocupa la región superior y parte de la región anterior del pulmón izquierdo.",
+  location: {
+    es: "Ocupa la región superior y parte de la región anterior del pulmón izquierdo.",
+    en: "Occupies the upper region and part of the anterior region of the left lung.",
+  },
 
   relationships: [
-    "Forma parte del pulmón izquierdo.",
-    "Se encuentra superior al lóbulo inferior.",
-    "Presenta relación con la incisura cardíaca.",
-    "Incluye la língula.",
+    { es: "Forma parte del pulmón izquierdo.", en: "It is part of the left lung." },
+    { es: "Se encuentra superior al lóbulo inferior.", en: "It is superior to the lower lobe." },
+    { es: "Presenta relación con la incisura cardíaca.", en: "It is related to the cardiac notch." },
+    { es: "Incluye la língula.", en: "It includes the lingula." },
   ],
 };
 

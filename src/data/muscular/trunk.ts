@@ -10,11 +10,26 @@ export const trunkEntries: readonly EducationalStructureBinding[] = [
     ],
     {
       id: "muscular.pectoralis-major",
-      name: "Músculo pectoral mayor",
-      type: "Músculo esquelético",
-      description: "Gran músculo en forma de abanico que cubre la parte superior del tórax.",
-      function: "Aduce y rota medialmente el brazo; su porción clavicular flexiona el brazo, y su porción esternocostal lo extiende desde una posición flexionada.",
-      location: "Región anterior del tórax.",
+      name: {
+        es: "Músculo pectoral mayor",
+        en: "Pectoralis major muscle",
+      },
+      type: {
+        es: "Músculo esquelético",
+        en: "Skeletal muscle",
+      },
+      description: {
+        es: "Gran músculo en forma de abanico que cubre la parte superior del tórax.",
+        en: "Large fan-shaped muscle that covers the upper chest.",
+      },
+      function: {
+        es: "Aduce y rota medialmente el brazo; su porción clavicular flexiona el brazo, y su porción esternocostal lo extiende desde una posición flexionada.",
+        en: "Adducts and medially rotates the arm; its clavicular part flexes the arm, and its sternocostal part extends it from a flexed position.",
+      },
+      location: {
+        es: "Región anterior del tórax.",
+        en: "Anterior region of the chest.",
+      },
     }
   ),
   bilateralGroup(

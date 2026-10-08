@@ -6,7 +6,7 @@ import type { AnatomySystemId } from "../../config/anatomySystems";
 import { getQuizConfig, getQuizConfigsBySystem } from "../../data/quiz";
 import { answerQuestion, createQuizSession, finishQuizSession, formatTime } from "../../utils/quiz/quizUtils";
 import { dbSaveQuizSession } from "../../utils/db";
-import { systemTranslationKeys, useI18n } from "../../i18n";
+import { getLocalizedText, systemTranslationKeys, useI18n } from "../../i18n";
 
 interface QuizPanelProps {
   activeSystem: AnatomySystemId;
@@ -16,7 +16,7 @@ interface QuizPanelProps {
 }
 
 export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChange, onClose }: QuizPanelProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const activeSystem = t(systemTranslationKeys[activeSystemId]);
   const [configs] = useState(() => getQuizConfigsBySystem(activeSystemId));
   const [persistenceError, setPersistenceError] = useState<string | null>(null);
@@ -52,8 +52,8 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
                 className="group flex w-full items-center justify-between gap-5 border border-line bg-surface-raised px-4 py-4 text-left transition-[border-color,background-color,transform] duration-150 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft/45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <span className="min-w-0">
-                  <span className="block text-heading font-semibold text-ink">{config.title}</span>
-                  <span className="mt-1 block text-body leading-6 text-ink-muted">{config.description}</span>
+                  <span className="block text-heading font-semibold text-ink">{getLocalizedText(config.title, language)}</span>
+                  <span className="mt-1 block text-body leading-6 text-ink-muted">{getLocalizedText(config.description, language)}</span>
                 </span>
                 <ArrowIcon className="shrink-0 text-accent transition-transform duration-150 group-hover:translate-x-1" />
               </button>
@@ -131,7 +131,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
         <div className="px-6 py-8 sm:px-12 sm:py-10">
           <div className="max-w-3xl">
             <p className="text-caption font-semibold uppercase tracking-[0.14em] text-accent">{difficultyLabel(question.difficulty, t)}</p>
-            <h1 className="mt-3 text-[1.65rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2rem]">{question.prompt}</h1>
+            <h1 className="mt-3 text-[1.65rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2rem]">{getLocalizedText(question.prompt, language)}</h1>
           </div>
           <div className="mt-8 grid gap-3">
             {question.options.map((option, index) => (
@@ -142,7 +142,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
                 className="group flex min-h-14 w-full items-center gap-4 border border-line bg-surface-raised px-4 py-3 text-left transition-[border-color,background-color,transform] duration-150 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft/45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line-strong text-label font-semibold text-ink-muted transition-colors duration-150 group-hover:border-accent group-hover:text-accent">{String.fromCharCode(65 + index)}</span>
-                <span className="text-body text-ink">{option}</span>
+                <span className="text-body text-ink">{getLocalizedText(option, language)}</span>
               </button>
             ))}
           </div>
@@ -187,15 +187,15 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
                   <span className="text-caption font-semibold uppercase tracking-[0.12em] text-ink-subtle">{t("quizQuestion")} {index + 1}</span>
                   <span className={`flex items-center gap-2 text-label font-semibold ${isCorrect ? "text-success" : "text-error"}`}><StatusIcon correct={isCorrect} />{isCorrect ? t("quizCorrect") : t("quizIncorrect")}</span>
                 </div>
-                <p className="mt-3 text-body font-medium text-ink">{question.prompt}</p>
+                <p className="mt-3 text-body font-medium text-ink">{getLocalizedText(question.prompt, language)}</p>
                 <div className="mt-3 space-y-1.5">
                   {question.options.map((option, optionIndex) => {
                     const isSelected = optionIndex === answer.selectedIndex;
                     const isCorrectOption = optionIndex === question.correctIndex;
-                    return <div key={optionIndex} className={`flex items-start gap-3 text-label ${isSelected || isCorrectOption ? "font-medium text-ink" : "text-ink-muted"}`}><span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-caption ${isCorrectOption ? "border-success bg-success-soft text-success" : isSelected ? "border-error bg-error-soft text-error" : "border-line-strong"}`}>{isCorrectOption ? "✓" : isSelected ? "×" : String.fromCharCode(65 + optionIndex)}</span><span>{option}</span></div>;
+                    return <div key={optionIndex} className={`flex items-start gap-3 text-label ${isSelected || isCorrectOption ? "font-medium text-ink" : "text-ink-muted"}`}><span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-caption ${isCorrectOption ? "border-success bg-success-soft text-success" : isSelected ? "border-error bg-error-soft text-error" : "border-line-strong"}`}>{isCorrectOption ? "✓" : isSelected ? "×" : String.fromCharCode(65 + optionIndex)}</span><span>{getLocalizedText(option, language)}</span></div>;
                   })}
                 </div>
-                <p className="mt-4 border-t border-current/10 pt-3 text-label leading-5 text-ink-muted">{question.explanation}</p>
+                <p className="mt-4 border-t border-current/10 pt-3 text-label leading-5 text-ink-muted">{getLocalizedText(question.explanation, language)}</p>
               </article>
             );
           })}
