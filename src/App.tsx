@@ -777,6 +777,30 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
    RENDER
   ==================================================== */
 
+  const anatomyViewer = (
+    <AnatomyViewer
+      /* Cambiar de sistema o modelo destruye el viewer anterior de forma intencional. */
+      key={`${activeSystem}-${cardiovascularView}`}
+      system={activeSystem}
+      modelPath={currentModel}
+      layer={currentLayer}
+      modelKey={currentModelKey}
+      onStructureSelect={handleStructureSelect}
+      action={viewerAction}
+      focusRequest={focusRequest}
+    />
+  );
+
+  const viewerToolbar = (
+    <ViewerToolbar
+      hasSelection={Boolean(selectedAnatomyId)}
+      onIsolate={() => runViewerAction("isolate")}
+      onHide={() => runViewerAction("hide")}
+      onTransparency={() => runViewerAction("transparency")}
+      onReset={() => runViewerAction("reset")}
+    />
+  );
+
   return (
     <AppShell
       header={
@@ -811,35 +835,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           metadata={activeViewName}
           hint="Arrastra para rotar · R para restablecer"
         >
-          <AnatomyViewer
-            /*
-             * Esta key es importante.
-             *
-             * Al cambiar de sistema se destruye
-             * completamente el visor anterior y
-             * se monta uno nuevo.
-             */
-            key={`${activeSystem}-${cardiovascularView}`}
-            system={
-              activeSystem
-            }
-            modelPath={
-              currentModel
-            }
-            layer={
-              currentLayer
-            }
-            modelKey={currentModelKey}
-            onStructureSelect={
-              handleStructureSelect
-            }
-            action={
-              viewerAction
-            }
-            focusRequest={
-              focusRequest
-            }
-           />
+          {anatomyViewer}
 
           {/* Sistemas y capas viven en ContextPanel para dejar el viewport libre. */}
 
@@ -847,13 +843,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               TOOLBAR
           ================================================= */}
 
-          <ViewerToolbar
-            hasSelection={Boolean(selectedAnatomyId)}
-            onIsolate={() => runViewerAction("isolate")}
-            onHide={() => runViewerAction("hide")}
-            onTransparency={() => runViewerAction("transparency")}
-            onReset={() => runViewerAction("reset")}
-          />
+          {viewerToolbar}
         </ViewportFrame>
 
         {/* =================================================
@@ -908,6 +898,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           progress={studyProgress}
           isActive={studyMode}
           selectedStructureName={selectedDisplayName}
+          viewer={anatomyViewer}
+          viewerToolbar={viewerToolbar}
           onStart={startStudyMode}
           onPrevious={() => goToStudyStep(studyStepIndex - 1)}
           onNext={() => goToStudyStep(studyStepIndex + 1)}
