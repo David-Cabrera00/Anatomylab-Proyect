@@ -41,7 +41,7 @@ export function InfoPanel({
 }: InfoPanelProps) {
   const { language, t } = useI18n();
   const localizedDisplayName = selectedAnatomyId
-    ? getLocalizedText(anatomyLocalizedDisplayNames[selectedAnatomyId] ?? selectedDisplayName ?? "", language)
+    ? getLocalizedText(anatomyLocalizedDisplayNames[selectedAnatomyId] ?? selectedData?.name ?? selectedDisplayName ?? "", language)
     : null;
   return (
     <aside className="flex w-[340px] min-w-0 shrink-0 flex-col overflow-y-auto border-l border-line bg-surface">
