@@ -1,22 +1,25 @@
 import type { AnatomySystemId } from "../config/anatomySystems";
+import type { LocalizableText } from "../i18n/localizedText";
+import { getLocalizedText } from "../i18n/localizedText";
+import { studyGuideEnglish, studyStepEnglish } from "./studyGuidesLocalizedText";
 
 export type StudyStep = {
   id: string;
   anatomyId: string;
-  title: string;
-  instruction: string;
-  hint: string;
+  title: LocalizableText;
+  instruction: LocalizableText;
+  hint: LocalizableText;
 };
 
 export type StudyGuide = {
   id: string;
   system: AnatomySystemId;
-  title: string;
-  description: string;
+  title: LocalizableText;
+  description: LocalizableText;
   steps: StudyStep[];
 };
 
-export const cardiovascularStudyGuide: StudyGuide = {
+const cardiovascularStudyGuideRaw: StudyGuide = {
   id: "cardiovascular-basic-flow",
 
   system: "cardiovascular",
@@ -189,7 +192,7 @@ export const cardiovascularStudyGuide: StudyGuide = {
   ],
 };
 
-export const respiratoryStudyGuide: StudyGuide = {
+const respiratoryStudyGuideRaw: StudyGuide = {
   id: "respiratory-basic-airflow",
   system: "respiratory",
   title: "Recorrido básico del aire",
@@ -289,7 +292,7 @@ export const respiratoryStudyGuide: StudyGuide = {
   ],
 };
 
-export const nervousStudyGuide: StudyGuide = {
+const nervousStudyGuideRaw: StudyGuide = {
   id: "nervous-system-overview",
   system: "nervous",
   title: "Panorama del sistema nervioso",
@@ -389,7 +392,7 @@ export const nervousStudyGuide: StudyGuide = {
   ],
 };
 
-export const skeletalStudyGuide: StudyGuide = {
+const skeletalStudyGuideRaw: StudyGuide = {
   id: "skeletal-axis-to-limbs",
   system: "skeletal",
   title: "Del eje a las extremidades",
@@ -489,7 +492,7 @@ export const skeletalStudyGuide: StudyGuide = {
   ],
 };
 
-export const muscularStudyGuide: StudyGuide = {
+const muscularStudyGuideRaw: StudyGuide = {
   id: "muscular-regional-overview",
   system: "muscular",
   title: "Músculos por regiones",
@@ -589,7 +592,7 @@ export const muscularStudyGuide: StudyGuide = {
   ],
 };
 
-export const digestiveStudyGuide: StudyGuide = {
+const digestiveStudyGuideRaw: StudyGuide = {
   id: "digestive-tract-and-accessory-organs",
   system: "digestive",
   title: "Recorrido del sistema digestivo",
@@ -706,6 +709,33 @@ export const digestiveStudyGuide: StudyGuide = {
     },
   ],
 };
+
+function localizeStudyGuide(guide: StudyGuide): StudyGuide {
+  const english = studyGuideEnglish[guide.id];
+  if (!english) throw new Error(`Traducción de guía Study ausente: ${guide.id}`);
+  return {
+    ...guide,
+    title: { es: getLocalizedText(guide.title, "es"), en: english.title },
+    description: { es: getLocalizedText(guide.description, "es"), en: english.description },
+    steps: guide.steps.map((step) => {
+      const stepEnglish = studyStepEnglish[step.id];
+      if (!stepEnglish) throw new Error(`Traducción de step Study ausente: ${step.id}`);
+      return {
+        ...step,
+        title: { es: getLocalizedText(step.title, "es"), en: stepEnglish.title },
+        instruction: { es: getLocalizedText(step.instruction, "es"), en: stepEnglish.instruction },
+        hint: { es: getLocalizedText(step.hint, "es"), en: stepEnglish.hint },
+      };
+    }),
+  };
+}
+
+export const cardiovascularStudyGuide = localizeStudyGuide(cardiovascularStudyGuideRaw);
+export const respiratoryStudyGuide = localizeStudyGuide(respiratoryStudyGuideRaw);
+export const nervousStudyGuide = localizeStudyGuide(nervousStudyGuideRaw);
+export const skeletalStudyGuide = localizeStudyGuide(skeletalStudyGuideRaw);
+export const muscularStudyGuide = localizeStudyGuide(muscularStudyGuideRaw);
+export const digestiveStudyGuide = localizeStudyGuide(digestiveStudyGuideRaw);
 
 export const studyGuidesBySystem: Partial<
   Record<AnatomySystemId, StudyGuide>

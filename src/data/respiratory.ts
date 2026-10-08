@@ -1,6 +1,8 @@
 import {
   getRespiratoryStructureName,
 } from "../utils/respiratory/respiratoryNames";
+import type { LocalizableText } from "../i18n/localizedText";
+import { getLocalizedText } from "../i18n/localizedText";
 
 /* ======================================================
    ANATOMYLAB AI
@@ -10,9 +12,10 @@ import {
 export type RespiratoryStructure = {
   id: string;
 
-  name: string;
+  name: LocalizableText;
 
   type:
+    | LocalizableText
     | "Pulmón"
     | "Lóbulo"
     | "Bronquio"
@@ -20,13 +23,13 @@ export type RespiratoryStructure = {
     | "Vía respiratoria"
     | "Vía aérea superior";
 
-  description: string;
+  description: LocalizableText;
 
-  function: string;
+  function: LocalizableText;
 
-  location: string;
+  location: LocalizableText;
 
-  relationships: string[];
+  relationships: LocalizableText[];
 };
 
 /* ======================================================
@@ -329,24 +332,36 @@ const rightLowerLobe: RespiratoryStructure = {
 const leftUpperLobe: RespiratoryStructure = {
   id: "left-upper-lobe",
 
-  name: "Lóbulo superior del pulmón izquierdo",
+  name: {
+    es: "Lóbulo superior del pulmón izquierdo",
+    en: "Superior lobe of the left lung",
+  },
 
-  type: "Lóbulo",
+  type: {
+    es: "Lóbulo",
+    en: "Lobe",
+  },
 
-  description:
-    "Porción superior del pulmón izquierdo que incluye la región de la língula.",
+  description: {
+    es: "Porción superior del pulmón izquierdo que incluye la región de la língula.",
+    en: "Upper portion of the left lung that includes the lingula region.",
+  },
 
-  function:
-    "Participa en la ventilación y en el intercambio gaseoso pulmonar.",
+  function: {
+    es: "Participa en la ventilación y en el intercambio gaseoso pulmonar.",
+    en: "Participates in ventilation and pulmonary gas exchange.",
+  },
 
-  location:
-    "Ocupa la región superior y parte de la región anterior del pulmón izquierdo.",
+  location: {
+    es: "Ocupa la región superior y parte de la región anterior del pulmón izquierdo.",
+    en: "Occupies the upper region and part of the anterior region of the left lung.",
+  },
 
   relationships: [
-    "Forma parte del pulmón izquierdo.",
-    "Se encuentra superior al lóbulo inferior.",
-    "Presenta relación con la incisura cardíaca.",
-    "Incluye la língula.",
+    { es: "Forma parte del pulmón izquierdo.", en: "It is part of the left lung." },
+    { es: "Se encuentra superior al lóbulo inferior.", en: "It is superior to the lower lobe." },
+    { es: "Presenta relación con la incisura cardíaca.", en: "It is related to the cardiac notch." },
+    { es: "Incluye la língula.", en: "It includes the lingula." },
   ],
 };
 
@@ -373,6 +388,165 @@ const leftLowerLobe: RespiratoryStructure = {
   ],
 };
 
+type RespiratoryEnglishContent = {
+  name: string;
+  type: string;
+  description: string;
+  function: string;
+  location: string;
+  relationships: string[];
+};
+
+const respiratoryEnglishById: Readonly<Record<string, RespiratoryEnglishContent>> = {
+  "right-lung": {
+    name: "Right lung", type: "Lung",
+    description: "Respiratory organ located on the right side of the thoracic cavity. It is slightly larger than the left lung and is divided into three lobes.",
+    function: "Participates in gas exchange, allowing oxygen to pass into the blood and carbon dioxide to be removed during breathing.",
+    location: "Located in the right thoracic cavity, lateral to the mediastinum and superior to the diaphragm.",
+    relationships: ["It is divided into the upper, middle, and lower lobes.", "It is medially related to the mediastinum.", "It rests inferiorly on the diaphragm.", "It receives air through the right main bronchus."],
+  },
+  "left-lung": {
+    name: "Left lung", type: "Lung",
+    description: "Respiratory organ located on the left side of the thoracic cavity. It is slightly smaller than the right lung because of the space occupied by the heart.",
+    function: "Performs the exchange of oxygen and carbon dioxide between inspired air and the blood in the pulmonary capillaries.",
+    location: "Located in the left thoracic cavity, lateral to the mediastinum and superior to the diaphragm.",
+    relationships: ["It is divided into the upper and lower lobes.", "It has a cardiac notch related to the heart.", "It rests on the diaphragm.", "It receives air through the left main bronchus."],
+  },
+  trachea: {
+    name: "Trachea", type: "Airway",
+    description: "Tubular respiratory passage that connects the larynx with the main bronchi. Its wall contains cartilaginous rings that help keep the airway open.",
+    function: "Conducts air to and from the lungs and also participates in filtering, humidifying, and cleaning inspired air.",
+    location: "Extends from the lower region of the larynx to its bifurcation into the main bronchi within the thorax.",
+    relationships: ["Superiorly, it continues with the larynx.", "Inferiorly, it divides into the right and left main bronchi.", "It lies anterior to the esophagus.", "Its bifurcation forms the tracheal carina."],
+  },
+  "right-main-bronchus": {
+    name: "Right main bronchus", type: "Bronchus",
+    description: "Right branch originating at the bifurcation of the trachea. It is generally shorter, wider, and more vertical than the left main bronchus.",
+    function: "Conducts air from the trachea to the right lung and subsequently to the lobar and segmental bronchi.",
+    location: "Extends from the tracheal bifurcation to the hilum of the right lung.",
+    relationships: ["It originates from the trachea.", "It enters the right lung through the pulmonary hilum.", "It divides into lobar bronchi.", "The lobar bronchi subsequently give rise to segmental bronchi."],
+  },
+  "left-main-bronchus": {
+    name: "Left main bronchus", type: "Bronchus",
+    description: "Left branch of the tracheal bifurcation that conducts air to the left lung.",
+    function: "Transports air from the trachea to the left lung and subsequently distributes it through lobar and segmental bronchi.",
+    location: "Extends from the tracheal bifurcation to the hilum of the left lung.",
+    relationships: ["It originates from the trachea.", "It enters the left lung through its hilum.", "It divides into lobar bronchi.", "It is related to mediastinal structures."],
+  },
+  larynx: {
+    name: "Larynx", type: "Upper airway",
+    description: "Cartilaginous structure of the airway located between the pharynx and the trachea. It also contains the structures responsible for voice production.",
+    function: "Allows air passage, participates in phonation, and protects the airway during swallowing.",
+    location: "Located in the anterior region of the neck, between the pharynx and the trachea.",
+    relationships: ["Superiorly, it communicates with the pharynx.", "Inferiorly, it continues with the trachea.", "It contains the vocal folds.", "The epiglottis participates in protecting the laryngeal inlet."],
+  },
+  pharynx: {
+    name: "Pharynx", type: "Upper airway",
+    description: "Muscular passage located behind the nasal and oral cavities that is part of both the respiratory and digestive systems.",
+    function: "Conducts air from the nasal cavity to the larynx and also participates in the passage of food to the esophagus.",
+    location: "Located posterior to the nasal and oral cavities and superior to the larynx and esophagus.",
+    relationships: ["It communicates with the nasal cavity.", "It continues with the larynx for the passage of air.", "It is also related to the esophagus."],
+  },
+  epiglottis: {
+    name: "Epiglottis", type: "Upper airway",
+    description: "Mucosa-covered elastic cartilage plate that forms part of the entrance to the larynx.",
+    function: "Helps protect the airway during swallowing by diverting the food bolus away from the laryngeal inlet.",
+    location: "Located in the upper region of the larynx, posterior to the base of the tongue.",
+    relationships: ["It attaches to the thyroid cartilage and hyoid bone by ligaments.", "Its anterior surface is related to the base of the tongue.", "It forms the anterior boundary of the laryngeal inlet."],
+  },
+  "nasal-cavity-mucosa": {
+    name: "Mucosal lining of the nasal cavity", type: "Upper airway",
+    description: "Moist lining of the nasal cavity that covers much of its walls and turbinates.",
+    function: "Helps filter, warm, and humidify inspired air before it continues to the pharynx.",
+    location: "Lines the internal surface of the nasal cavity in the upper region of the respiratory tract.",
+    relationships: ["It continues posteriorly with the mucosa of the nasopharynx.", "It is related to the nasal turbinates, which increase the surface area in contact with air.", "It contains epithelium and glands that participate in cleaning inspired air."],
+  },
+  "right-upper-lobe": {
+    name: "Upper lobe of the right lung", type: "Lobe",
+    description: "Upper portion of the right lung separated from the other lobes by pulmonary fissures.",
+    function: "Contains lung tissue where ventilation and gas exchange occur.",
+    location: "Occupies the upper region of the right lung.",
+    relationships: ["It is part of the right lung.", "It is inferiorly related to the middle lobe.", "It is partially separated by the horizontal fissure.", "It receives air through lobar and segmental bronchi."],
+  },
+  "right-middle-lobe": {
+    name: "Middle lobe of the right lung", type: "Lobe",
+    description: "Lobe located between the upper and lower lobes of the right lung.",
+    function: "Participates in pulmonary ventilation and gas exchange.",
+    location: "Located in the middle anterolateral region of the right lung.",
+    relationships: ["It is exclusively part of the right lung.", "It is inferior to the upper lobe.", "It is superior to the lower lobe.", "It is bounded by the horizontal and oblique fissures."],
+  },
+  "right-lower-lobe": {
+    name: "Lower lobe of the right lung", type: "Lobe",
+    description: "Inferior and mainly posterior portion of the right lung.",
+    function: "Participates in gas exchange and contains several basal bronchopulmonary segments.",
+    location: "Occupies mainly the inferior and posterior regions of the right lung.",
+    relationships: ["It is part of the right lung.", "It is inferiorly related to the diaphragm.", "It is separated from the upper lobe mainly by the oblique fissure."],
+  },
+  "left-lower-lobe": {
+    name: "Lower lobe of the left lung", type: "Lobe",
+    description: "Inferior and mainly posterior portion of the left lung.",
+    function: "Participates in gas exchange and contains basal bronchopulmonary segments.",
+    location: "Located in the inferior and posterior regions of the left lung.",
+    relationships: ["It is part of the left lung.", "It is separated from the upper lobe by the oblique fissure.", "It is inferiorly related to the diaphragm."],
+  },
+};
+
+const respiratoryEnglishNameBySpanish: Readonly<Record<string, string>> = {
+  "Epiglotis": "Epiglottis",
+  "Capa mucosa de la cavidad nasal": "Mucosal lining of the nasal cavity",
+  "Lóbulo inferior del pulmón izquierdo": "Lower lobe of the left lung",
+  "Lóbulo superior del pulmón izquierdo": "Upper lobe of the left lung",
+  "Lóbulo inferior del pulmón derecho": "Lower lobe of the right lung",
+  "Lóbulo medio del pulmón derecho": "Middle lobe of the right lung",
+  "Lóbulo superior del pulmón derecho": "Upper lobe of the right lung",
+  "Bronquio segmentario basal anterior del pulmón derecho (BVIII)": "Anterior basal segmental bronchus of the right lung (BVIII)",
+  "Bronquio segmentario basal lateral del pulmón derecho (BIX)": "Lateral basal segmental bronchus of the right lung (BIX)",
+  "Bronquio segmentario basal posterior del pulmón derecho (BX)": "Posterior basal segmental bronchus of the right lung (BX)",
+  "Bronquio segmentario superior del pulmón derecho (BVI)": "Superior segmental bronchus of the right lung (BVI)",
+  "Bronquio segmentario basal medial del pulmón derecho (BVII)": "Medial basal segmental bronchus of the right lung (BVII)",
+  "Bronquio lobar inferior derecho": "Right lower lobar bronchus",
+  "Bronquio segmentario lateral del pulmón derecho (BIV)": "Lateral segmental bronchus of the right lung (BIV)",
+  "Bronquio segmentario medial del pulmón derecho (BV)": "Medial segmental bronchus of the right lung (BV)",
+  "Bronquio lobar medio derecho": "Right middle lobar bronchus",
+  "Bronquio intermedio derecho": "Right intermediate bronchus",
+  "Bronquio segmentario anterior del pulmón derecho (BIII)": "Anterior segmental bronchus of the right lung (BIII)",
+  "Bronquio segmentario apical del pulmón derecho (BI)": "Apical segmental bronchus of the right lung (BI)",
+  "Bronquio segmentario posterior del pulmón derecho (BII)": "Posterior segmental bronchus of the right lung (BII)",
+  "Bronquio lobar superior derecho": "Right upper lobar bronchus",
+  "Bronquio principal derecho": "Right main bronchus",
+  "Bronquio segmentario basal anteromedial del pulmón izquierdo": "Anteromedial basal segmental bronchus of the left lung",
+  "Bronquio segmentario basal anterior del pulmón izquierdo (BVIII)": "Anterior basal segmental bronchus of the left lung (BVIII)",
+  "Bronquio segmentario basal medial del pulmón izquierdo (BVII)": "Medial basal segmental bronchus of the left lung (BVII)",
+  "Bronquio segmentario basal posterior del pulmón izquierdo (BX)": "Posterior basal segmental bronchus of the left lung (BX)",
+  "Bronquio segmentario superior del pulmón izquierdo (BVI)": "Superior segmental bronchus of the left lung (BVI)",
+  "Bronquio segmentario basal lateral del pulmón izquierdo (BIX)": "Lateral basal segmental bronchus of the left lung (BIX)",
+  "Bronquio lobar inferior izquierdo": "Left lower lobar bronchus",
+  "Bronquio segmentario apicoposterior del pulmón izquierdo (BI + BII)": "Apicoposterior segmental bronchus of the left lung (BI + BII)",
+  "Bronquio segmentario lingular superior del pulmón izquierdo (BIV)": "Superior lingular segmental bronchus of the left lung (BIV)",
+  "Bronquio segmentario anterior del pulmón izquierdo (BIII)": "Anterior segmental bronchus of the left lung (BIII)",
+  "Bronquio segmentario lingular inferior del pulmón izquierdo (BV)": "Inferior lingular segmental bronchus of the left lung (BV)",
+  "Bronquio lobar superior izquierdo": "Left upper lobar bronchus",
+  "Bronquio principal izquierdo": "Left main bronchus",
+  "Tráquea": "Trachea",
+};
+
+function localizedStructure(structure: RespiratoryStructure): RespiratoryStructure {
+  const content = respiratoryEnglishById[structure.id];
+  if (!content) return structure;
+  return {
+    ...structure,
+    name: { es: getLocalizedText(structure.name, "es"), en: content.name },
+    type: { es: getLocalizedText(structure.type, "es"), en: content.type },
+    description: { es: getLocalizedText(structure.description, "es"), en: content.description },
+    function: { es: getLocalizedText(structure.function, "es"), en: content.function },
+    location: { es: getLocalizedText(structure.location, "es"), en: content.location },
+    relationships: structure.relationships.map((relationship, index) => ({
+      es: getLocalizedText(relationship, "es"),
+      en: content.relationships[index] ?? getLocalizedText(relationship, "es"),
+    })),
+  };
+}
+
 /* ======================================================
    GENERADORES DE INFORMACIÓN
 
@@ -397,27 +571,35 @@ function createSegmentalBronchus(
           )
         ? "izquierdo"
         : "correspondiente";
+  const englishName = respiratoryEnglishNameBySpanish[name] ?? name;
+  const englishSide = side === "derecho" ? "right" : side === "izquierdo" ? "left" : "corresponding";
 
   return {
     id: name,
 
-    name,
+    name: { es: name, en: englishName },
 
-    type: "Bronquio",
+    type: { es: "Bronquio", en: "Bronchus" },
 
-    description:
-      `${name} es una rama bronquial que conduce aire hacia un segmento broncopulmonar específico del pulmón ${side}.`,
+    description: {
+      es: `${name} es una rama bronquial que conduce aire hacia un segmento broncopulmonar específico del pulmón ${side}.`,
+      en: `${englishName} is a bronchial branch that conducts air to a specific bronchopulmonary segment of the ${englishSide} lung.`,
+    },
 
-    function:
-      "Distribuye el aire inspirado hacia una región anatómica específica del pulmón.",
+    function: {
+      es: "Distribuye el aire inspirado hacia una región anatómica específica del pulmón.",
+      en: "Distributes inspired air to a specific anatomical region of the lung.",
+    },
 
-    location:
-      `Se encuentra dentro del árbol bronquial del pulmón ${side}.`,
+    location: {
+      es: `Se encuentra dentro del árbol bronquial del pulmón ${side}.`,
+      en: `It is located within the bronchial tree of the ${englishSide} lung.`,
+    },
 
     relationships: [
-      "Se origina a partir de ramas bronquiales de mayor calibre.",
-      "Se dirige hacia un segmento broncopulmonar.",
-      "Forma parte del árbol traqueobronquial.",
+      { es: "Se origina a partir de ramas bronquiales de mayor calibre.", en: "It originates from larger-caliber bronchial branches." },
+      { es: "Se dirige hacia un segmento broncopulmonar.", en: "It courses toward a bronchopulmonary segment." },
+      { es: "Forma parte del árbol traqueobronquial.", en: "It is part of the tracheobronchial tree." },
     ],
   };
 }
@@ -438,27 +620,35 @@ function createPulmonarySegment(
           )
         ? "izquierdo"
         : "correspondiente";
+  const englishName = respiratoryEnglishNameBySpanish[name] ?? name;
+  const englishSide = side === "derecho" ? "right" : side === "izquierdo" ? "left" : "corresponding";
 
   return {
     id: name,
 
-    name,
+    name: { es: name, en: englishName },
 
-    type: "Segmento pulmonar",
+    type: { es: "Segmento pulmonar", en: "Pulmonary segment" },
 
-    description:
-      `${name} es una subdivisión anatómica del pulmón ${side}, ventilada por un bronquio segmentario.`,
+    description: {
+      es: `${name} es una subdivisión anatómica del pulmón ${side}, ventilada por un bronquio segmentario.`,
+      en: `${englishName} is a subdivision of the ${englishSide} lung, ventilated by a segmental bronchus.`,
+    },
 
-    function:
-      "Participa en la ventilación y en el intercambio gaseoso dentro de una región específica del pulmón.",
+    function: {
+      es: "Participa en la ventilación y en el intercambio gaseoso dentro de una región específica del pulmón.",
+      en: "Participates in ventilation and gas exchange within a specific region of the lung.",
+    },
 
-    location:
-      `Se encuentra dentro de uno de los lóbulos del pulmón ${side}.`,
+    location: {
+      es: `Se encuentra dentro de uno de los lóbulos del pulmón ${side}.`,
+      en: `It is located within one of the lobes of the ${englishSide} lung.`,
+    },
 
     relationships: [
-      "Forma parte de un lóbulo pulmonar.",
-      "Recibe aire mediante un bronquio segmentario.",
-      "Se relaciona con ramas de los vasos pulmonares.",
+      { es: "Forma parte de un lóbulo pulmonar.", en: "It is part of a pulmonary lobe." },
+      { es: "Recibe aire mediante un bronquio segmentario.", en: "It receives air through a segmental bronchus." },
+      { es: "Se relaciona con ramas de los vasos pulmonares.", en: "It is related to branches of the pulmonary vessels." },
     ],
   };
 }
@@ -466,26 +656,33 @@ function createPulmonarySegment(
 function createGenericBronchus(
   name: string
 ): RespiratoryStructure {
+  const englishName = respiratoryEnglishNameBySpanish[name] ?? name;
   return {
     id: name,
 
-    name,
+    name: { es: name, en: englishName },
 
-    type: "Bronquio",
+    type: { es: "Bronquio", en: "Bronchus" },
 
-    description:
-      `${name} forma parte del árbol bronquial y participa en la conducción del aire dentro del sistema respiratorio.`,
+    description: {
+      es: `${name} forma parte del árbol bronquial y participa en la conducción del aire dentro del sistema respiratorio.`,
+      en: `${englishName} is part of the bronchial tree and participates in conducting air within the respiratory system.`,
+    },
 
-    function:
-      "Transporta y distribuye el aire hacia regiones cada vez más pequeñas del pulmón.",
+    function: {
+      es: "Transporta y distribuye el aire hacia regiones cada vez más pequeñas del pulmón.",
+      en: "Transports and distributes air to progressively smaller regions of the lung.",
+    },
 
-    location:
-      "Se localiza dentro del árbol traqueobronquial.",
+    location: {
+      es: "Se localiza dentro del árbol traqueobronquial.",
+      en: "It is located within the tracheobronchial tree.",
+    },
 
     relationships: [
-      "Se relaciona con otras ramas bronquiales.",
-      "Conduce aire hacia regiones pulmonares.",
-      "Forma parte de la vía respiratoria inferior.",
+      { es: "Se relaciona con otras ramas bronquiales.", en: "It is related to other bronchial branches." },
+      { es: "Conduce aire hacia regiones pulmonares.", en: "It conducts air to pulmonary regions." },
+      { es: "Forma parte de la vía respiratoria inferior.", en: "It is part of the lower respiratory tract." },
     ],
   };
 }
@@ -513,7 +710,7 @@ export function getRespiratoryStructure(
     [leftUpperLobe.id]: leftUpperLobe,
     [leftLowerLobe.id]: leftLowerLobe,
   };
-  if (Object.prototype.hasOwnProperty.call(byId, structureId)) return byId[structureId];
+  if (Object.prototype.hasOwnProperty.call(byId, structureId)) return localizedStructure(byId[structureId]);
 
   const visibleName =
     getRespiratoryStructureName(
@@ -535,7 +732,7 @@ export function getRespiratoryStructure(
       "traquea"
     )
   ) {
-    return trachea;
+    return localizedStructure(trachea);
   }
 
   /* ====================================================
@@ -548,7 +745,7 @@ export function getRespiratoryStructure(
       "laringe"
     )
   ) {
-    return larynx;
+    return localizedStructure(larynx);
   }
 
   /* ====================================================
@@ -561,15 +758,15 @@ export function getRespiratoryStructure(
       "faringe"
     )
   ) {
-    return pharynx;
+    return localizedStructure(pharynx);
   }
 
   if (name === "epiglotis" || name.includes("epiglotis")) {
-    return epiglottis;
+    return localizedStructure(epiglottis);
   }
 
   if (name.includes("mucosa") && name.includes("cavidad nasal")) {
-    return nasalCavityMucosa;
+    return localizedStructure(nasalCavityMucosa);
   }
 
   /* ====================================================
@@ -581,7 +778,7 @@ export function getRespiratoryStructure(
       "bronquio principal derecho"
     )
   ) {
-    return rightMainBronchus;
+    return localizedStructure(rightMainBronchus);
   }
 
   if (
@@ -589,7 +786,7 @@ export function getRespiratoryStructure(
       "bronquio principal izquierdo"
     )
   ) {
-    return leftMainBronchus;
+    return localizedStructure(leftMainBronchus);
   }
 
   /* ====================================================
@@ -649,7 +846,7 @@ export function getRespiratoryStructure(
       "pulmon derecho"
     )
   ) {
-    return rightUpperLobe;
+    return localizedStructure(rightUpperLobe);
   }
 
   /* ====================================================
@@ -664,7 +861,7 @@ export function getRespiratoryStructure(
       "pulmon derecho"
     )
   ) {
-    return rightMiddleLobe;
+    return localizedStructure(rightMiddleLobe);
   }
 
   /* ====================================================
@@ -679,7 +876,7 @@ export function getRespiratoryStructure(
       "pulmon derecho"
     )
   ) {
-    return rightLowerLobe;
+    return localizedStructure(rightLowerLobe);
   }
 
   /* ====================================================
@@ -694,7 +891,7 @@ export function getRespiratoryStructure(
       "pulmon izquierdo"
     )
   ) {
-    return leftUpperLobe;
+    return localizedStructure(leftUpperLobe);
   }
 
   /* ====================================================
@@ -709,7 +906,7 @@ export function getRespiratoryStructure(
       "pulmon izquierdo"
     )
   ) {
-    return leftLowerLobe;
+    return localizedStructure(leftLowerLobe);
   }
 
   /* ====================================================
@@ -735,7 +932,7 @@ export function getRespiratoryStructure(
       )
     )
   ) {
-    return rightLung;
+    return localizedStructure(rightLung);
   }
 
   /* ====================================================
@@ -757,7 +954,7 @@ export function getRespiratoryStructure(
       )
     )
   ) {
-    return leftLung;
+    return localizedStructure(leftLung);
   }
 
   return null;

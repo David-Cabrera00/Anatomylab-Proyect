@@ -1,4 +1,5 @@
 import type { AnatomySystemId } from "../../config/anatomySystems";
+import type { LocalizableText } from "../../i18n/localizedText";
 
 export type QuizQuestionType =
   | "identify-by-description"
@@ -13,10 +14,10 @@ export type QuizQuestion = {
   type: QuizQuestionType;
   anatomyId: string;
   system: AnatomySystemId;
-  prompt: string;
-  options: string[];
+  prompt: LocalizableText;
+  options: LocalizableText[];
   correctIndex: number;
-  explanation: string;
+  explanation: LocalizableText;
   difficulty: "easy" | "medium" | "hard";
   tags: string[];
 };
@@ -24,8 +25,8 @@ export type QuizQuestion = {
 export type QuizConfig = {
   id: string;
   system: AnatomySystemId;
-  title: string;
-  description: string;
+  title: LocalizableText;
+  description: LocalizableText;
   questionPool: QuizQuestion[];
   questionsPerSession: number;
   passingScore: number;

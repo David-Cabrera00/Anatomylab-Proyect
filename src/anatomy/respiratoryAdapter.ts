@@ -1,5 +1,6 @@
 import { getRespiratoryStructure } from "../data/respiratory";
 import { getSystemStructureName } from "../utils/systemNames";
+import { getLocalizedText } from "../i18n/localizedText";
 import {
   respiratoryModelCatalog,
   type RespiratoryModelCatalogEntry,
@@ -101,10 +102,14 @@ export function createRespiratoryAnatomyEntries(
       region: metadata.region,
       subregion: metadata.subregion,
       laterality: lateralityFor(catalogEntry.originalName),
-      structureType: educationalData?.type ?? metadata.structureType,
+      structureType: educationalData?.type
+        ? getLocalizedText(educationalData.type, "es")
+        : metadata.structureType,
       keywords: uniqueKeywords([
         displayName,
-        educationalData?.name,
+        educationalData?.name
+          ? getLocalizedText(educationalData.name, "es")
+          : undefined,
         metadata.region,
         metadata.subregion,
         metadata.structureType,

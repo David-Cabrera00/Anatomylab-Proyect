@@ -6,6 +6,7 @@ import type { AnatomyStructureIndexEntry } from "./types";
 import type { AnatomyStructureData } from "../data/educationalCollection";
 import { digestiveModelCatalog } from "./catalogs/digestiveModelCatalog";
 import { digestiveStableIdByOriginalName } from "./metadata/digestiveStableIds";
+import { getLocalizedText } from "../i18n/localizedText";
 
 const catalogNames = new Set(digestiveModelCatalog.map((item) => item.originalName));
 
@@ -52,8 +53,8 @@ export function createDigestiveAnatomyEntries(
       system: "digestive", modelBindings: [catalog],
       displayName,
       layer: layerFor(originalName), region: regionByName[originalName] ?? "Abdomen",
-      laterality: side, structureType: data?.type ?? "Estructura anatómica",
-      keywords: [...new Set([data?.name ?? originalName, originalName.replace(/\.(l|r)$/i, "")])],
+      laterality: side, structureType: data ? getLocalizedText(data.type, "es") : "Estructura anatómica",
+      keywords: [...new Set([data ? getLocalizedText(data.name, "es") : originalName, originalName.replace(/\.(l|r)$/i, "")])],
       educationalId: data?.id,
     });
   });

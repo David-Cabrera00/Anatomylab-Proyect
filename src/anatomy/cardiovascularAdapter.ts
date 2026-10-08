@@ -7,6 +7,7 @@ import {
 import { createAnatomyEntry } from "./createAnatomyEntry";
 import { cardiovascularStableIdByOriginalName } from "./metadata/cardiovascularStableIds";
 import type { AnatomyLaterality, AnatomyStructureIndexEntry } from "./types";
+import { getLocalizedText } from "../i18n/localizedText";
 
 type EntryDraft = Readonly<{
   originalName: string;
@@ -110,6 +111,12 @@ export function createCardiovascularAnatomyEntries(
     const layer = draft.catalogEntries[0].layer;
     const displayName = getSystemStructureName("cardiovascular", draft.originalName);
     const region = regionFor(displayName, layer);
+    const educationalName = educational ? getLocalizedText(educational.name, "es") : undefined;
+    const educationalType = educational ? getLocalizedText(educational.type, "es") : undefined;
+    const educationalLocation = educational ? getLocalizedText(educational.location, "es") : undefined;
+    const educationalRelationships = educational?.relationships.map((relationship) =>
+      getLocalizedText(relationship, "es")
+    ) ?? [];
 
     return createAnatomyEntry({
       id: anatomyId,
@@ -121,15 +128,15 @@ export function createCardiovascularAnatomyEntries(
       displayName,
       layer,
       region,
-      subregion: educational?.location,
+      subregion: educationalLocation,
       laterality: lateralityFor(draft.originalName),
-      structureType: educational?.type ?? (layer === "heart" ? "Estructura cardíaca" : layer === "arteries" ? "Arteria" : "Vena"),
+      structureType: educationalType ?? (layer === "heart" ? "Estructura cardíaca" : layer === "arteries" ? "Arteria" : "Vena"),
       keywords: uniqueKeywords([
         displayName,
-        educational?.name,
+        educationalName,
         region,
-        educational?.location,
-        ...educational?.relationships ?? [],
+        educationalLocation,
+        ...educationalRelationships,
       ]),
       educationalId: educational?.id,
     });

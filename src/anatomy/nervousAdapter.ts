@@ -7,6 +7,7 @@ import { nervousModelCatalog } from "./catalogs/nervousModelCatalog";
 import { nervousStableIdByOriginalName } from "./metadata/nervousStableIds";
 import { nervousModelNodeStableIdByOriginalName } from "./metadata/nervousModelNodeStableIds";
 import { nervousLayerByOriginalName } from "./metadata/nervousHierarchyLayers";
+import { getLocalizedText } from "../i18n/localizedText";
 
 const catalogByName = new Map(nervousModelCatalog.map((item) => [item.originalName, item]));
 const regionByName: Record<string, string> = { "Plexo coroideo.l": "Encéfalo", "Plexo coroideo.r": "Encéfalo" };
@@ -65,8 +66,8 @@ export function createNervousAnatomyEntries(
       layer: hierarchyLayer,
       region: regionByName[originalName] ?? (hierarchyLayer === "nervous-central" ? "Encéfalo" : hierarchyLayer === "nervous-sense" ? "Órganos de los sentidos" : "Sistema nervioso periférico"),
       laterality: s,
-      structureType: data?.type ?? "Estructura anatómica",
-      keywords: [data?.name ?? originalName],
+      structureType: data ? getLocalizedText(data.type, "es") : "Estructura anatómica",
+      keywords: [data ? getLocalizedText(data.name, "es") : originalName],
       educationalId: data?.id,
     });
   });
