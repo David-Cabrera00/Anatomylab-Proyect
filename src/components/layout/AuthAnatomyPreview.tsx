@@ -20,7 +20,7 @@ function PreviewModel() {
 
     const scaledBounds = new THREE.Box3().setFromObject(clone);
     const scaledCenter = scaledBounds.getCenter(new THREE.Vector3());
-    clone.position.set(-scaledCenter.x, -scaledCenter.y - 0.2, -scaledCenter.z);
+    clone.position.set(-scaledCenter.x + 0.16, -scaledCenter.y - 0.32, -scaledCenter.z);
     clone.traverse((object) => {
       if (object instanceof THREE.Mesh) {
         object.castShadow = true;
@@ -43,10 +43,11 @@ export function AuthAnatomyPreview() {
         gl={{ antialias: true, alpha: true }}
         dpr={[1, 2]}
       >
-        <ambientLight intensity={0.8} />
-        <directionalLight position={[4, 5, 5]} intensity={1.25} castShadow />
-        <directionalLight position={[-3, 2, 4]} intensity={0.55} />
-        <directionalLight position={[0, 3, -4]} intensity={0.3} />
+        <ambientLight intensity={0.65} />
+        <hemisphereLight args={["#ffffff", "#d7e1e5", 0.75]} />
+        <directionalLight position={[4, 6, 5]} intensity={1.1} castShadow />
+        <directionalLight position={[-4, 3, 4]} intensity={0.7} />
+        <directionalLight position={[0, 5, -4]} intensity={0.45} />
         <PreviewModel />
         <OrbitControls
           autoRotate
