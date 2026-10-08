@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { anatomySystems, type AnatomySystemId } from "../config/anatomySystems";
 import { getLocalizedText, systemTranslationKeys, useI18n } from "../i18n";
 import type { StudyGuide, StudyStep } from "../data/studyGuides";
+import { anatomyLocalizedDisplayNames } from "../data/anatomyLocalizedDisplayNames";
 import { Button } from "../components/ui";
 
 type StudyViewProps = {
@@ -56,7 +57,12 @@ export function StudyView({
   const totalSteps = guide.steps.length;
   const isLastStep = stepIndex === totalSteps - 1;
   const systemLabel = t(systemTranslationKeys[system]);
-  const activeStructure = selectedStructureName ?? getLocalizedText(currentStep.title, language);
+  const localizedAnatomyName = anatomyLocalizedDisplayNames[currentStep.anatomyId];
+  const activeStructure = localizedAnatomyName
+    ? getLocalizedText(localizedAnatomyName, language)
+    : language === "es"
+      ? selectedStructureName ?? getLocalizedText(currentStep.title, language)
+      : getLocalizedText(currentStep.title, language);
 
   return (
     <section className="h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
