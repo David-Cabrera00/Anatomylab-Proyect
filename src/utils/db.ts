@@ -200,7 +200,17 @@ export async function dbGetSearchHistory(limit?: number): Promise<SearchHistory[
 
 // Mastery Stats
 export async function dbGetMasteryStats(system: string): Promise<Array<{ anatomy_id: string; correct: number; total: number }>> {
-  return invoke("db_get_mastery_stats", { system });
+  const rows = await invoke<Array<[string, number | null, number | null]>>("db_get_mastery_stats", { system });
+  return rows.map(([anatomy_id, correct, total]) => ({
+    anatomy_id,
+    correct: toFiniteCount(correct),
+    total: toFiniteCount(total),
+  }));
+}
+
+function toFiniteCount(value: unknown): number {
+  const numeric = Number(value ?? 0);
+  return Number.isFinite(numeric) ? numeric : 0;
 }
 
 // Convenience: Mastery level calculation
