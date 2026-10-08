@@ -11,8 +11,8 @@ type QuizViewProps = {
 
 export function QuizView({ activeSystem, quizState, onStateChange, onClose }: QuizViewProps) {
   return (
-    <section className="h-full overflow-y-auto bg-slate-50 p-6 lg:p-8">
-      <div className="mx-auto flex min-h-full max-w-3xl items-start justify-center">
+    <section className="h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
+      <div className="mx-auto flex min-h-full max-w-5xl items-start justify-center">
         <div className="w-full">
           <QuizPanel
             activeSystem={activeSystem}

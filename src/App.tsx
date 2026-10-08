@@ -7,19 +7,16 @@
 
 import "./App.css";
 
-import {
-  Badge,
-  Button,
-  Card,
-  EmptyState,
-  InfoSection,
-  SegmentedControl,
-} from "./components/ui";
-
 import { SearchBar } from "./components/SearchBar";
 import { AppHeader } from "./components/layout/AppHeader";
 import { AppShell } from "./components/layout/AppShell";
 import { AppSidebar } from "./components/layout/AppSidebar";
+import { AuthAnatomyPreview } from "./components/layout/AuthAnatomyPreview";
+import { AuthLayout } from "./components/layout/AuthLayout";
+import { ContextPanel } from "./components/anatomy/ContextPanel";
+import { InfoPanel } from "./components/anatomy/InfoPanel";
+import { ViewerToolbar } from "./components/anatomy/ViewerToolbar";
+import { ViewportFrame } from "./components/anatomy/ViewportFrame";
 
 import AnatomyViewer, {
   type ViewerAction,
@@ -54,7 +51,7 @@ import { SettingsView } from "./views/SettingsView";
 import { StudyView } from "./views/StudyView";
 import { RegisterView } from "./views/RegisterView";
 import type { AppView } from "./views/types";
-import { systemTranslationKeys, useI18n } from "./i18n";
+import { useI18n } from "./i18n";
 
 /* ======================================================
    VISTA CARDIOVASCULAR
@@ -127,8 +124,8 @@ const systemDescriptions: Record<
 function App() {
   const [appView, setAppView] = useState<AppView>("login");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { t } = useI18n();
-
+  const { language, t } = useI18n();
+  const isEnglish = language === "en";
   /* ====================================================
      SISTEMA ACTIVO
   ==================================================== */
@@ -746,16 +743,63 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   if (!isAuthenticated) {
-    return appView === "register" ? (
-      <RegisterView onRegister={completeAuth} onLogin={() => setAppView("login")} />
-    ) : (
-      <LoginView onLogin={completeAuth} onRegister={() => setAppView("register")} />
+    const isRegister = appView === "register";
+
+    return (
+      <AuthLayout
+        brand={t("appName")}
+        productMeta={isEnglish ? "3D ANATOMY WORKSPACE" : "ESPACIO DE ANATOMÍA 3D"}
+        productTitle={isEnglish ? "Explore the human body in 3D" : "Explora el cuerpo humano en 3D"}
+        productDescription={isEnglish
+          ? "Understand systems, structures, and relationships through interactive models."
+          : "Comprende sistemas, estructuras y relaciones mediante modelos interactivos."}
+        benefits={[
+          { number: "01", content: isEnglish ? "Interactive 3D models" : "Modelos 3D interactivos" },
+          { number: "02", content: isEnglish ? "Guided anatomy study" : "Estudio anatómico guiado" },
+          { number: "03", content: isEnglish ? "Quiz and progress tracking" : "Quiz y seguimiento de progreso" },
+        ]}
+        productVisual={<AuthAnatomyPreview />}
+        formTitle={isRegister ? t("authRegisterTitle") : (isEnglish ? "Welcome back" : "Bienvenido de nuevo")}
+        formSubtitle={isRegister
+          ? (isEnglish ? "Start studying anatomy with interactive models." : "Comienza a estudiar anatomía con modelos interactivos.")
+          : t("homeIntro")}
+      >
+        {isRegister ? (
+          <RegisterView onRegister={completeAuth} onLogin={() => setAppView("login")} />
+        ) : (
+          <LoginView onLogin={completeAuth} onRegister={() => setAppView("register")} />
+        )}
+      </AuthLayout>
     );
   }
 
   /* ====================================================
    RENDER
   ==================================================== */
+
+  const anatomyViewer = (
+    <AnatomyViewer
+      /* Cambiar de sistema o modelo destruye el viewer anterior de forma intencional. */
+      key={`${activeSystem}-${cardiovascularView}`}
+      system={activeSystem}
+      modelPath={currentModel}
+      layer={currentLayer}
+      modelKey={currentModelKey}
+      onStructureSelect={handleStructureSelect}
+      action={viewerAction}
+      focusRequest={focusRequest}
+    />
+  );
+
+  const viewerToolbar = (
+    <ViewerToolbar
+      hasSelection={Boolean(selectedAnatomyId)}
+      onIsolate={() => runViewerAction("isolate")}
+      onHide={() => runViewerAction("hide")}
+      onTransparency={() => runViewerAction("transparency")}
+      onReset={() => runViewerAction("reset")}
+    />
+  );
 
   return (
     <AppShell
@@ -774,385 +818,65 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
                 VISOR 3D
             ================================================= */}
 
-        <section className="relative min-h-0 min-w-0 flex-1 overflow-hidden bg-slate-100">
-          <AnatomyViewer
-            /*
-             * Esta key es importante.
-             *
-             * Al cambiar de sistema se destruye
-             * completamente el visor anterior y
-             * se monta uno nuevo.
-             */
-            key={`${activeSystem}-${cardiovascularView}`}
-            system={
-              activeSystem
-            }
-            modelPath={
-              currentModel
-            }
-            layer={
-              currentLayer
-            }
-            modelKey={currentModelKey}
-            onStructureSelect={
-              handleStructureSelect
-            }
-            action={
-              viewerAction
-            }
-            focusRequest={
-              focusRequest
-            }
-           />
+        <ContextPanel
+          activeSystem={activeSystem}
+          activeConfig={activeConfig}
+          activeLayer={activeLayer}
+          activeLayers={activeLayers}
+          studyMode={studyMode}
+          heartDetail={activeSystem === "cardiovascular" && cardiovascularView === "heart-detail"}
+          onChangeSystem={changeSystem}
+          onChangeLayer={changeLayer}
+          onReturnToOverview={returnToOverview}
+        />
 
-          <Card variant="floating" className="absolute left-4 top-4 z-30 max-w-[calc(100%-2rem)] p-2">
-            <label className="flex min-w-0 items-center gap-2 text-xs font-semibold text-slate-600">
-              <span className="shrink-0">{t("systemsTitle")}</span>
-              <select
-                value={activeSystem}
-                onChange={(event) => changeSystem(event.target.value as AnatomySystemId)}
-                className="min-w-0 max-w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm font-medium text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-                aria-label={t("systemsTitle")}
-              >
-                {anatomySystemList.map((system) => (
-                  <option key={system.id} value={system.id}>
-                    {t(systemTranslationKeys[system.id])}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </Card>
+        <ViewportFrame
+          label={activeConfig.fullName}
+          metadata={activeViewName}
+          hint="Arrastra para rotar · R para restablecer"
+        >
+          {anatomyViewer}
 
-          {/* =================================================
-              CAPAS
-          ================================================= */}
-
-          {!studyMode &&
-            !(
-              activeSystem ===
-                "cardiovascular" &&
-              cardiovascularView ===
-                "heart-detail"
-            ) && (
-              <Card
-                variant="floating"
-                className="absolute right-5 top-5 z-10 flex max-w-[calc(100%-14rem)] min-w-0 items-center gap-3 p-2"
-              >
-                <div className="min-w-0 shrink-0 pl-1">
-                  <p className="text-caption font-semibold uppercase tracking-wide text-ink-subtle">
-                    Capas
-                  </p>
-                  <p className="max-w-24 truncate text-label font-medium text-ink">
-                    {activeConfig.label}
-                  </p>
-                </div>
-                <div className="min-w-0 overflow-x-auto">
-                  <SegmentedControl
-                    label={`Capas de ${activeConfig.fullName}`}
-                    options={activeLayers.map((layer) => ({
-                      value: layer.id,
-                      label: layer.label,
-                    }))}
-                    value={activeLayer}
-                    onChange={changeLayer}
-                  />
-                </div>
-              </Card>
-            )}
-
-          {/* =================================================
-              CORAZÓN DETALLADO
-          ================================================= */}
-
-          {activeSystem ===
-            "cardiovascular" &&
-            cardiovascularView ===
-              "heart-detail" && (
-              <div className="absolute left-1/2 top-5 z-10 flex -translate-x-1/2 items-center gap-3 rounded-xl border border-slate-200 bg-white/95 p-2 shadow-sm backdrop-blur">
-                <button
-                  type="button"
-                  onClick={
-                    returnToOverview
-                  }
-                  className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
-                >
-                  ← Volver al sistema
-                </button>
-
-                <div className="h-5 w-px bg-slate-200" />
-
-                <span className="pr-2 text-sm font-semibold">
-                  Corazón en detalle
-                </span>
-              </div>
-            )}
-
-          {/* =================================================
-              LEYENDA
-          ================================================= */}
-
-          {!studyMode &&
-            !(
-              activeSystem ===
-                "cardiovascular" &&
-              cardiovascularView ===
-                "heart-detail"
-            ) &&
-            activeConfig
-              .legend.length >
-              0 && (
-              <div className="absolute left-5 top-24 z-10 rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-sm backdrop-blur">
-                <p className="mb-2 font-semibold text-slate-700">
-                  Capas anatómicas
-                </p>
-
-                <div className="space-y-2">
-                  {activeConfig.legend.map(
-                    (
-                      item
-                    ) => (
-                      <div
-                        key={
-                          item.label
-                        }
-                        className="flex items-center gap-2"
-                      >
-                        <span
-                          className="h-3 w-3 rounded-full"
-                          style={{
-                            backgroundColor:
-                              item.color,
-                          }}
-                        />
-
-                        <span>
-                          {
-                            item.label
-                          }
-                        </span>
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
+          {/* Sistemas y capas viven en ContextPanel para dejar el viewport libre. */}
 
           {/* =================================================
               TOOLBAR
           ================================================= */}
 
-          <div className="pointer-events-none absolute inset-x-4 bottom-4 z-30 flex justify-center">
-            <Card variant="floating" className="pointer-events-auto flex max-w-full flex-wrap justify-center gap-1 p-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() =>
-                  runViewerAction(
-                    "isolate"
-                  )
-                }
-                disabled={
-                  !selectedAnatomyId
-                }
-              >
-                Aislar
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() =>
-                  runViewerAction(
-                    "hide"
-                  )
-                }
-                disabled={
-                  !selectedAnatomyId
-                }
-              >
-                Ocultar
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() =>
-                  runViewerAction(
-                    "transparency"
-                  )
-                }
-                disabled={
-                  !selectedAnatomyId
-                }
-              >
-                Transparencia
-              </Button>
-
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() =>
-                  runViewerAction(
-                    "reset"
-                  )
-                }
-              >
-                Restablecer
-              </Button>
-            </Card>
-          </div>
-        </section>
+          {viewerToolbar}
+        </ViewportFrame>
 
         {/* =================================================
             PANEL DERECHO
         ================================================= */}
 
-        <aside className="flex w-80 min-w-0 shrink-0 flex-col overflow-y-auto border-l border-line bg-surface px-5 py-6">
-          <p className="text-caption font-semibold uppercase tracking-wider text-ink-subtle">
-            Información anatómica
-          </p>
-
-          {selectedAnatomyId ? (
-            <>
-              <div className="mt-5 min-w-0">
-                <div
-                  className="mb-4 flex h-11 w-11 items-center justify-center rounded-ds-md text-heading font-semibold"
-                  style={{
-                    backgroundColor: activeConfig.accentColor,
-                    color: activeConfig.color,
-                  }}
-                  aria-hidden="true"
-                >
-                  {systemSymbols[activeSystem]}
-                </div>
-
-                <h2 className="text-title font-semibold tracking-tight text-ink [overflow-wrap:anywhere]">
-                  {selectedDisplayName}
-                </h2>
-
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {selectedAnatomyIdData && (
-                    <Badge>{selectedAnatomyIdData.type}</Badge>
-                  )}
-                  <span className="text-caption text-ink-muted">
-                    {activeConfig.fullName}
-                  </span>
-                </div>
-
-                <p className="mt-2 text-caption text-ink-subtle">
-                  Vista: {activeViewName}
-                </p>
-
-                {studyMode && activeStudyGuide && (
-                  <Badge variant="warning" className="mt-3">
-                    Estudio {studyStepIndex + 1}/
-                    {activeStudyGuide.steps.length}
-                  </Badge>
-                )}
-              </div>
-
-              <div className="mt-6 space-y-6 border-t border-line pt-5">
-                <InfoSection title="Descripción">
-                  <p className="break-words">
-                    {selectedAnatomyIdData
-                      ? selectedAnatomyIdData.description
-                      : activeSystem === "nervous"
-                        ? `Has seleccionado ${selectedDisplayName}. La información educativa del sistema nervioso se añadirá en la siguiente fase.`
-                        : activeSystem === "skeletal"
-                          ? `Has seleccionado ${selectedDisplayName}. La información educativa del sistema esquelético se añadirá en la siguiente fase.`
-                          : activeSystem === "muscular"
-                            ? `Has seleccionado ${selectedDisplayName}. La información educativa del sistema muscular se añadirá en la siguiente fase.`
-                            : activeSystem === "digestive"
-                              ? `Has seleccionado ${selectedDisplayName}. La información educativa del sistema digestivo se añadirá en la siguiente fase.`
-                              : `Has seleccionado ${selectedDisplayName}. Todavía estamos agregando información educativa específica para esta estructura.`}
-                  </p>
-                </InfoSection>
-
-                {selectedAnatomyIdData && (
-                  <>
-                    {selectedAnatomyIdData.function && (
-                      <InfoSection title="Función">
-                        <p>{selectedAnatomyIdData.function}</p>
-                      </InfoSection>
-                    )}
-                    {selectedAnatomyIdData.location && (
-                      <InfoSection title="Ubicación">
-                        <p>{selectedAnatomyIdData.location}</p>
-                      </InfoSection>
-                    )}
-                    {selectedAnatomyIdData.relationships && selectedAnatomyIdData.relationships.length > 0 && (
-                      <InfoSection title="Relaciones anatómicas">
-                        <ul className="list-disc space-y-1 pl-5 marker:text-ink-subtle">
-                          {selectedAnatomyIdData.relationships.map((relationship) => (
-                            <li key={relationship} className="break-words">
-                              {relationship}
-                            </li>
-                          ))}
-                        </ul>
-                      </InfoSection>
-                    )}
-                  </>
-                )}
-              </div>
-            </>
-          ) : (
-            <EmptyState
-              className="mt-12"
-              title="Selecciona una estructura"
-              description={
-                activeSystem === "cardiovascular" &&
-                cardiovascularView === "heart-detail"
-                  ? "Explora las cavidades, válvulas y estructuras internas disponibles en el modelo detallado del corazón."
-                  : systemDescriptions[activeSystem]
-              }
-            />
-          )}
-
-          <div className="mt-auto pt-6">
-            <div className="border-t border-line pt-5">
-              {selectedAnatomyId && (
-                <p className="mb-3 text-caption font-semibold uppercase tracking-wider text-ink-subtle">
-                  Acciones
-                </p>
-              )}
-              <div className="space-y-2">
-                {canExploreHeart && (
-                  <Button
-                    variant="secondary"
-                    onClick={openHeartDetail}
-                    className="w-full whitespace-normal"
-                  >
-                    Explorar corazón en detalle →
-                  </Button>
-                )}
-                <Button
-                  variant="secondary"
-                  disabled={!selectedAnatomyId || favoriteSaved}
-                  onClick={() => {
-                    if (!selectedAnatomyId) return;
-                    void dbAddFavorite(activeSystem, selectedAnatomyId)
-                      .then(() => {
-                        setFavoriteSaved(true);
-                        setFavoritesRevision((revision) => revision + 1);
-                      })
-                      .catch((error) => console.error("Error saving favorite:", error));
-                  }}
-                  className="w-full whitespace-normal"
-                >
-                  {favoriteSaved ? "Guardado en favoritos" : "Guardar en favoritos"}
-                </Button>
-                <Button
-                  variant={selectedAnatomyId ? "primary" : "secondary"}
-                  disabled={!selectedAnatomyId}
-                  className="w-full whitespace-normal"
-                >
-                  Preguntar a Anatomy AI
-                </Button>
-              </div>
-            </div>
-          </div>
-
-        </aside>
+        <InfoPanel
+          activeSystem={activeSystem}
+          activeConfig={activeConfig}
+          activeViewName={activeViewName}
+          selectedAnatomyId={selectedAnatomyId}
+          selectedDisplayName={selectedDisplayName}
+          selectedData={selectedAnatomyIdData}
+          systemSymbol={systemSymbols[activeSystem]}
+          emptyDescription={activeSystem === "cardiovascular" && cardiovascularView === "heart-detail"
+            ? "Explora las cavidades, válvulas y estructuras internas disponibles en el modelo detallado del corazón."
+            : systemDescriptions[activeSystem]}
+          studyMode={studyMode}
+          activeStudyGuide={activeStudyGuide}
+          studyStepIndex={studyStepIndex}
+          canExploreHeart={canExploreHeart}
+          onExploreHeart={openHeartDetail}
+          favoriteSaved={favoriteSaved}
+          onSaveFavorite={() => {
+            if (!selectedAnatomyId) return;
+            void dbAddFavorite(activeSystem, selectedAnatomyId)
+              .then(() => {
+                setFavoriteSaved(true);
+                setFavoritesRevision((revision) => revision + 1);
+              })
+              .catch((error) => console.error("Error saving favorite:", error));
+          }}
+        />
           </main>
         </AnatomyView>
       ) : appView === "home" ? (
@@ -1174,6 +898,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           progress={studyProgress}
           isActive={studyMode}
           selectedStructureName={selectedDisplayName}
+          viewer={anatomyViewer}
+          viewerToolbar={viewerToolbar}
           onStart={startStudyMode}
           onPrevious={() => goToStudyStep(studyStepIndex - 1)}
           onNext={() => goToStudyStep(studyStepIndex + 1)}

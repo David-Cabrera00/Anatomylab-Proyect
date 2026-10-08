@@ -1213,7 +1213,7 @@ export default function AnatomyViewer({
       <Canvas
         shadows
         camera={{
-          position: [0, 0.5, 8],
+          position: [0, 0.5, 6.8],
           fov: 40,
           near: 0.01,
           far: 1000,
