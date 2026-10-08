@@ -1,6 +1,8 @@
 import type { QuizQuestion } from "./types";
+import { getLocalizedText } from "../../i18n/localizedText";
+import { skeletalQuizEnglish } from "./skeletalQuizLocalizedText";
 
-export const skeletalQuizQuestions: QuizQuestion[] = [
+const skeletalQuizQuestionsRaw: QuizQuestion[] = [
   {
     id: "skel-q-001",
     type: "identify-by-description",
@@ -201,3 +203,17 @@ export const skeletalQuizQuestions: QuizQuestion[] = [
     tags: ["cintura-escapular", "articulaciones"],
   },
 ];
+
+export const skeletalQuizQuestions: QuizQuestion[] = skeletalQuizQuestionsRaw.map((question) => {
+  const english = skeletalQuizEnglish[question.id];
+  if (!english) throw new Error(`Traducción Quiz esquelético ausente: ${question.id}`);
+  if (english.options.length !== question.options.length) {
+    throw new Error(`Opciones Quiz esquelético incoherentes: ${question.id}`);
+  }
+  return {
+    ...question,
+    prompt: { es: getLocalizedText(question.prompt, "es"), en: english.prompt },
+    options: question.options.map((option, index) => ({ es: getLocalizedText(option, "es"), en: english.options[index] })),
+    explanation: { es: getLocalizedText(question.explanation, "es"), en: english.explanation },
+  };
+});

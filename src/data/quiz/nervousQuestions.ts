@@ -1,6 +1,8 @@
 import type { QuizQuestion } from "./types";
+import { getLocalizedText } from "../../i18n/localizedText";
+import { nervousQuizEnglish } from "./nervousQuizLocalizedText";
 
-export const nervousQuizQuestions: QuizQuestion[] = [
+const nervousQuizQuestionsRaw: QuizQuestion[] = [
   {
     id: "nerv-q-001",
     type: "identify-by-description",
@@ -201,3 +203,17 @@ export const nervousQuizQuestions: QuizQuestion[] = [
     tags: ["diencefalo", "homeostasis", "neuroendocrino"],
   },
 ];
+
+export const nervousQuizQuestions: QuizQuestion[] = nervousQuizQuestionsRaw.map((question) => {
+  const english = nervousQuizEnglish[question.id];
+  if (!english) throw new Error(`Traducción Quiz nervioso ausente: ${question.id}`);
+  if (english.options.length !== question.options.length) {
+    throw new Error(`Opciones Quiz nervioso incoherentes: ${question.id}`);
+  }
+  return {
+    ...question,
+    prompt: { es: getLocalizedText(question.prompt, "es"), en: english.prompt },
+    options: question.options.map((option, index) => ({ es: getLocalizedText(option, "es"), en: english.options[index] })),
+    explanation: { es: getLocalizedText(question.explanation, "es"), en: english.explanation },
+  };
+});
