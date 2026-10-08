@@ -1,13 +1,14 @@
 ﻿import { useEffect, useState } from "react";
 
 import { dbGetQuizHistory, type QuizHistory } from "../../utils/db";
+import { useI18n } from "../../i18n";
 
 export interface HistoryTabProps {
   system: string;
 }
 
-const formatDate = (iso: string): string =>
-  new Date(iso).toLocaleString("es-ES", {
+const formatDate = (iso: string, language: "es" | "en"): string =>
+  new Date(iso).toLocaleString(language === "en" ? "en-US" : "es-ES", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -23,6 +24,7 @@ const formatTime = (ms: number | null): string => {
 };
 
 export function HistoryTab({ system }: HistoryTabProps) {
+  const { language, t } = useI18n();
   const [sessions, setSessions] = useState<QuizHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -46,7 +48,7 @@ export function HistoryTab({ system }: HistoryTabProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8 text-ink-muted text-sm">
-        Cargando historial...
+        {t("historyLoading")}
       </div>
     );
   }
@@ -54,8 +56,8 @@ export function HistoryTab({ system }: HistoryTabProps) {
   if (sessions.length === 0) {
     return (
       <div className="border-l-2 border-accent bg-accent-soft/30 px-4 py-5 text-sm text-ink-muted">
-        <p className="font-medium text-ink">No hay sesiones de quiz aún.</p>
-        <p className="mt-1 text-xs">Completa un quiz para ver el historial.</p>
+        <p className="font-medium text-ink">{t("historyEmpty")}</p>
+        <p className="mt-1 text-xs">{t("historyEmptyHint")}</p>
       </div>
     );
   }
@@ -85,7 +87,7 @@ export function HistoryTab({ system }: HistoryTabProps) {
                   </span>
                 </div>
                 <div className="mt-1 flex items-center gap-2 text-xs text-ink-muted">
-                  <span>{formatDate(session.completed_at)}</span>
+                  <span>{formatDate(session.completed_at, language)}</span>
                   <span>·</span>
                   <span>{formatTime(session.time_spent_ms)}</span>
                 </div>
@@ -105,10 +107,10 @@ export function HistoryTab({ system }: HistoryTabProps) {
             {isExpanded && (
               <div className="space-y-3 border-t border-line bg-surface-raised px-3 py-3">
                 <div className="text-xs text-ink-muted">
-                  Config: {session.config_id} · Inicio: {formatDate(session.started_at)}
+                  {t("historyConfig")}: {session.config_id} · {t("historyStart")}: {formatDate(session.started_at, language)}
                 </div>
                 <span className="text-xs text-ink-muted underline underline-offset-2">
-                  Ver respuestas detalladas (próximamente)
+                  {t("historyDetailsSoon")}
                 </span>
               </div>
             )}

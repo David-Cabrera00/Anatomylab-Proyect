@@ -6,6 +6,7 @@ import type { AnatomySystemId } from "../../config/anatomySystems";
 import { getQuizConfig, getQuizConfigsBySystem } from "../../data/quiz";
 import { answerQuestion, createQuizSession, finishQuizSession, formatTime } from "../../utils/quiz/quizUtils";
 import { dbSaveQuizSession } from "../../utils/db";
+import { systemTranslationKeys, useI18n } from "../../i18n";
 
 interface QuizPanelProps {
   activeSystem: AnatomySystemId;
@@ -14,8 +15,10 @@ interface QuizPanelProps {
   onClose: () => void;
 }
 
-export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: QuizPanelProps) {
-  const [configs] = useState(() => getQuizConfigsBySystem(activeSystem));
+export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChange, onClose }: QuizPanelProps) {
+  const { t } = useI18n();
+  const activeSystem = t(systemTranslationKeys[activeSystemId]);
+  const [configs] = useState(() => getQuizConfigsBySystem(activeSystemId));
   const [persistenceError, setPersistenceError] = useState<string | null>(null);
 
   const handleStartQuiz = useCallback((configId: string) => {
@@ -31,15 +34,15 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
         <header className="border-b border-line px-6 py-6 sm:px-8">
           <div className="flex items-start justify-between gap-5">
             <div>
-              <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">Quiz anatómico</p>
-              <h1 className="mt-3 text-display font-semibold tracking-tight text-ink">Elige una evaluación</h1>
-              <p className="mt-3 max-w-2xl text-body leading-6 text-ink-muted">Selecciona un recorrido para comprobar tu comprensión de las estructuras anatómicas.</p>
+              <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{t("quizTitle")}</p>
+              <h1 className="mt-3 text-display font-semibold tracking-tight text-ink">{t("quizChooseAssessment")}</h1>
+              <p className="mt-3 max-w-2xl text-body leading-6 text-ink-muted">{t("quizDescription")}</p>
             </div>
-            <Button variant="ghost" size="sm" onClick={onClose} aria-label="Cerrar quiz">×</Button>
+            <Button variant="ghost" size="sm" onClick={onClose} aria-label={t("quizClose")}>×</Button>
           </div>
         </header>
         <div className="px-6 py-6 sm:px-8">
-          <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">Sistema activo · {activeSystem}</p>
+          <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("quizActiveSystem")} · {activeSystem}</p>
           <div className="mt-4 grid gap-3">
             {configs.map((config) => (
               <button
@@ -100,7 +103,7 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
           }),
         }).catch((error) => {
           console.error("Error saving quiz session:", error);
-          setPersistenceError("No se pudo guardar esta sesión en el historial.");
+          setPersistenceError(t("quizPersistenceError"));
         });
         onStateChange({ status: "reviewing", session: completedSession, config });
       } else {
@@ -114,20 +117,20 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
           <div className="flex items-center justify-between gap-5">
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center justify-between gap-3 text-caption uppercase tracking-[0.12em] text-ink-subtle">
-                <span>Quiz anatómico</span>
-                <span>Pregunta {session.currentIndex + 1} de {config.questionsPerSession}</span>
+                <span>{t("quizTitle")}</span>
+                <span>{t("quizQuestion")} {session.currentIndex + 1} {t("studyOf")} {config.questionsPerSession}</span>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${Math.round(progress)}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
                 <div className="h-full rounded-full bg-accent transition-[width] duration-300" style={{ width: `${progress}%` }} />
               </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={onClose} aria-label="Cerrar quiz">×</Button>
+            <Button variant="ghost" size="sm" onClick={onClose} aria-label={t("quizClose")}>×</Button>
           </div>
         </header>
 
         <div className="px-6 py-8 sm:px-12 sm:py-10">
           <div className="max-w-3xl">
-            <p className="text-caption font-semibold uppercase tracking-[0.14em] text-accent">{question.difficulty}</p>
+            <p className="text-caption font-semibold uppercase tracking-[0.14em] text-accent">{difficultyLabel(question.difficulty, t)}</p>
             <h1 className="mt-3 text-[1.65rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2rem]">{question.prompt}</h1>
           </div>
           <div className="mt-8 grid gap-3">
@@ -160,18 +163,18 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
         <header className="border-b border-line px-6 py-7 sm:px-8">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">Resultado de la evaluación</p>
-              <h1 className="mt-3 text-display font-semibold tracking-tight text-ink">{passed ? "¡Aprobado!" : "Sigue practicando"}</h1>
-              <p className="mt-2 text-body text-ink-muted">{correctCount} de {config.questionsPerSession} correctas · {formatTime(totalTime)}</p>
+              <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{t("quizResult")}</p>
+              <h1 className="mt-3 text-display font-semibold tracking-tight text-ink">{passed ? t("quizPassed") : t("quizKeepPracticing")}</h1>
+              <p className="mt-2 text-body text-ink-muted">{correctCount} {t("studyOf")} {config.questionsPerSession} {t("quizCorrectCount")} · {formatTime(totalTime)}</p>
             </div>
-            <div className="text-right"><span className="text-[3.5rem] font-semibold leading-none tracking-tight text-ink">{score}%</span><p className="mt-2 text-caption uppercase tracking-[0.12em] text-ink-subtle">Puntuación</p></div>
+            <div className="text-right"><span className="text-[3.5rem] font-semibold leading-none tracking-tight text-ink">{score}%</span><p className="mt-2 text-caption uppercase tracking-[0.12em] text-ink-subtle">{t("quizScore")}</p></div>
           </div>
           <div className="mt-6 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${score}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={score}><div className={`h-full rounded-full ${passed ? "bg-success" : "bg-accent"}`} style={{ width: `${score}%` }} /></div>
         </header>
 
         <div className="space-y-3 px-6 py-6 sm:px-8">
           {persistenceError && <p className="border-l-2 border-error bg-error-soft px-4 py-3 text-body text-error" role="alert">{persistenceError}</p>}
-          <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">Revisión de respuestas</p>
+          <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("quizReviewAnswers")}</p>
           {session.questionIds.map((qId, index) => {
             const question = config.questionPool.find((q) => q.id === qId);
             const answer = session.answers[qId];
@@ -181,8 +184,8 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
             return (
               <article key={qId} className={`border px-4 py-4 ${isCorrect ? "border-success/40 bg-success-soft/40" : "border-error/40 bg-error-soft/40"}`}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <span className="text-caption font-semibold uppercase tracking-[0.12em] text-ink-subtle">Pregunta {index + 1}</span>
-                  <span className={`flex items-center gap-2 text-label font-semibold ${isCorrect ? "text-success" : "text-error"}`}><StatusIcon correct={isCorrect} />{isCorrect ? "Correcta" : "Incorrecta"}</span>
+                  <span className="text-caption font-semibold uppercase tracking-[0.12em] text-ink-subtle">{t("quizQuestion")} {index + 1}</span>
+                  <span className={`flex items-center gap-2 text-label font-semibold ${isCorrect ? "text-success" : "text-error"}`}><StatusIcon correct={isCorrect} />{isCorrect ? t("quizCorrect") : t("quizIncorrect")}</span>
                 </div>
                 <p className="mt-3 text-body font-medium text-ink">{question.prompt}</p>
                 <div className="mt-3 space-y-1.5">
@@ -199,11 +202,11 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
         </div>
 
         <footer className="flex flex-wrap justify-end gap-3 border-t border-line px-6 py-5 sm:px-8">
-          <Button variant="ghost" onClick={onClose}>Volver</Button>
+          <Button variant="ghost" onClick={onClose}>{t("quizBack")}</Button>
           <Button variant="primary" onClick={() => {
             const newSession = createQuizSession(config.id);
             if (newSession) onStateChange({ status: "active", session: newSession, config });
-          }}>Reintentar</Button>
+          }}>{t("quizRetry")}</Button>
         </footer>
       </section>
     );
@@ -220,4 +223,8 @@ function StatusIcon({ correct }: { correct: boolean }) {
   return correct
     ? <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true"><path d="m4 10 4 4 8-8" /></svg>
     : <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true"><path d="m6 6 8 8M14 6l-8 8" /></svg>;
+}
+
+function difficultyLabel(difficulty: "easy" | "medium" | "hard", t: ReturnType<typeof useI18n>["t"]): string {
+  return t(difficulty === "easy" ? "quizDifficultyEasy" : difficulty === "medium" ? "quizDifficultyMedium" : "quizDifficultyHard");
 }

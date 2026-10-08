@@ -36,17 +36,16 @@ export function StudyView({
   onNext,
   onFinish,
 }: StudyViewProps) {
-  const { language, t } = useI18n();
-  const isEnglish = language === "en";
+  const { t } = useI18n();
   const config = anatomySystems[system];
 
   if (!guide || !currentStep) {
     return (
       <section className="flex h-full items-center justify-center overflow-y-auto bg-canvas px-6 py-8 lg:px-10">
         <div className="max-w-xl border-l-4 border-accent bg-surface px-6 py-6 shadow-ds-raised">
-          <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{isEnglish ? "Guided learning" : "Aprendizaje guiado"}</p>
-          <h1 className="mt-3 text-title font-semibold tracking-tight text-ink">{isEnglish ? "Study" : "Estudio"}</h1>
-          <p className="mt-2 text-body leading-6 text-ink-muted">{isEnglish ? `No study guide is available for ${system}.` : `No hay una guía de estudio disponible para ${system}.`}</p>
+          <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{t("studyGuidedLearning")}</p>
+          <h1 className="mt-3 text-title font-semibold tracking-tight text-ink">{t("studyTitle")}</h1>
+          <p className="mt-2 text-body leading-6 text-ink-muted">{t("studyUnavailable")} {t(systemTranslationKeys[system])}.</p>
         </div>
       </section>
     );
@@ -64,7 +63,7 @@ export function StudyView({
       <div className="mx-auto max-w-[88rem] space-y-8">
         <header className="border-b border-line pb-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{isEnglish ? "Study session" : "Sesión de estudio"}</p>
+            <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{t("studySession")}</p>
             <div className="flex items-center gap-2 text-caption uppercase tracking-[0.12em] text-ink-subtle">
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: config.color }} aria-hidden="true" />
               {systemLabel}
@@ -75,16 +74,16 @@ export function StudyView({
               <h1 className="max-w-3xl text-display font-semibold leading-tight tracking-[-0.025em] text-ink sm:text-[2.35rem] sm:leading-[1.08]">{guide.title}</h1>
               <p className="mt-3 max-w-3xl text-body leading-7 text-ink-muted">{guide.description}</p>
             </div>
-            <SessionProgress progress={currentProgress} stepNumber={stepNumber} totalSteps={totalSteps} label={isEnglish ? "Step" : "Paso"} />
+            <SessionProgress progress={currentProgress} stepNumber={stepNumber} totalSteps={totalSteps} label={t("studyStep")} ofLabel={t("studyOf")} />
           </div>
         </header>
 
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.85fr)_minmax(20rem,1fr)] xl:gap-10">
-          <section className="relative min-h-[28rem] min-w-0 overflow-hidden border border-line bg-surface shadow-ds-raised" aria-label={isEnglish ? "3D anatomy viewer" : "Visor anatómico 3D"}>
+          <section className="relative min-h-[28rem] min-w-0 overflow-hidden border border-line bg-surface shadow-ds-raised" aria-label={t("studyViewer")}>
             <div className="pointer-events-none absolute left-5 top-4 z-10 flex items-center gap-3 text-caption text-ink-subtle">
               <span className="font-semibold uppercase tracking-[0.14em] text-ink-muted">{systemLabel}</span>
               <span className="h-3 w-px bg-line-strong" aria-hidden="true" />
-              <span>{isEnglish ? "Guided focus" : "Foco guiado"}</span>
+              <span>{t("anatomyGuidedFocus")}</span>
             </div>
             <div className="h-[28rem] min-h-0 w-full sm:h-[32rem]">{viewer}</div>
             {viewerToolbar}
@@ -98,7 +97,6 @@ export function StudyView({
             totalSteps={totalSteps}
             progress={currentProgress}
             isActive={isActive}
-            isEnglish={isEnglish}
             color={config.color}
           />
         </div>
@@ -106,31 +104,31 @@ export function StudyView({
         <footer className="border-t border-line pt-5">
           {!isActive ? (
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="text-label text-ink-muted">{isEnglish ? "Follow the guide at your own pace." : "Sigue la guía a tu propio ritmo."}</p>
+              <p className="text-label text-ink-muted">{t("studyFollowGuide")}</p>
               <Button variant="primary" size="lg" onClick={onStart}>
                 <PlayIcon />
-                {isEnglish ? "Start study" : "Iniciar estudio"}
+                {t("studyStart")}
               </Button>
             </div>
           ) : (
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="ghost" size="sm" onClick={() => onFinish(false)}>
                 <ExitIcon />
-                {isEnglish ? "Exit study" : "Salir del estudio"}
+                {t("studyExit")}
               </Button>
               <div className="ml-auto flex flex-wrap gap-3">
                 <Button variant="secondary" size="md" disabled={stepIndex === 0} onClick={onPrevious}>
                   <ArrowIcon direction="back" />
-                  {isEnglish ? "Previous" : "Anterior"}
+                  {t("studyPrevious")}
                 </Button>
                 {isLastStep ? (
                   <Button variant="primary" size="md" onClick={() => onFinish(true)}>
                     <CheckIcon />
-                    {isEnglish ? "Finish session" : "Finalizar sesión"}
+                    {t("studyFinish")}
                   </Button>
                 ) : (
                   <Button variant="primary" size="md" onClick={onNext}>
-                    {isEnglish ? "Next" : "Siguiente"}
+                    {t("studyNext")}
                     <ArrowIcon direction="forward" />
                   </Button>
                 )}
@@ -143,11 +141,11 @@ export function StudyView({
   );
 }
 
-function SessionProgress({ progress, stepNumber, totalSteps, label }: { progress: number; stepNumber: number; totalSteps: number; label: string }) {
+function SessionProgress({ progress, stepNumber, totalSteps, label, ofLabel }: { progress: number; stepNumber: number; totalSteps: number; label: string; ofLabel: string }) {
   return (
     <div className="min-w-0">
       <div className="flex items-baseline justify-between gap-4 text-label">
-        <span className="font-semibold text-ink">{label} {stepNumber} {label === "Paso" ? "de" : "of"} {totalSteps}</span>
+        <span className="font-semibold text-ink">{label} {stepNumber} {ofLabel} {totalSteps}</span>
         <span className="text-ink-muted">{Math.round(progress)}%</span>
       </div>
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${Math.round(progress)}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
@@ -157,20 +155,21 @@ function SessionProgress({ progress, stepNumber, totalSteps, label }: { progress
   );
 }
 
-function StudyContentPanel({ systemLabel, structure, currentStep, stepNumber, totalSteps, progress, isActive, isEnglish, color }: { systemLabel: string; structure: string; currentStep: StudyStep; stepNumber: number; totalSteps: number; progress: number; isActive: boolean; isEnglish: boolean; color: string }) {
+function StudyContentPanel({ systemLabel, structure, currentStep, stepNumber, totalSteps, progress, isActive, color }: { systemLabel: string; structure: string; currentStep: StudyStep; stepNumber: number; totalSteps: number; progress: number; isActive: boolean; color: string }) {
+  const { t } = useI18n();
   return (
-    <aside className="min-w-0 border border-line bg-surface p-5 shadow-ds-raised sm:p-6" aria-label={isEnglish ? "Guided study content" : "Contenido guiado de estudio"}>
+    <aside className="min-w-0 border border-line bg-surface p-5 shadow-ds-raised sm:p-6" aria-label={t("studyContent")}>
       <div className="flex items-center justify-between gap-4">
         <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{systemLabel}</p>
         <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} aria-hidden="true" />
       </div>
-      <p className="mt-5 text-caption uppercase tracking-[0.12em] text-ink-subtle">{isEnglish ? "Current structure" : "Estructura actual"}</p>
+      <p className="mt-5 text-caption uppercase tracking-[0.12em] text-ink-subtle">{t("studyCurrentStructure")}</p>
       <h2 className="mt-2 text-[1.65rem] font-semibold leading-tight tracking-tight text-ink">{structure}</h2>
 
       <div className="mt-7 border-l-2 border-accent bg-accent-soft/45 px-4 py-4">
         <div className="flex items-center gap-2 text-caption font-semibold uppercase tracking-[0.14em] text-accent">
           <InstructionIcon />
-          {isEnglish ? "Instruction" : "Instrucción"}
+          {t("studyInstruction")}
         </div>
         <p className="mt-2 text-body leading-6 text-ink">{currentStep.instruction}</p>
       </div>
@@ -179,18 +178,18 @@ function StudyContentPanel({ systemLabel, structure, currentStep, stepNumber, to
         <div className="mt-5 flex gap-3 border-t border-line pt-5">
           <HintIcon />
           <div>
-            <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{isEnglish ? "Hint" : "Pista"}</p>
+            <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("studyHint")}</p>
             <p className="mt-1 text-label leading-5 text-ink-muted">{currentStep.hint}</p>
           </div>
         </div>
       ) : null}
 
       <dl className="mt-6 divide-y divide-line border-t border-line">
-        <RailItem label={isEnglish ? "Step" : "Paso"} value={`${stepNumber} / ${totalSteps}`} />
-        <RailItem label={isEnglish ? "Status" : "Estado"} value={isActive ? (isEnglish ? "In progress" : "En curso") : (isEnglish ? "Ready to start" : "Lista para comenzar")} />
+        <RailItem label={t("studyStep")} value={`${stepNumber} / ${totalSteps}`} />
+        <RailItem label={t("studyStatus")} value={isActive ? t("studyInProgress") : t("studyReady")} />
       </dl>
       <div className="mt-5">
-        <div className="flex items-baseline justify-between gap-3"><span className="text-label text-ink-muted">{isEnglish ? "Progress" : "Progreso"}</span><span className="text-heading font-semibold text-ink">{Math.round(progress)}%</span></div>
+        <div className="flex items-baseline justify-between gap-3"><span className="text-label text-ink-muted">{t("studyProgress")}</span><span className="text-heading font-semibold text-ink">{Math.round(progress)}%</span></div>
         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-canvas-muted"><div className="h-full rounded-full bg-accent transition-[width] duration-300" style={{ width: `${progress}%` }} /></div>
       </div>
     </aside>

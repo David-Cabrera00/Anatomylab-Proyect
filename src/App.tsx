@@ -51,7 +51,7 @@ import { SettingsView } from "./views/SettingsView";
 import { StudyView } from "./views/StudyView";
 import { RegisterView } from "./views/RegisterView";
 import type { AppView } from "./views/types";
-import { useI18n } from "./i18n";
+import { anatomyLayerTranslationKeys, systemDescriptionTranslationKeys, systemFullNameTranslationKeys, useI18n } from "./i18n";
 
 /* ======================================================
    VISTA CARDIOVASCULAR
@@ -93,29 +93,6 @@ const systemSymbols: Record<
 /* ======================================================
    TEXTO INICIAL DE CADA SISTEMA
 ====================================================== */
-
-const systemDescriptions: Record<
-  AnatomySystemId,
-  string
-> = {
-  cardiovascular:
-    "Haz clic sobre el corazón o un vaso del modelo 3D para consultar su información anatómica.",
-
-  respiratory:
-    "Haz clic sobre una estructura respiratoria del modelo 3D para consultar su información anatómica.",
-
-  nervous:
-    "Haz clic sobre una estructura nerviosa para identificar sus componentes anatómicos.",
-
-  skeletal:
-    "Haz clic sobre un hueso del modelo 3D para identificarlo y explorar su región anatómica.",
-
-  muscular:
-    "Haz clic sobre un músculo del modelo 3D para identificarlo.",
-
-  digestive:
-    "Haz clic sobre un órgano o estructura digestiva del modelo 3D para identificarlo.",
-};
 
 /* ======================================================
    APP
@@ -395,13 +372,14 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       "cardiovascular" &&
     cardiovascularView ===
       "heart-detail"
-      ? "Corazón en detalle"
+      ? t("anatomyHeartDetail")
       : activeLayers.find(
           (layer) =>
             layer.id ===
             activeLayer
-        )?.label ??
-        "General";
+        )?.id
+        ? t(anatomyLayerTranslationKeys[activeLayers.find((layer) => layer.id === activeLayer)!.id])
+        : t("anatomyGeneral");
 
   /* ====================================================
    EJECUTAR ACCIÓN
@@ -831,9 +809,9 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
         />
 
         <ViewportFrame
-          label={activeConfig.fullName}
+          label={t(systemFullNameTranslationKeys[activeSystem])}
           metadata={activeViewName}
-          hint="Arrastra para rotar · R para restablecer"
+          hint={t("anatomyViewerHint")}
         >
           {anatomyViewer}
 
@@ -859,8 +837,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           selectedData={selectedAnatomyIdData}
           systemSymbol={systemSymbols[activeSystem]}
           emptyDescription={activeSystem === "cardiovascular" && cardiovascularView === "heart-detail"
-            ? "Explora las cavidades, válvulas y estructuras internas disponibles en el modelo detallado del corazón."
-            : systemDescriptions[activeSystem]}
+            ? t("heartDetailDescription")
+            : t(systemDescriptionTranslationKeys[activeSystem])}
           studyMode={studyMode}
           activeStudyGuide={activeStudyGuide}
           studyStepIndex={studyStepIndex}
