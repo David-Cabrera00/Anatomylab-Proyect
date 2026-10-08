@@ -1,5 +1,8 @@
-import { useState, type FormEvent, type ReactNode } from "react";
-import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { useState, type FormEvent } from "react";
+
+import { AuthAnatomyPreview } from "../components/layout/AuthAnatomyPreview";
+import { AuthLayout } from "../components/layout/AuthLayout";
+import { Button } from "../components/ui";
 import { useI18n } from "../i18n";
 
 type RegisterViewProps = {
@@ -8,7 +11,8 @@ type RegisterViewProps = {
 };
 
 export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
+  const isEnglish = language === "en";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,56 +34,80 @@ export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
   };
 
   return (
-    <AuthLayout eyebrow={t("appName")} title={t("authRegisterTitle")}>
+    <AuthLayout
+      brand={t("appName")}
+      productMeta={isEnglish ? "3D ANATOMY WORKSPACE" : "ESPACIO DE ANATOMÍA 3D"}
+      productTitle={isEnglish ? "Explore the human body in 3D" : "Explora el cuerpo humano en 3D"}
+      productDescription={isEnglish
+        ? "Understand systems, structures, and relationships through interactive models."
+        : "Comprende sistemas, estructuras y relaciones mediante modelos interactivos."}
+      benefits={[
+        { number: "01", content: isEnglish ? "Interactive 3D models" : "Modelos 3D interactivos" },
+        { number: "02", content: isEnglish ? "Guided anatomy study" : "Estudio anatómico guiado" },
+        { number: "03", content: isEnglish ? "Quiz and progress tracking" : "Quiz y seguimiento de progreso" },
+      ]}
+      productVisual={<AuthAnatomyPreview />}
+      formTitle={t("authRegisterTitle")}
+      formSubtitle={isEnglish
+        ? "Start studying anatomy with interactive models."
+        : "Comienza a estudiar anatomía con modelos interactivos."}
+      footer={
+        <p className="text-center text-body text-ink-muted">
+          {t("authExistingAccountPrompt")} {" "}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onLogin}
+            className="min-h-0 px-0 py-0 align-baseline text-label font-semibold hover:bg-transparent hover:underline"
+          >
+            {t("authBackToLogin")}
+          </Button>
+        </p>
+      }
+    >
       <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-        <Field label={t("authName")} type="text" value={name} onChange={setName} />
-        <Field label={t("authEmail")} type="email" value={email} onChange={setEmail} />
-        <Field label={t("authPassword")} type="password" value={password} onChange={setPassword} />
-        <Field label={t("authConfirmPassword")} type="password" value={confirmation} onChange={setConfirmation} />
+        <Field id="register-name" label={t("authName")} type="text" value={name} onChange={setName} autoComplete="name" />
+        <Field id="register-email" label={t("authEmail")} type="email" value={email} onChange={setEmail} autoComplete="email" />
+        <Field id="register-password" label={t("authPassword")} type="password" value={password} onChange={setPassword} autoComplete="new-password" />
+        <Field id="register-confirm-password" label={t("authConfirmPassword")} type="password" value={confirmation} onChange={setConfirmation} autoComplete="new-password" />
 
-        <div className="flex justify-end">
-          <LanguageSwitcher />
-        </div>
+        {error && <p className="text-body text-error" role="alert">{error}</p>}
 
-        {error && <p className="text-sm text-rose-600" role="alert">{error}</p>}
-
-        <button type="submit" className="w-full rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">
+        <Button type="submit" variant="primary" size="lg" className="w-full">
           {t("authRegisterButton")}
-        </button>
+        </Button>
       </form>
-
-      <p className="mt-6 text-center text-sm text-slate-500">
-        {t("authExistingAccountPrompt")} {" "}
-        <button type="button" onClick={onLogin} className="font-semibold text-slate-900 hover:underline">
-          {t("authBackToLogin")}
-        </button>
-      </p>
     </AuthLayout>
   );
 }
 
-function AuthLayout({ eyebrow, title, children }: { eyebrow: string; title: string; children: ReactNode }) {
+function Field({
+  id,
+  label,
+  type,
+  value,
+  onChange,
+  autoComplete,
+}: {
+  id: string;
+  label: string;
+  type: string;
+  value: string;
+  onChange: (value: string) => void;
+  autoComplete: string;
+}) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4 py-10">
-      <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-wider text-slate-400">{eyebrow}</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">{title}</h1>
-        <div className="mt-8">{children}</div>
-      </section>
-    </main>
-  );
-}
-
-function Field({ label, type, value, onChange }: { label: string; type: string; value: string; onChange: (value: string) => void }) {
-  return (
-    <label className="block text-sm font-medium text-slate-700">
+    <label htmlFor={id} className="block text-label font-medium text-ink-muted">
       {label}
       <input
+        id={id}
         required
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+        autoComplete={autoComplete}
+        className="mt-2 min-h-10 w-full rounded-ds-sm border border-line bg-surface px-3 py-2.5 text-body text-ink outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
       />
     </label>
   );

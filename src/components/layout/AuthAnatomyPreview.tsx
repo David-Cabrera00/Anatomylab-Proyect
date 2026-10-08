@@ -43,15 +43,31 @@ export function AuthAnatomyPreview() {
         gl={{ antialias: true, alpha: true }}
         dpr={[1, 2]}
       >
-        <ambientLight intensity={0.65} />
-        <hemisphereLight args={["#ffffff", "#d7e1e5", 0.75]} />
-        <directionalLight position={[4, 6, 5]} intensity={1.1} castShadow />
-        <directionalLight position={[-4, 3, 4]} intensity={0.7} />
-        <directionalLight position={[0, 5, -4]} intensity={0.45} />
+      <ambientLight intensity={0.3} />
+
+        <hemisphereLight
+          args={["#f4f7f8", "#9eafb6", 0.4]}
+        />
+
+        <directionalLight
+          position={[4, 5, 6]}
+          intensity={1.0}
+          castShadow
+        />
+
+        <directionalLight
+          position={[-4, 2, 3]}
+          intensity={0.25}
+        />
+
+        <directionalLight
+          position={[1, 4, -5]}
+          intensity={0.6}
+        />
         <PreviewModel />
         <OrbitControls
           autoRotate
-          autoRotateSpeed={0.35}
+          autoRotateSpeed={0.90}
           enablePan={false}
           enableZoom={false}
           enableDamping
