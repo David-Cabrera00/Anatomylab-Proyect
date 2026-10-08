@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 
-import { Button, Card } from "../ui";
+import { Button } from "../ui";
 import type { QuizState } from "../../data/quiz/types";
 import type { AnatomySystemId } from "../../config/anatomySystems";
 import { getQuizConfig, getQuizConfigsBySystem } from "../../data/quiz";
-import { createQuizSession, answerQuestion, finishQuizSession, formatTime } from "../../utils/quiz/quizUtils";
+import { answerQuestion, createQuizSession, finishQuizSession, formatTime } from "../../utils/quiz/quizUtils";
 import { dbSaveQuizSession } from "../../utils/db";
 
 interface QuizPanelProps {
@@ -27,43 +27,46 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
 
   if (quizState.status === "idle") {
     return (
-      <Card className="w-full">
-        <div className="p-4 space-y-3">
-          <h3 className="text-sm font-semibold">Quiz anatómico - {activeSystem}</h3>
-          <p className="text-xs text-slate-500">
-            Selecciona un quiz para comenzar. Cada sesión tiene 10 preguntas aleatorias.
-          </p>
-          <div className="space-y-2">
+      <section className="border border-line bg-surface shadow-ds-raised">
+        <header className="border-b border-line px-6 py-6 sm:px-8">
+          <div className="flex items-start justify-between gap-5">
+            <div>
+              <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">Quiz anatómico</p>
+              <h1 className="mt-3 text-display font-semibold tracking-tight text-ink">Elige una evaluación</h1>
+              <p className="mt-3 max-w-2xl text-body leading-6 text-ink-muted">Selecciona un recorrido para comprobar tu comprensión de las estructuras anatómicas.</p>
+            </div>
+            <Button variant="ghost" size="sm" onClick={onClose} aria-label="Cerrar quiz">×</Button>
+          </div>
+        </header>
+        <div className="px-6 py-6 sm:px-8">
+          <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">Sistema activo · {activeSystem}</p>
+          <div className="mt-4 grid gap-3">
             {configs.map((config) => (
-              <Button
+              <button
                 key={config.id}
-                variant="ghost"
-                className="w-full justify-start text-left gap-3"
+                type="button"
                 onClick={() => handleStartQuiz(config.id)}
+                className="group flex w-full items-center justify-between gap-5 border border-line bg-surface-raised px-4 py-4 text-left transition-[border-color,background-color,transform] duration-150 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft/45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                <div>
-                  <p className="font-medium text-sm">{config.title}</p>
-                  <p className="text-xs text-slate-500">{config.description}</p>
-                </div>
-              </Button>
+                <span className="min-w-0">
+                  <span className="block text-heading font-semibold text-ink">{config.title}</span>
+                  <span className="mt-1 block text-body leading-6 text-ink-muted">{config.description}</span>
+                </span>
+                <ArrowIcon className="shrink-0 text-accent transition-transform duration-150 group-hover:translate-x-1" />
+              </button>
             ))}
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose} className="w-full">
-            Cerrar
-          </Button>
         </div>
-      </Card>
+      </section>
     );
   }
 
   if (quizState.status === "active") {
     const { session, config } = quizState;
     const question = config.questionPool.find((q) => q.id === session.questionIds[session.currentIndex]);
-    const progress = ((session.currentIndex) / config.questionsPerSession) * 100;
+    const progress = (session.currentIndex / config.questionsPerSession) * 100;
 
-    if (!question) {
-      return null;
-    }
+    if (!question) return null;
 
     const handleAnswer = (selectedIndex: number) => {
       const timeMs = Date.now() - session.startedAt;
@@ -106,36 +109,42 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
     };
 
     return (
-      <Card className="w-full max-h-[80vh] flex flex-col">
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-              <span>Pregunta {session.currentIndex + 1} de {config.questionsPerSession}</span>
-              <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 capitalize">{question.difficulty}</span>
+      <section className="border border-line bg-surface shadow-ds-raised">
+        <header className="border-b border-line px-6 py-5 sm:px-8">
+          <div className="flex items-center justify-between gap-5">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center justify-between gap-3 text-caption uppercase tracking-[0.12em] text-ink-subtle">
+                <span>Quiz anatómico</span>
+                <span>Pregunta {session.currentIndex + 1} de {config.questionsPerSession}</span>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${Math.round(progress)}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
+                <div className="h-full rounded-full bg-accent transition-[width] duration-300" style={{ width: `${progress}%` }} />
+              </div>
             </div>
-            <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-              <div className="h-full bg-slate-900 transition-all" style={{ width: `${progress}%` }} />
-            </div>
+            <Button variant="ghost" size="sm" onClick={onClose} aria-label="Cerrar quiz">×</Button>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose}>×</Button>
-        </div>
+        </header>
 
-        <div className="p-4 flex-1 overflow-y-auto">
-          <p className="text-base font-medium mb-4">{question.prompt}</p>
-          <div className="space-y-2">
+        <div className="px-6 py-8 sm:px-12 sm:py-10">
+          <div className="max-w-3xl">
+            <p className="text-caption font-semibold uppercase tracking-[0.14em] text-accent">{question.difficulty}</p>
+            <h1 className="mt-3 text-[1.65rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2rem]">{question.prompt}</h1>
+          </div>
+          <div className="mt-8 grid gap-3">
             {question.options.map((option, index) => (
-              <Button
+              <button
                 key={index}
-                variant="ghost"
-                className="w-full justify-start text-left"
+                type="button"
                 onClick={() => handleAnswer(index)}
+                className="group flex min-h-14 w-full items-center gap-4 border border-line bg-surface-raised px-4 py-3 text-left transition-[border-color,background-color,transform] duration-150 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft/45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                {option}
-              </Button>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line-strong text-label font-semibold text-ink-muted transition-colors duration-150 group-hover:border-accent group-hover:text-accent">{String.fromCharCode(65 + index)}</span>
+                <span className="text-body text-ink">{option}</span>
+              </button>
             ))}
           </div>
         </div>
-      </Card>
+      </section>
     );
   }
 
@@ -147,20 +156,22 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
     const totalTime = session.completedAt ? session.completedAt - session.startedAt : 0;
 
     return (
-      <Card className="w-full max-h-[80vh] flex flex-col">
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold">
-              {passed ? "¡Aprobado!" : "No aprobado"} - {score}%
-            </h3>
-            <p className="text-xs text-slate-500">
-              {correctCount} de {config.questionsPerSession} correctas · {formatTime(totalTime)}
-            </p>
+      <section className="border border-line bg-surface shadow-ds-raised">
+        <header className="border-b border-line px-6 py-7 sm:px-8">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">Resultado de la evaluación</p>
+              <h1 className="mt-3 text-display font-semibold tracking-tight text-ink">{passed ? "¡Aprobado!" : "Sigue practicando"}</h1>
+              <p className="mt-2 text-body text-ink-muted">{correctCount} de {config.questionsPerSession} correctas · {formatTime(totalTime)}</p>
+            </div>
+            <div className="text-right"><span className="text-[3.5rem] font-semibold leading-none tracking-tight text-ink">{score}%</span><p className="mt-2 text-caption uppercase tracking-[0.12em] text-ink-subtle">Puntuación</p></div>
           </div>
-        </div>
+          <div className="mt-6 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${score}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={score}><div className={`h-full rounded-full ${passed ? "bg-success" : "bg-accent"}`} style={{ width: `${score}%` }} /></div>
+        </header>
 
-        <div className="p-4 flex-1 overflow-y-auto space-y-4">
-          {persistenceError && <p className="rounded-lg bg-red-50 p-3 text-xs text-red-700">{persistenceError}</p>}
+        <div className="space-y-3 px-6 py-6 sm:px-8">
+          {persistenceError && <p className="border-l-2 border-error bg-error-soft px-4 py-3 text-body text-error" role="alert">{persistenceError}</p>}
+          <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">Revisión de respuestas</p>
           {session.questionIds.map((qId, index) => {
             const question = config.questionPool.find((q) => q.id === qId);
             const answer = session.answers[qId];
@@ -168,44 +179,45 @@ export function QuizPanel({ activeSystem, quizState, onStateChange, onClose }: Q
 
             const isCorrect = answer.correct;
             return (
-              <div key={qId} className="rounded-lg border p-3" style={{ borderColor: isCorrect ? "#10b981" : "#ef4444" }}>
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <span className="text-xs font-medium text-slate-500">Pregunta {index + 1}</span>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded ${isCorrect ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
-                    {isCorrect ? "Correcta" : "Incorrecta"}
-                  </span>
+              <article key={qId} className={`border px-4 py-4 ${isCorrect ? "border-success/40 bg-success-soft/40" : "border-error/40 bg-error-soft/40"}`}>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-caption font-semibold uppercase tracking-[0.12em] text-ink-subtle">Pregunta {index + 1}</span>
+                  <span className={`flex items-center gap-2 text-label font-semibold ${isCorrect ? "text-success" : "text-error"}`}><StatusIcon correct={isCorrect} />{isCorrect ? "Correcta" : "Incorrecta"}</span>
                 </div>
-                <p className="text-sm font-medium mb-2">{question.prompt}</p>
-                <div className="space-y-1 text-xs">
-                  {question.options.map((opt, i) => (
-                    <div key={i} className={`flex items-center gap-2 ${i === answer.selectedIndex ? "font-medium" : ""}`}>
-                      <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[10px] ${i === question.correctIndex ? "border-emerald-500 bg-emerald-50 text-emerald-600" : i === answer.selectedIndex ? "border-red-500 bg-red-50 text-red-600" : "border-slate-300"}`}>
-                        {i === question.correctIndex || i === answer.selectedIndex ? "✓" : ""}
-                      </span>
-                      <span>{opt}</span>
-                    </div>
-                  ))}
+                <p className="mt-3 text-body font-medium text-ink">{question.prompt}</p>
+                <div className="mt-3 space-y-1.5">
+                  {question.options.map((option, optionIndex) => {
+                    const isSelected = optionIndex === answer.selectedIndex;
+                    const isCorrectOption = optionIndex === question.correctIndex;
+                    return <div key={optionIndex} className={`flex items-start gap-3 text-label ${isSelected || isCorrectOption ? "font-medium text-ink" : "text-ink-muted"}`}><span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-caption ${isCorrectOption ? "border-success bg-success-soft text-success" : isSelected ? "border-error bg-error-soft text-error" : "border-line-strong"}`}>{isCorrectOption ? "✓" : isSelected ? "×" : String.fromCharCode(65 + optionIndex)}</span><span>{option}</span></div>;
+                  })}
                 </div>
-                <p className="mt-2 text-xs text-slate-600 bg-slate-50 p-2 rounded">{question.explanation}</p>
-              </div>
+                <p className="mt-4 border-t border-current/10 pt-3 text-label leading-5 text-ink-muted">{question.explanation}</p>
+              </article>
             );
           })}
         </div>
 
-        <div className="p-4 border-t border-slate-200 flex gap-2">
-          <Button variant="ghost" className="flex-1" onClick={onClose}>
-            Volver
-          </Button>
-          <Button onClick={() => {
+        <footer className="flex flex-wrap justify-end gap-3 border-t border-line px-6 py-5 sm:px-8">
+          <Button variant="ghost" onClick={onClose}>Volver</Button>
+          <Button variant="primary" onClick={() => {
             const newSession = createQuizSession(config.id);
             if (newSession) onStateChange({ status: "active", session: newSession, config });
-          }}>
-            Reintentar
-          </Button>
-        </div>
-      </Card>
+          }}>Reintentar</Button>
+        </footer>
+      </section>
     );
   }
 
   return null;
+}
+
+function ArrowIcon({ className = "" }: { className?: string }) {
+  return <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={`h-4 w-4 ${className}`}><path d="M3 10h13M11 5l5 5-5 5" /></svg>;
+}
+
+function StatusIcon({ correct }: { correct: boolean }) {
+  return correct
+    ? <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true"><path d="m4 10 4 4 8-8" /></svg>
+    : <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true"><path d="m6 6 8 8M14 6l-8 8" /></svg>;
 }
