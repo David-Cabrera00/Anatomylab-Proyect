@@ -15,10 +15,12 @@ function PreviewModel() {
     const maxDimension = Math.max(size.x, size.y, size.z);
 
     if (maxDimension > 0) {
-      clone.scale.setScalar(4.4 / maxDimension);
+      clone.scale.setScalar(5.2 / maxDimension);
     }
 
-    clone.position.y = -0.35;
+    const scaledBounds = new THREE.Box3().setFromObject(clone);
+    const scaledCenter = scaledBounds.getCenter(new THREE.Vector3());
+    clone.position.set(-scaledCenter.x, -scaledCenter.y - 0.2, -scaledCenter.z);
     clone.traverse((object) => {
       if (object instanceof THREE.Mesh) {
         object.castShadow = true;
@@ -34,14 +36,13 @@ function PreviewModel() {
 
 export function AuthAnatomyPreview() {
   return (
-    <div className="h-[280px] w-full sm:h-[320px]" aria-label="AnatomyLab 3D preview" role="img">
+    <div className="h-[360px] w-full sm:h-[420px] xl:h-[500px]" aria-label="AnatomyLab 3D preview" role="img">
       <Canvas
         shadows
-        camera={{ position: [0, 0.35, 5.8], fov: 32, near: 0.01, far: 100 }}
+        camera={{ position: [0, 0.25, 7.8], fov: 38, near: 0.01, far: 100 }}
         gl={{ antialias: true, alpha: true }}
         dpr={[1, 2]}
       >
-        <color attach="background" args={["#f3f6f7"]} />
         <ambientLight intensity={0.8} />
         <directionalLight position={[4, 5, 5]} intensity={1.25} castShadow />
         <directionalLight position={[-3, 2, 4]} intensity={0.55} />

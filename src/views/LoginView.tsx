@@ -30,10 +30,11 @@ export function LoginView({ onLogin, onRegister }: LoginViewProps) {
   return (
     <AuthLayout
       brand={t("appName")}
+      productMeta={isEnglish ? "3D ANATOMY WORKSPACE" : "ESPACIO DE ANATOMÍA 3D"}
       productTitle={isEnglish ? "Explore the human body in 3D" : "Explora el cuerpo humano en 3D"}
       productDescription={isEnglish
-        ? "Learn with interactive models, guided study, and progress."
-        : "Aprendizaje con modelos interactivos, gu\u00edas y progreso."}
+        ? "Understand systems, structures, and relationships through interactive models."
+        : "Comprende sistemas, estructuras y relaciones mediante modelos interactivos."}
       benefits={[
         { number: "01", content: isEnglish ? "Interactive 3D models" : "Modelos 3D interactivos" },
         { number: "02", content: isEnglish ? "Guided anatomy study" : "Estudio anat\u00f3mico guiado" },
