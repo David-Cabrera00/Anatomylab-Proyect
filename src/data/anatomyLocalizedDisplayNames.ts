@@ -10,4 +10,8 @@ export const anatomyLocalizedDisplayNames: Readonly<Record<string, LocalizedText
     es: "Músculo pectoral mayor izquierdo",
     en: "Left pectoralis major muscle",
   },
+  "muscular.pectoralis-major.right": {
+    es: "Músculo pectoral mayor derecho",
+    en: "Right pectoralis major muscle",
+  },
 };

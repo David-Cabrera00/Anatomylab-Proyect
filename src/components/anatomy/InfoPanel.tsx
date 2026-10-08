@@ -40,8 +40,17 @@ export function InfoPanel({
   onSaveFavorite,
 }: InfoPanelProps) {
   const { language, t } = useI18n();
+  const explicitDisplayName = selectedAnatomyId ? anatomyLocalizedDisplayNames[selectedAnatomyId] : undefined;
+  const localizedDataName = selectedData ? getLocalizedText(selectedData.name, language) : selectedDisplayName ?? "";
+  const muscularLaterality = activeConfig.id === "muscular"
+    ? selectedDisplayName?.endsWith(" izquierdo")
+      ? " left"
+      : selectedDisplayName?.endsWith(" derecho")
+        ? " right"
+        : ""
+    : "";
   const localizedDisplayName = selectedAnatomyId
-    ? getLocalizedText(anatomyLocalizedDisplayNames[selectedAnatomyId] ?? selectedData?.name ?? selectedDisplayName ?? "", language)
+    ? getLocalizedText(explicitDisplayName ?? { es: localizedDataName, en: `${localizedDataName}${muscularLaterality}` }, language)
     : null;
   return (
     <aside className="flex w-[340px] min-w-0 shrink-0 flex-col overflow-y-auto border-l border-line bg-surface">
