@@ -1,26 +1,34 @@
+import type { LocalizedText } from "../i18n/localizedText";
+import { localizeCardiovascularStructure } from "./cardiovascularLocalizedText";
+
 export type CardiovascularStructure = {
   id: string;
 
+  name: LocalizedText;
+
+  type: LocalizedText;
+  description: LocalizedText;
+
+  function: LocalizedText;
+
+  location: LocalizedText;
+
+  relationships: readonly LocalizedText[];
+};
+
+type CardiovascularLegacyStructure = {
+  id: string;
   name: string;
-
-  type:
-    | "Corazón"
-    | "Arteria"
-    | "Vena"
-    | "Gran vaso";
-
+  type: string;
   description: string;
-
   function: string;
-
   location: string;
-
   relationships: string[];
 };
 
-export const cardiovascularData: Record<
+const cardiovascularLegacyData: Record<
   string,
-  CardiovascularStructure
+  CardiovascularLegacyStructure
 > = {
   /* =========================
      CORAZÓN
@@ -461,6 +469,13 @@ export const cardiovascularData: Record<
     ],
   },
 };
+
+export const cardiovascularData: Record<string, CardiovascularStructure> = Object.fromEntries(
+  Object.entries(cardiovascularLegacyData).map(([id, structure]) => [
+    id,
+    localizeCardiovascularStructure(structure),
+  ])
+);
 
 /* =========================
    CONSULTA DE DATOS
