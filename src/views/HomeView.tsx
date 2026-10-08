@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { anatomySystems, type AnatomySystemId } from "../config/anatomySystems";
 import { systemTranslationKeys, useI18n, type Language } from "../i18n";
-import { Button, EmptyState } from "../components/ui";
+import { Button } from "../components/ui";
 import { dbGetMasteryStats } from "../utils/db";
 
 type HomeSystem = {
@@ -19,7 +19,7 @@ type HomeViewProps = {
 };
 
 type MasteryStat = { anatomy_id: string; correct: number; total: number };
-type SystemProgress = { answered: number; correct: number; structures: number };
+type SystemProgress = { answered: number; correct: number };
 
 const systemDescriptions: Record<Language, Record<AnatomySystemId, string>> = {
   es: {
@@ -73,9 +73,9 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
   const continueProgress = continueSystem ? progressBySystem[continueSystem.id] : undefined;
 
   return (
-    <section className="h-full overflow-y-auto bg-canvas px-6 py-8 lg:px-10 lg:py-10">
-      <div className="mx-auto max-w-[88rem] space-y-10">
-        <header className="border-b border-line pb-7">
+    <section className="h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
+      <div className="mx-auto max-w-[88rem] space-y-8">
+        <header className="border-b border-line pb-5">
           <div className="flex items-center justify-between gap-4">
             <p className="text-label font-semibold uppercase tracking-[0.16em] text-accent">{t("appName")}</p>
             <span className="flex items-center gap-2 text-caption uppercase tracking-[0.14em] text-ink-subtle">
@@ -83,10 +83,10 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
               {t("systemsTitle")}
             </span>
           </div>
-          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,30rem)] lg:items-end lg:gap-10">
+          <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,30rem)] lg:items-end lg:gap-10">
             <div>
               <h1 className="max-w-3xl text-display font-semibold tracking-[-0.025em] text-ink sm:text-[2.45rem] sm:leading-[1.08]">{t("homeWelcome")}</h1>
-              <p className="mt-4 max-w-2xl text-body leading-7 text-ink-muted">{t("homeIntro")}</p>
+              <p className="mt-3 max-w-2xl text-body leading-7 text-ink-muted">{t("homeIntro")}</p>
             </div>
             <div className="min-w-0">{search}</div>
           </div>
@@ -103,12 +103,14 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
                 onOpen={() => onOpenSystem(continueSystem.id)}
               />
             ) : (
-              <div className="mt-5 flex flex-col gap-5 border-l-4 border-accent bg-surface px-5 py-5 shadow-ds-raised sm:flex-row sm:items-center sm:justify-between sm:gap-8">
-                <EmptyState
-                  title={t("homeNoProgress")}
-                  description={t("homeChooseSystem")}
-                  className="max-w-2xl [&>div]:h-10 [&>div]:w-10 [&>div]:rounded-ds-sm [&>h2]:mt-3 [&>h2]:text-body [&>p]:mt-1 [&>p]:text-label"
-                />
+              <div className="mt-4 flex flex-col gap-4 border-l-4 border-accent bg-surface px-4 py-4 shadow-ds-raised sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                <div className="flex min-w-0 items-center gap-4">
+                  <EmptyProgressIcon />
+                  <div className="min-w-0">
+                    <h3 className="text-body font-semibold text-ink">{t("homeNoProgress")}</h3>
+                    <p className="mt-1 text-label leading-5 text-ink-muted">{t("homeChooseSystem")}</p>
+                  </div>
+                </div>
                 <Button variant="primary" size="md" onClick={onOpenAnatomy} className="shrink-0">
                   {t("homeOpenAnatomy")}<ArrowIcon />
                 </Button>
@@ -125,7 +127,7 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
             title={t("systemsTitle")}
             aside={<p className="max-w-sm text-body text-ink-muted lg:text-right">{t("homeChooseSystem")}</p>}
           />
-          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {systems.map((system) => (
               <AnatomySystemItem
                 key={system.id}
@@ -159,7 +161,7 @@ function ContinueStudy({ system, progress, description, onOpen }: { system: Home
   const config = anatomySystems[system.id];
 
   return (
-    <div className="mt-5 grid gap-7 border border-line bg-surface p-5 shadow-ds-raised sm:p-6 lg:grid-cols-[minmax(0,1fr)_13rem] lg:items-center lg:p-7">
+    <div className="mt-4 grid gap-6 border border-line bg-surface p-5 shadow-ds-raised sm:p-5 lg:grid-cols-[minmax(0,1fr)_13rem] lg:items-center lg:p-6">
       <div className="min-w-0">
         <div className="flex items-start gap-4">
           <div className="flex h-11 w-1 shrink-0 rounded-full" style={{ backgroundColor: config.color }} aria-hidden="true" />
@@ -186,7 +188,7 @@ function ContinueStudy({ system, progress, description, onOpen }: { system: Home
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${accuracy}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={accuracy}>
           <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${accuracy}%`, backgroundColor: config.color }} />
         </div>
-        <p className="mt-3 text-label text-ink-muted">{progress.structures} {t("homeStructures").toLowerCase()}</p>
+        <p className="mt-3 text-label text-ink-muted">{progress.answered} {t("homeAnswered").toLowerCase()}</p>
       </div>
     </div>
   );
@@ -197,13 +199,13 @@ function AnatomySystemItem({ system, description, onOpen }: { system: HomeSystem
   const config = anatomySystems[system.id];
 
   return (
-    <button type="button" onClick={onOpen} className="group relative flex min-h-[7.5rem] min-w-0 items-start gap-4 border border-line bg-surface px-4 py-4 text-left shadow-ds-raised transition-[border-color,background-color,transform] duration-150 hover:-translate-y-0.5 hover:border-line-strong hover:bg-surface-raised focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:translate-y-0 active:bg-accent-soft">
+    <button type="button" onClick={onOpen} className="group relative flex min-h-[6.75rem] min-w-0 items-start gap-3 border border-line bg-surface px-4 py-3.5 text-left shadow-ds-raised transition-[border-color,background-color,transform] duration-150 hover:-translate-y-0.5 hover:border-line-strong hover:bg-surface-raised focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:translate-y-0 active:bg-accent-soft">
       <span className="h-full min-h-12 w-1 shrink-0 rounded-full" style={{ backgroundColor: config.color }} aria-hidden="true" />
       <SystemIcon system={system.id} color={config.color} />
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="block text-heading font-semibold text-ink">{t(systemTranslationKeys[system.id])}</span>
         <span className="mt-1 block text-label leading-5 text-ink-muted">{description}</span>
-        <span className="mt-auto flex items-center gap-2 pt-4 text-caption font-semibold uppercase tracking-[0.1em] text-accent">{t("homeOpenSystem")}<ArrowIcon className="transition-transform duration-150 group-hover:translate-x-1" /></span>
+        <span className="mt-auto flex items-center gap-2 pt-3 text-caption font-semibold uppercase tracking-[0.1em] text-accent">{t("homeOpenSystem")}<ArrowIcon className="transition-transform duration-150 group-hover:translate-x-1" /></span>
       </span>
     </button>
   );
@@ -223,7 +225,7 @@ function ProgressSummary({ progress, onOpen }: { progress: SystemProgress | null
         <Button variant="ghost" size="sm" onClick={onOpen}>{t("navProgress")}<ArrowIcon /></Button>
       </div>
       <div className="mt-7">
-        <div className="flex items-baseline justify-between gap-4"><span className="text-[2.25rem] font-semibold leading-none tracking-tight text-ink">{accuracy}%</span><span className="text-label text-ink-muted">{progress?.structures ?? 0} {t("homeStructures").toLowerCase()}</span></div>
+        <div className="flex items-baseline justify-between gap-4"><span className="text-[2.25rem] font-semibold leading-none tracking-tight text-ink">{accuracy}%</span></div>
         <div className="mt-4 h-2 overflow-hidden rounded-full bg-canvas-muted" aria-label={`${accuracy}%`} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={accuracy}><div className="h-full rounded-full bg-accent transition-[width] duration-500" style={{ width: `${accuracy}%` }} /></div>
         <p className="mt-4 text-body leading-6 text-ink-muted">{progress && progress.answered > 0 ? `${progress.answered} ${t("homeAnswered").toLowerCase()}` : t("homeNoProgress")}</p>
       </div>
@@ -232,12 +234,24 @@ function ProgressSummary({ progress, onOpen }: { progress: SystemProgress | null
 }
 
 function summarizeStats(stats: MasteryStat[]): SystemProgress {
-  return stats.reduce((summary, item) => ({ answered: summary.answered + item.total, correct: summary.correct + item.correct, structures: summary.structures + 1 }), { answered: 0, correct: 0, structures: 0 });
+  return stats.reduce((summary, item) => ({ answered: summary.answered + item.total, correct: summary.correct + item.correct }), { answered: 0, correct: 0 });
 }
 
 function summarizeProgress(progress: SystemProgress[]): SystemProgress | null {
   if (!progress.length) return null;
-  return progress.reduce((summary, item) => ({ answered: summary.answered + item.answered, correct: summary.correct + item.correct, structures: summary.structures + item.structures }), { answered: 0, correct: 0, structures: 0 });
+  return progress.reduce((summary, item) => ({ answered: summary.answered + item.answered, correct: summary.correct + item.correct }), { answered: 0, correct: 0 });
+}
+
+function EmptyProgressIcon() {
+  return (
+    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-ds-sm bg-accent-soft text-accent" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+        <circle cx="16" cy="16" r="10" />
+        <circle cx="16" cy="16" r="4" />
+        <path d="M16 2v5M16 25v5M2 16h5M25 16h5" />
+      </svg>
+    </span>
+  );
 }
 
 function SystemIcon({ system, color }: { system: AnatomySystemId; color: string }) {
