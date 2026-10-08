@@ -1,8 +1,6 @@
 import { useState, type FormEvent } from "react";
 
 import { Button } from "../components/ui";
-import { AuthLayout } from "../components/layout/AuthLayout";
-import { AuthAnatomyPreview } from "../components/layout/AuthAnatomyPreview";
 import { useI18n } from "../i18n";
 
 type LoginViewProps = {
@@ -11,8 +9,7 @@ type LoginViewProps = {
 };
 
 export function LoginView({ onLogin, onRegister }: LoginViewProps) {
-  const { language, t } = useI18n();
-  const isEnglish = language === "en";
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,36 +25,7 @@ export function LoginView({ onLogin, onRegister }: LoginViewProps) {
   };
 
   return (
-    <AuthLayout
-      brand={t("appName")}
-      productMeta={isEnglish ? "3D ANATOMY WORKSPACE" : "ESPACIO DE ANATOMÍA 3D"}
-      productTitle={isEnglish ? "Explore the human body in 3D" : "Explora el cuerpo humano en 3D"}
-      productDescription={isEnglish
-        ? "Understand systems, structures, and relationships through interactive models."
-        : "Comprende sistemas, estructuras y relaciones mediante modelos interactivos."}
-      benefits={[
-        { number: "01", content: isEnglish ? "Interactive 3D models" : "Modelos 3D interactivos" },
-        { number: "02", content: isEnglish ? "Guided anatomy study" : "Estudio anat\u00f3mico guiado" },
-        { number: "03", content: isEnglish ? "Quiz and progress tracking" : "Quiz y seguimiento de progreso" },
-      ]}
-      productVisual={<AuthAnatomyPreview />}
-      formTitle={isEnglish ? "Welcome back" : "Bienvenido de nuevo"}
-      formSubtitle={t("homeIntro")}
-      footer={
-        <p className="text-center text-body text-ink-muted">
-          {t("authCreateAccountPrompt")} {" "}
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={onRegister}
-            className="min-h-0 px-0 py-0 align-baseline text-label font-semibold hover:bg-transparent hover:underline"
-          >
-            {t("authRegisterButton")}
-          </Button>
-        </p>
-      }
-    >
+    <>
       <form className="space-y-5" onSubmit={handleSubmit} noValidate>
         <Field id="login-email" label={t("authEmail")} type="email" value={email} onChange={setEmail} autoComplete="email" />
         <Field id="login-password" label={t("authPassword")} type="password" value={password} onChange={setPassword} autoComplete="current-password" />
@@ -76,7 +44,22 @@ export function LoginView({ onLogin, onRegister }: LoginViewProps) {
           {t("authLoginButton")}
         </Button>
       </form>
-    </AuthLayout>
+
+      <div className="mt-6 border-t border-line pt-5">
+        <p className="text-center text-body text-ink-muted">
+          {t("authCreateAccountPrompt")} {" "}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onRegister}
+            className="min-h-0 px-0 py-0 align-baseline text-label font-semibold hover:bg-transparent hover:underline"
+          >
+            {t("authRegisterButton")}
+          </Button>
+        </p>
+      </div>
+    </>
   );
 }
 

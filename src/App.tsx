@@ -11,6 +11,8 @@ import { SearchBar } from "./components/SearchBar";
 import { AppHeader } from "./components/layout/AppHeader";
 import { AppShell } from "./components/layout/AppShell";
 import { AppSidebar } from "./components/layout/AppSidebar";
+import { AuthAnatomyPreview } from "./components/layout/AuthAnatomyPreview";
+import { AuthLayout } from "./components/layout/AuthLayout";
 import { ContextPanel } from "./components/anatomy/ContextPanel";
 import { InfoPanel } from "./components/anatomy/InfoPanel";
 import { ViewerToolbar } from "./components/anatomy/ViewerToolbar";
@@ -49,6 +51,7 @@ import { SettingsView } from "./views/SettingsView";
 import { StudyView } from "./views/StudyView";
 import { RegisterView } from "./views/RegisterView";
 import type { AppView } from "./views/types";
+import { useI18n } from "./i18n";
 
 /* ======================================================
    VISTA CARDIOVASCULAR
@@ -121,6 +124,8 @@ const systemDescriptions: Record<
 function App() {
   const [appView, setAppView] = useState<AppView>("login");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { language, t } = useI18n();
+  const isEnglish = language === "en";
   /* ====================================================
      SISTEMA ACTIVO
   ==================================================== */
@@ -738,10 +743,33 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   };
 
   if (!isAuthenticated) {
-    return appView === "register" ? (
-      <RegisterView onRegister={completeAuth} onLogin={() => setAppView("login")} />
-    ) : (
-      <LoginView onLogin={completeAuth} onRegister={() => setAppView("register")} />
+    const isRegister = appView === "register";
+
+    return (
+      <AuthLayout
+        brand={t("appName")}
+        productMeta={isEnglish ? "3D ANATOMY WORKSPACE" : "ESPACIO DE ANATOMÍA 3D"}
+        productTitle={isEnglish ? "Explore the human body in 3D" : "Explora el cuerpo humano en 3D"}
+        productDescription={isEnglish
+          ? "Understand systems, structures, and relationships through interactive models."
+          : "Comprende sistemas, estructuras y relaciones mediante modelos interactivos."}
+        benefits={[
+          { number: "01", content: isEnglish ? "Interactive 3D models" : "Modelos 3D interactivos" },
+          { number: "02", content: isEnglish ? "Guided anatomy study" : "Estudio anatómico guiado" },
+          { number: "03", content: isEnglish ? "Quiz and progress tracking" : "Quiz y seguimiento de progreso" },
+        ]}
+        productVisual={<AuthAnatomyPreview />}
+        formTitle={isRegister ? t("authRegisterTitle") : (isEnglish ? "Welcome back" : "Bienvenido de nuevo")}
+        formSubtitle={isRegister
+          ? (isEnglish ? "Start studying anatomy with interactive models." : "Comienza a estudiar anatomía con modelos interactivos.")
+          : t("homeIntro")}
+      >
+        {isRegister ? (
+          <RegisterView onRegister={completeAuth} onLogin={() => setAppView("login")} />
+        ) : (
+          <LoginView onLogin={completeAuth} onRegister={() => setAppView("register")} />
+        )}
+      </AuthLayout>
     );
   }
 

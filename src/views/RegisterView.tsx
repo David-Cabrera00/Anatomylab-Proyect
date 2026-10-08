@@ -1,7 +1,5 @@
 import { useState, type FormEvent } from "react";
 
-import { AuthAnatomyPreview } from "../components/layout/AuthAnatomyPreview";
-import { AuthLayout } from "../components/layout/AuthLayout";
 import { Button } from "../components/ui";
 import { useI18n } from "../i18n";
 
@@ -11,8 +9,7 @@ type RegisterViewProps = {
 };
 
 export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
-  const { language, t } = useI18n();
-  const isEnglish = language === "en";
+  const { t } = useI18n();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,38 +31,7 @@ export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
   };
 
   return (
-    <AuthLayout
-      brand={t("appName")}
-      productMeta={isEnglish ? "3D ANATOMY WORKSPACE" : "ESPACIO DE ANATOMÍA 3D"}
-      productTitle={isEnglish ? "Explore the human body in 3D" : "Explora el cuerpo humano en 3D"}
-      productDescription={isEnglish
-        ? "Understand systems, structures, and relationships through interactive models."
-        : "Comprende sistemas, estructuras y relaciones mediante modelos interactivos."}
-      benefits={[
-        { number: "01", content: isEnglish ? "Interactive 3D models" : "Modelos 3D interactivos" },
-        { number: "02", content: isEnglish ? "Guided anatomy study" : "Estudio anatómico guiado" },
-        { number: "03", content: isEnglish ? "Quiz and progress tracking" : "Quiz y seguimiento de progreso" },
-      ]}
-      productVisual={<AuthAnatomyPreview />}
-      formTitle={t("authRegisterTitle")}
-      formSubtitle={isEnglish
-        ? "Start studying anatomy with interactive models."
-        : "Comienza a estudiar anatomía con modelos interactivos."}
-      footer={
-        <p className="text-center text-body text-ink-muted">
-          {t("authExistingAccountPrompt")} {" "}
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={onLogin}
-            className="min-h-0 px-0 py-0 align-baseline text-label font-semibold hover:bg-transparent hover:underline"
-          >
-            {t("authBackToLogin")}
-          </Button>
-        </p>
-      }
-    >
+    <>
       <form className="space-y-4" onSubmit={handleSubmit} noValidate>
         <Field id="register-name" label={t("authName")} type="text" value={name} onChange={setName} autoComplete="name" />
         <Field id="register-email" label={t("authEmail")} type="email" value={email} onChange={setEmail} autoComplete="email" />
@@ -78,7 +44,22 @@ export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
           {t("authRegisterButton")}
         </Button>
       </form>
-    </AuthLayout>
+
+      <div className="mt-6 border-t border-line pt-5">
+        <p className="text-center text-body text-ink-muted">
+          {t("authExistingAccountPrompt")} {" "}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onLogin}
+            className="min-h-0 px-0 py-0 align-baseline text-label font-semibold hover:bg-transparent hover:underline"
+          >
+            {t("authBackToLogin")}
+          </Button>
+        </p>
+      </div>
+    </>
   );
 }
 
