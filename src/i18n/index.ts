@@ -1,7 +1,8 @@
-import { createContext, createElement, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, createElement, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { en } from "./en";
 import { es } from "./es";
+import { dbGetPreference, dbSetPreference } from "../utils/db";
 export { getLocalizedText } from "./localizedText";
 export type { LocalizedLanguage, LocalizedText, LocalizableText } from "./localizedText";
 
@@ -78,6 +79,7 @@ export const anatomyLegendTranslationKeys: Record<string, TranslationKey> = {
 };
 
 const LANGUAGE_STORAGE_KEY = "anatomylab.language";
+const LANGUAGE_PREFERENCE_KEY = "language";
 
 const dictionaries = { es, en } as const;
 
@@ -103,6 +105,19 @@ function getInitialLanguage(): Language {
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(getInitialLanguage);
 
+  useEffect(() => {
+    let cancelled = false;
+    void dbGetPreference(LANGUAGE_PREFERENCE_KEY)
+      .then((stored) => {
+        if (!cancelled && (stored === "es" || stored === "en")) {
+          setLanguageState(stored);
+          try { window.localStorage.setItem(LANGUAGE_STORAGE_KEY, stored); } catch { /* fallback remains usable */ }
+        }
+      })
+      .catch(() => { /* SQLite is optional during web previews */ });
+    return () => { cancelled = true; };
+  }, []);
+
   const setLanguage = (nextLanguage: Language) => {
     setLanguageState(nextLanguage);
     try {
@@ -110,6 +125,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     } catch {
       // The UI remains usable if localStorage is unavailable.
     }
+    void dbSetPreference(LANGUAGE_PREFERENCE_KEY, nextLanguage).catch(() => {
+      // Keep the local preference when SQLite is unavailable.
+    });
   };
 
   const value = useMemo<I18nContextValue>(() => ({
