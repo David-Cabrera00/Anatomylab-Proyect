@@ -43,7 +43,7 @@ export class AuthService {
     if (!secret) throw new Error("JWT_SECRET debe estar configurado.");
     const accessToken = await this.jwt.signAsync(
       { sub: user.id, email: user.email },
-      { secret },
+      { secret, expiresIn: "7d" },
     );
     return { accessToken, user };
   }
