@@ -112,6 +112,22 @@ body {
   background: radial-gradient(circle at 72% 48%, rgb(255 255 255 / 28%), transparent 43%);
 }
 
+.auth-panel-particles {
+  background-image:
+    radial-gradient(circle at 12% 18%, rgb(23 96 117 / 38%) 0 1px, transparent 1.75px),
+    radial-gradient(circle at 28% 72%, rgb(23 96 117 / 27%) 0 1px, transparent 1.75px),
+    radial-gradient(circle at 54% 28%, rgb(23 96 117 / 32%) 0 1.5px, transparent 2.25px),
+    radial-gradient(circle at 82% 16%, rgb(23 96 117 / 24%) 0 1px, transparent 1.75px),
+    radial-gradient(circle at 91% 74%, rgb(23 96 117 / 34%) 0 1.5px, transparent 2.25px),
+    radial-gradient(circle at 68% 88%, rgb(23 96 117 / 22%) 0 1px, transparent 1.75px),
+    radial-gradient(circle at 42% 84%, rgb(23 96 117 / 24%) 0 1px, transparent 1.75px),
+    radial-gradient(circle at 74% 54%, rgb(23 96 117 / 25%) 0 1px, transparent 1.75px);
+  opacity: 0.9;
+  transform: translate3d(0, 0, 0);
+  will-change: transform, background-position;
+  animation: auth-particles-drift 13s ease-in-out infinite alternate;
+}
+
 .auth-model-halo {
   background: radial-gradient(circle, rgb(255 255 255 / 22%) 0%, rgb(255 255 255 / 8%) 38%, transparent 70%);
   filter: blur(2px);
@@ -120,6 +136,33 @@ body {
 
 :root[data-theme="dark"] .auth-panel-glow {
   background: radial-gradient(circle at 72% 48%, rgb(104 182 197 / 14%), transparent 43%);
+}
+
+:root[data-theme="dark"] .auth-panel-particles {
+  background-image:
+    radial-gradient(circle at 12% 18%, rgb(158 224 235 / 58%) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 28% 72%, rgb(158 224 235 / 38%) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 54% 28%, rgb(158 224 235 / 48%) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 82% 16%, rgb(158 224 235 / 32%) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 91% 74%, rgb(158 224 235 / 45%) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 68% 88%, rgb(158 224 235 / 30%) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 42% 84%, rgb(158 224 235 / 28%) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 74% 54%, rgb(158 224 235 / 26%) 0 1px, transparent 1.5px);
+}
+
+@keyframes auth-particles-drift {
+  from {
+    background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    background-position: 12px -8px, -10px 11px, 8px 10px, -11px -7px, 10px -9px, -7px 8px, 8px 5px, -6px -10px;
+    transform: translate3d(5px, -4px, 0) scale(1.015);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-panel-particles { animation: none; }
 }
 
 :root[data-theme="dark"] .auth-model-halo {
