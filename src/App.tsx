@@ -15,6 +15,7 @@ import { AuthAnatomyPreview } from "./components/layout/AuthAnatomyPreview";
 import { AuthLayout } from "./components/layout/AuthLayout";
 import { ContextPanel } from "./components/anatomy/ContextPanel";
 import { InfoPanel } from "./components/anatomy/InfoPanel";
+import { AnatomyTutorPanel } from "./components/anatomy/AnatomyTutorPanel";
 import { SystemIcon } from "./components/anatomy/SystemIcon";
 import { ViewerToolbar } from "./components/anatomy/ViewerToolbar";
 import { ViewportFrame } from "./components/anatomy/ViewportFrame";
@@ -187,6 +188,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   ==================================================== */
 
   const [quizState, setQuizState] = useState<QuizState>({ status: "closed" });
+  const [tutorOpen, setTutorOpen] = useState(false);
 
   const [favoriteSaved, setFavoriteSaved] = useState(false);
   const [favoritesRevision, setFavoritesRevision] = useState(0);
@@ -770,7 +772,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     >
       {appView === "anatomy" ? (
         <AnatomyView>
-          <main className="flex min-h-0 flex-1">
+            <main className="relative flex min-h-0 flex-1">
             {/* =================================================
                 VISOR 3D
             ================================================= */}
@@ -833,7 +835,18 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               })
               .catch((error) => console.error("Error saving favorite:", error));
           }}
+          onAskAI={() => setTutorOpen(true)}
         />
+        {tutorOpen && selectedAnatomyId && selectedDisplayName ? (
+          <AnatomyTutorPanel
+            system={activeSystem}
+            anatomyId={selectedAnatomyId}
+            structureName={selectedDisplayName}
+            data={selectedAnatomyIdData}
+            systemColor={activeConfig.color}
+            onClose={() => setTutorOpen(false)}
+          />
+        ) : null}
           </main>
         </AnatomyView>
       ) : appView === "home" ? (
