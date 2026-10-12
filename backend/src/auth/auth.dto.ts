@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 export class RegisterDto {
   @IsEmail()
@@ -8,6 +8,7 @@ export class RegisterDto {
   @IsString()
   @MinLength(8)
   @MaxLength(128)
+  @Matches(/^\S+$/, { message: "La contraseña no puede contener espacios." })
   password!: string;
 
   @IsOptional()
@@ -25,5 +26,6 @@ export class LoginDto {
   @IsString()
   @MinLength(8)
   @MaxLength(128)
+  @Matches(/^\S+$/, { message: "La contraseña no puede contener espacios." })
   password!: string;
 }

@@ -3,6 +3,7 @@
 import { dbGetQuizAnswers, dbGetQuizHistory, type QuizAnswer, type QuizHistory } from "../../utils/db";
 import { getLocalizedText, useI18n } from "../../i18n";
 import { getQuizConfig } from "../../data/quiz";
+import { ErrorState, LoadingState } from "../ui";
 
 export interface HistoryTabProps {
   system: string;
@@ -28,6 +29,8 @@ export function HistoryTab({ system }: HistoryTabProps) {
   const { language, t } = useI18n();
   const [sessions, setSessions] = useState<QuizHistory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [answersBySession, setAnswersBySession] = useState<Record<string, QuizAnswer[]>>({});
   const [loadingAnswers, setLoadingAnswers] = useState<string | null>(null);
@@ -52,26 +55,25 @@ export function HistoryTab({ system }: HistoryTabProps) {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setHasError(false);
     dbGetQuizHistory(system, 50)
       .then((data) => {
         if (!cancelled) setSessions(data);
       })
-      .catch((error) => console.error("Error loading history:", error))
+      .catch((error) => { console.error("Error loading history:", error); if (!cancelled) setHasError(true); })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
     return () => {
       cancelled = true;
     };
-  }, [system]);
+  }, [system, retryKey]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-8 text-ink-muted text-sm">
-        {t("historyLoading")}
-      </div>
-    );
+    return <LoadingState label={t("historyLoading")} />;
   }
+
+  if (hasError) return <ErrorState title={t("dataLoadErrorTitle")} description={t("historyLoadError")} retryLabel={t("commonRetry")} onRetry={() => setRetryKey((key) => key + 1)} />;
 
   if (sessions.length === 0) {
     return (

@@ -37,8 +37,8 @@ export function LoginView({ onLogin, onLocalMode, onRegister }: LoginViewProps) 
   return (
     <>
       <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-        <Field id="login-email" label={t("authEmail")} type="email" value={email} onChange={setEmail} autoComplete="email" />
-        <Field id="login-password" label={t("authPassword")} type="password" value={password} onChange={setPassword} autoComplete="current-password" />
+        <Field id="login-email" label={t("authEmail")} type="email" value={email} onChange={setEmail} autoComplete="email" maxLength={254} />
+        <Field id="login-password" label={t("authPassword")} type="password" value={password} onChange={setPassword} autoComplete="current-password" maxLength={128} />
 
         <label className="flex flex-wrap items-center gap-2 text-body text-ink-muted">
           <input
@@ -77,7 +77,7 @@ export function LoginView({ onLogin, onLocalMode, onRegister }: LoginViewProps) 
   );
 }
 
-function Field({ id, label, type, value, onChange, autoComplete }: { id: string; label: string; type: string; value: string; onChange: (value: string) => void; autoComplete: string }) {
+function Field({ id, label, type, value, onChange, autoComplete, maxLength }: { id: string; label: string; type: string; value: string; onChange: (value: string) => void; autoComplete: string; maxLength: number }) {
   return (
     <label htmlFor={id} className="block text-label font-medium text-ink-muted">
       {label}
@@ -86,7 +86,8 @@ function Field({ id, label, type, value, onChange, autoComplete }: { id: string;
         required
         type={type}
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        maxLength={maxLength}
+        onChange={(event) => onChange(type === "password" ? event.target.value.replace(/\s/g, "") : event.target.value)}
         autoComplete={autoComplete}
         className="mt-2 min-h-10 w-full rounded-ds-sm border border-line bg-surface px-3 py-2.5 text-body text-ink outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
       />

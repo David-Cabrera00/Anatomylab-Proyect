@@ -43,10 +43,10 @@ export function RegisterView({ onRegister, onLocalMode, onLogin }: RegisterViewP
   return (
     <>
       <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-        <Field id="register-name" label={t("authName")} type="text" value={name} onChange={setName} autoComplete="name" />
-        <Field id="register-email" label={t("authEmail")} type="email" value={email} onChange={setEmail} autoComplete="email" />
-        <Field id="register-password" label={t("authPassword")} type="password" value={password} onChange={setPassword} autoComplete="new-password" />
-        <Field id="register-confirm-password" label={t("authConfirmPassword")} type="password" value={confirmation} onChange={setConfirmation} autoComplete="new-password" />
+        <Field id="register-name" label={t("authName")} type="text" value={name} onChange={setName} autoComplete="name" maxLength={100} />
+        <Field id="register-email" label={t("authEmail")} type="email" value={email} onChange={setEmail} autoComplete="email" maxLength={254} />
+        <Field id="register-password" label={t("authPassword")} type="password" value={password} onChange={setPassword} autoComplete="new-password" maxLength={128} />
+        <Field id="register-confirm-password" label={t("authConfirmPassword")} type="password" value={confirmation} onChange={setConfirmation} autoComplete="new-password" maxLength={128} />
 
         {error && <p className="text-body text-error" role="alert">{error}</p>}
 
@@ -84,6 +84,7 @@ function Field({
   value,
   onChange,
   autoComplete,
+  maxLength,
 }: {
   id: string;
   label: string;
@@ -91,6 +92,7 @@ function Field({
   value: string;
   onChange: (value: string) => void;
   autoComplete: string;
+  maxLength: number;
 }) {
   return (
     <label htmlFor={id} className="block text-label font-medium text-ink-muted">
@@ -100,7 +102,8 @@ function Field({
         required
         type={type}
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        maxLength={maxLength}
+        onChange={(event) => onChange(type === "password" ? event.target.value.replace(/\s/g, "") : event.target.value)}
         autoComplete={autoComplete}
         className="mt-2 min-h-10 w-full rounded-ds-sm border border-line bg-surface px-3 py-2.5 text-body text-ink outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
       />
