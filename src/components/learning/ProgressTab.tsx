@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { dbGetMasteryStats, getMasteryColor, getMasteryLevel } from "../../utils/db";
 import { useI18n } from "../../i18n";
+import { getAnatomyDisplayName } from "../../utils/anatomyDisplayName";
 
 export type MasteryStat = { anatomy_id: string; correct: number; total: number };
 
@@ -27,7 +28,7 @@ const MASTERY_ORDER = { mastered: 0, proficient: 1, familiar: 2, learning: 3, no
 const MASTERY_LABEL_KEYS = { mastered: "masteryMastered", proficient: "masteryProficient", familiar: "masteryFamiliar", learning: "masteryLearning", none: "masteryNone" } as const;
 
 export function ProgressTab({ system, stats: providedStats, onStatsLoaded, showSummary = true }: ProgressTabProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const [stats, setStats] = useState<MasteryStat[]>(normalizeStats(providedStats ?? []));
   const [loading, setLoading] = useState(providedStats === undefined);
 
@@ -77,7 +78,7 @@ export function ProgressTab({ system, stats: providedStats, onStatsLoaded, showS
               return (
                 <div key={item.anatomy_id} className="flex flex-wrap items-center gap-4 px-2 py-3 text-body transition-colors duration-150 hover:bg-surface-raised">
                   <span className="h-8 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-                  <span className="min-w-0 flex-1 truncate font-medium text-ink">{item.anatomy_id}</span>
+                  <span className="min-w-0 flex-1 truncate font-medium text-ink">{getAnatomyDisplayName(item.anatomy_id, language)}</span>
                   <div className="flex items-center gap-3"><span className={`rounded-ds-sm px-2 py-1 text-caption font-medium ${getMasteryColor(level)}`}>{t(MASTERY_LABEL_KEYS[level])}</span><span className="min-w-12 text-right text-label text-ink-muted">{accuracy}%</span></div>
                 </div>
               );
