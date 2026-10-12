@@ -1037,6 +1037,41 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
     location: "Lóbulo parietal, posterior y aproximadamente paralelo al surco central.",
     relationships: ["Giro poscentral", "Corteza somatosensitiva primaria", "Lóbulo parietal"],
   }),
+  bilateral("Surco subparietal", {
+    id: "nervous.subparietal-sulcus", name: "Surco subparietal", type: "Surco cerebral",
+    description: "Surco de la superficie medial del hemisferio cerebral situado por detrás del lobulillo paracentral.",
+    function: "Ayuda a delimitar regiones mediales parietales relacionadas con integración visuoespacial.",
+    location: "Superficie medial del lóbulo parietal, por debajo del precúneo.",
+    relationships: ["Precúneo", "Lóbulo parietal", "Lobulillo paracentral"],
+  }),
+  bilateral("Surco temporal inferior", {
+    id: "nervous.inferior-temporal-sulcus", name: "Surco temporal inferior", type: "Surco cerebral",
+    description: "Surco longitudinal que separa el giro temporal inferior de regiones occipitotemporales.",
+    function: "Delimita áreas temporales implicadas en el procesamiento visual y semántico.",
+    location: "Superficie lateral del lóbulo temporal, por debajo del giro temporal medio.",
+    relationships: ["Giro temporal inferior", "Giro occipitotemporal lateral", "Lóbulo temporal"],
+  }),
+  bilateral("Surco temporal superior", {
+    id: "nervous.superior-temporal-sulcus", name: "Surco temporal superior", type: "Surco cerebral",
+    description: "Surco que recorre la superficie lateral del lóbulo temporal entre los giros temporales superior y medio.",
+    function: "Participa en redes auditivas, lingüísticas y de interpretación de señales sociales.",
+    location: "Superficie lateral del lóbulo temporal, por debajo del giro temporal superior.",
+    relationships: ["Giro temporal superior", "Giro temporal medio", "Corteza auditiva"],
+  }),
+  bilateral("Precentral sulcus (Superior part)*", {
+    id: "nervous.superior-precentral-sulcus", name: "Surco precentral, porción superior", type: "Surco cerebral",
+    description: "Porción superior del surco precentral situada por delante del giro precentral.",
+    function: "Delimita la corteza motora y contribuye a organizar la superficie lateral frontal.",
+    location: "Lóbulo frontal lateral, anterior y paralelo al surco central.",
+    relationships: ["Giro precentral", "Corteza motora primaria", "Surco central"],
+  }),
+  bilateral("Precentral sulcus (inferior part)*", {
+    id: "nervous.inferior-precentral-sulcus", name: "Surco precentral, porción inferior", type: "Surco cerebral",
+    description: "Porción inferior del surco precentral próxima a la región opercular del lóbulo frontal.",
+    function: "Delimita regiones motoras frontales relacionadas con movimientos de la cara y el miembro superior.",
+    location: "Lóbulo frontal lateral, por delante del giro precentral inferior.",
+    relationships: ["Giro precentral", "Giro frontal inferior", "Corteza motora"],
+  }),
   {
     originalName: "Tracto corticoespinal anterior",
     data: {

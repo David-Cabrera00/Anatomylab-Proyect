@@ -498,6 +498,11 @@ const curatedNames: Readonly<Record<string, string>> = {
   "nervous.paracentral-sulcus": "Paracentral sulcus",
   "nervous.parieto-occipital-sulcus": "Parieto-occipital sulcus",
   "nervous.postcentral-sulcus": "Postcentral sulcus",
+  "nervous.subparietal-sulcus": "Subparietal sulcus",
+  "nervous.inferior-temporal-sulcus": "Inferior temporal sulcus",
+  "nervous.superior-temporal-sulcus": "Superior temporal sulcus",
+  "nervous.superior-precentral-sulcus": "Superior precentral sulcus",
+  "nervous.inferior-precentral-sulcus": "Inferior precentral sulcus",
 };
 
 const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<NervousField, "name" | "relationship">, string>>>>> = {
@@ -740,6 +745,36 @@ const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<Ner
     description: "Sulcus located behind the postcentral gyrus on the lateral surface of the cerebral hemisphere.",
     function: "Separates the primary somatosensory cortex from parietal association regions.",
     location: "Parietal lobe, posterior and roughly parallel to the central sulcus.",
+  },
+  "nervous.subparietal-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Sulcus on the medial cerebral surface located posterior to the paracentral lobule.",
+    function: "Helps delimit medial parietal regions involved in visuospatial integration.",
+    location: "Medial surface of the parietal lobe, below the precuneus.",
+  },
+  "nervous.inferior-temporal-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Longitudinal sulcus separating the inferior temporal gyrus from occipitotemporal regions.",
+    function: "Delimits temporal areas involved in visual and semantic processing.",
+    location: "Lateral surface of the temporal lobe, below the middle temporal gyrus.",
+  },
+  "nervous.superior-temporal-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Sulcus running along the lateral temporal lobe between the superior and middle temporal gyri.",
+    function: "Participates in auditory, language, and social-signal interpretation networks.",
+    location: "Lateral surface of the temporal lobe, below the superior temporal gyrus.",
+  },
+  "nervous.superior-precentral-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Superior portion of the precentral sulcus located anterior to the precentral gyrus.",
+    function: "Delimits motor cortex and helps organize the lateral frontal surface.",
+    location: "Lateral frontal lobe, anterior and parallel to the central sulcus.",
+  },
+  "nervous.inferior-precentral-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Inferior portion of the precentral sulcus near the opercular region of the frontal lobe.",
+    function: "Delimits frontal motor regions related to movements of the face and upper limb.",
+    location: "Lateral frontal lobe, anterior to the inferior precentral gyrus.",
   },
 };
 
