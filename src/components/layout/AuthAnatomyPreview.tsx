@@ -15,12 +15,12 @@ function PreviewModel() {
     const maxDimension = Math.max(size.x, size.y, size.z);
 
     if (maxDimension > 0) {
-      clone.scale.setScalar(5.2 / maxDimension);
+      clone.scale.setScalar(4.65 / maxDimension);
     }
 
     const scaledBounds = new THREE.Box3().setFromObject(clone);
     const scaledCenter = scaledBounds.getCenter(new THREE.Vector3());
-    clone.position.set(-scaledCenter.x + 0.16, -scaledCenter.y - 0.32, -scaledCenter.z);
+    clone.position.set(-scaledCenter.x + 0.12, -scaledCenter.y - 0.08, -scaledCenter.z);
     clone.traverse((object) => {
       if (object instanceof THREE.Mesh) {
         object.castShadow = true;
@@ -36,7 +36,8 @@ function PreviewModel() {
 
 export function AuthAnatomyPreview() {
   return (
-    <div className="h-[360px] w-full sm:h-[420px] xl:h-[500px]" aria-label="AnatomyLab 3D preview" role="img">
+    <div className="relative h-[360px] w-full sm:h-[420px] xl:h-[500px]" aria-label="AnatomyLab 3D preview" role="img">
+      <div className="auth-model-halo pointer-events-none absolute inset-[8%] rounded-full" aria-hidden="true" />
       <Canvas
         shadows
         camera={{ position: [0, 0.25, 7.8], fov: 38, near: 0.01, far: 100 }}

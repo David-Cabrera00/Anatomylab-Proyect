@@ -34,8 +34,9 @@ export function AuthLayout({
   return (
     <main className="min-h-screen overflow-y-auto bg-canvas">
       <div className="grid min-h-screen lg:grid-cols-[minmax(0,1.55fr)_minmax(22rem,1fr)]">
-        <section className="flex min-h-[620px] min-w-0 flex-col border-b border-line bg-auth-panel px-6 py-8 sm:px-10 sm:py-10 lg:min-h-screen lg:border-b-0 lg:border-r lg:px-12 lg:py-10 xl:px-16">
-          <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col">
+        <section className="relative flex min-h-[620px] min-w-0 flex-col overflow-hidden border-b border-line bg-auth-panel px-6 py-8 sm:px-10 sm:py-10 lg:min-h-screen lg:border-b-0 lg:border-r lg:px-12 lg:py-10 xl:px-16">
+          <div className="auth-panel-glow pointer-events-none absolute inset-0" aria-hidden="true" />
+          <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col">
             <div className="flex items-center justify-between gap-5">
               <p className="text-caption font-semibold uppercase tracking-[0.18em] text-accent">{brand}</p>
               {productMeta ? <p className="hidden text-caption font-medium uppercase tracking-[0.16em] text-ink-subtle sm:block">{productMeta}</p> : null}

@@ -107,3 +107,21 @@ body {
 :root[data-theme="dark"] .text-slate-400 { color: var(--color-ink-muted); }
 :root[data-theme="dark"] .border-slate-200,
 :root[data-theme="dark"] .border-slate-100 { border-color: var(--color-line); }
+
+.auth-panel-glow {
+  background: radial-gradient(circle at 72% 48%, rgb(255 255 255 / 28%), transparent 43%);
+}
+
+.auth-model-halo {
+  background: radial-gradient(circle, rgb(255 255 255 / 22%) 0%, rgb(255 255 255 / 8%) 38%, transparent 70%);
+  filter: blur(2px);
+  opacity: 0.9;
+}
+
+:root[data-theme="dark"] .auth-panel-glow {
+  background: radial-gradient(circle at 72% 48%, rgb(104 182 197 / 14%), transparent 43%);
+}
+
+:root[data-theme="dark"] .auth-model-halo {
+  background: radial-gradient(circle, rgb(104 182 197 / 17%) 0%, rgb(104 182 197 / 6%) 38%, transparent 70%);
+}
