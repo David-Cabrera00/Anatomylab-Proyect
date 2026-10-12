@@ -473,6 +473,11 @@ const curatedNames: Readonly<Record<string, string>> = {
   "nervous.middle-posterior-cingulate-gyrus": "Middle posterior cingulate gyrus and sulcus",
   "nervous.paracentral-gyrus-and-sulcus": "Paracentral gyrus and sulcus",
   "nervous.frontomarginal-orbital-gyri": "Frontomarginal orbital gyri",
+  "nervous.habenula": "Habenula",
+  "nervous.falx-cerebri": "Falx cerebri",
+  "nervous.medullary-gray-matter": "Gray matter of the medulla oblongata",
+  "nervous.intermediomedial-nucleus": "Intermediomedial nucleus",
+  "nervous.septal-nuclei": "Septal nuclei",
 };
 
 const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<NervousField, "name" | "relationship">, string>>>>> = {
@@ -565,6 +570,36 @@ const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<Ner
     description: "Group of gyri on the orbital surface of the frontal lobe near its frontal margin.",
     function: "Participates in orbitofrontal networks that evaluate stimuli and guide decision-making.",
     location: "Inferior and medial surface of the frontal lobe.",
+  },
+  "nervous.habenula": {
+    type: "Epithalamic nucleus",
+    description: "Small group of nuclei in the epithalamus, adjacent to the habenular trigone.",
+    function: "Modulates reward, aversion, motivation, and autonomic response circuits.",
+    location: "Dorsomedial diencephalon, near the roof of the third ventricle.",
+  },
+  "nervous.falx-cerebri": {
+    type: "Meninge",
+    description: "Vertical fold of dura mater that extends between the cerebral hemispheres.",
+    function: "Partially separates both hemispheres and helps support the brain inside the cranial cavity.",
+    location: "Longitudinal cerebral fissure, between the right and left hemispheres.",
+  },
+  "nervous.medullary-gray-matter": {
+    type: "Brainstem gray matter",
+    description: "Collection of nuclei and neuronal regions forming the gray matter of the medulla oblongata.",
+    function: "Integrates vital reflexes and contributes to autonomic, motor, and sensory control.",
+    location: "Within the medulla oblongata, around its pathways and dorsal and ventral surfaces.",
+  },
+  "nervous.intermediomedial-nucleus": {
+    type: "Spinal cord nucleus",
+    description: "Column of neurons located in the intermediate zone of the spinal cord.",
+    function: "Participates in visceral signal integration and spinal autonomic circuits.",
+    location: "Intermediate gray matter of the spinal cord, especially in thoracic and upper lumbar segments.",
+  },
+  "nervous.septal-nuclei": {
+    type: "Basal forebrain nuclei",
+    description: "Group of nuclei located in the medial septal region of the telencephalon.",
+    function: "Participates in limbic circuits related to memory, emotion, and hippocampal modulation.",
+    location: "Septal area, anterior to the hypothalamus and near the corpus callosum.",
   },
 };
 

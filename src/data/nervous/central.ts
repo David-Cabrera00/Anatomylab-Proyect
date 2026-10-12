@@ -848,6 +848,56 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
     relationships: ["Corteza orbitofrontal", "Giro recto", "Surco olfatorio"],
   }),
   {
+    originalName: "Habénula",
+    data: {
+      id: "nervous.habenula", name: "Habénula", type: "Núcleo epitalámico",
+      description: "Pequeño conjunto de núcleos situado en el epitálamo, junto al trígono de la habénula.",
+      function: "Modula circuitos relacionados con recompensa, aversión, motivación y respuestas autonómicas.",
+      location: "Dorso medial del diencéfalo, próximo al techo del tercer ventrículo.",
+      relationships: ["Epífisis", "Estría medular del tálamo", "Núcleos septales"],
+    },
+  },
+  {
+    originalName: "Hoz del cerebro",
+    data: {
+      id: "nervous.falx-cerebri", name: "Hoz del cerebro", type: "Meninge",
+      description: "Pliegue vertical de duramadre que se introduce entre los hemisferios cerebrales.",
+      function: "Separa parcialmente ambos hemisferios y ayuda a sostener el encéfalo dentro de la cavidad craneal.",
+      location: "Fisura longitudinal del cerebro, entre los hemisferios derecho e izquierdo.",
+      relationships: ["Duramadre", "Seno sagital superior", "Hemisferios cerebrales"],
+    },
+  },
+  {
+    originalName: "Materia gris del bulbo raquídeo",
+    data: {
+      id: "nervous.medullary-gray-matter", name: "Materia gris del bulbo raquídeo", type: "Sustancia gris del tronco encefálico",
+      description: "Conjunto de núcleos y regiones neuronales que forman la materia gris de la médula oblongada.",
+      function: "Integra reflejos vitales y participa en el control autónomo, motor y sensitivo.",
+      location: "Interior del bulbo raquídeo, alrededor de sus vías y superficies dorsales y ventrales.",
+      relationships: ["Bulbo raquídeo", "Núcleo del tracto solitario", "Núcleo ambiguo"],
+    },
+  },
+  {
+    originalName: "Núcleo intermediomedial",
+    data: {
+      id: "nervous.intermediomedial-nucleus", name: "Núcleo intermediomedial", type: "Núcleo de la médula espinal",
+      description: "Columna de neuronas situada en la zona intermedia de la médula espinal.",
+      function: "Participa en la integración de señales viscerales y en circuitos autonómicos espinales.",
+      location: "Sustancia gris intermedia de la médula espinal, especialmente en segmentos torácicos y lumbares superiores.",
+      relationships: ["Médula espinal", "Asta lateral", "Sistema nervioso autónomo"],
+    },
+  },
+  {
+    originalName: "Núcleos septales",
+    data: {
+      id: "nervous.septal-nuclei", name: "Núcleos septales", type: "Núcleos del prosencéfalo basal",
+      description: "Grupo de núcleos ubicados en la región septal medial del telencéfalo.",
+      function: "Participan en circuitos límbicos relacionados con memoria, emoción y modulación del hipocampo.",
+      location: "Área septal, por delante del hipotálamo y próxima al cuerpo calloso.",
+      relationships: ["Hipocampo", "Fórnix", "Estría terminal"],
+    },
+  },
+  {
     originalName: "Tracto corticoespinal anterior",
     data: {
       id: "nervous.anterior-corticospinal-tract", name: "Tracto corticoespinal anterior", type: "Vía motora descendente",

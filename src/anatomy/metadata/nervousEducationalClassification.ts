@@ -62,12 +62,20 @@ export const nervousCentralBatch3Candidates = [
   { concept: "Giros orbitarios frontomarginales", educationalId: "nervous.frontomarginal-orbital-gyri", anatomyIds: ["nervous.model-node-0169", "nervous.model-node-0170"] },
 ] as const;
 
+export const nervousCentralBatch4Candidates = [
+  { concept: "Habénula", educationalId: "nervous.habenula", anatomyIds: ["nervous.model-node-0059"] },
+  { concept: "Hoz del cerebro", educationalId: "nervous.falx-cerebri", anatomyIds: ["nervous.model-node-0060"] },
+  { concept: "Materia gris del bulbo raquídeo", educationalId: "nervous.medullary-gray-matter", anatomyIds: ["nervous.model-node-0077"] },
+  { concept: "Núcleo intermediomedial", educationalId: "nervous.intermediomedial-nucleus", anatomyIds: ["nervous.model-node-0154"] },
+  { concept: "Núcleos septales", educationalId: "nervous.septal-nuclei", anatomyIds: ["nervous.model-node-0166"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 257,
-  centralEntriesWithoutEducationalContent: 103,
+  entriesWithoutEducationalContent: 252,
+  centralEntriesWithoutEducationalContent: 98,
   peripheralEntriesWithoutEducationalContent: 144,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 40,
-  completedEntries: 70,
-  entriesPendingReview: 257,
+  completedConcepts: 45,
+  completedEntries: 75,
+  entriesPendingReview: 252,
 } as const;
