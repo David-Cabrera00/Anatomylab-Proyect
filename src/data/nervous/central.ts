@@ -967,6 +967,41 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
     location: "Extremo anterior del lóbulo temporal, por delante del giro temporal superior.",
     relationships: ["Lóbulo temporal", "Amígdala", "Corteza orbitofrontal"],
   }),
+  bilateral("Sulcus interm_prim-Jensen", {
+    id: "nervous.jensen-intermediate-sulcus", name: "Surco intermedio de Jensen", type: "Surco cerebral",
+    description: "Surco cortical variable situado en la región temporal lateral del hemisferio cerebral.",
+    function: "Sirve como referencia anatómica para delimitar regiones de la corteza temporal lateral.",
+    location: "Superficie lateral del lóbulo temporal, cerca de los giros temporales medio e inferior.",
+    relationships: ["Lóbulo temporal", "Giro temporal medio", "Giro temporal inferior"],
+  }),
+  bilateral("Surco circular de la ínsula", {
+    id: "nervous.circular-insular-sulcus", name: "Surco circular de la ínsula", type: "Surco cerebral",
+    description: "Surco que rodea parcialmente la corteza insular y la separa de los opérculos vecinos.",
+    function: "Delimita la ínsula y facilita la identificación de sus relaciones con las cortezas operculares.",
+    location: "Borde periférico de la ínsula, dentro de la cisura lateral.",
+    relationships: ["Ínsula", "Opérculo frontal", "Opérculo temporal"],
+  }),
+  bilateral("Surco colateral", {
+    id: "nervous.collateral-sulcus", name: "Surco colateral", type: "Surco cerebral",
+    description: "Surco longitudinal de la superficie inferior del hemisferio cerebral.",
+    function: "Constituye una referencia anatómica entre regiones temporales mediales y laterales.",
+    location: "Superficie inferior del lóbulo temporal, próximo al giro parahipocampal y al giro fusiforme.",
+    relationships: ["Giro parahipocampal", "Giro fusiforme", "Lóbulo temporal"],
+  }),
+  bilateral("Surco frontal inferior", {
+    id: "nervous.inferior-frontal-sulcus", name: "Surco frontal inferior", type: "Surco cerebral",
+    description: "Surco que separa el giro frontal inferior del giro frontal medio.",
+    function: "Ayuda a delimitar regiones prefrontales implicadas en lenguaje, control cognitivo y conducta.",
+    location: "Superficie lateral del lóbulo frontal, por encima del giro frontal inferior.",
+    relationships: ["Giro frontal inferior", "Giro frontal medio", "Corteza prefrontal"],
+  }),
+  bilateral("Surco frontal superior", {
+    id: "nervous.superior-frontal-sulcus", name: "Surco frontal superior", type: "Surco cerebral",
+    description: "Surco longitudinal que separa el giro frontal superior del giro frontal medio.",
+    function: "Delimita regiones de la corteza prefrontal dorsal relacionadas con planificación y control ejecutivo.",
+    location: "Superficie lateral del lóbulo frontal, entre los giros frontal superior y medio.",
+    relationships: ["Giro frontal superior", "Giro frontal medio", "Corteza prefrontal dorsolateral"],
+  }),
   {
     originalName: "Tracto corticoespinal anterior",
     data: {

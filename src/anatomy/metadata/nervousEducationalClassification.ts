@@ -86,12 +86,20 @@ export const nervousCentralBatch6Candidates = [
   { concept: "Polo temporal", educationalId: "nervous.temporal-pole", anatomyIds: ["nervous.model-node-0187", "nervous.model-node-0188"] },
 ] as const;
 
+export const nervousCentralBatch7Candidates = [
+  { concept: "Surco intermedio de Jensen", educationalId: "nervous.jensen-intermediate-sulcus", anatomyIds: ["nervous.model-node-0281", "nervous.model-node-0282"] },
+  { concept: "Surco circular de la ínsula", educationalId: "nervous.circular-insular-sulcus", anatomyIds: ["nervous.model-node-0283", "nervous.model-node-0284"] },
+  { concept: "Surco colateral", educationalId: "nervous.collateral-sulcus", anatomyIds: ["nervous.model-node-0285", "nervous.model-node-0286"] },
+  { concept: "Surco frontal inferior", educationalId: "nervous.inferior-frontal-sulcus", anatomyIds: ["nervous.model-node-0287", "nervous.model-node-0288"] },
+  { concept: "Surco frontal superior", educationalId: "nervous.superior-frontal-sulcus", anatomyIds: ["nervous.model-node-0289", "nervous.model-node-0290"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 232,
-  centralEntriesWithoutEducationalContent: 78,
+  entriesWithoutEducationalContent: 222,
+  centralEntriesWithoutEducationalContent: 68,
   peripheralEntriesWithoutEducationalContent: 144,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 55,
-  completedEntries: 95,
-  entriesPendingReview: 232,
+  completedConcepts: 60,
+  completedEntries: 105,
+  entriesPendingReview: 222,
 } as const;

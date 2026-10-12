@@ -488,6 +488,11 @@ const curatedNames: Readonly<Record<string, string>> = {
   "nervous.triangular-part-inferior-frontal-gyrus": "Triangular part of inferior frontal gyrus",
   "nervous.planum-temporale": "Planum temporale",
   "nervous.temporal-pole": "Temporal pole",
+  "nervous.jensen-intermediate-sulcus": "Jensen intermediate sulcus",
+  "nervous.circular-insular-sulcus": "Circular insular sulcus",
+  "nervous.collateral-sulcus": "Collateral sulcus",
+  "nervous.inferior-frontal-sulcus": "Inferior frontal sulcus",
+  "nervous.superior-frontal-sulcus": "Superior frontal sulcus",
 };
 
 const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<NervousField, "name" | "relationship">, string>>>>> = {
@@ -670,6 +675,36 @@ const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<Ner
     description: "Anterior end of the temporal lobe integrating temporal and limbic regions.",
     function: "Contributes to semantic recognition, memory, and socioemotional processing.",
     location: "Anterior end of the temporal lobe, in front of the superior temporal gyrus.",
+  },
+  "nervous.jensen-intermediate-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Variable cortical sulcus located in the lateral temporal region of the cerebral hemisphere.",
+    function: "Provides an anatomical landmark for lateral temporal cortical regions.",
+    location: "Lateral surface of the temporal lobe, near the middle and inferior temporal gyri.",
+  },
+  "nervous.circular-insular-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Sulcus that partially surrounds the insular cortex and separates it from neighboring opercula.",
+    function: "Delimits the insula and helps identify its relationships with the opercular cortices.",
+    location: "Peripheral border of the insula, within the lateral fissure.",
+  },
+  "nervous.collateral-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Longitudinal sulcus on the inferior surface of the cerebral hemisphere.",
+    function: "Provides an anatomical landmark between medial and lateral temporal regions.",
+    location: "Inferior surface of the temporal lobe, near the parahippocampal and fusiform gyri.",
+  },
+  "nervous.inferior-frontal-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Sulcus separating the inferior frontal gyrus from the middle frontal gyrus.",
+    function: "Helps delimit prefrontal regions involved in language, cognitive control, and behavior.",
+    location: "Lateral surface of the frontal lobe, above the inferior frontal gyrus.",
+  },
+  "nervous.superior-frontal-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Longitudinal sulcus separating the superior frontal gyrus from the middle frontal gyrus.",
+    function: "Delimits dorsal prefrontal regions related to planning and executive control.",
+    location: "Lateral surface of the frontal lobe, between the superior and middle frontal gyri.",
   },
 };
 
