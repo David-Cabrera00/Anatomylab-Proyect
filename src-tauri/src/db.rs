@@ -447,6 +447,20 @@ pub fn db_get_quiz_answers(
     rows.map(|row| row.map_err(|e| e.to_string())).collect()
 }
 
+#[tauri::command]
+pub fn db_clear_learning_data(
+    db: tauri::State<'_, DbConnection>,
+) -> Result<(), String> {
+    let mut conn = db.get_connection();
+    let transaction = conn.transaction().map_err(|e| e.to_string())?;
+    transaction.execute("DELETE FROM quiz_answers", []).map_err(|e| e.to_string())?;
+    transaction.execute("DELETE FROM quiz_history", []).map_err(|e| e.to_string())?;
+    transaction.execute("DELETE FROM study_progress", []).map_err(|e| e.to_string())?;
+    transaction.execute("DELETE FROM study_sessions", []).map_err(|e| e.to_string())?;
+    transaction.commit().map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 // Favorites
 #[tauri::command]
 pub fn db_add_favorite(

@@ -73,9 +73,11 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
   const continueProgress = continueSystem ? progressBySystem[continueSystem.id] : undefined;
 
   return (
-    <section className="h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
+    <section className="dashboard-page h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
       <div className="mx-auto max-w-[88rem] space-y-8">
-        <header className="border-b border-line pb-5">
+        <header className="dashboard-hero relative overflow-hidden border border-line bg-surface px-6 py-6 shadow-ds-raised lg:px-8 lg:py-7">
+          <div className="dashboard-hero-glow pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full" aria-hidden="true" />
+          <div className="relative z-10">
           <div className="flex items-center justify-between gap-4">
             <p className="text-label font-semibold uppercase tracking-[0.16em] text-accent">{t("appName")}</p>
             <span className="flex items-center gap-2 text-caption uppercase tracking-[0.14em] text-ink-subtle">
@@ -90,9 +92,10 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
             </div>
             <div className="min-w-0">{search}</div>
           </div>
+          </div>
         </header>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.75fr)] lg:items-start lg:gap-12">
+        <div>
           <section aria-labelledby="continue-studying-title" className="min-w-0">
             <SectionHeading number="01" title={t("homeContinue")} action={<Button variant="ghost" size="sm" onClick={onOpenAnatomy}>{t("homeViewAnatomy")}<ArrowIcon /></Button>} />
             {continueSystem && continueProgress ? (
@@ -103,7 +106,7 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
                 onOpen={() => onOpenSystem(continueSystem.id)}
               />
             ) : (
-              <div className="mt-4 flex flex-col gap-4 border-l-4 border-accent bg-surface px-4 py-4 shadow-ds-raised sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+              <div className="dashboard-card mt-4 flex flex-col gap-4 border-l-4 border-accent bg-surface px-4 py-4 shadow-ds-raised sm:flex-row sm:items-center sm:justify-between sm:gap-6">
                 <div className="flex min-w-0 items-center gap-4">
                   <EmptyProgressIcon />
                   <div className="min-w-0">
@@ -117,13 +120,13 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
               </div>
             )}
           </section>
-
-          <ProgressSummary progress={progress} onOpen={onOpenAnatomy} />
         </div>
+
+        <ProgressSummary progress={progress} onOpen={onOpenAnatomy} />
 
         <section aria-labelledby="explore-systems-title">
           <SectionHeading
-            number="02"
+            number="03"
             title={t("systemsTitle")}
             aside={<p className="max-w-sm text-body text-ink-muted lg:text-right">{t("homeChooseSystem")}</p>}
           />
@@ -161,7 +164,7 @@ function ContinueStudy({ system, progress, description, onOpen }: { system: Home
   const config = anatomySystems[system.id];
 
   return (
-    <div className="mt-4 grid gap-6 border border-line bg-surface p-5 shadow-ds-raised sm:p-5 lg:grid-cols-[minmax(0,1fr)_13rem] lg:items-center lg:p-6">
+    <div className="dashboard-card mt-4 grid gap-6 border border-line bg-surface p-5 shadow-ds-raised sm:p-5 lg:grid-cols-[minmax(0,1fr)_13rem] lg:items-center lg:p-6">
       <div className="min-w-0">
         <div className="flex items-start gap-4">
           <div className="flex h-11 w-1 shrink-0 rounded-full" style={{ backgroundColor: config.color }} aria-hidden="true" />
@@ -199,7 +202,7 @@ function AnatomySystemItem({ system, description, onOpen }: { system: HomeSystem
   const config = anatomySystems[system.id];
 
   return (
-    <button type="button" onClick={onOpen} className="group relative flex min-h-[6.75rem] min-w-0 items-start gap-3 border border-line bg-surface px-4 py-3.5 text-left shadow-ds-raised transition-[border-color,background-color,transform] duration-150 hover:-translate-y-0.5 hover:border-line-strong hover:bg-surface-raised focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:translate-y-0 active:bg-accent-soft">
+    <button type="button" onClick={onOpen} className="dashboard-system-card group relative flex min-h-[6.75rem] min-w-0 items-start gap-3 border border-line bg-surface px-4 py-3.5 text-left shadow-ds-raised transition-[border-color,background-color,transform,box-shadow] duration-200 hover:-translate-y-1 hover:border-line-strong hover:bg-surface-raised hover:shadow-ds-floating focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:translate-y-0 active:bg-accent-soft">
       <span className="h-full min-h-12 w-1 shrink-0 rounded-full" style={{ backgroundColor: config.color }} aria-hidden="true" />
       <SystemIcon system={system.id} color={config.color} />
       <span className="flex min-w-0 flex-1 flex-col">
@@ -216,10 +219,10 @@ function ProgressSummary({ progress, onOpen }: { progress: SystemProgress | null
   const accuracy = progress && progress.answered > 0 ? Math.round((progress.correct / progress.answered) * 100) : 0;
 
   return (
-    <section aria-labelledby="progress-summary-title" className="border-t border-line pt-6 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">
+    <section aria-labelledby="progress-summary-title" className="dashboard-summary border border-line bg-surface p-6 shadow-ds-raised lg:p-7">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">03</p>
+          <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">02</p>
           <h2 id="progress-summary-title" className="mt-2 text-title font-semibold tracking-tight text-ink">{t("homeGeneralProgress")}</h2>
         </div>
         <Button variant="ghost" size="sm" onClick={onOpen}>{t("navProgress")}<ArrowIcon /></Button>

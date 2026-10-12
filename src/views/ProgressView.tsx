@@ -13,9 +13,9 @@ export function ProgressView({ system }: { system: AnatomySystemId }) {
   const accuracy = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0;
 
   return (
-    <section className="h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
+    <section className="progress-page h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
       <div className="mx-auto max-w-[88rem] space-y-8">
-        <header className="border-b border-line pb-6">
+        <header className="progress-hero border border-line bg-surface px-6 py-6 shadow-ds-raised lg:px-8 lg:py-7">
           <div className="flex items-center justify-between gap-4">
             <p className="text-label font-semibold uppercase tracking-[0.16em] text-accent">{t("progressTitle")}</p>
             <span className="text-caption uppercase tracking-[0.14em] text-ink-subtle">AnatomyLab AI</span>
@@ -35,7 +35,7 @@ export function ProgressView({ system }: { system: AnatomySystemId }) {
         </header>
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.75fr)] lg:gap-10">
-          <section aria-labelledby="overall-progress-title" className="min-w-0 border border-line bg-surface p-6 shadow-ds-raised sm:p-7">
+          <section aria-labelledby="overall-progress-title" className="progress-card min-w-0 border border-line bg-surface p-6 shadow-ds-raised sm:p-7">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div><p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">01</p><h2 id="overall-progress-title" className="mt-2 text-title font-semibold tracking-tight text-ink">{t("progressOverall")}</h2></div>
               <span className="text-caption uppercase tracking-[0.12em] text-ink-subtle">{t("progressActiveSystem")}</span>
@@ -46,14 +46,14 @@ export function ProgressView({ system }: { system: AnatomySystemId }) {
           <SystemIndex activeSystem={system} />
         </div>
 
-        <section aria-labelledby="mastery-title" className="border-t border-line pt-7">
+        <section aria-labelledby="mastery-title" className="progress-section border-t border-line pt-7">
           <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">02</p><h2 id="mastery-title" className="mt-2 text-title font-semibold tracking-tight text-ink">{t("progressMastery")}</h2></div><p className="max-w-md text-body text-ink-muted">{t("progressMasteryIntro")}</p></div>
-          <div className="mt-5 border border-line bg-surface p-5 shadow-ds-raised sm:p-6"><ProgressTab system={system} stats={stats} onStatsLoaded={setStats} showSummary={false} /></div>
+          <div className="progress-card mt-5 border border-line bg-surface p-5 shadow-ds-raised sm:p-6"><ProgressTab system={system} stats={stats} onStatsLoaded={setStats} showSummary={false} /></div>
         </section>
 
-        <section aria-labelledby="history-title" className="border-t border-line pt-7">
+        <section aria-labelledby="history-title" className="progress-section border-t border-line pt-7">
           <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">03</p><h2 id="history-title" className="mt-2 text-title font-semibold tracking-tight text-ink">{t("progressHistory")}</h2></div><p className="max-w-md text-body text-ink-muted">{t("progressHistoryIntro")}</p></div>
-          <div className="mt-5 border border-line bg-surface p-5 shadow-ds-raised sm:p-6"><HistoryTab system={system} /></div>
+          <div className="progress-card mt-5 border border-line bg-surface p-5 shadow-ds-raised sm:p-6"><HistoryTab system={system} /></div>
         </section>
       </div>
     </section>
@@ -76,7 +76,7 @@ function GeneralSummary({ accuracy, totalAnswers, structures }: { accuracy: numb
 function SystemIndex({ activeSystem }: { activeSystem: AnatomySystemId }) {
   const { t } = useI18n();
   return (
-    <aside className="border border-line bg-surface p-5 shadow-ds-raised" aria-label={t("systemsTitle")}>
+    <aside className="progress-card border border-line bg-surface p-5 shadow-ds-raised" aria-label={t("systemsTitle")}>
       <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("systemsTitle")}</p>
       <div className="mt-4 divide-y divide-line">
         {anatomySystemList.map((system) => {

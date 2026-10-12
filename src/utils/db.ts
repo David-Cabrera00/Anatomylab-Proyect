@@ -141,6 +141,10 @@ export async function dbGetQuizHistory(system?: string, limit?: number): Promise
   return invoke("db_get_quiz_history", { system, limit });
 }
 
+export async function dbClearLearningData(): Promise<void> {
+  return invoke("db_clear_learning_data");
+}
+
 // Favorites
 export async function dbAddFavorite(
   system: string,

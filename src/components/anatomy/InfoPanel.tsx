@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { AnatomySystemConfig, AnatomySystemId } from "../../config/anatomySystems";
 import type { AnatomyStructureData } from "../../data/anatomyStructureData";
 import type { StudyGuide } from "../../data/studyGuides";
@@ -12,7 +13,7 @@ type InfoPanelProps = {
   selectedAnatomyId: string | null;
   selectedDisplayName: string | null;
   selectedData: AnatomyStructureData | null;
-  systemSymbol: string;
+  systemIcon: ReactNode;
   emptyDescription: string;
   studyMode: boolean;
   activeStudyGuide?: StudyGuide;
@@ -29,7 +30,7 @@ export function InfoPanel({
   selectedAnatomyId,
   selectedDisplayName,
   selectedData,
-  systemSymbol,
+  systemIcon,
   emptyDescription,
   studyMode,
   activeStudyGuide,
@@ -53,14 +54,14 @@ export function InfoPanel({
     ? getLocalizedText(explicitDisplayName ?? { es: localizedDataName, en: `${localizedDataName}${muscularLaterality}` }, language)
     : null;
   return (
-    <aside className="flex w-[340px] min-w-0 shrink-0 flex-col overflow-y-auto border-l border-line bg-surface">
+    <aside className="anatomy-info-panel flex w-[340px] min-w-0 shrink-0 flex-col overflow-y-auto border-l border-line bg-surface">
       <div className="border-b border-line px-5 pb-4 pt-4">
         <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("anatomyInformation")}</p>
 
         {selectedAnatomyId ? (
           <div className="mt-4 min-w-0">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-ds-md text-heading font-semibold" style={{ backgroundColor: activeConfig.accentColor, color: activeConfig.color }} aria-hidden="true">
-              {systemSymbol}
+              {systemIcon}
             </div>
             <p className="text-caption font-semibold uppercase tracking-[0.12em]" style={{ color: activeConfig.color }}>{t(systemTranslationKeys[activeConfig.id])}</p>
             <h2 className="mt-1 text-title font-semibold tracking-tight text-ink [overflow-wrap:anywhere]">{localizedDisplayName}</h2>

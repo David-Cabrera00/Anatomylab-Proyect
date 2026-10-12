@@ -1,11 +1,11 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "../ui";
 import type { QuizState } from "../../data/quiz/types";
 import type { AnatomySystemId } from "../../config/anatomySystems";
 import { getQuizConfig, getQuizConfigsBySystem } from "../../data/quiz";
 import { answerQuestion, createQuizSession, finishQuizSession, formatTime } from "../../utils/quiz/quizUtils";
-import { dbSaveQuizSession } from "../../utils/db";
+import { dbGetPreference, dbSaveQuizSession } from "../../utils/db";
 import { getLocalizedText, systemTranslationKeys, useI18n } from "../../i18n";
 
 interface QuizPanelProps {
@@ -20,6 +20,17 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
   const activeSystem = t(systemTranslationKeys[activeSystemId]);
   const [configs] = useState(() => getQuizConfigsBySystem(activeSystemId));
   const [persistenceError, setPersistenceError] = useState<string | null>(null);
+  const [showExplanations, setShowExplanations] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    void dbGetPreference("study.showExplanations")
+      .then((stored) => {
+        if (!cancelled && stored !== null) setShowExplanations(stored !== "false");
+      })
+      .catch(() => { /* Keep explanations enabled by default. */ });
+    return () => { cancelled = true; };
+  }, []);
 
   const handleStartQuiz = useCallback((configId: string) => {
     const session = createQuizSession(configId);
@@ -195,7 +206,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
                     return <div key={optionIndex} className={`flex items-start gap-3 text-label ${isSelected || isCorrectOption ? "font-medium text-ink" : "text-ink-muted"}`}><span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-caption ${isCorrectOption ? "border-success bg-success-soft text-success" : isSelected ? "border-error bg-error-soft text-error" : "border-line-strong"}`}>{isCorrectOption ? "✓" : isSelected ? "×" : String.fromCharCode(65 + optionIndex)}</span><span>{getLocalizedText(option, language)}</span></div>;
                   })}
                 </div>
-                <p className="mt-4 border-t border-current/10 pt-3 text-label leading-5 text-ink-muted">{getLocalizedText(question.explanation, language)}</p>
+                {showExplanations && <p className="mt-4 border-t border-current/10 pt-3 text-label leading-5 text-ink-muted">{getLocalizedText(question.explanation, language)}</p>}
               </article>
             );
           })}
