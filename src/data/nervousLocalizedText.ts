@@ -518,6 +518,16 @@ const curatedNames: Readonly<Record<string, string>> = {
   "nervous.superior-salivatory-nucleus": "Superior salivatory nucleus",
   "nervous.opercular-part-inferior-frontal-gyrus": "Opercular part of inferior frontal gyrus",
   "nervous.spinal-reticular-process": "Spinal reticular process",
+  "nervous.horizontal-anterior-lateral-fissure-branch": "Horizontal anterior branch of lateral fissure",
+  "nervous.vertical-anterior-lateral-fissure-branch": "Vertical anterior branch of lateral fissure",
+  "nervous.posterior-lateral-fissure-branch": "Posterior branch of lateral fissure",
+  "nervous.posterior-transverse-collateral-sulcus": "Posterior transverse collateral sulcus",
+  "nervous.marginal-cingulate-sulcus": "Marginal cingulate sulcus",
+  "nervous.anterior-occipital-sulcus": "Anterior occipital sulcus",
+  "nervous.lunate-sulcus": "Lunate sulcus",
+  "nervous.h-shaped-orbital-sulci": "H-shaped orbital sulci",
+  "nervous.lateral-orbital-sulci": "Lateral orbital sulci",
+  "nervous.lateral-intermediate-substance": "Lateral intermediate substance",
 };
 
 const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<NervousField, "name" | "relationship">, string>>>>> = {
@@ -880,6 +890,66 @@ const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<Ner
     description: "Reticular extension or region related to the internal organization of the spinal cord.",
     function: "Participates in spinal signal integration and modulation of motor and autonomic responses.",
     location: "Reticular region of the brainstem and its spinal continuities.",
+  },
+  "nervous.horizontal-anterior-lateral-fissure-branch": {
+    type: "Cerebral sulcus",
+    description: "Horizontal anterior branch of the lateral fissure extending toward the frontal surface.",
+    function: "Delimits opercular regions and helps organize the inferior frontal cortex.",
+    location: "Anterior portion of the lateral fissure, between the frontal and temporal opercula.",
+  },
+  "nervous.vertical-anterior-lateral-fissure-branch": {
+    type: "Cerebral sulcus",
+    description: "Vertical anterior branch of the lateral fissure ascending toward the frontal lobe.",
+    function: "Helps delimit the opercular and triangular parts of the inferior frontal gyrus.",
+    location: "Anterior lateral fissure, between its horizontal and posterior branches.",
+  },
+  "nervous.posterior-lateral-fissure-branch": {
+    type: "Cerebral sulcus",
+    description: "Main posterior branch of the lateral fissure separating frontal and parietal lobes from the temporal lobe.",
+    function: "Delimits the superior temporal cortex and adjacent opercular regions.",
+    location: "Lateral surface of the hemisphere, between the temporal, frontal, and parietal lobes.",
+  },
+  "nervous.posterior-transverse-collateral-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Posterior transverse sulcus related to the organization of the inferior temporal and occipital surfaces.",
+    function: "Provides a landmark for medial occipitotemporal regions.",
+    location: "Posterior inferior surface of the cerebral hemisphere.",
+  },
+  "nervous.marginal-cingulate-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Marginal end of the cingulate sulcus near the superior border of the hemisphere.",
+    function: "Delimits medial frontoparietal regions related to motor control and attention.",
+    location: "Medial surface of the hemisphere, near the paracentral lobule.",
+  },
+  "nervous.anterior-occipital-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Sulcus on the anterior region of the lateral surface of the occipital lobe.",
+    function: "Contributes to the organization of occipital visual cortical areas.",
+    location: "Lateral surface of the occipital lobe, near its temporal boundary.",
+  },
+  "nervous.lunate-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Sulcus on the occipital surface associated with the boundaries of visual cortex.",
+    function: "Marks the transition between primary visual and visual association regions.",
+    location: "Lateral and posterior surface of the occipital lobe.",
+  },
+  "nervous.h-shaped-orbital-sulci": {
+    type: "Cerebral sulci",
+    description: "Group of approximately H-shaped sulci on the orbital frontal surface.",
+    function: "Organizes and delimits orbital gyri involved in valuation and behavioral control.",
+    location: "Inferior surface of the frontal lobe.",
+  },
+  "nervous.lateral-orbital-sulci": {
+    type: "Cerebral sulci",
+    description: "Sulci on the lateral orbital surface of the frontal lobe.",
+    function: "Delimit lateral orbitofrontal regions involved in stimulus evaluation.",
+    location: "Lateral orbital surface of the frontal lobe.",
+  },
+  "nervous.lateral-intermediate-substance": {
+    type: "Spinal gray matter",
+    description: "Gray matter region located between the posterior and anterior horns of the spinal cord.",
+    function: "Integrates sensory and motor signals and contains circuits related to autonomic functions.",
+    location: "Lateral intermediate zone of the spinal cord, especially in thoracic segments.",
   },
 };
 

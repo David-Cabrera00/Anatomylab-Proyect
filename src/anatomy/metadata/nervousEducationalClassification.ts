@@ -131,12 +131,25 @@ export const nervousCentralBatch11Candidates = [
   { concept: "Proceso reticular espinal", educationalId: "nervous.spinal-reticular-process", anatomyIds: ["nervous.model-node-0193"] },
 ] as const;
 
+export const nervousCentralBatch12Candidates = [
+  { concept: "Rama anterior horizontal de la cisura lateral", educationalId: "nervous.horizontal-anterior-lateral-fissure-branch", anatomyIds: ["nervous.model-node-0065", "nervous.model-node-0066"] },
+  { concept: "Rama anterior vertical de la cisura lateral", educationalId: "nervous.vertical-anterior-lateral-fissure-branch", anatomyIds: ["nervous.model-node-0067", "nervous.model-node-0068"] },
+  { concept: "Rama posterior de la cisura lateral", educationalId: "nervous.posterior-lateral-fissure-branch", anatomyIds: ["nervous.model-node-0069", "nervous.model-node-0070"] },
+  { concept: "Surco colateral transversal posterior", educationalId: "nervous.posterior-transverse-collateral-sulcus", anatomyIds: ["nervous.model-node-0001", "nervous.model-node-0002"] },
+  { concept: "Surco del cíngulo, porción marginal", educationalId: "nervous.marginal-cingulate-sulcus", anatomyIds: ["nervous.model-node-0023", "nervous.model-node-0024"] },
+  { concept: "Surco occipital anterior", educationalId: "nervous.anterior-occipital-sulcus", anatomyIds: ["nervous.model-node-0007", "nervous.model-node-0008"] },
+  { concept: "Surco semilunar", educationalId: "nervous.lunate-sulcus", anatomyIds: ["nervous.model-node-0075", "nervous.model-node-0076"] },
+  { concept: "Surcos orbitarios en H", educationalId: "nervous.h-shaped-orbital-sulci", anatomyIds: ["nervous.model-node-0173", "nervous.model-node-0174"] },
+  { concept: "Surcos orbitarios laterales", educationalId: "nervous.lateral-orbital-sulci", anatomyIds: ["nervous.model-node-0175", "nervous.model-node-0176"] },
+  { concept: "Sustancia intermedia lateral", educationalId: "nervous.lateral-intermediate-substance", anatomyIds: ["nervous.model-node-0307"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 178,
-  centralEntriesWithoutEducationalContent: 24,
+  entriesWithoutEducationalContent: 159,
+  centralEntriesWithoutEducationalContent: 5,
   peripheralEntriesWithoutEducationalContent: 144,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 85,
-  completedEntries: 149,
-  entriesPendingReview: 178,
+  completedConcepts: 95,
+  completedEntries: 168,
+  entriesPendingReview: 159,
 } as const;
