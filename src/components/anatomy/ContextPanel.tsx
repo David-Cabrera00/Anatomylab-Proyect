@@ -28,7 +28,7 @@ export function ContextPanel({
   const { t } = useI18n();
 
   return (
-    <aside className="flex w-[236px] min-w-0 shrink-0 flex-col overflow-y-auto border-r border-line bg-surface">
+    <aside className="anatomy-context-panel flex w-[236px] min-w-0 shrink-0 flex-col overflow-y-auto border-r border-line bg-surface">
       <div className="border-b border-line px-4 py-4">
         <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("anatomyContext")}</p>
         <div className="mt-2 flex items-center gap-2">

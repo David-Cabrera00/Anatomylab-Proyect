@@ -15,6 +15,7 @@ import { AuthAnatomyPreview } from "./components/layout/AuthAnatomyPreview";
 import { AuthLayout } from "./components/layout/AuthLayout";
 import { ContextPanel } from "./components/anatomy/ContextPanel";
 import { InfoPanel } from "./components/anatomy/InfoPanel";
+import { SystemIcon } from "./components/anatomy/SystemIcon";
 import { ViewerToolbar } from "./components/anatomy/ViewerToolbar";
 import { ViewportFrame } from "./components/anatomy/ViewportFrame";
 
@@ -60,35 +61,6 @@ import { anatomyLayerTranslationKeys, systemDescriptionTranslationKeys, systemFu
 type CardiovascularView =
   | "overview"
   | "heart-detail";
-
-/* ======================================================
-   SÍMBOLOS TEMPORALES
-
-   Más adelante podemos reemplazarlos por iconos.
-====================================================== */
-
-const systemSymbols: Record<
-  AnatomySystemId,
-  string
-> = {
-  cardiovascular:
-    "♥",
-
-  respiratory:
-    "R",
-
-  nervous:
-    "N",
-
-  skeletal:
-    "E",
-
-  muscular:
-    "M",
-
-  digestive:
-    "D",
-};
 
 /* ======================================================
    TEXTO INICIAL DE CADA SISTEMA
@@ -842,7 +814,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           selectedAnatomyId={selectedAnatomyId}
           selectedDisplayName={selectedDisplayName}
           selectedData={selectedAnatomyIdData}
-          systemSymbol={systemSymbols[activeSystem]}
+          systemIcon={<SystemIcon system={activeSystem} color={activeConfig.color} className="h-7 w-7" />}
           emptyDescription={activeSystem === "cardiovascular" && cardiovascularView === "heart-detail"
             ? t("heartDetailDescription")
             : t(systemDescriptionTranslationKeys[activeSystem])}

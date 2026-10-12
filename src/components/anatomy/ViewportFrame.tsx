@@ -9,8 +9,8 @@ type ViewportFrameProps = {
 
 export function ViewportFrame({ children, label, metadata, hint }: ViewportFrameProps) {
   return (
-    <div className="relative min-h-0 min-w-0 flex-1 overflow-hidden bg-canvas p-4">
-      <div className="relative h-full min-h-0 overflow-hidden rounded-ds-md border border-line bg-surface">
+    <div className="viewer-stage relative min-h-0 min-w-0 flex-1 overflow-hidden bg-canvas p-4">
+      <div className="viewer-canvas relative h-full min-h-0 overflow-hidden rounded-ds-md border border-line bg-surface">
         <span className="pointer-events-none absolute left-3 top-3 z-10 h-3 w-3 border-l border-t border-line-strong" aria-hidden="true" />
         <span className="pointer-events-none absolute right-3 top-3 z-10 h-3 w-3 border-r border-t border-line-strong" aria-hidden="true" />
         <span className="pointer-events-none absolute bottom-3 left-3 z-10 h-3 w-3 border-b border-l border-line-strong" aria-hidden="true" />

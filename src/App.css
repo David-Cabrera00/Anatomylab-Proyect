@@ -203,6 +203,44 @@ body {
   background-image: radial-gradient(circle at 8% 10%, rgb(104 182 197 / 9%), transparent 24rem);
 }
 
+.viewer-stage {
+  background-image: radial-gradient(circle at 50% 42%, rgb(23 96 117 / 7%), transparent 32rem);
+}
+
+.viewer-canvas {
+  background-image:
+    radial-gradient(circle at 50% 42%, rgb(23 96 117 / 8%), transparent 42%),
+    linear-gradient(rgb(23 96 117 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(23 96 117 / 3%) 1px, transparent 1px);
+  background-size: auto, 56px 56px, 56px 56px;
+}
+
+.anatomy-context-panel,
+.anatomy-info-panel {
+  box-shadow: var(--shadow-ds-raised);
+}
+
+.anatomy-context-panel button,
+.anatomy-info-panel button {
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.anatomy-context-panel button:hover:not(:disabled),
+.anatomy-info-panel button:hover:not(:disabled) {
+  transform: translateX(1px);
+}
+
+:root[data-theme="dark"] .viewer-stage {
+  background-image: radial-gradient(circle at 50% 42%, rgb(104 182 197 / 9%), transparent 32rem);
+}
+
+:root[data-theme="dark"] .viewer-canvas {
+  background-image:
+    radial-gradient(circle at 50% 42%, rgb(104 182 197 / 10%), transparent 42%),
+    linear-gradient(rgb(104 182 197 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(104 182 197 / 4%) 1px, transparent 1px);
+}
+
 .auth-panel-glow {
   background: radial-gradient(circle at 72% 48%, rgb(255 255 255 / 28%), transparent 43%);
 }
