@@ -812,6 +812,41 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
     location: "Entre el flóculo y la región del nódulo cerebeloso.",
     relationships: ["Flóculo", "Nódulo del vermis", "Núcleos vestibulares"],
   }),
+  bilateral("Amígdala del cerebelo", {
+    id: "nervous.cerebellar-amygdala", name: "Amígdala del cerebelo", type: "Lóbulo cerebeloso",
+    description: "Lóbulo del hemisferio cerebeloso situado en la región inferior y posterior del cerebelo.",
+    function: "Participa en circuitos cerebelosos relacionados con el equilibrio y la coordinación motora.",
+    location: "Superficie inferior del hemisferio cerebeloso, próxima al flóculo y al nódulo.",
+    relationships: ["Cerebelo", "Flóculo", "Nódulo del vermis"],
+  }),
+  bilateral("Cingulate gyrus and sulcus (Middle anterior part)", {
+    id: "nervous.middle-anterior-cingulate-gyrus", name: "Giro y surco del cíngulo, porción media anterior", type: "Sistema límbico",
+    description: "Región del giro del cíngulo y su surco en la superficie medial anterior del hemisferio cerebral.",
+    function: "Contribuye a la atención, la motivación y la integración de respuestas emocionales con la conducta.",
+    location: "Superficie medial del lóbulo frontal, alrededor del cuerpo calloso.",
+    relationships: ["Cuerpo calloso", "Giro del cíngulo", "Corteza prefrontal"],
+  }),
+  bilateral("Cingulate gyrus and sulcus (Middle posterior part)", {
+    id: "nervous.middle-posterior-cingulate-gyrus", name: "Giro y surco del cíngulo, porción media posterior", type: "Sistema límbico",
+    description: "Región posterior del giro del cíngulo y del surco que lo acompaña en la superficie medial cerebral.",
+    function: "Participa en la memoria, la orientación interna y la integración de información contextual.",
+    location: "Superficie medial del hemisferio, posterior al cuerpo calloso.",
+    relationships: ["Cuerpo calloso", "Precúneo", "Giro parahipocampal"],
+  }),
+  bilateral("Paracentral gyrus and sulcus*", {
+    id: "nervous.paracentral-gyrus-and-sulcus", name: "Giro y surco paracentrales", type: "Corteza cerebral",
+    description: "Lobulillo de la superficie medial cerebral que continúa las regiones precentral y poscentral.",
+    function: "Contiene representaciones motoras y sensitivas relacionadas principalmente con el miembro inferior.",
+    location: "Superficie medial del hemisferio, alrededor del extremo superior del surco central.",
+    relationships: ["Surco central", "Corteza motora", "Corteza somatosensitiva"],
+  }),
+  bilateral("Orbital gyri (Frontomarginal gyrus and sulcus*)", {
+    id: "nervous.frontomarginal-orbital-gyri", name: "Giros orbitarios frontomarginales", type: "Corteza cerebral",
+    description: "Conjunto de giros de la superficie orbitaria del lóbulo frontal próximos al borde frontal.",
+    function: "Participa en redes orbitofrontales que valoran estímulos y orientan la toma de decisiones.",
+    location: "Superficie inferior y medial del lóbulo frontal.",
+    relationships: ["Corteza orbitofrontal", "Giro recto", "Surco olfatorio"],
+  }),
   {
     originalName: "Tracto corticoespinal anterior",
     data: {

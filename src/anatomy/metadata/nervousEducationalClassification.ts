@@ -54,12 +54,20 @@ export const nervousPeripheralBatch2Candidates = [
   { concept: "División posterior del tronco inferior", educationalId: "nervous.inferior-trunk-posterior-division", anatomyIds: ["nervous.model-node-0041", "nervous.model-node-0042"] },
 ] as const;
 
+export const nervousCentralBatch3Candidates = [
+  { concept: "Amígdala del cerebelo", educationalId: "nervous.cerebellar-amygdala", anatomyIds: ["nervous.cerebellar-amygdala.left", "nervous.cerebellar-amygdala.right"] },
+  { concept: "Giro y surco del cíngulo, porción media anterior", educationalId: "nervous.middle-anterior-cingulate-gyrus", anatomyIds: ["nervous.model-node-0017", "nervous.model-node-0018"] },
+  { concept: "Giro y surco del cíngulo, porción media posterior", educationalId: "nervous.middle-posterior-cingulate-gyrus", anatomyIds: ["nervous.model-node-0019", "nervous.model-node-0020"] },
+  { concept: "Giro y surco paracentrales", educationalId: "nervous.paracentral-gyrus-and-sulcus", anatomyIds: ["nervous.model-node-0177", "nervous.model-node-0178"] },
+  { concept: "Giros orbitarios frontomarginales", educationalId: "nervous.frontomarginal-orbital-gyri", anatomyIds: ["nervous.model-node-0169", "nervous.model-node-0170"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 267,
-  centralEntriesWithoutEducationalContent: 113,
+  entriesWithoutEducationalContent: 257,
+  centralEntriesWithoutEducationalContent: 103,
   peripheralEntriesWithoutEducationalContent: 144,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 35,
-  completedEntries: 60,
-  entriesPendingReview: 267,
+  completedConcepts: 40,
+  completedEntries: 70,
+  entriesPendingReview: 257,
 } as const;

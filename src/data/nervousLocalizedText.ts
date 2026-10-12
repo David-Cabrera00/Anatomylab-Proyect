@@ -468,6 +468,11 @@ const curatedNames: Readonly<Record<string, string>> = {
   "nervous.radial-nerve": "Radial nerve",
   "nervous.olfactory-nerve": "Olfactory nerve (I)",
   "nervous.optic-nerve": "Optic nerve (II)",
+  "nervous.cerebellar-amygdala": "Cerebellar tonsil",
+  "nervous.middle-anterior-cingulate-gyrus": "Middle anterior cingulate gyrus and sulcus",
+  "nervous.middle-posterior-cingulate-gyrus": "Middle posterior cingulate gyrus and sulcus",
+  "nervous.paracentral-gyrus-and-sulcus": "Paracentral gyrus and sulcus",
+  "nervous.frontomarginal-orbital-gyri": "Frontomarginal orbital gyri",
 };
 
 const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<NervousField, "name" | "relationship">, string>>>>> = {
@@ -530,6 +535,36 @@ const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<Ner
     description: "Special sensory fibers carrying olfactory information from the nasal mucosa.",
     function: "Conducts signals from olfactory receptors to the olfactory bulb.",
     location: "Crosses the cribriform plate of the ethmoid toward the base of the brain.",
+  },
+  "nervous.cerebellar-amygdala": {
+    type: "Cerebellar lobe",
+    description: "Lobe of the cerebellar hemisphere located on its inferior and posterior aspect.",
+    function: "Participates in cerebellar circuits related to balance and motor coordination.",
+    location: "Inferior surface of the cerebellar hemisphere, near the flocculus and nodulus.",
+  },
+  "nervous.middle-anterior-cingulate-gyrus": {
+    type: "Limbic system",
+    description: "Region of the cingulate gyrus and its sulcus on the anterior medial cerebral hemisphere.",
+    function: "Contributes to attention, motivation, and the integration of emotional responses with behavior.",
+    location: "Medial surface of the frontal lobe, around the corpus callosum.",
+  },
+  "nervous.middle-posterior-cingulate-gyrus": {
+    type: "Limbic system",
+    description: "Posterior region of the cingulate gyrus and its accompanying sulcus on the medial cerebral surface.",
+    function: "Participates in memory, internal orientation, and contextual information integration.",
+    location: "Medial surface of the hemisphere, posterior to the corpus callosum.",
+  },
+  "nervous.paracentral-gyrus-and-sulcus": {
+    type: "Cerebral cortex",
+    description: "Medial cerebral lobule that continues the precentral and postcentral regions.",
+    function: "Contains motor and sensory representations mainly related to the lower limb.",
+    location: "Medial surface of the hemisphere, around the superior end of the central sulcus.",
+  },
+  "nervous.frontomarginal-orbital-gyri": {
+    type: "Cerebral cortex",
+    description: "Group of gyri on the orbital surface of the frontal lobe near its frontal margin.",
+    function: "Participates in orbitofrontal networks that evaluate stimuli and guide decision-making.",
+    location: "Inferior and medial surface of the frontal lobe.",
   },
 };
 
