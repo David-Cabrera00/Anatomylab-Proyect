@@ -68,6 +68,29 @@ export const nervousPeripheralBatch4Candidates = [
   { concept: "Rama femoral del nervio genitofemoral", educationalId: "nervous.femoral-genitofemoral-branch", anatomyIds: ["nervous.model-node-0200", "nervous.model-node-0201"] },
 ] as const;
 
+export const nervousPeripheralBatch5Candidates = [
+  { concept: "Rama genital del nervio genitofemoral", educationalId: "nervous.genital-genitofemoral-branch", anatomyIds: ["nervous.model-node-0202", "nervous.model-node-0203"] },
+  { concept: "Rama infrapatelar del nervio safeno", educationalId: "nervous.infrapatellar-saphenous-branch", anatomyIds: ["nervous.model-node-0204", "nervous.model-node-0205"] },
+  { concept: "Rama meníngea del nervio maxilar", educationalId: "nervous.meningeal-maxillary-branch", anatomyIds: ["nervous.model-node-0206", "nervous.model-node-0207"] },
+  { concept: "Rama palmar del nervio mediano", educationalId: "nervous.palmar-median-branch", anatomyIds: ["nervous.model-node-0208", "nervous.model-node-0209"] },
+  { concept: "Rama palmar del nervio ulnar", educationalId: "nervous.palmar-ulnar-branch", anatomyIds: ["nervous.model-node-0210", "nervous.model-node-0211"] },
+  { concept: "Rama posterior del nervio cutáneo antebraquial medial", educationalId: "nervous.posterior-branch-medial-antebrachial-cutaneous-nerve", anatomyIds: ["nervous.model-node-0212", "nervous.model-node-0213"] },
+  { concept: "Rama posterior del nervio obturador", educationalId: "nervous.posterior-obturator-nerve-branch", anatomyIds: ["nervous.model-node-0214", "nervous.model-node-0215"] },
+  { concept: "Rama profunda del nervio radial", educationalId: "nervous.deep-radial-nerve-branch", anatomyIds: ["nervous.model-node-0216", "nervous.model-node-0217"] },
+  { concept: "Rama profunda del nervio ulnar", educationalId: "nervous.deep-ulnar-nerve-branch", anatomyIds: ["nervous.model-node-0218", "nervous.model-node-0219"] },
+  { concept: "Rama superficial del nervio radial", educationalId: "nervous.superficial-radial-nerve-branch", anatomyIds: ["nervous.model-node-0220", "nervous.model-node-0221"] },
+  { concept: "Rama superficial del nervio ulnar", educationalId: "nervous.superficial-ulnar-nerve-branch", anatomyIds: ["nervous.model-node-0222", "nervous.model-node-0223"] },
+  { concept: "Rama sural comunicante del nervio fibular común", educationalId: "nervous.communicating-sural-branch-common-fibular", anatomyIds: ["nervous.model-node-0224", "nervous.model-node-0225"] },
+  { concept: "Ramas cutáneas anteriores del nervio femoral", educationalId: "nervous.anterior-cutaneous-femoral-branches", anatomyIds: ["nervous.model-node-0226", "nervous.model-node-0227"] },
+  { concept: "Ramas cutáneas crurales mediales del nervio safeno", educationalId: "nervous.medial-crural-cutaneous-saphenous-branches", anatomyIds: ["nervous.model-node-0228", "nervous.model-node-0229"] },
+  { concept: "Ramas digitales dorsales del nervio fibular profundo", educationalId: "nervous.dorsal-digital-deep-fibular-branches", anatomyIds: ["nervous.model-node-0230", "nervous.model-node-0231"] },
+  { concept: "Ramas digitales dorsales del nervio fibular superficial", educationalId: "nervous.dorsal-digital-superficial-fibular-branches", anatomyIds: ["nervous.model-node-0232", "nervous.model-node-0233"] },
+  { concept: "Ramas digitales dorsales del nervio radial", educationalId: "nervous.dorsal-digital-radial-branches", anatomyIds: ["nervous.model-node-0234", "nervous.model-node-0235"] },
+  { concept: "Ramas digitales dorsales del nervio ulnar", educationalId: "nervous.dorsal-digital-ulnar-branches", anatomyIds: ["nervous.model-node-0236", "nervous.model-node-0237"] },
+  { concept: "Ramas digitales palmares comunes del nervio mediano", educationalId: "nervous.common-palmar-digital-median-branches", anatomyIds: ["nervous.model-node-0238", "nervous.model-node-0239"] },
+  { concept: "Ramas digitales palmares comunes del nervio ulnar", educationalId: "nervous.common-palmar-digital-ulnar-branches", anatomyIds: ["nervous.model-node-0240", "nervous.model-node-0241"] },
+] as const;
+
 export const nervousPeripheralBatch2Candidates = [
   { concept: "División anterior del tronco superior", educationalId: "nervous.superior-trunk-anterior-division", anatomyIds: ["nervous.model-node-0037", "nervous.model-node-0038"] },
   { concept: "División anterior del tronco medio", educationalId: "nervous.middle-trunk-anterior-division", anatomyIds: ["nervous.model-node-0035", "nervous.model-node-0036"] },
@@ -191,11 +214,11 @@ export const nervousPeripheralBatch1Candidates = [
 ] as const;
 
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 79,
+  entriesWithoutEducationalContent: 39,
   centralEntriesWithoutEducationalContent: 5,
-  peripheralEntriesWithoutEducationalContent: 64,
+  peripheralEntriesWithoutEducationalContent: 24,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 135,
-  completedEntries: 248,
-  entriesPendingReview: 79,
+  completedConcepts: 155,
+  completedEntries: 288,
+  entriesPendingReview: 39,
 } as const;

@@ -27,6 +27,7 @@ const groups = [
   ...classification.nervousCentralBatch2Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
   ...classification.nervousPeripheralBatch3Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
   ...classification.nervousPeripheralBatch4Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
+  ...classification.nervousPeripheralBatch5Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
   ...classification.nervousPeripheralBatch2Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
   ...classification.nervousCentralBatch3Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
   ...classification.nervousCentralBatch4Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
