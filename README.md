@@ -163,6 +163,7 @@ npm run backend:dev         # Ejecutar NestJS en desarrollo
 npm run backend:build       # Compilar el backend
 npm run backend:prisma:generate
 npm run backend:prisma:migrate
+npm --prefix backend run security:smoke # Pruebas de seguridad locales
 ```
 
 Validaciones recomendadas antes de un commit:
