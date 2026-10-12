@@ -169,6 +169,40 @@ body {
   box-shadow: var(--shadow-ds-floating);
 }
 
+.progress-page {
+  background-image: radial-gradient(circle at 8% 10%, rgb(23 96 117 / 6%), transparent 24rem);
+}
+
+.progress-hero,
+.progress-card {
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.progress-hero:hover,
+.progress-card:hover {
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-ds-floating);
+}
+
+.progress-section > div:first-of-type {
+  position: relative;
+}
+
+.progress-section > div:first-of-type::before {
+  position: absolute;
+  top: 0.4rem;
+  left: -0.75rem;
+  width: 2px;
+  height: 2.25rem;
+  content: "";
+  background: var(--color-accent);
+  opacity: 0.7;
+}
+
+:root[data-theme="dark"] .progress-page {
+  background-image: radial-gradient(circle at 8% 10%, rgb(104 182 197 / 9%), transparent 24rem);
+}
+
 .auth-panel-glow {
   background: radial-gradient(circle at 72% 48%, rgb(255 255 255 / 28%), transparent 43%);
 }
