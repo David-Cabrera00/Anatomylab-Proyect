@@ -39,7 +39,7 @@ export const nervousCentralBatch2Candidates = [
   { concept: "Tracto vestibuloespinal medial", educationalId: "nervous.medial-vestibulospinal-tract", anatomyIds: ["nervous.model-node-0317"] },
 ] as const;
 
-export const nervousPeripheralBatch1Candidates = [
+export const nervousPeripheralBatch3Candidates = [
   { concept: "Tronco superior del plexo braquial", educationalId: "nervous.superior-brachial-plexus-trunk", anatomyIds: ["nervous.model-node-0324", "nervous.model-node-0325"] },
   { concept: "Tronco medio del plexo braquial", educationalId: "nervous.middle-brachial-plexus-trunk", anatomyIds: ["nervous.model-node-0322", "nervous.model-node-0323"] },
   { concept: "Tronco inferior del plexo braquial", educationalId: "nervous.inferior-brachial-plexus-trunk", anatomyIds: ["nervous.model-node-0320", "nervous.model-node-0321"] },
@@ -144,12 +144,35 @@ export const nervousCentralBatch12Candidates = [
   { concept: "Sustancia intermedia lateral", educationalId: "nervous.lateral-intermediate-substance", anatomyIds: ["nervous.model-node-0307"] },
 ] as const;
 
+export const nervousPeripheralBatch1Candidates = [
+  { concept: "Cuerda del tímpano", educationalId: "nervous.chorda-tympani", anatomyIds: ["nervous.model-node-0027", "nervous.model-node-0028"] },
+  { concept: "División anterior del nervio mandibular", educationalId: "nervous.anterior-mandibular-division", anatomyIds: ["nervous.model-node-0031", "nervous.model-node-0032"] },
+  { concept: "División posterior del nervio mandibular", educationalId: "nervous.posterior-mandibular-division", anatomyIds: ["nervous.model-node-0039", "nervous.model-node-0040"] },
+  { concept: "Nervio al músculo milohioideo", educationalId: "nervous.mylohyoid-nerve", anatomyIds: ["nervous.model-node-0080", "nervous.model-node-0081"] },
+  { concept: "Nervio alveolar inferior", educationalId: "nervous.inferior-alveolar-nerve", anatomyIds: ["nervous.model-node-0082", "nervous.model-node-0083"] },
+  { concept: "Nervio bucal", educationalId: "nervous.buccal-nerve", anatomyIds: ["nervous.model-node-0084", "nervous.model-node-0085"] },
+  { concept: "Nervio cutáneo antebraquial lateral", educationalId: "nervous.lateral-antebrachial-cutaneous-nerve", anatomyIds: ["nervous.model-node-0088", "nervous.model-node-0089"] },
+  { concept: "Nervio cutáneo antebraquial medial", educationalId: "nervous.medial-antebrachial-cutaneous-nerve", anatomyIds: ["nervous.model-node-0090", "nervous.model-node-0091"] },
+  { concept: "Nervio cutáneo antebraquial posterior", educationalId: "nervous.posterior-antebrachial-cutaneous-nerve", anatomyIds: ["nervous.model-node-0092", "nervous.model-node-0093"] },
+  { concept: "Nervio cutáneo braquial lateral inferior", educationalId: "nervous.inferior-lateral-brachial-cutaneous-nerve", anatomyIds: ["nervous.model-node-0094", "nervous.model-node-0095"] },
+  { concept: "Nervio cutáneo braquial lateroposterior", educationalId: "nervous.posterolateral-brachial-cutaneous-nerve", anatomyIds: ["nervous.model-node-0096", "nervous.model-node-0097"] },
+  { concept: "Nervio cutáneo braquial medial", educationalId: "nervous.medial-brachial-cutaneous-nerve", anatomyIds: ["nervous.model-node-0098", "nervous.model-node-0099"] },
+  { concept: "Nervio cutáneo dorsal intermedio del pie", educationalId: "nervous.intermediate-dorsal-cutaneous-nerve", anatomyIds: ["nervous.model-node-0100", "nervous.model-node-0101"] },
+  { concept: "Nervio cutáneo dorsal medial del pie", educationalId: "nervous.medial-dorsal-cutaneous-nerve", anatomyIds: ["nervous.model-node-0102", "nervous.model-node-0103"] },
+  { concept: "Nervio cutáneo femoral posterior", educationalId: "nervous.posterior-femoral-cutaneous-nerve", anatomyIds: ["nervous.model-node-0104", "nervous.model-node-0105"] },
+  { concept: "Nervio cutáneo sural medial", educationalId: "nervous.medial-sural-cutaneous-nerve", anatomyIds: ["nervous.model-node-0106", "nervous.model-node-0107"] },
+  { concept: "Nervio del músculo cuadrado femoral", educationalId: "nervous.quadratus-femoris-nerve", anatomyIds: ["nervous.model-node-0108", "nervous.model-node-0109"] },
+  { concept: "Nervio del músculo piriforme", educationalId: "nervous.piriformis-nerve", anatomyIds: ["nervous.model-node-0110", "nervous.model-node-0111"] },
+  { concept: "Nervio escapular dorsal", educationalId: "nervous.dorsal-scapular-nerve", anatomyIds: ["nervous.model-node-0112", "nervous.model-node-0113"] },
+  { concept: "Nervio ilio-inguinal", educationalId: "nervous.ilioinguinal-nerve", anatomyIds: ["nervous.model-node-0114", "nervous.model-node-0115"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 159,
+  entriesWithoutEducationalContent: 119,
   centralEntriesWithoutEducationalContent: 5,
-  peripheralEntriesWithoutEducationalContent: 144,
+  peripheralEntriesWithoutEducationalContent: 104,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 95,
-  completedEntries: 168,
-  entriesPendingReview: 159,
+  completedConcepts: 115,
+  completedEntries: 208,
+  entriesPendingReview: 119,
 } as const;

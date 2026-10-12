@@ -406,4 +406,84 @@ export const peripheralEntries: readonly EducationalStructureBinding[] = [
     location: "Posterior a la clavícula, entre el tronco inferior y el fascículo posterior.",
     relationships: ["Tronco inferior", "Fascículo posterior", "Plexo braquial"],
   }),
+  bilateral("Cuerda del tímpano", {
+    id: "nervous.chorda-tympani", name: "Cuerda del tímpano", type: "Nervio craneal",
+    description: "Rama del nervio facial que atraviesa la cavidad timpánica.", function: "Transporta gusto de los dos tercios anteriores de la lengua y fibras parasimpáticas.", location: "Desde el nervio facial, a través del oído medio, hacia la fosa infratemporal.", relationships: ["Nervio facial", "Nervio lingual", "Glándulas salivales"],
+  }),
+  bilateral("División anterior del nervio mandibular", {
+    id: "nervous.anterior-mandibular-division", name: "División anterior del nervio mandibular", type: "Rama del nervio trigémino",
+    description: "División principalmente motora del nervio mandibular.", function: "Distribuye fibras motoras a músculos de la masticación y sensibilidad a regiones de la cara.", location: "Fosa infratemporal, distal al ganglio trigeminal.", relationships: ["Nervio mandibular", "Músculos de la masticación"],
+  }),
+  bilateral("División posterior del nervio mandibular", {
+    id: "nervous.posterior-mandibular-division", name: "División posterior del nervio mandibular", type: "Rama del nervio trigémino",
+    description: "División principalmente sensitiva del nervio mandibular.", function: "Conduce sensibilidad de la mandíbula, lengua, dientes y regiones temporales.", location: "Fosa infratemporal, posterior al nervio mandibular.", relationships: ["Nervio mandibular", "Nervio lingual", "Nervio alveolar inferior"],
+  }),
+  bilateral("Nervio al músculo milohioideo", {
+    id: "nervous.mylohyoid-nerve", name: "Nervio al músculo milohioideo", type: "Nervio motor",
+    description: "Rama motora que nace del nervio alveolar inferior antes de entrar en el foramen mandibular.", function: "Inerva los músculos milohioideo y vientre anterior del digástrico.", location: "Surco milohioideo de la mandíbula.", relationships: ["Nervio alveolar inferior", "Músculo milohioideo"],
+  }),
+  bilateral("Nervio alveolar inferior", {
+    id: "nervous.inferior-alveolar-nerve", name: "Nervio alveolar inferior", type: "Nervio sensitivo",
+    description: "Rama del nervio mandibular que entra en el conducto mandibular.", function: "Conduce sensibilidad de dientes inferiores, mandíbula y labio inferior.", location: "Fosa infratemporal y conducto mandibular.", relationships: ["Nervio mandibular", "Nervio mentoniano", "Dientes inferiores"],
+  }),
+  bilateral("Nervio bucal", {
+    id: "nervous.buccal-nerve", name: "Nervio bucal", type: "Nervio sensitivo",
+    description: "Rama sensitiva del nervio mandibular que alcanza la mejilla.", function: "Conduce sensibilidad de la mucosa y piel de la mejilla.", location: "Entre las porciones del músculo pterigoideo lateral y sobre el buccinador.", relationships: ["Nervio mandibular", "Músculo buccinador"],
+  }),
+  bilateral("Nervio cutáneo antebraquial lateral", {
+    id: "nervous.lateral-antebrachial-cutaneous-nerve", name: "Nervio cutáneo antebraquial lateral", type: "Nervio cutáneo",
+    description: "Continuación sensitiva del nervio musculocutáneo.", function: "Inerva la piel de la región lateral del antebrazo.", location: "Desde el codo hacia la cara lateral del antebrazo.", relationships: ["Nervio musculocutáneo", "Antebrazo"],
+  }),
+  bilateral("Nervio cutáneo antebraquial medial", {
+    id: "nervous.medial-antebrachial-cutaneous-nerve", name: "Nervio cutáneo antebraquial medial", type: "Nervio cutáneo",
+    description: "Nervio sensitivo procedente del fascículo medial del plexo braquial.", function: "Inerva la piel de la región medial del antebrazo.", location: "Cara medial del brazo y antebrazo.", relationships: ["Plexo braquial", "Antebrazo"],
+  }),
+  bilateral("Nervio cutáneo antebraquial posterior", {
+    id: "nervous.posterior-antebrachial-cutaneous-nerve", name: "Nervio cutáneo antebraquial posterior", type: "Nervio cutáneo",
+    description: "Rama sensitiva del nervio radial destinada al antebrazo posterior.", function: "Inerva la piel de la superficie posterior del antebrazo.", location: "Compartimento posterior del antebrazo.", relationships: ["Nervio radial", "Antebrazo"],
+  }),
+  bilateral("Nervio cutáneo braquial lateral inferior", {
+    id: "nervous.inferior-lateral-brachial-cutaneous-nerve", name: "Nervio cutáneo braquial lateral inferior", type: "Nervio cutáneo",
+    description: "Rama cutánea del nervio radial para la región lateral inferior del brazo.", function: "Conduce sensibilidad de la piel sobre la porción inferior lateral del brazo.", location: "Cara lateral inferior del brazo.", relationships: ["Nervio radial", "Brazo"],
+  }),
+  bilateral("Nervio cutáneo braquial lateroposterior", {
+    id: "nervous.posterolateral-brachial-cutaneous-nerve", name: "Nervio cutáneo braquial lateroposterior", type: "Nervio cutáneo",
+    description: "Rama sensitiva del nervio radial para la región posterior del brazo.", function: "Inerva la piel de la superficie posterolateral del brazo.", location: "Compartimento posterior del brazo.", relationships: ["Nervio radial", "Brazo"],
+  }),
+  bilateral("Nervio cutáneo braquial medial", {
+    id: "nervous.medial-brachial-cutaneous-nerve", name: "Nervio cutáneo braquial medial", type: "Nervio cutáneo",
+    description: "Nervio sensitivo del fascículo medial del plexo braquial.", function: "Inerva la piel de la superficie medial del brazo.", location: "Cara medial del brazo, cerca de la axila.", relationships: ["Plexo braquial", "Brazo"],
+  }),
+  bilateral("Nervio cutáneo dorsal intermedio del pie", {
+    id: "nervous.intermediate-dorsal-cutaneous-nerve", name: "Nervio cutáneo dorsal intermedio del pie", type: "Nervio cutáneo",
+    description: "Rama cutánea dorsal del nervio fibular superficial.", function: "Inerva la piel de la región dorsal intermedia del pie.", location: "Dorso del pie, hacia los dedos laterales.", relationships: ["Nervio fibular superficial", "Pie"],
+  }),
+  bilateral("Nervio cutáneo dorsal medial del pie", {
+    id: "nervous.medial-dorsal-cutaneous-nerve", name: "Nervio cutáneo dorsal medial del pie", type: "Nervio cutáneo",
+    description: "Rama cutánea del nervio fibular superficial para el dorso medial del pie.", function: "Inerva la piel del dorso medial del pie y del primer dedo.", location: "Dorso medial del pie.", relationships: ["Nervio fibular superficial", "Pie"],
+  }),
+  bilateral("Nervio cutáneo femoral posterior", {
+    id: "nervous.posterior-femoral-cutaneous-nerve", name: "Nervio cutáneo femoral posterior", type: "Nervio cutáneo",
+    description: "Nervio sensitivo del plexo sacro destinado a la piel posterior del miembro inferior.", function: "Conduce sensibilidad de la región glútea inferior y del muslo posterior.", location: "Región posterior del muslo.", relationships: ["Plexo sacro", "Muslo"],
+  }),
+  bilateral("Nervio cutáneo sural medial", {
+    id: "nervous.medial-sural-cutaneous-nerve", name: "Nervio cutáneo sural medial", type: "Nervio cutáneo",
+    description: "Rama sensitiva relacionada con el nervio tibial en la formación del nervio sural.", function: "Inerva la piel posterolateral de la pierna y del pie.", location: "Pantorrilla posterior, junto a la vena safena menor.", relationships: ["Nervio tibial", "Nervio sural", "Pierna"],
+  }),
+  bilateral("Nervio del músculo cuadrado femoral", {
+    id: "nervous.quadratus-femoris-nerve", name: "Nervio del músculo cuadrado femoral", type: "Nervio motor",
+    description: "Rama del plexo sacro que pasa por delante del músculo piriforme.", function: "Inerva el músculo cuadrado femoral y el gemelo inferior.", location: "Región glútea profunda.", relationships: ["Plexo sacro", "Músculo cuadrado femoral"],
+  }),
+  bilateral("Nervio del músculo piriforme", {
+    id: "nervous.piriformis-nerve", name: "Nervio del músculo piriforme", type: "Nervio motor",
+    description: "Rama nerviosa destinada al músculo piriforme.", function: "Proporciona inervación motora al músculo piriforme.", location: "Plexo sacro y región glútea profunda.", relationships: ["Plexo sacro", "Músculo piriforme"],
+  }),
+  bilateral("Nervio escapular dorsal", {
+    id: "nervous.dorsal-scapular-nerve", name: "Nervio escapular dorsal", type: "Nervio motor",
+    description: "Rama del ramo anterior del nervio espinal C5.", function: "Inerva los músculos romboides y el elevador de la escápula.", location: "Región posterior del cuello y borde medial de la escápula.", relationships: ["Plexo braquial", "Romboides", "Elevador de la escápula"],
+  }),
+  bilateral("Nervio ilio-inguinal", {
+    id: "nervous.ilioinguinal-nerve", name: "Nervio ilio-inguinal", type: "Nervio periférico",
+    description: "Rama del plexo lumbar que recorre la región inguinal.", function: "Conduce sensibilidad de la región inguinal y aporta fibras motoras a músculos de la pared abdominal.", location: "Entre los músculos transverso y oblicuo interno, hacia el conducto inguinal.", relationships: ["Plexo lumbar", "Conducto inguinal", "Región inguinal"],
+  }),
 ];
