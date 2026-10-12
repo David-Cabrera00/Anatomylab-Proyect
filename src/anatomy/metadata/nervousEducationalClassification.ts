@@ -45,6 +45,29 @@ export const nervousPeripheralBatch3Candidates = [
   { concept: "Tronco inferior del plexo braquial", educationalId: "nervous.inferior-brachial-plexus-trunk", anatomyIds: ["nervous.model-node-0320", "nervous.model-node-0321"] },
 ] as const;
 
+export const nervousPeripheralBatch4Candidates = [
+  { concept: "Nervio iliohipogástrico", educationalId: "nervous.iliohypogastric-nerve", anatomyIds: ["nervous.model-node-0116", "nervous.model-node-0117"] },
+  { concept: "Nervio interóseo anterior del antebrazo", educationalId: "nervous.anterior-interosseous-nerve", anatomyIds: ["nervous.model-node-0118", "nervous.model-node-0119"] },
+  { concept: "Nervio interóseo posterior del antebrazo", educationalId: "nervous.posterior-interosseous-nerve", anatomyIds: ["nervous.model-node-0120", "nervous.model-node-0121"] },
+  { concept: "Nervio mental", educationalId: "nervous.mental-nerve", anatomyIds: ["nervous.model-node-0122", "nervous.model-node-0123"] },
+  { concept: "Nervio pectoral lateral", educationalId: "nervous.lateral-pectoral-nerve", anatomyIds: ["nervous.model-node-0124", "nervous.model-node-0125"] },
+  { concept: "Nervio pectoral medial", educationalId: "nervous.medial-pectoral-nerve", anatomyIds: ["nervous.model-node-0126", "nervous.model-node-0127"] },
+  { concept: "Nervio subclavio", educationalId: "nervous.subclavian-nerve", anatomyIds: ["nervous.model-node-0128", "nervous.model-node-0129"] },
+  { concept: "Nervio subescapular inferior", educationalId: "nervous.inferior-subscapular-nerve", anatomyIds: ["nervous.model-node-0130", "nervous.model-node-0131"] },
+  { concept: "Nervio subescapular superior", educationalId: "nervous.superior-subscapular-nerve", anatomyIds: ["nervous.model-node-0132", "nervous.model-node-0133"] },
+  { concept: "Nervio toracodorsal", educationalId: "nervous.thoracodorsal-nerve", anatomyIds: ["nervous.model-node-0134", "nervous.model-node-0135"] },
+  { concept: "Nervio vestibular", educationalId: "nervous.vestibular-nerve", anatomyIds: ["nervous.model-node-0136", "nervous.model-node-0137"] },
+  { concept: "Raíz anterior del nervio cutáneo femoral posterior", educationalId: "nervous.anterior-root-posterior-femoral-cutaneous-nerve", anatomyIds: ["nervous.model-node-0264", "nervous.model-node-0265"] },
+  { concept: "Raíz motora del nervio trigémino", educationalId: "nervous.motor-root-trigeminal-nerve", anatomyIds: ["nervous.model-node-0266", "nervous.model-node-0267"] },
+  { concept: "Raíz posterior del nervio cutáneo femoral posterior", educationalId: "nervous.posterior-root-posterior-femoral-cutaneous-nerve", anatomyIds: ["nervous.model-node-0268", "nervous.model-node-0269"] },
+  { concept: "Raíz sensorial del nervio trigémino", educationalId: "nervous.sensory-root-trigeminal-nerve", anatomyIds: ["nervous.model-node-0270", "nervous.model-node-0271"] },
+  { concept: "Rama anterior del nervio cutáneo antebraquial medial", educationalId: "nervous.anterior-branch-medial-antebrachial-cutaneous-nerve", anatomyIds: ["nervous.model-node-0194", "nervous.model-node-0195"] },
+  { concept: "Rama anterior del nervio obturador", educationalId: "nervous.anterior-obturator-nerve-branch", anatomyIds: ["nervous.model-node-0196", "nervous.model-node-0197"] },
+  { concept: "Rama comunicante del nervio mediano con el nervio ulnar", educationalId: "nervous.median-ulnar-communicating-branch", anatomyIds: ["nervous.model-node-0003", "nervous.model-node-0004"] },
+  { concept: "Rama dorsal del nervio ulnar", educationalId: "nervous.dorsal-ulnar-nerve-branch", anatomyIds: ["nervous.model-node-0198", "nervous.model-node-0199"] },
+  { concept: "Rama femoral del nervio genitofemoral", educationalId: "nervous.femoral-genitofemoral-branch", anatomyIds: ["nervous.model-node-0200", "nervous.model-node-0201"] },
+] as const;
+
 export const nervousPeripheralBatch2Candidates = [
   { concept: "División anterior del tronco superior", educationalId: "nervous.superior-trunk-anterior-division", anatomyIds: ["nervous.model-node-0037", "nervous.model-node-0038"] },
   { concept: "División anterior del tronco medio", educationalId: "nervous.middle-trunk-anterior-division", anatomyIds: ["nervous.model-node-0035", "nervous.model-node-0036"] },
@@ -168,11 +191,11 @@ export const nervousPeripheralBatch1Candidates = [
 ] as const;
 
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 119,
+  entriesWithoutEducationalContent: 79,
   centralEntriesWithoutEducationalContent: 5,
-  peripheralEntriesWithoutEducationalContent: 104,
+  peripheralEntriesWithoutEducationalContent: 64,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 115,
-  completedEntries: 208,
-  entriesPendingReview: 119,
+  completedConcepts: 135,
+  completedEntries: 248,
+  entriesPendingReview: 79,
 } as const;
