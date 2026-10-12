@@ -29,6 +29,7 @@ import {
   type AnatomyLayerId,
   type AnatomySystemId,
 } from "../config/anatomySystems";
+import { useI18n } from "../i18n";
 
 import type { AnatomyModelKey } from "../anatomy";
 import { getAnatomyEntryById } from "../anatomy";
@@ -1208,12 +1209,16 @@ export default function AnatomyViewer({
   action,
   focusRequest,
 }: AnatomyViewerProps) {
+  const { theme } = useI18n();
+  const isHeartDetail = modelKey === "heart-detail";
+  const cameraDistance = isHeartDetail ? 6.8 : 9.2;
+
   return (
     <div className="h-full w-full">
       <Canvas
         shadows
         camera={{
-          position: [0, 0.5, 6.8],
+          position: [0, 0.35, cameraDistance],
           fov: 40,
           near: 0.01,
           far: 1000,
@@ -1226,7 +1231,7 @@ export default function AnatomyViewer({
       >
         <color
           attach="background"
-          args={["#f1f5f9"]}
+          args={[theme === "dark" ? "#111315" : "#f1f5f9"]}
         />
 
         <ambientLight intensity={0.65} />

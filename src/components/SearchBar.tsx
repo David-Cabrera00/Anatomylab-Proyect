@@ -85,7 +85,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
     <div ref={containerRef} className={`relative min-w-0 ${className}`}>
       <label htmlFor="anatomy-search" className="sr-only">{t("searchLabel")}</label>
       <div className="relative">
-        <svg className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <input
@@ -101,7 +101,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
           aria-expanded={showDropdown}
           aria-controls="anatomy-search-results"
           aria-autocomplete="list"
-          className="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-slate-500"
+          className="search-field w-full rounded-ds-md border border-line bg-surface py-2.5 pl-10 pr-10 text-body text-ink outline-none transition-[border-color,box-shadow] focus:border-accent focus:ring-2 focus:ring-accent/20"
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
@@ -110,7 +110,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
           <button
             type="button"
             onClick={() => { setQuery(""); setHighlightedIndex(-1); }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle transition-colors hover:text-ink"
             aria-label={t("searchClear")}
           >
             <span aria-hidden="true">&times;</span>
@@ -119,12 +119,12 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
       </div>
 
       {showDropdown && (
-        <div id="anatomy-search-results" className="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 divide-y divide-slate-100 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg" role="listbox">
+        <div id="anatomy-search-results" className="search-results absolute left-0 right-0 top-full z-50 mt-2 max-h-96 divide-y divide-line overflow-y-auto rounded-ds-md border border-line bg-surface shadow-ds-floating" role="listbox">
           {items.length === 0 && query.trim() && (
-            <div className="p-4 text-center text-sm text-slate-500">{t("searchNoResults")} &quot;{query}&quot;</div>
+            <div className="p-4 text-center text-body text-ink-muted">{t("searchNoResults")} &quot;{query}&quot;</div>
           )}
           {items.length === 0 && !query.trim() && currentSystem && (
-            <div className="p-4 text-center text-sm text-slate-500">
+            <div className="p-4 text-center text-body text-ink-muted">
               {t("searchTypeToSearch")} {t(systemTranslationKeys[currentSystem])}
             </div>
           )}
@@ -136,20 +136,20 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
               aria-selected={index === highlightedIndex}
               onClick={() => handleSelect(entry)}
               onMouseEnter={() => setHighlightedIndex(index)}
-              className={`w-full px-4 py-3 text-left text-sm transition-colors ${index === highlightedIndex ? "bg-slate-50" : "hover:bg-slate-50"}`}
+              className={`w-full px-4 py-3 text-left text-body transition-colors ${index === highlightedIndex ? "bg-accent-soft" : "hover:bg-canvas-muted"}`}
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium text-slate-900">{entry.displayName}</p>
+                  <p className="truncate font-medium text-ink">{entry.displayName}</p>
                   <div className="mt-1 flex flex-wrap items-center gap-1.5">
                     <Badge variant="info" className="text-xs">{t(systemTranslationKeys[entry.system])}</Badge>
                     <Badge variant="neutral" className="text-xs">{entry.layer}</Badge>
                     {entry.laterality && <Badge variant="info" className="text-xs">{entry.laterality === "left" ? "Izq" : entry.laterality === "right" ? "Der" : "Med"}</Badge>}
                     {entry.hasEducationalCard && <Badge variant="success" className="text-xs">Ficha</Badge>}
                   </div>
-                  {entry.region && <p className="mt-1 truncate text-xs text-slate-500">{entry.region}</p>}
+                  {entry.region && <p className="mt-1 truncate text-caption text-ink-muted">{entry.region}</p>}
                 </div>
-                <kbd className="hidden items-center rounded bg-slate-100 px-2 py-1 text-xs text-slate-400 sm:inline-flex">Enter</kbd>
+                <kbd className="hidden items-center rounded-ds-sm bg-canvas-muted px-2 py-1 text-caption text-ink-subtle sm:inline-flex">Enter</kbd>
               </div>
             </button>
           ))}

@@ -2,26 +2,36 @@ import { useState, type FormEvent } from "react";
 
 import { Button } from "../components/ui";
 import { useI18n } from "../i18n";
+import { backendLogin, type BackendSession } from "../utils/backendApi";
 
 type LoginViewProps = {
-  onLogin: () => void;
+  onLogin: (session: BackendSession | null) => void;
+  onLocalMode: () => void;
   onRegister: () => void;
 };
 
-export function LoginView({ onLogin, onRegister }: LoginViewProps) {
+export function LoginView({ onLogin, onLocalMode, onRegister }: LoginViewProps) {
   const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!email.trim() || !password) {
       setError(t("authRequiredLogin"));
       return;
     }
     setError("");
-    onLogin();
+    setIsSubmitting(true);
+    try {
+      onLogin(await backendLogin(email.trim(), password));
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : t("authBackendUnavailable"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -40,7 +50,7 @@ export function LoginView({ onLogin, onRegister }: LoginViewProps) {
 
         {error && <p className="text-body text-error" role="alert">{error}</p>}
 
-        <Button type="submit" variant="primary" size="lg" className="w-full">
+        <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isSubmitting}>
           {t("authLoginButton")}
         </Button>
       </form>
@@ -59,6 +69,10 @@ export function LoginView({ onLogin, onRegister }: LoginViewProps) {
           </Button>
         </p>
       </div>
+
+      <button type="button" onClick={onLocalMode} className="mt-4 w-full text-center text-caption text-ink-subtle transition-colors hover:text-accent">
+        {t("authContinueLocal")}
+      </button>
     </>
   );
 }

@@ -65,9 +65,9 @@ export function StudyView({
       : getLocalizedText(currentStep.title, language);
 
   return (
-    <section className="h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
+    <section className="study-page h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
       <div className="mx-auto max-w-[88rem] space-y-8">
-        <header className="border-b border-line pb-6">
+        <header className="study-hero border border-line bg-surface px-6 py-6 shadow-ds-raised lg:px-8 lg:py-7">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{t("studySession")}</p>
             <div className="flex items-center gap-2 text-caption uppercase tracking-[0.12em] text-ink-subtle">
@@ -85,7 +85,7 @@ export function StudyView({
         </header>
 
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.85fr)_minmax(20rem,1fr)] xl:gap-10">
-          <section className="relative min-h-[28rem] min-w-0 overflow-hidden border border-line bg-surface shadow-ds-raised" aria-label={t("studyViewer")}>
+          <section className="study-viewer relative min-h-[28rem] min-w-0 overflow-hidden border border-line bg-surface shadow-ds-raised" aria-label={t("studyViewer")}>
             <div className="pointer-events-none absolute left-5 top-4 z-10 flex items-center gap-3 text-caption text-ink-subtle">
               <span className="font-semibold uppercase tracking-[0.14em] text-ink-muted">{systemLabel}</span>
               <span className="h-3 w-px bg-line-strong" aria-hidden="true" />
@@ -165,7 +165,7 @@ function SessionProgress({ progress, stepNumber, totalSteps, label, ofLabel }: {
 function StudyContentPanel({ systemLabel, structure, currentStep, stepNumber, totalSteps, progress, isActive, language, color }: { systemLabel: string; structure: string; currentStep: StudyStep; stepNumber: number; totalSteps: number; progress: number; isActive: boolean; language: "es" | "en"; color: string }) {
   const { t } = useI18n();
   return (
-    <aside className="min-w-0 border border-line bg-surface p-5 shadow-ds-raised sm:p-6" aria-label={t("studyContent")}>
+    <aside className="study-content-panel min-w-0 border border-line bg-surface p-5 shadow-ds-raised sm:p-6" aria-label={t("studyContent")}>
       <div className="flex items-center justify-between gap-4">
         <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{systemLabel}</p>
         <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} aria-hidden="true" />

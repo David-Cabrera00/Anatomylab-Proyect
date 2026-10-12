@@ -241,6 +241,92 @@ body {
     linear-gradient(90deg, rgb(104 182 197 / 4%) 1px, transparent 1px);
 }
 
+.quiz-page,
+.study-page {
+  background-image: radial-gradient(circle at 92% 6%, rgb(23 96 117 / 6%), transparent 26rem);
+}
+
+.quiz-panel,
+.study-hero,
+.study-viewer,
+.study-content-panel {
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.quiz-panel:hover,
+.study-hero:hover,
+.study-viewer:hover,
+.study-content-panel:hover {
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-ds-floating);
+}
+
+.quiz-option:hover .quiz-option-index {
+  transform: scale(1.05);
+}
+
+.quiz-review-card {
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.quiz-review-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-ds-raised);
+}
+
+.study-viewer {
+  background-image: radial-gradient(circle at 50% 42%, rgb(23 96 117 / 6%), transparent 26rem);
+}
+
+:root[data-theme="dark"] .quiz-page,
+:root[data-theme="dark"] .study-page {
+  background-image: radial-gradient(circle at 92% 6%, rgb(104 182 197 / 9%), transparent 26rem);
+}
+
+:root[data-theme="dark"] .study-viewer {
+  background-image: radial-gradient(circle at 50% 42%, rgb(104 182 197 / 9%), transparent 26rem);
+}
+
+.app-header {
+  box-shadow: 0 1px 0 rgb(26 43 50 / 3%), 0 6px 18px rgb(26 43 50 / 3%);
+}
+
+.search-field:hover,
+.search-field:focus {
+  box-shadow: 0 4px 16px rgb(26 43 50 / 7%);
+}
+
+.search-results {
+  animation: search-results-enter 150ms ease-out;
+}
+
+.sidebar-item:hover:not([aria-current="page"]) {
+  transform: translateX(2px);
+}
+
+:root[data-theme="dark"] .app-header {
+  box-shadow: 0 1px 0 rgb(0 0 0 / 20%), 0 6px 18px rgb(0 0 0 / 14%);
+}
+
+:root[data-theme="dark"] .search-field:hover,
+:root[data-theme="dark"] .search-field:focus {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 24%);
+}
+
+.anatomy-tutor-panel {
+  animation: tutor-panel-enter 180ms ease-out;
+}
+
+@keyframes tutor-panel-enter {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes search-results-enter {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .auth-panel-glow {
   background: radial-gradient(circle at 72% 48%, rgb(255 255 255 / 28%), transparent 43%);
 }

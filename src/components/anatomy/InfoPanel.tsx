@@ -22,6 +22,7 @@ type InfoPanelProps = {
   onExploreHeart: () => void;
   favoriteSaved: boolean;
   onSaveFavorite: () => void;
+  onAskAI: () => void;
 };
 
 export function InfoPanel({
@@ -39,6 +40,7 @@ export function InfoPanel({
   onExploreHeart,
   favoriteSaved,
   onSaveFavorite,
+  onAskAI,
 }: InfoPanelProps) {
   const { language, t } = useI18n();
   const explicitDisplayName = selectedAnatomyId ? anatomyLocalizedDisplayNames[selectedAnatomyId] : undefined;
@@ -100,7 +102,7 @@ export function InfoPanel({
           <div className="space-y-2">
             {canExploreHeart && <Button variant="secondary" onClick={onExploreHeart} className="w-full whitespace-normal">{t("anatomyExploreHeart")}</Button>}
             <Button variant="secondary" disabled={favoriteSaved} onClick={onSaveFavorite} className="w-full whitespace-normal">{favoriteSaved ? t("anatomySavedFavorite") : t("anatomySaveFavorite")}</Button>
-            <Button variant="primary" className="w-full whitespace-normal">{t("anatomyAskAI")}</Button>
+            <Button variant="primary" onClick={onAskAI} className="w-full whitespace-normal">{t("anatomyAskAI")}</Button>
           </div>
         </div>
       ) : null}
