@@ -25,12 +25,24 @@ const nervousById = new Map(
 const groups = [
   ...classification.nervousCentralBatch1Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
   ...classification.nervousCentralBatch2Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
-  ...classification.nervousPeripheralBatch1Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
+  ...classification.nervousPeripheralBatch3Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
+  ...classification.nervousPeripheralBatch4Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
+  ...classification.nervousPeripheralBatch5Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
+  ...classification.nervousCentralBatch13Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
+  ...classification.nervousPeripheralBatch6Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
+  ...classification.nervousSenseBatch1Candidates.map((group) => ({ ...group, layer: "nervous-sense" })),
   ...classification.nervousPeripheralBatch2Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
   ...classification.nervousCentralBatch3Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
   ...classification.nervousCentralBatch4Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
   ...classification.nervousCentralBatch5Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
   ...classification.nervousCentralBatch6Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
+  ...classification.nervousCentralBatch7Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
+  ...classification.nervousCentralBatch8Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
+  ...classification.nervousCentralBatch9Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
+  ...classification.nervousCentralBatch10Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
+  ...classification.nervousCentralBatch11Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
+  ...classification.nervousCentralBatch12Candidates.map((group) => ({ ...group, layer: "nervous-central" })),
+  ...classification.nervousPeripheralBatch1Candidates.map((group) => ({ ...group, layer: "nervous-peripheral" })),
 ];
 const candidateIds = groups.flatMap((group) => [...group.anatomyIds]);
 const uniqueCandidateIds = new Set(candidateIds);
@@ -62,11 +74,13 @@ for (const group of groups) {
       errors.push(`${entry.id}: ficha educativa incorrecta o ausente.`);
     }
   }
-  if (entries.length === 2) {
+  if (entries.length === 2 && new Set(entries.map((entry) => entry.laterality)).has("left") && new Set(entries.map((entry) => entry.laterality)).has("right")) {
     const sides = new Set(entries.map((entry) => entry.laterality));
     if (!sides.has("left") || !sides.has("right")) {
       errors.push(`${group.concept}: se esperaba un par bilateral completo.`);
     }
+  } else if (entries.length > 1 && entries.some((entry) => entry.educationalId !== group.educationalId)) {
+    errors.push(`${group.concept}: las entradas agrupadas deben compartir la ficha educativa.`);
   } else if (entries.length === 1 && entries[0].laterality !== "midline") {
     errors.push(`${group.concept}: el candidato único no es una estructura media.`);
   }
