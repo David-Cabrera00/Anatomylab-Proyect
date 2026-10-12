@@ -2,21 +2,24 @@ import { useState, type FormEvent } from "react";
 
 import { Button } from "../components/ui";
 import { useI18n } from "../i18n";
+import { backendRegister, type BackendSession } from "../utils/backendApi";
 
 type RegisterViewProps = {
-  onRegister: () => void;
+  onRegister: (session: BackendSession | null) => void;
+  onLocalMode: () => void;
   onLogin: () => void;
 };
 
-export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
+export function RegisterView({ onRegister, onLocalMode, onLogin }: RegisterViewProps) {
   const { t } = useI18n();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!name.trim() || !email.trim() || !password || !confirmation) {
       setError(t("authRequiredRegister"));
@@ -27,7 +30,14 @@ export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
       return;
     }
     setError("");
-    onRegister();
+    setIsSubmitting(true);
+    try {
+      onRegister(await backendRegister(email.trim(), password, name.trim()));
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : t("authBackendUnavailable"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -40,7 +50,7 @@ export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
 
         {error && <p className="text-body text-error" role="alert">{error}</p>}
 
-        <Button type="submit" variant="primary" size="lg" className="w-full">
+        <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isSubmitting}>
           {t("authRegisterButton")}
         </Button>
       </form>
@@ -59,6 +69,10 @@ export function RegisterView({ onRegister, onLogin }: RegisterViewProps) {
           </Button>
         </p>
       </div>
+
+      <button type="button" onClick={onLocalMode} className="mt-4 w-full text-center text-caption text-ink-subtle transition-colors hover:text-accent">
+        {t("authContinueLocal")}
+      </button>
     </>
   );
 }

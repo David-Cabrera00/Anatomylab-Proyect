@@ -43,6 +43,13 @@ import {
 
 import type { QuizState } from "./data/quiz/types";
 import { dbAddFavorite, dbAddSearchHistory, dbSaveStudyProgress, dbSaveStudySession } from "./utils/db";
+import {
+  clearBackendSession,
+  loadBackendSession,
+  saveBackendSession,
+  type BackendSession,
+} from "./utils/backendApi";
+import { syncLocalLearningData } from "./utils/backendSync";
 import { AnatomyView } from "./views/AnatomyView";
 import { HomeView } from "./views/HomeView";
 import { LoginView } from "./views/LoginView";
@@ -74,6 +81,8 @@ type CardiovascularView =
 function App() {
   const [appView, setAppView] = useState<AppView>("login");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [backendSession, setBackendSession] = useState<BackendSession | null>(null);
+  const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced" | "error">("idle");
   const { language, t } = useI18n();
   const isEnglish = language === "en";
   /* ====================================================
@@ -193,6 +202,34 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   const [favoriteSaved, setFavoriteSaved] = useState(false);
   const [favoritesRevision, setFavoritesRevision] = useState(0);
   const studyStartedAtRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const storedSession = loadBackendSession();
+    if (storedSession) {
+      setBackendSession(storedSession);
+      setIsAuthenticated(true);
+      setAppView("home");
+    }
+  }, []);
+
+  const syncBackendData = useCallback(async () => {
+    if (!backendSession) return;
+    setSyncStatus("syncing");
+    try {
+      await syncLocalLearningData(backendSession.accessToken);
+      setSyncStatus("synced");
+    } catch (error) {
+      console.error("Error syncing local learning data:", error);
+      setSyncStatus("error");
+    }
+  }, [backendSession]);
+
+  useEffect(() => {
+    if (!backendSession) return;
+    void syncBackendData();
+    const interval = window.setInterval(() => void syncBackendData(), 30_000);
+    return () => window.clearInterval(interval);
+  }, [backendSession, syncBackendData]);
 
   /* ====================================================
    CONFIGURACIÓN ACTUAL
@@ -689,12 +726,26 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     />
   );
 
-  const completeAuth = () => {
+  const completeAuth = (session: BackendSession | null) => {
+    if (session) {
+      saveBackendSession(session);
+      setBackendSession(session);
+    }
+    setIsAuthenticated(true);
+    setAppView("home");
+  };
+
+  const continueLocalMode = () => {
+    clearBackendSession();
+    setBackendSession(null);
     setIsAuthenticated(true);
     setAppView("home");
   };
 
   const handleLogout = () => {
+    clearBackendSession();
+    setBackendSession(null);
+    setSyncStatus("idle");
     setIsAuthenticated(false);
     setQuizState({ status: "closed" });
     setStudyMode(false);
@@ -724,9 +775,9 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           : t("homeIntro")}
       >
         {isRegister ? (
-          <RegisterView onRegister={completeAuth} onLogin={() => setAppView("login")} />
+          <RegisterView onRegister={completeAuth} onLocalMode={continueLocalMode} onLogin={() => setAppView("login")} />
         ) : (
-          <LoginView onLogin={completeAuth} onRegister={() => setAppView("register")} />
+          <LoginView onLogin={completeAuth} onLocalMode={continueLocalMode} onRegister={() => setAppView("register")} />
         )}
       </AuthLayout>
     );
@@ -832,6 +883,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
               .then(() => {
                 setFavoriteSaved(true);
                 setFavoritesRevision((revision) => revision + 1);
+                void syncBackendData();
               })
               .catch((error) => console.error("Error saving favorite:", error));
           }}
@@ -894,7 +946,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           refreshKey={favoritesRevision}
         />
       ) : (
-        <SettingsView onLogout={handleLogout} />
+        <SettingsView onLogout={handleLogout} backendConnected={Boolean(backendSession)} syncStatus={syncStatus} onSync={syncBackendData} />
       )}
     </AppShell>
   );

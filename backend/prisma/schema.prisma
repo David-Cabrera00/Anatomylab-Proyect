@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String             @id @default(cuid())
+  email           String             @unique
+  passwordHash    String
+  displayName     String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  progress        StudyProgress[]
+  quizSessions    QuizSession[]
+  favorites       Favorite[]
+  preferences     UserPreference[]
+  studySessions   StudySession[]
+  tutorMessages   TutorMessage[]
+}
+
+model StudyProgress {
+  id             String   @id @default(cuid())
+  userId         String
+  system         String
+  anatomyId      String
+  score          Float    @default(0)
+  timeSpentMs    Int      @default(0)
+  lastStudiedAt  DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, system, anatomyId])
+  @@index([userId, system])
+}
+
+model QuizSession {
+  id              String        @id @default(cuid())
+  userId          String
+  system          String
+  configId        String
+  score           Float
+  correctCount    Int
+  totalQuestions  Int
+  timeSpentMs     Int?
+  startedAt       DateTime
+  completedAt     DateTime      @default(now())
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers         QuizAnswer[]
+
+  @@index([userId, system, completedAt])
+}
+
+model QuizAnswer {
+  id              String      @id @default(cuid())
+  quizSessionId   String
+  anatomyId       String
+  questionId      String
+  selectedIndex   Int
+  correctIndex    Int
+  isCorrect       Boolean
+  timeMs          Int?
+  quizSession     QuizSession @relation(fields: [quizSessionId], references: [id], onDelete: Cascade)
+
+  @@index([quizSessionId])
+}
+
+model Favorite {
+  id          String   @id @default(cuid())
+  userId      String
+  system      String
+  anatomyId   String
+  notes       String?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, system, anatomyId])
+}
+
+model UserPreference {
+  id        String   @id @default(cuid())
+  userId    String
+  key       String
+  value     String
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+}
+
+model StudySession {
+  id           String   @id @default(cuid())
+  userId       String
+  system       String
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+  stepsDone    Int      @default(0)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, system, startedAt])
+}
+
+model TutorMessage {
+  id          String   @id @default(cuid())
+  userId      String
+  system      String
+  anatomyId   String
+  role        String
+  content     String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, anatomyId, createdAt])
+}

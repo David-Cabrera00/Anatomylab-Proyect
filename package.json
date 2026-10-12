@@ -8,7 +8,12 @@
     "build": "tsc && vite build",
     "audit:anatomy": "node scripts/audit-anatomy.mjs",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "backend:install": "npm --prefix backend install",
+    "backend:dev": "npm --prefix backend run start:dev",
+    "backend:build": "npm --prefix backend run build",
+    "backend:prisma:generate": "npm --prefix backend run prisma:generate",
+    "backend:prisma:migrate": "npm --prefix backend run prisma:migrate"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

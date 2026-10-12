@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: anatomylab-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: anatomylab
+      POSTGRES_PASSWORD: anatomylab
+      POSTGRES_DB: anatomylab
+    ports:
+      - "55432:5432"
+    volumes:
+      - anatomylab-postgres-data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://anatomylab:anatomylab@postgres:5432/anatomylab?schema=public
+      PORT: 3000
+      CORS_ORIGIN: http://localhost:1420
+      JWT_SECRET: replace-with-a-local-secret
+    ports:
+      - "3000:3000"
+
+volumes:
+  anatomylab-postgres-data:
