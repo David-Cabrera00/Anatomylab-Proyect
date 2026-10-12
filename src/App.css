@@ -158,6 +158,17 @@ body {
   background: radial-gradient(circle, rgb(104 182 197 / 16%), transparent 68%);
 }
 
+.profile-hero,
+.profile-card {
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.profile-hero:hover,
+.profile-card:hover {
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-ds-floating);
+}
+
 .auth-panel-glow {
   background: radial-gradient(circle at 72% 48%, rgb(255 255 255 / 28%), transparent 43%);
 }

@@ -1,5 +1,6 @@
 import { FavoritesTab } from "../components/learning";
 import type { AnatomySystemId } from "../config/anatomySystems";
+import { useI18n } from "../i18n";
 
 type ProfileViewProps = {
   system: AnatomySystemId;
@@ -8,21 +9,27 @@ type ProfileViewProps = {
 };
 
 export function ProfileView({ system, onFocusFavorite, refreshKey = 0 }: ProfileViewProps) {
-  return (
-    <section className="h-full overflow-y-auto bg-slate-50 p-6 lg:p-8">
-      <div className="mx-auto max-w-5xl">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Perfil</h1>
-        <p className="mt-1 text-sm text-slate-500">Tus estructuras anatómicas guardadas.</p>
+  const { t } = useI18n();
 
-        <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
-          <h2 className="text-lg font-semibold tracking-tight text-slate-900">Favoritos</h2>
-          <p className="mt-1 text-sm text-slate-500">Sistema activo: {system}</p>
+  return (
+    <section className="profile-page h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
+      <div className="mx-auto max-w-5xl">
+        <header className="profile-hero border border-line bg-surface px-6 py-6 shadow-ds-raised sm:px-8">
+          <p className="text-label font-semibold uppercase tracking-[0.16em] text-accent">{t("profileEyebrow")}</p>
+          <h1 className="mt-3 text-display font-semibold tracking-tight text-ink">{t("profileTitle")}</h1>
+          <p className="mt-2 max-w-2xl text-body leading-6 text-ink-muted">{t("profileIntro")}</p>
+        </header>
+
+        <section className="profile-card mt-6 border border-line bg-surface p-5 shadow-ds-raised sm:p-6">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
+            <div>
+              <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">01</p>
+              <h2 className="mt-2 text-title font-semibold tracking-tight text-ink">{t("profileFavoritesTitle")}</h2>
+            </div>
+            <p className="text-label text-ink-muted">{t("profileActiveSystem")}: {system}</p>
+          </div>
           <div className="mt-4">
-            <FavoritesTab
-              system={system}
-              onFocus={onFocusFavorite}
-              refreshKey={refreshKey}
-            />
+            <FavoritesTab system={system} onFocus={onFocusFavorite} refreshKey={refreshKey} />
           </div>
         </section>
       </div>
