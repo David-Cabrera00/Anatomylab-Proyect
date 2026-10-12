@@ -1,8 +1,24 @@
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { useEffect, useState } from "react";
+import { dbGetPreference, dbSetPreference } from "../utils/db";
 import { useI18n, type Theme } from "../i18n";
 
 export function SettingsView() {
   const { theme, setTheme, t } = useI18n();
+  const [showExplanations, setShowExplanations] = useState(true);
+
+  useEffect(() => {
+    void dbGetPreference("study.showExplanations")
+      .then((stored) => { if (stored !== null) setShowExplanations(stored !== "false"); })
+      .catch(() => { /* Default remains enabled. */ });
+  }, []);
+
+  const handleExplanationsChange = (enabled: boolean) => {
+    setShowExplanations(enabled);
+    void dbSetPreference("study.showExplanations", String(enabled)).catch(() => {
+      // Keep the in-memory setting when SQLite is unavailable.
+    });
+  };
 
   return (
     <section className="h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
@@ -20,6 +36,24 @@ export function SettingsView() {
               <p className="mt-2 text-body text-ink-muted">{t("settingsLanguageDescription")}</p>
             </div>
             <LanguageSwitcher />
+          </div>
+        </section>
+
+        <section className="mt-5 border border-line bg-surface p-6 shadow-ds-raised" aria-labelledby="study-setting-title">
+          <div className="flex flex-wrap items-center justify-between gap-5">
+            <div>
+              <h2 id="study-setting-title" className="text-title font-semibold text-ink">{t("settingsStudyTitle")}</h2>
+              <p className="mt-2 text-body text-ink-muted">{t("settingsStudyDescription")}</p>
+            </div>
+            <label className="inline-flex cursor-pointer items-center gap-3 text-label font-semibold text-ink">
+              <input
+                type="checkbox"
+                checked={showExplanations}
+                onChange={(event) => handleExplanationsChange(event.target.checked)}
+                className="h-4 w-4 accent-[var(--color-accent)]"
+              />
+              {t("settingsStudyExplanations")}
+            </label>
           </div>
         </section>
 
