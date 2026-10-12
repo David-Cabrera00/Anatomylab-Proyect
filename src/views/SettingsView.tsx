@@ -1,11 +1,12 @@
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { useEffect, useState } from "react";
-import { dbGetPreference, dbSetPreference } from "../utils/db";
+import { dbClearLearningData, dbGetPreference, dbSetPreference } from "../utils/db";
 import { useI18n, type Theme } from "../i18n";
 
 export function SettingsView() {
   const { theme, setTheme, t } = useI18n();
   const [showExplanations, setShowExplanations] = useState(true);
+  const [clearStatus, setClearStatus] = useState<"idle" | "cleared" | "error">("idle");
 
   useEffect(() => {
     void dbGetPreference("study.showExplanations")
@@ -18,6 +19,14 @@ export function SettingsView() {
     void dbSetPreference("study.showExplanations", String(enabled)).catch(() => {
       // Keep the in-memory setting when SQLite is unavailable.
     });
+  };
+
+  const handleClearLearningData = () => {
+    if (!window.confirm(t("settingsDataConfirm"))) return;
+    setClearStatus("idle");
+    void dbClearLearningData()
+      .then(() => setClearStatus("cleared"))
+      .catch(() => setClearStatus("error"));
   };
 
   return (
@@ -54,6 +63,20 @@ export function SettingsView() {
               />
               {t("settingsStudyExplanations")}
             </label>
+          </div>
+        </section>
+
+        <section className="mt-5 border border-line bg-surface p-6 shadow-ds-raised" aria-labelledby="data-setting-title">
+          <div className="flex flex-wrap items-center justify-between gap-5">
+            <div>
+              <h2 id="data-setting-title" className="text-title font-semibold text-ink">{t("settingsDataTitle")}</h2>
+              <p className="mt-2 max-w-xl text-body text-ink-muted">{t("settingsDataDescription")}</p>
+              {clearStatus === "cleared" && <p className="mt-3 text-label font-medium text-success">{t("settingsDataCleared")}</p>}
+              {clearStatus === "error" && <p className="mt-3 text-label font-medium text-error">{t("settingsDataError")}</p>}
+            </div>
+            <button type="button" onClick={handleClearLearningData} className="border border-error px-3 py-2 text-label font-semibold text-error transition-colors hover:bg-error-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error">
+              {t("settingsDataClear")}
+            </button>
           </div>
         </section>
 
