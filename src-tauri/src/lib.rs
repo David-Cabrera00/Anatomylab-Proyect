@@ -30,6 +30,7 @@ pub fn run() {
             // Quiz History
             db::db_save_quiz_session,
             db::db_get_quiz_history,
+            db::db_get_quiz_answers,
             // Favorites
             db::db_add_favorite,
             db::db_remove_favorite,

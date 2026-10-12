@@ -39,6 +39,10 @@ export interface QuizAnswer {
   time_ms: number;
 }
 
+export async function dbGetQuizAnswers(quizHistoryId: string): Promise<QuizAnswer[]> {
+  return invoke("db_get_quiz_answers", { quizHistoryId });
+}
+
 export interface Favorite {
   id: string;
   system: string;

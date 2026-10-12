@@ -191,6 +191,18 @@ pub struct QuizAnswerInput {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct QuizAnswer {
+    pub id: String,
+    pub quiz_history_id: String,
+    pub question_id: String,
+    pub anatomy_id: String,
+    pub selected_index: i32,
+    pub correct_index: i32,
+    pub is_correct: bool,
+    pub time_ms: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Favorite {
     pub id: String,
     pub system: String,
@@ -407,6 +419,32 @@ pub fn db_get_quiz_history(
         result.push(row.map_err(|e| e.to_string())?);
     }
     Ok(result)
+}
+
+#[tauri::command]
+pub fn db_get_quiz_answers(
+    db: tauri::State<'_, DbConnection>,
+    quiz_history_id: String,
+) -> Result<Vec<QuizAnswer>, String> {
+    let conn = db.get_connection();
+    let mut stmt = conn.prepare(
+        "SELECT id, quiz_history_id, question_id, anatomy_id, selected_index, correct_index, is_correct, time_ms
+         FROM quiz_answers WHERE quiz_history_id = ? ORDER BY rowid"
+    ).map_err(|e| e.to_string())?;
+    let rows = stmt.query_map(params![quiz_history_id], |row| {
+        Ok(QuizAnswer {
+            id: row.get(0)?,
+            quiz_history_id: row.get(1)?,
+            question_id: row.get(2)?,
+            anatomy_id: row.get(3)?,
+            selected_index: row.get(4)?,
+            correct_index: row.get(5)?,
+            is_correct: row.get::<_, i32>(6)? != 0,
+            time_ms: row.get(7)?,
+        })
+    }).map_err(|e| e.to_string())?;
+
+    rows.map(|row| row.map_err(|e| e.to_string())).collect()
 }
 
 // Favorites
