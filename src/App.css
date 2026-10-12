@@ -108,6 +108,56 @@ body {
 :root[data-theme="dark"] .border-slate-200,
 :root[data-theme="dark"] .border-slate-100 { border-color: var(--color-line); }
 
+.dashboard-page {
+  background-image: radial-gradient(circle at 92% 4%, rgb(23 96 117 / 8%), transparent 25rem);
+}
+
+.dashboard-hero {
+  isolation: isolate;
+}
+
+.dashboard-hero-glow {
+  background: radial-gradient(circle, rgb(23 96 117 / 17%), transparent 68%);
+  filter: blur(1px);
+}
+
+.dashboard-card,
+.dashboard-summary,
+.dashboard-system-card {
+  transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.dashboard-card:hover,
+.dashboard-summary:hover {
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-ds-floating);
+}
+
+.dashboard-system-card::after {
+  position: absolute;
+  inset: auto 1rem 0;
+  height: 2px;
+  content: "";
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  opacity: 0;
+  transform: scaleX(0.55);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.dashboard-system-card:hover::after,
+.dashboard-system-card:focus-visible::after {
+  opacity: 0.8;
+  transform: scaleX(1);
+}
+
+:root[data-theme="dark"] .dashboard-page {
+  background-image: radial-gradient(circle at 92% 4%, rgb(104 182 197 / 11%), transparent 25rem);
+}
+
+:root[data-theme="dark"] .dashboard-hero-glow {
+  background: radial-gradient(circle, rgb(104 182 197 / 16%), transparent 68%);
+}
+
 .auth-panel-glow {
   background: radial-gradient(circle at 72% 48%, rgb(255 255 255 / 28%), transparent 43%);
 }
