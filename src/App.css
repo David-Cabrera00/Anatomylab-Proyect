@@ -6,6 +6,7 @@
   --color-canvas-muted: #eaf0f2;
   --color-surface: #ffffff;
   --color-surface-raised: #fbfcfd;
+  --color-auth-panel: #b8cbd2;
   --color-line: #d7e1e5;
   --color-line-strong: #82969e;
   --color-ink: #1a2b32;
@@ -73,24 +74,26 @@ body {
 
 /* Dark mode reuses the same design tokens; layouts and component geometry stay unchanged. */
 :root[data-theme="dark"] {
-  --color-canvas: #101a1f;
-  --color-canvas-muted: #18272e;
-  --color-surface: #17252b;
-  --color-surface-raised: #1d2d34;
-  --color-line: #30444c;
-  --color-line-strong: #6f8790;
-  --color-ink: #edf5f6;
-  --color-ink-muted: #b6c8cd;
-  --color-ink-subtle: #91a8af;
-  --color-accent: #6bb6c7;
-  --color-accent-hover: #87c8d6;
-  --color-accent-soft: #1d3b45;
-  --color-success: #72c69d;
-  --color-success-soft: #1c3a30;
-  --color-warning: #e1b66a;
-  --color-warning-soft: #3b301d;
-  --color-error: #ed8e98;
-  --color-error-soft: #42252b;
+  color-scheme: dark;
+  --color-canvas: #111315;
+  --color-canvas-muted: #1a1d20;
+  --color-surface: #1b1e21;
+  --color-surface-raised: #23272b;
+  --color-auth-panel: #202a2e;
+  --color-line: #373d42;
+  --color-line-strong: #778188;
+  --color-ink: #f1f3f4;
+  --color-ink-muted: #b8c0c5;
+  --color-ink-subtle: #929ca2;
+  --color-accent: #68b6c5;
+  --color-accent-hover: #83c8d4;
+  --color-accent-soft: #1c353c;
+  --color-success: #78c9a0;
+  --color-success-soft: #1e392f;
+  --color-warning: #e2b66b;
+  --color-warning-soft: #3b301e;
+  --color-error: #ed929a;
+  --color-error-soft: #41262b;
 }
 
 /* A few legacy utility classes still exist in profile/search surfaces. Keep them legible in dark mode. */

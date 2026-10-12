@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { dbClearLearningData, dbGetPreference, dbSetPreference } from "../utils/db";
 import { useI18n, type Theme } from "../i18n";
 
-export function SettingsView() {
+export function SettingsView({ onLogout }: { onLogout: () => void }) {
   const { theme, setTheme, t } = useI18n();
   const [showExplanations, setShowExplanations] = useState(true);
   const [clearStatus, setClearStatus] = useState<"idle" | "cleared" | "error">("idle");
@@ -99,6 +99,18 @@ export function SettingsView() {
                 </button>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="mt-5 border border-line bg-surface p-6 shadow-ds-raised" aria-labelledby="account-setting-title">
+          <div className="flex flex-wrap items-center justify-between gap-5">
+            <div>
+              <h2 id="account-setting-title" className="text-title font-semibold text-ink">{t("settingsAccountTitle")}</h2>
+              <p className="mt-2 text-body text-ink-muted">{t("settingsAccountDescription")}</p>
+            </div>
+            <button type="button" onClick={onLogout} className="border border-line px-3 py-2 text-label font-semibold text-ink transition-colors hover:border-accent hover:bg-accent-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+              {t("settingsLogout")}
+            </button>
           </div>
         </section>
       </div>

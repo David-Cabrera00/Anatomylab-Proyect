@@ -720,6 +720,13 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     setAppView("home");
   };
 
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setQuizState({ status: "closed" });
+    setStudyMode(false);
+    setAppView("login");
+  };
+
   if (!isAuthenticated) {
     const isRegister = appView === "register";
 
@@ -902,7 +909,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
           refreshKey={favoritesRevision}
         />
       ) : (
-        <SettingsView />
+        <SettingsView onLogout={handleLogout} />
       )}
     </AppShell>
   );
