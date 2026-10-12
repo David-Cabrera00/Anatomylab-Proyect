@@ -932,6 +932,41 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
     location: "Superficie inferior del cerebro, entre los giros occipitotemporal lateral y fusiforme.",
     relationships: ["Giro occipitotemporal lateral", "Giro fusiforme", "Lóbulo temporal"],
   }),
+  bilateral("Transverse frontopolar gyrus and sulcus*", {
+    id: "nervous.transverse-frontopolar-gyrus-and-sulcus", name: "Giro y surco frontopolares transversos", type: "Corteza cerebral",
+    description: "Región cortical transversal situada en la parte más anterior de la superficie frontal.",
+    function: "Participa en redes de asociación relacionadas con planificación, evaluación y control cognitivo.",
+    location: "Polo frontal, por delante de las regiones prefrontales laterales.",
+    relationships: ["Corteza prefrontal", "Polo frontal", "Giros orbitarios"],
+  }),
+  bilateral("Orbital part of  inferior frontal gyrus", {
+    id: "nervous.orbital-part-inferior-frontal-gyrus", name: "Parte orbitaria del giro frontal inferior", type: "Corteza cerebral",
+    description: "Porción inferior del giro frontal inferior que se extiende sobre la superficie orbitaria.",
+    function: "Contribuye a la evaluación de estímulos, el control inhibitorio y la selección de respuestas.",
+    location: "Superficie orbitaria del lóbulo frontal, próxima a la corteza orbitofrontal.",
+    relationships: ["Corteza orbitofrontal", "Giros orbitales", "Surco olfatorio"],
+  }),
+  bilateral("Parte triangular del giro frontal inferior", {
+    id: "nervous.triangular-part-inferior-frontal-gyrus", name: "Parte triangular del giro frontal inferior", type: "Corteza cerebral",
+    description: "Porción triangular del giro frontal inferior delimitada por ramas de la cisura lateral.",
+    function: "Participa en el procesamiento del lenguaje y en la selección y organización de respuestas.",
+    location: "Superficie lateral del lóbulo frontal, entre las partes opercular y orbitaria.",
+    relationships: ["Giro frontal inferior", "Cisura lateral", "Área de Broca"],
+  }),
+  bilateral("Plano temporal", {
+    id: "nervous.planum-temporale", name: "Plano temporal", type: "Corteza auditiva de asociación",
+    description: "Región plana de la superficie superior del lóbulo temporal, posterior a la corteza auditiva primaria.",
+    function: "Participa en el procesamiento auditivo de asociación y en redes relacionadas con el lenguaje.",
+    location: "Superficie superior del lóbulo temporal, dentro de la cisura lateral.",
+    relationships: ["Corteza auditiva primaria", "Giro temporal superior", "Área de Wernicke"],
+  }),
+  bilateral("Polo temporal", {
+    id: "nervous.temporal-pole", name: "Polo temporal", type: "Corteza temporal anterior",
+    description: "Extremo anterior del lóbulo temporal que integra regiones temporales y límbicas.",
+    function: "Contribuye al reconocimiento semántico, la memoria y el procesamiento socioemocional.",
+    location: "Extremo anterior del lóbulo temporal, por delante del giro temporal superior.",
+    relationships: ["Lóbulo temporal", "Amígdala", "Corteza orbitofrontal"],
+  }),
   {
     originalName: "Tracto corticoespinal anterior",
     data: {

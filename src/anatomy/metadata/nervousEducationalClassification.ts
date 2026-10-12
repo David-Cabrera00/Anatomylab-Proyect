@@ -78,12 +78,20 @@ export const nervousCentralBatch5Candidates = [
   { concept: "Surco occipitotemporal, porción lateral", educationalId: "nervous.lateral-occipitotemporal-sulcus", anatomyIds: ["nervous.model-node-0167", "nervous.model-node-0168"] },
 ] as const;
 
+export const nervousCentralBatch6Candidates = [
+  { concept: "Giro y surco frontopolares transversos", educationalId: "nervous.transverse-frontopolar-gyrus-and-sulcus", anatomyIds: ["nervous.model-node-0318", "nervous.model-node-0319"] },
+  { concept: "Parte orbitaria del giro frontal inferior", educationalId: "nervous.orbital-part-inferior-frontal-gyrus", anatomyIds: ["nervous.model-node-0171", "nervous.model-node-0172"] },
+  { concept: "Parte triangular del giro frontal inferior", educationalId: "nervous.triangular-part-inferior-frontal-gyrus", anatomyIds: ["nervous.model-node-0181", "nervous.model-node-0182"] },
+  { concept: "Plano temporal", educationalId: "nervous.planum-temporale", anatomyIds: ["nervous.model-node-0185", "nervous.model-node-0186"] },
+  { concept: "Polo temporal", educationalId: "nervous.temporal-pole", anatomyIds: ["nervous.model-node-0187", "nervous.model-node-0188"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 242,
-  centralEntriesWithoutEducationalContent: 88,
+  entriesWithoutEducationalContent: 232,
+  centralEntriesWithoutEducationalContent: 78,
   peripheralEntriesWithoutEducationalContent: 144,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 50,
-  completedEntries: 85,
-  entriesPendingReview: 242,
+  completedConcepts: 55,
+  completedEntries: 95,
+  entriesPendingReview: 232,
 } as const;

@@ -483,6 +483,11 @@ const curatedNames: Readonly<Record<string, string>> = {
   "nervous.inferior-occipital-gyrus-and-sulcus": "Inferior occipital gyrus and sulcus",
   "nervous.lateral-occipital-gyrus": "Lateral occipital gyrus",
   "nervous.lateral-occipitotemporal-sulcus": "Lateral occipitotemporal sulcus",
+  "nervous.transverse-frontopolar-gyrus-and-sulcus": "Transverse frontopolar gyrus and sulcus",
+  "nervous.orbital-part-inferior-frontal-gyrus": "Orbital part of inferior frontal gyrus",
+  "nervous.triangular-part-inferior-frontal-gyrus": "Triangular part of inferior frontal gyrus",
+  "nervous.planum-temporale": "Planum temporale",
+  "nervous.temporal-pole": "Temporal pole",
 };
 
 const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<NervousField, "name" | "relationship">, string>>>>> = {
@@ -635,6 +640,36 @@ const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<Ner
     description: "Longitudinal sulcus on the inferior cerebral surface separating occipitotemporal regions.",
     function: "Provides an anatomical landmark between cortical areas involved in complex visual processing.",
     location: "Inferior surface of the brain, between the lateral occipitotemporal and fusiform gyri.",
+  },
+  "nervous.transverse-frontopolar-gyrus-and-sulcus": {
+    type: "Cerebral cortex",
+    description: "Transverse cortical region located at the most anterior part of the frontal surface.",
+    function: "Participates in association networks related to planning, evaluation, and cognitive control.",
+    location: "Frontal pole, anterior to the lateral prefrontal regions.",
+  },
+  "nervous.orbital-part-inferior-frontal-gyrus": {
+    type: "Cerebral cortex",
+    description: "Inferior portion of the inferior frontal gyrus extending across the orbital surface.",
+    function: "Contributes to stimulus evaluation, inhibitory control, and response selection.",
+    location: "Orbital surface of the frontal lobe, near the orbitofrontal cortex.",
+  },
+  "nervous.triangular-part-inferior-frontal-gyrus": {
+    type: "Cerebral cortex",
+    description: "Triangular portion of the inferior frontal gyrus bounded by branches of the lateral fissure.",
+    function: "Participates in language processing and the selection and organization of responses.",
+    location: "Lateral surface of the frontal lobe, between the opercular and orbital parts.",
+  },
+  "nervous.planum-temporale": {
+    type: "Auditory association cortex",
+    description: "Flat region on the superior temporal surface posterior to the primary auditory cortex.",
+    function: "Participates in auditory association processing and language-related networks.",
+    location: "Superior surface of the temporal lobe, within the lateral fissure.",
+  },
+  "nervous.temporal-pole": {
+    type: "Anterior temporal cortex",
+    description: "Anterior end of the temporal lobe integrating temporal and limbic regions.",
+    function: "Contributes to semantic recognition, memory, and socioemotional processing.",
+    location: "Anterior end of the temporal lobe, in front of the superior temporal gyrus.",
   },
 };
 
