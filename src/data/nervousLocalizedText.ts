@@ -508,6 +508,16 @@ const curatedNames: Readonly<Record<string, string>> = {
   "nervous.posterior-dorsal-cingulate-gyrus": "Posterior dorsal cingulate gyrus and sulcus",
   "nervous.accessory-nerve-nucleus": "Accessory nerve nucleus",
   "nervous.lentiform-nucleus": "Lentiform nucleus",
+  "nervous.spinal-dura-mater": "Spinal dura mater",
+  "nervous.medullary-thalamic-striae": "Medullary thalamic striae",
+  "nervous.anterior-proprius-fasciculus": "Anterior proprius fasciculus",
+  "nervous.lateral-proprius-fasciculus": "Lateral proprius fasciculus",
+  "nervous.posterior-proprius-fasciculus": "Posterior proprius fasciculus",
+  "nervous.proprius-nucleus": "Proprius nucleus",
+  "nervous.inferior-salivatory-nucleus": "Inferior salivatory nucleus",
+  "nervous.superior-salivatory-nucleus": "Superior salivatory nucleus",
+  "nervous.opercular-part-inferior-frontal-gyrus": "Opercular part of inferior frontal gyrus",
+  "nervous.spinal-reticular-process": "Spinal reticular process",
 };
 
 const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<NervousField, "name" | "relationship">, string>>>>> = {
@@ -810,6 +820,66 @@ const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<Ner
     description: "Gray matter mass formed by the putamen and globus pallidus.",
     function: "Participates in selecting and modulating motor programs and in learning circuits.",
     location: "Deep within the cerebral hemisphere, lateral to the internal capsule.",
+  },
+  "nervous.spinal-dura-mater": {
+    type: "Meninge",
+    description: "Strong outer meningeal layer surrounding the spinal cord.",
+    function: "Protects the spinal cord and helps maintain its position within the vertebral canal.",
+    location: "Around the spinal cord, deep to the vertebral canal.",
+  },
+  "nervous.medullary-thalamic-striae": {
+    type: "Limbic pathway",
+    description: "Fiber bundles running along the dorsal border of the thalamus toward the habenular region.",
+    function: "Carry signals from septal and limbic regions to the habenular nuclei.",
+    location: "Dorsomedial border of the thalamus, beside the roof of the third ventricle.",
+  },
+  "nervous.anterior-proprius-fasciculus": {
+    type: "Spinal tract",
+    description: "Propriospinal fibers in the anterior region of the spinal cord.",
+    function: "Connects spinal segments and contributes to coordination of axial responses.",
+    location: "Anterior funiculus of the spinal cord, near the anterior median fissure.",
+  },
+  "nervous.lateral-proprius-fasciculus": {
+    type: "Spinal tract",
+    description: "Propriospinal fibers located in the lateral region of the spinal cord.",
+    function: "Allows communication between spinal segments to integrate motor and sensory activity.",
+    location: "Lateral funiculus of the spinal cord, around the gray matter.",
+  },
+  "nervous.posterior-proprius-fasciculus": {
+    type: "Spinal tract",
+    description: "Propriospinal fibers located in the posterior region of the spinal cord.",
+    function: "Integrates information between spinal segments and participates in reflex circuits.",
+    location: "Posterior funiculus of the spinal cord, near the gray matter.",
+  },
+  "nervous.proprius-nucleus": {
+    type: "Spinal cord nucleus",
+    description: "Neuronal group in the posterior gray matter of the spinal cord.",
+    function: "Participates in somatosensory information processing and reflex circuits.",
+    location: "Posterior horn of the spinal cord, especially in cervical and thoracic regions.",
+  },
+  "nervous.inferior-salivatory-nucleus": {
+    type: "Parasympathetic nucleus",
+    description: "Autonomic nucleus giving rise to parasympathetic fibers associated with the glossopharyngeal nerve.",
+    function: "Stimulates secretion from the parotid gland.",
+    location: "Rostral medulla, near the reticular formation and nucleus ambiguus.",
+  },
+  "nervous.superior-salivatory-nucleus": {
+    type: "Parasympathetic nucleus",
+    description: "Autonomic nucleus associated with parasympathetic fibers of the facial nerve.",
+    function: "Regulates secretion from the lacrimal, submandibular, and sublingual glands.",
+    location: "Caudal pons, near the facial motor nucleus.",
+  },
+  "nervous.opercular-part-inferior-frontal-gyrus": {
+    type: "Cerebral cortex",
+    description: "Part of the inferior frontal gyrus forming the frontal operculum.",
+    function: "Participates in speech motor control, articulation, and language processing.",
+    location: "Lateral surface of the frontal lobe, beside the lateral fissure.",
+  },
+  "nervous.spinal-reticular-process": {
+    type: "Reticular formation",
+    description: "Reticular extension or region related to the internal organization of the spinal cord.",
+    function: "Participates in spinal signal integration and modulation of motor and autonomic responses.",
+    location: "Reticular region of the brainstem and its spinal continuities.",
   },
 };
 

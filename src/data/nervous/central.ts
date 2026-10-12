@@ -1108,6 +1108,94 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
     relationships: ["Putamen", "Globo pálido", "Cápsula interna"],
   }),
   {
+    originalName: "Dura espinal",
+    data: {
+      id: "nervous.spinal-dura-mater", name: "Dura espinal", type: "Meninge",
+      description: "Capa externa y resistente de las meninges que envuelve la médula espinal.",
+      function: "Protege la médula espinal y contribuye a mantener su posición dentro del conducto vertebral.",
+      location: "Alrededor de la médula espinal, profunda al canal vertebral.",
+      relationships: ["Médula espinal", "Aracnoides espinal", "Conducto vertebral"],
+    },
+  },
+  bilateral("Estrías talámicas medulares", {
+    id: "nervous.medullary-thalamic-striae", name: "Estrías talámicas medulares", type: "Vía límbica",
+    description: "Fascículos de fibras que recorren el borde dorsal del tálamo hacia la región habenular.",
+    function: "Conducen señales desde regiones septales y límbicas hacia los núcleos habenulares.",
+    location: "Borde dorsomedial del tálamo, junto al techo del tercer ventrículo.",
+    relationships: ["Habénula", "Núcleos septales", "Tálamo"],
+  }),
+  {
+    originalName: "Fascículo anterior propio",
+    data: {
+      id: "nervous.anterior-proprius-fasciculus", name: "Fascículo anterior propio", type: "Tracto espinal",
+      description: "Conjunto de fibras propioespinales de la región anterior de la médula espinal.",
+      function: "Conecta segmentos medulares y contribuye a la coordinación de respuestas axiales.",
+      location: "Cordón anterior de la médula espinal, próximo a la fisura media anterior.",
+      relationships: ["Médula espinal", "Cordón anterior", "Interneuronas espinales"],
+    },
+  },
+  {
+    originalName: "Fascículo lateral propio",
+    data: {
+      id: "nervous.lateral-proprius-fasciculus", name: "Fascículo lateral propio", type: "Tracto espinal",
+      description: "Fibras propioespinales situadas en la región lateral de la médula espinal.",
+      function: "Permite la comunicación entre segmentos medulares para integrar actividad motora y sensitiva.",
+      location: "Cordón lateral de la médula espinal, alrededor de la sustancia gris.",
+      relationships: ["Médula espinal", "Cordón lateral", "Interneuronas espinales"],
+    },
+  },
+  {
+    originalName: "Fascículo posterior propio",
+    data: {
+      id: "nervous.posterior-proprius-fasciculus", name: "Fascículo posterior propio", type: "Tracto espinal",
+      description: "Fibras propioespinales ubicadas en la región posterior de la médula espinal.",
+      function: "Integra información entre segmentos medulares y participa en circuitos reflejos.",
+      location: "Cordón posterior de la médula espinal, cerca de la sustancia gris.",
+      relationships: ["Médula espinal", "Cordón posterior", "Reflejos espinales"],
+    },
+  },
+  {
+    originalName: "Núcleo propio",
+    data: {
+      id: "nervous.proprius-nucleus", name: "Núcleo propio", type: "Núcleo de la médula espinal",
+      description: "Grupo neuronal de la sustancia gris posterior de la médula espinal.",
+      function: "Participa en el procesamiento de información somatosensitiva y en circuitos reflejos.",
+      location: "Asta posterior de la médula espinal, especialmente en la región cervical y torácica.",
+      relationships: ["Asta posterior", "Médula espinal", "Vías sensitivas"],
+    },
+  },
+  bilateral("Núcleo salival inferior", {
+    id: "nervous.inferior-salivatory-nucleus", name: "Núcleo salival inferior", type: "Núcleo parasimpático",
+    description: "Núcleo autónomo que origina fibras parasimpáticas asociadas al nervio glosofaríngeo.",
+    function: "Estimula la secreción de la glándula parótida.",
+    location: "Bulbo rostral, cerca de la formación reticular y del núcleo ambiguo.",
+    relationships: ["Nervio glosofaríngeo", "Ganglio ótico", "Glándula parótida"],
+  }),
+  bilateral("Núcleo salival superior", {
+    id: "nervous.superior-salivatory-nucleus", name: "Núcleo salival superior", type: "Núcleo parasimpático",
+    description: "Núcleo autónomo relacionado con fibras parasimpáticas del nervio facial.",
+    function: "Regula la secreción de las glándulas lagrimales y salivales submandibular y sublingual.",
+    location: "Puente caudal, próximo al núcleo motor del nervio facial.",
+    relationships: ["Nervio facial", "Ganglio pterigopalatino", "Glándula submandibular"],
+  }),
+  bilateral("Parte opercular del giro frontal inferior", {
+    id: "nervous.opercular-part-inferior-frontal-gyrus", name: "Parte opercular del giro frontal inferior", type: "Corteza cerebral",
+    description: "Porción del giro frontal inferior que forma parte del opérculo frontal.",
+    function: "Participa en el control motor del habla, la articulación y el procesamiento lingüístico.",
+    location: "Superficie lateral del lóbulo frontal, junto a la cisura lateral.",
+    relationships: ["Giro frontal inferior", "Área de Broca", "Cisura lateral"],
+  }),
+  {
+    originalName: "Proceso reticular espinal",
+    data: {
+      id: "nervous.spinal-reticular-process", name: "Proceso reticular espinal", type: "Formación reticular",
+      description: "Prolongación o región reticular relacionada con la organización interna de la médula espinal.",
+      function: "Participa en la integración de señales espinales y en la modulación de respuestas motoras y autonómicas.",
+      location: "Región reticular del tronco encefálico y sus continuidades espinales.",
+      relationships: ["Formación reticular", "Médula espinal", "Vías reticuloespinales"],
+    },
+  },
+  {
     originalName: "Tracto corticoespinal anterior",
     data: {
       id: "nervous.anterior-corticospinal-tract", name: "Tracto corticoespinal anterior", type: "Vía motora descendente",

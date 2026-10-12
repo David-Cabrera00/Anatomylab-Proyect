@@ -118,12 +118,25 @@ export const nervousCentralBatch10Candidates = [
   { concept: "Núcleo lentiforme", educationalId: "nervous.lentiform-nucleus", anatomyIds: ["nervous.model-node-0155", "nervous.model-node-0156"] },
 ] as const;
 
+export const nervousCentralBatch11Candidates = [
+  { concept: "Dura espinal", educationalId: "nervous.spinal-dura-mater", anatomyIds: ["nervous.model-node-0047"] },
+  { concept: "Estrías talámicas medulares", educationalId: "nervous.medullary-thalamic-striae", anatomyIds: ["nervous.model-node-0048", "nervous.model-node-0049"] },
+  { concept: "Fascículo anterior propio", educationalId: "nervous.anterior-proprius-fasciculus", anatomyIds: ["nervous.model-node-0050"] },
+  { concept: "Fascículo lateral propio", educationalId: "nervous.lateral-proprius-fasciculus", anatomyIds: ["nervous.model-node-0051"] },
+  { concept: "Fascículo posterior propio", educationalId: "nervous.posterior-proprius-fasciculus", anatomyIds: ["nervous.model-node-0052"] },
+  { concept: "Núcleo propio", educationalId: "nervous.proprius-nucleus", anatomyIds: ["nervous.model-node-0161"] },
+  { concept: "Núcleo salival inferior", educationalId: "nervous.inferior-salivatory-nucleus", anatomyIds: ["nervous.model-node-0162", "nervous.model-node-0163"] },
+  { concept: "Núcleo salival superior", educationalId: "nervous.superior-salivatory-nucleus", anatomyIds: ["nervous.model-node-0164", "nervous.model-node-0165"] },
+  { concept: "Parte opercular del giro frontal inferior", educationalId: "nervous.opercular-part-inferior-frontal-gyrus", anatomyIds: ["nervous.model-node-0179", "nervous.model-node-0180"] },
+  { concept: "Proceso reticular espinal", educationalId: "nervous.spinal-reticular-process", anatomyIds: ["nervous.model-node-0193"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 192,
-  centralEntriesWithoutEducationalContent: 38,
+  entriesWithoutEducationalContent: 178,
+  centralEntriesWithoutEducationalContent: 24,
   peripheralEntriesWithoutEducationalContent: 144,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 75,
-  completedEntries: 135,
-  entriesPendingReview: 192,
+  completedConcepts: 85,
+  completedEntries: 149,
+  entriesPendingReview: 178,
 } as const;
