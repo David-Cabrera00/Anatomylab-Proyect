@@ -41,7 +41,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
 
   if (quizState.status === "idle") {
     return (
-      <section className="border border-line bg-surface shadow-ds-raised">
+      <section className="quiz-panel border border-line bg-surface shadow-ds-raised">
         <header className="border-b border-line px-6 py-6 sm:px-8">
           <div className="flex items-start justify-between gap-5">
             <div>
@@ -123,7 +123,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
     };
 
     return (
-      <section className="border border-line bg-surface shadow-ds-raised">
+      <section className="quiz-panel quiz-active-panel border border-line bg-surface shadow-ds-raised">
         <header className="border-b border-line px-6 py-5 sm:px-8">
           <div className="flex items-center justify-between gap-5">
             <div className="min-w-0 flex-1">
@@ -150,9 +150,9 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
                 key={index}
                 type="button"
                 onClick={() => handleAnswer(index)}
-                className="group flex min-h-14 w-full items-center gap-4 border border-line bg-surface-raised px-4 py-3 text-left transition-[border-color,background-color,transform] duration-150 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft/45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="quiz-option group flex min-h-14 w-full items-center gap-4 border border-line bg-surface-raised px-4 py-3 text-left transition-[border-color,background-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft/45 hover:shadow-ds-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line-strong text-label font-semibold text-ink-muted transition-colors duration-150 group-hover:border-accent group-hover:text-accent">{String.fromCharCode(65 + index)}</span>
+                <span className="quiz-option-index flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line-strong text-label font-semibold text-ink-muted transition-[border-color,color,transform] duration-150 group-hover:border-accent group-hover:text-accent">{String.fromCharCode(65 + index)}</span>
                 <span className="text-body text-ink">{getLocalizedText(option, language)}</span>
               </button>
             ))}
@@ -170,7 +170,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
     const totalTime = session.completedAt ? session.completedAt - session.startedAt : 0;
 
     return (
-      <section className="border border-line bg-surface shadow-ds-raised">
+      <section className="quiz-panel quiz-review-panel border border-line bg-surface shadow-ds-raised">
         <header className="border-b border-line px-6 py-7 sm:px-8">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -193,7 +193,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
 
             const isCorrect = answer.correct;
             return (
-              <article key={qId} className={`border px-4 py-4 ${isCorrect ? "border-success/40 bg-success-soft/40" : "border-error/40 bg-error-soft/40"}`}>
+              <article key={qId} className={`quiz-review-card border px-4 py-4 ${isCorrect ? "border-success/40 bg-success-soft/40" : "border-error/40 bg-error-soft/40"}`}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <span className="text-caption font-semibold uppercase tracking-[0.12em] text-ink-subtle">{t("quizQuestion")} {index + 1}</span>
                   <span className={`flex items-center gap-2 text-label font-semibold ${isCorrect ? "text-success" : "text-error"}`}><StatusIcon correct={isCorrect} />{isCorrect ? t("quizCorrect") : t("quizIncorrect")}</span>

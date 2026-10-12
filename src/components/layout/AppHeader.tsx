@@ -24,7 +24,7 @@ export function AppHeader({ currentView, search }: AppHeaderProps) {
   const { t } = useI18n();
 
   return (
-    <div className="flex h-16 items-center justify-between border-b border-line bg-surface px-6">
+    <div className="app-header flex h-16 items-center justify-between border-b border-line bg-surface px-6">
       <div className="flex min-w-0 flex-1 items-center gap-4 lg:gap-6">
         <div className="shrink-0">
           <h1 className="text-heading font-semibold tracking-tight text-ink">{t("appName")}</h1>
