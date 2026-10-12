@@ -1072,6 +1072,41 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
     location: "Lóbulo frontal lateral, por delante del giro precentral inferior.",
     relationships: ["Giro precentral", "Giro frontal inferior", "Corteza motora"],
   }),
+  bilateral("Base del pedúnculo", {
+    id: "nervous.crus-of-cerebral-peduncle", name: "Base del pedúnculo", type: "Vía motora mesencefálica",
+    description: "Porción anterior del pedúnculo cerebral que contiene fibras descendentes del mesencéfalo.",
+    function: "Conduce fibras motoras y corticopontinas desde la corteza hacia el tronco encefálico y la médula.",
+    location: "Superficie ventral del mesencéfalo, por delante del tegmento.",
+    relationships: ["Mesencéfalo", "Cápsula interna", "Puente"],
+  }),
+  bilateral("Fosa interpeduncular", {
+    id: "nervous.interpeduncular-fossa", name: "Fosa interpeduncular", type: "Región mesencefálica",
+    description: "Depresión de la superficie ventral del mesencéfalo situada entre los pedúnculos cerebrales.",
+    function: "Sirve como referencia anatómica para estructuras mesencefálicas y la emergencia del nervio oculomotor.",
+    location: "Cara inferior del mesencéfalo, entre los pedúnculos cerebrales.",
+    relationships: ["Pedúnculos cerebrales", "Nervio oculomotor", "Sustancia perforada posterior"],
+  }),
+  bilateral("Cingulate gyrus and sulcus (Posterior dorsal part)", {
+    id: "nervous.posterior-dorsal-cingulate-gyrus", name: "Giro y surco del cíngulo, porción dorsal posterior", type: "Sistema límbico",
+    description: "Porción dorsal posterior del giro del cíngulo y del surco que lo acompaña.",
+    function: "Participa en orientación interna, memoria y evaluación de información contextual.",
+    location: "Superficie medial del hemisferio, posterior al cuerpo calloso y próxima al precúneo.",
+    relationships: ["Cuerpo calloso", "Precúneo", "Sistema límbico"],
+  }),
+  bilateral("Núcleo del nervio accesorio", {
+    id: "nervous.accessory-nerve-nucleus", name: "Núcleo del nervio accesorio", type: "Núcleo motor espinal",
+    description: "Columna motora de neuronas que origina la raíz espinal del nervio accesorio.",
+    function: "Controla principalmente los músculos esternocleidomastoideo y trapecio.",
+    location: "Asta anterior de los segmentos cervicales superiores de la médula espinal.",
+    relationships: ["Nervio accesorio", "Músculo esternocleidomastoideo", "Músculo trapecio"],
+  }),
+  bilateral("Núcleo lentiforme", {
+    id: "nervous.lentiform-nucleus", name: "Núcleo lentiforme", type: "Ganglio basal",
+    description: "Masa de sustancia gris formada por el putamen y el globo pálido.",
+    function: "Participa en la selección y modulación de programas motores y en circuitos de aprendizaje.",
+    location: "Profundo en el hemisferio cerebral, lateral a la cápsula interna.",
+    relationships: ["Putamen", "Globo pálido", "Cápsula interna"],
+  }),
   {
     originalName: "Tracto corticoespinal anterior",
     data: {

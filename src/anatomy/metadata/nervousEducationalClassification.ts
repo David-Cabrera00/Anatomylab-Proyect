@@ -110,12 +110,20 @@ export const nervousCentralBatch9Candidates = [
   { concept: "Surco precentral, porción inferior", educationalId: "nervous.inferior-precentral-sulcus", anatomyIds: ["nervous.model-node-0191", "nervous.model-node-0192"] },
 ] as const;
 
+export const nervousCentralBatch10Candidates = [
+  { concept: "Base del pedúnculo", educationalId: "nervous.crus-of-cerebral-peduncle", anatomyIds: ["nervous.model-node-0009", "nervous.model-node-0010"] },
+  { concept: "Fosa interpeduncular", educationalId: "nervous.interpeduncular-fossa", anatomyIds: ["nervous.model-node-0053", "nervous.model-node-0054"] },
+  { concept: "Giro y surco del cíngulo, porción dorsal posterior", educationalId: "nervous.posterior-dorsal-cingulate-gyrus", anatomyIds: ["nervous.model-node-0021", "nervous.model-node-0022"] },
+  { concept: "Núcleo del nervio accesorio", educationalId: "nervous.accessory-nerve-nucleus", anatomyIds: ["nervous.model-node-0146", "nervous.model-node-0147"] },
+  { concept: "Núcleo lentiforme", educationalId: "nervous.lentiform-nucleus", anatomyIds: ["nervous.model-node-0155", "nervous.model-node-0156"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 202,
-  centralEntriesWithoutEducationalContent: 48,
+  entriesWithoutEducationalContent: 192,
+  centralEntriesWithoutEducationalContent: 38,
   peripheralEntriesWithoutEducationalContent: 144,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 70,
-  completedEntries: 125,
-  entriesPendingReview: 202,
+  completedConcepts: 75,
+  completedEntries: 135,
+  entriesPendingReview: 192,
 } as const;

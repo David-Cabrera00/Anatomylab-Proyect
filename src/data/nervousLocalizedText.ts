@@ -503,6 +503,11 @@ const curatedNames: Readonly<Record<string, string>> = {
   "nervous.superior-temporal-sulcus": "Superior temporal sulcus",
   "nervous.superior-precentral-sulcus": "Superior precentral sulcus",
   "nervous.inferior-precentral-sulcus": "Inferior precentral sulcus",
+  "nervous.crus-of-cerebral-peduncle": "Crus of cerebral peduncle",
+  "nervous.interpeduncular-fossa": "Interpeduncular fossa",
+  "nervous.posterior-dorsal-cingulate-gyrus": "Posterior dorsal cingulate gyrus and sulcus",
+  "nervous.accessory-nerve-nucleus": "Accessory nerve nucleus",
+  "nervous.lentiform-nucleus": "Lentiform nucleus",
 };
 
 const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<NervousField, "name" | "relationship">, string>>>>> = {
@@ -775,6 +780,36 @@ const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<Ner
     description: "Inferior portion of the precentral sulcus near the opercular region of the frontal lobe.",
     function: "Delimits frontal motor regions related to movements of the face and upper limb.",
     location: "Lateral frontal lobe, anterior to the inferior precentral gyrus.",
+  },
+  "nervous.crus-of-cerebral-peduncle": {
+    type: "Midbrain motor pathway",
+    description: "Anterior part of the cerebral peduncle containing descending fibers in the midbrain.",
+    function: "Carries motor and corticopontine fibers from the cortex toward the brainstem and spinal cord.",
+    location: "Ventral surface of the midbrain, anterior to the tegmentum.",
+  },
+  "nervous.interpeduncular-fossa": {
+    type: "Midbrain region",
+    description: "Depression on the ventral midbrain between the cerebral peduncles.",
+    function: "Provides an anatomical landmark for midbrain structures and oculomotor nerve emergence.",
+    location: "Inferior surface of the midbrain, between the cerebral peduncles.",
+  },
+  "nervous.posterior-dorsal-cingulate-gyrus": {
+    type: "Limbic system",
+    description: "Posterior dorsal portion of the cingulate gyrus and its accompanying sulcus.",
+    function: "Participates in internal orientation, memory, and contextual information evaluation.",
+    location: "Medial surface of the hemisphere, posterior to the corpus callosum and near the precuneus.",
+  },
+  "nervous.accessory-nerve-nucleus": {
+    type: "Spinal motor nucleus",
+    description: "Motor neuronal column that gives rise to the spinal root of the accessory nerve.",
+    function: "Primarily controls the sternocleidomastoid and trapezius muscles.",
+    location: "Anterior horn of the upper cervical spinal cord.",
+  },
+  "nervous.lentiform-nucleus": {
+    type: "Basal ganglion",
+    description: "Gray matter mass formed by the putamen and globus pallidus.",
+    function: "Participates in selecting and modulating motor programs and in learning circuits.",
+    location: "Deep within the cerebral hemisphere, lateral to the internal capsule.",
   },
 };
 
