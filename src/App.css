@@ -70,3 +70,37 @@ body {
   background: var(--color-canvas);
   color: var(--color-ink);
 }
+
+/* Dark mode reuses the same design tokens; layouts and component geometry stay unchanged. */
+:root[data-theme="dark"] {
+  --color-canvas: #101a1f;
+  --color-canvas-muted: #18272e;
+  --color-surface: #17252b;
+  --color-surface-raised: #1d2d34;
+  --color-line: #30444c;
+  --color-line-strong: #6f8790;
+  --color-ink: #edf5f6;
+  --color-ink-muted: #b6c8cd;
+  --color-ink-subtle: #91a8af;
+  --color-accent: #6bb6c7;
+  --color-accent-hover: #87c8d6;
+  --color-accent-soft: #1d3b45;
+  --color-success: #72c69d;
+  --color-success-soft: #1c3a30;
+  --color-warning: #e1b66a;
+  --color-warning-soft: #3b301d;
+  --color-error: #ed8e98;
+  --color-error-soft: #42252b;
+}
+
+/* A few legacy utility classes still exist in profile/search surfaces. Keep them legible in dark mode. */
+:root[data-theme="dark"] .bg-white { background-color: var(--color-surface); }
+:root[data-theme="dark"] .bg-slate-50 { background-color: var(--color-canvas-muted); }
+:root[data-theme="dark"] .bg-slate-100 { background-color: var(--color-surface-raised); }
+:root[data-theme="dark"] .text-slate-900,
+:root[data-theme="dark"] .text-slate-700 { color: var(--color-ink); }
+:root[data-theme="dark"] .text-slate-600,
+:root[data-theme="dark"] .text-slate-500,
+:root[data-theme="dark"] .text-slate-400 { color: var(--color-ink-muted); }
+:root[data-theme="dark"] .border-slate-200,
+:root[data-theme="dark"] .border-slate-100 { border-color: var(--color-line); }

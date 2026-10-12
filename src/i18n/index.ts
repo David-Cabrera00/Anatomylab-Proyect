@@ -7,6 +7,7 @@ export { getLocalizedText } from "./localizedText";
 export type { LocalizedLanguage, LocalizedText, LocalizableText } from "./localizedText";
 
 export type Language = "es" | "en";
+export type Theme = "light" | "dark";
 export type TranslationKey = keyof typeof es;
 
 export const systemTranslationKeys: Record<string, TranslationKey> = {
@@ -80,12 +81,16 @@ export const anatomyLegendTranslationKeys: Record<string, TranslationKey> = {
 
 const LANGUAGE_STORAGE_KEY = "anatomylab.language";
 const LANGUAGE_PREFERENCE_KEY = "language";
+const THEME_STORAGE_KEY = "anatomylab.theme";
+const THEME_PREFERENCE_KEY = "theme";
 
 const dictionaries = { es, en } as const;
 
 type I18nContextValue = {
   language: Language;
   setLanguage: (language: Language) => void;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   t: (key: TranslationKey) => string;
 };
 
@@ -102,8 +107,18 @@ function getInitialLanguage(): Language {
   }
 }
 
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") return "light";
+  try {
+    return window.localStorage.getItem(THEME_STORAGE_KEY) === "dark" ? "dark" : "light";
+  } catch {
+    return "light";
+  }
+}
+
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(getInitialLanguage);
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
 
   useEffect(() => {
     let cancelled = false;
@@ -118,6 +133,21 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     return () => { cancelled = true; };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    void dbGetPreference(THEME_PREFERENCE_KEY)
+      .then((stored) => {
+        if (!cancelled && (stored === "light" || stored === "dark")) setThemeState(stored);
+      })
+      .catch(() => { /* local fallback remains usable */ });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try { window.localStorage.setItem(THEME_STORAGE_KEY, theme); } catch { /* fallback remains usable */ }
+  }, [theme]);
+
   const setLanguage = (nextLanguage: Language) => {
     setLanguageState(nextLanguage);
     try {
@@ -130,11 +160,20 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const setTheme = (nextTheme: Theme) => {
+    setThemeState(nextTheme);
+    void dbSetPreference(THEME_PREFERENCE_KEY, nextTheme).catch(() => {
+      // Keep the local preference when SQLite is unavailable.
+    });
+  };
+
   const value = useMemo<I18nContextValue>(() => ({
     language,
     setLanguage,
+    theme,
+    setTheme,
     t: (key) => dictionaries[language][key],
-  }), [language]);
+  }), [language, theme]);
 
   return createElement(I18nContext.Provider, { value }, children);
 }
