@@ -22,6 +22,7 @@ const commonAccessory = {
 } as const;
 
 export const digestiveEnglishFields: Readonly<Record<string, DigestiveEnglishFields>> = {
+  "digestive.gingiva": { name: "Gingiva", type: "Oral tissue", description: "Mucosa surrounding and protecting the teeth within the oral cavity.", function: "Protects dental supporting tissues and contributes to the digestive tract's initial barrier.", location: "Alveolar margin of the oral cavity.", relationships: ["Teeth", "Oral cavity", "Alveolar bone"] },
   "parotid-gland-left": {
     name: "Parotid gland", type: "Salivary gland", description: "Major salivary gland.", function: "Produces serous saliva.", location: "Parotid region.",
   },

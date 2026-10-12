@@ -6,6 +6,15 @@ import { accessoryEntries } from "./digestive/accessory";
 import { grouped } from "./digestive/binding";
 
 const digestivePilotEntriesRaw = [
+  {
+    originalName: "Gingiva",
+    data: {
+      id: "digestive.gingiva", name: "Encía", type: "Tejido oral",
+      description: "Mucosa que rodea y protege los dientes dentro de la cavidad oral.",
+      function: "Protege los tejidos de soporte dental y contribuye a la barrera inicial del aparato digestivo.",
+      location: "Margen alveolar de la cavidad oral.", relationships: ["Dientes", "Cavidad oral", "Hueso alveolar"],
+    },
+  },
   grouped(["Glándula parótida.l", "Glándula parótida.r"], {
     id: "parotid-gland-left", name: "Glándula parótida", type: "Glándula salival",
     description: "Glándula salival mayor.", function: "Produce saliva serosa.", location: "Región parotídea.",
