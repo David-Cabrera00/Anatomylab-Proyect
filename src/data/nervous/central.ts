@@ -897,6 +897,41 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
       relationships: ["Hipocampo", "Fórnix", "Estría terminal"],
     },
   },
+  bilateral("Giro occipitotemporal lateral", {
+    id: "nervous.lateral-occipitotemporal-gyrus", name: "Giro occipitotemporal lateral", type: "Corteza cerebral",
+    description: "Giro de la superficie inferior del lóbulo temporal y occipital lateral.",
+    function: "Participa en el análisis visual de objetos, escenas y categorías complejas.",
+    location: "Superficie inferior del cerebro, lateral al giro fusiforme.",
+    relationships: ["Giro fusiforme", "Surco occipitotemporal", "Corteza visual"],
+  }),
+  bilateral("Giros orbitales", {
+    id: "nervous.orbital-gyri", name: "Giros orbitales", type: "Corteza cerebral",
+    description: "Conjunto de giros situados en la superficie orbitaria del lóbulo frontal.",
+    function: "Integra valoraciones sensoriales y emocionales para orientar la conducta y la toma de decisiones.",
+    location: "Superficie inferior del lóbulo frontal, alrededor de los surcos orbitarios.",
+    relationships: ["Corteza orbitofrontal", "Giro recto", "Surco olfatorio"],
+  }),
+  bilateral("Inferior occipital gyrus and sulcus*", {
+    id: "nervous.inferior-occipital-gyrus-and-sulcus", name: "Giro y surco occipitales inferiores", type: "Corteza cerebral",
+    description: "Región cortical de la superficie lateral e inferior del lóbulo occipital.",
+    function: "Contribuye al procesamiento visual de formas, color y rasgos de los objetos.",
+    location: "Lóbulo occipital inferior, por debajo de regiones occipitales laterales.",
+    relationships: ["Corteza visual", "Giro occipital lateral", "Surco occipitotemporal"],
+  }),
+  bilateral("Lateral occipital gyrus (Middle occipital gyrus*)", {
+    id: "nervous.lateral-occipital-gyrus", name: "Giro occipital lateral", type: "Corteza cerebral",
+    description: "Giro de la superficie lateral del lóbulo occipital, también relacionado con el giro occipital medio.",
+    function: "Participa en el procesamiento visual de formas y en el reconocimiento de objetos.",
+    location: "Superficie lateral del lóbulo occipital, entre los surcos occipitales.",
+    relationships: ["Corteza visual", "Giro occipital inferior", "Lóbulo parietal"],
+  }),
+  bilateral("Occipitotemporal sulcus (Lateral part*)", {
+    id: "nervous.lateral-occipitotemporal-sulcus", name: "Surco occipitotemporal, porción lateral", type: "Surco cerebral",
+    description: "Surco longitudinal de la superficie inferior cerebral que separa regiones occipitotemporales.",
+    function: "Sirve como referencia anatómica entre áreas corticales implicadas en el procesamiento visual complejo.",
+    location: "Superficie inferior del cerebro, entre los giros occipitotemporal lateral y fusiforme.",
+    relationships: ["Giro occipitotemporal lateral", "Giro fusiforme", "Lóbulo temporal"],
+  }),
   {
     originalName: "Tracto corticoespinal anterior",
     data: {

@@ -70,12 +70,20 @@ export const nervousCentralBatch4Candidates = [
   { concept: "Núcleos septales", educationalId: "nervous.septal-nuclei", anatomyIds: ["nervous.model-node-0166"] },
 ] as const;
 
+export const nervousCentralBatch5Candidates = [
+  { concept: "Giro occipitotemporal lateral", educationalId: "nervous.lateral-occipitotemporal-gyrus", anatomyIds: ["nervous.model-node-0055", "nervous.model-node-0056"] },
+  { concept: "Giros orbitales", educationalId: "nervous.orbital-gyri", anatomyIds: ["nervous.model-node-0057", "nervous.model-node-0058"] },
+  { concept: "Giro y surco occipitales inferiores", educationalId: "nervous.inferior-occipital-gyrus-and-sulcus", anatomyIds: ["nervous.model-node-0061", "nervous.model-node-0062"] },
+  { concept: "Giro occipital lateral", educationalId: "nervous.lateral-occipital-gyrus", anatomyIds: ["nervous.model-node-0071", "nervous.model-node-0072"] },
+  { concept: "Surco occipitotemporal, porción lateral", educationalId: "nervous.lateral-occipitotemporal-sulcus", anatomyIds: ["nervous.model-node-0167", "nervous.model-node-0168"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 252,
-  centralEntriesWithoutEducationalContent: 98,
+  entriesWithoutEducationalContent: 242,
+  centralEntriesWithoutEducationalContent: 88,
   peripheralEntriesWithoutEducationalContent: 144,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 45,
-  completedEntries: 75,
-  entriesPendingReview: 252,
+  completedConcepts: 50,
+  completedEntries: 85,
+  entriesPendingReview: 242,
 } as const;

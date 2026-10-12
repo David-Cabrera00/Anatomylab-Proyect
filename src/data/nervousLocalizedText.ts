@@ -478,6 +478,11 @@ const curatedNames: Readonly<Record<string, string>> = {
   "nervous.medullary-gray-matter": "Gray matter of the medulla oblongata",
   "nervous.intermediomedial-nucleus": "Intermediomedial nucleus",
   "nervous.septal-nuclei": "Septal nuclei",
+  "nervous.lateral-occipitotemporal-gyrus": "Lateral occipitotemporal gyrus",
+  "nervous.orbital-gyri": "Orbital gyri",
+  "nervous.inferior-occipital-gyrus-and-sulcus": "Inferior occipital gyrus and sulcus",
+  "nervous.lateral-occipital-gyrus": "Lateral occipital gyrus",
+  "nervous.lateral-occipitotemporal-sulcus": "Lateral occipitotemporal sulcus",
 };
 
 const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<NervousField, "name" | "relationship">, string>>>>> = {
@@ -600,6 +605,36 @@ const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<Ner
     description: "Group of nuclei located in the medial septal region of the telencephalon.",
     function: "Participates in limbic circuits related to memory, emotion, and hippocampal modulation.",
     location: "Septal area, anterior to the hypothalamus and near the corpus callosum.",
+  },
+  "nervous.lateral-occipitotemporal-gyrus": {
+    type: "Cerebral cortex",
+    description: "Gyrus on the inferior surface of the lateral temporal and occipital lobes.",
+    function: "Participates in visual analysis of complex objects, scenes, and categories.",
+    location: "Inferior surface of the brain, lateral to the fusiform gyrus.",
+  },
+  "nervous.orbital-gyri": {
+    type: "Cerebral cortex",
+    description: "Group of gyri located on the orbital surface of the frontal lobe.",
+    function: "Integrates sensory and emotional valuations to guide behavior and decision-making.",
+    location: "Inferior surface of the frontal lobe, around the orbital sulci.",
+  },
+  "nervous.inferior-occipital-gyrus-and-sulcus": {
+    type: "Cerebral cortex",
+    description: "Cortical region on the lateral and inferior surface of the occipital lobe.",
+    function: "Contributes to visual processing of shape, color, and object features.",
+    location: "Inferior occipital lobe, below the lateral occipital regions.",
+  },
+  "nervous.lateral-occipital-gyrus": {
+    type: "Cerebral cortex",
+    description: "Gyrus on the lateral surface of the occipital lobe, also related to the middle occipital gyrus.",
+    function: "Participates in visual processing of shape and object recognition.",
+    location: "Lateral surface of the occipital lobe, between the occipital sulci.",
+  },
+  "nervous.lateral-occipitotemporal-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Longitudinal sulcus on the inferior cerebral surface separating occipitotemporal regions.",
+    function: "Provides an anatomical landmark between cortical areas involved in complex visual processing.",
+    location: "Inferior surface of the brain, between the lateral occipitotemporal and fusiform gyri.",
   },
 };
 
