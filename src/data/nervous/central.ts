@@ -1269,6 +1269,31 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
     },
   },
   {
+    originalNames: ["Canal central", "Canal central.001"],
+    data: {
+      id: "nervous.central-canal", name: "Canal central", type: "Sistema ventricular espinal",
+      description: "Conducto estrecho que recorre el centro de la médula espinal y contiene líquido cefalorraquídeo.", function: "Facilita la circulación del líquido cefalorraquídeo dentro de la médula espinal.", location: "Centro de la sustancia gris medular.", relationships: ["Médula espinal", "Líquido cefalorraquídeo", "Cuarto ventrículo"],
+    },
+  },
+  {
+    originalName: "Tracto posterolateral",
+    data: {
+      id: "nervous.posterolateral-tract", name: "Tracto posterolateral", type: "Tracto espinal", description: "Vía de fibras situada en la región posterolateral de la médula espinal.", function: "Participa en la transmisión de información nociceptiva y térmica hacia circuitos ascendentes.", location: "Cordón posterolateral de la médula espinal.", relationships: ["Médula espinal", "Vías anterolaterales"],
+    },
+  },
+  {
+    originalName: "Tracto reticuloespinal lateral",
+    data: {
+      id: "nervous.lateral-reticulospinal-tract", name: "Tracto reticuloespinal lateral", type: "Vía motora descendente", description: "Vía descendente originada en la formación reticular lateral del tronco encefálico.", function: "Modula el tono muscular, la postura y respuestas motoras automáticas.", location: "Cordón lateral de la médula espinal.", relationships: ["Formación reticular", "Médula espinal", "Control postural"],
+    },
+  },
+  {
+    originalName: "Tracto reticuloespinal medial",
+    data: {
+      id: "nervous.medial-reticulospinal-tract", name: "Tracto reticuloespinal medial", type: "Vía motora descendente", description: "Vía descendente de la formación reticular medial hacia la médula espinal.", function: "Contribuye al control de la postura y de movimientos axiales y proximales.", location: "Cordón anterior de la médula espinal.", relationships: ["Formación reticular", "Médula espinal", "Musculatura axial"],
+    },
+  },
+  {
     originalName: "Tracto corticoespinal anterior",
     data: {
       id: "nervous.anterior-corticospinal-tract", name: "Tracto corticoespinal anterior", type: "Vía motora descendente",

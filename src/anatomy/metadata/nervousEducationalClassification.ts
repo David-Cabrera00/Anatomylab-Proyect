@@ -91,6 +91,36 @@ export const nervousPeripheralBatch5Candidates = [
   { concept: "Ramas digitales palmares comunes del nervio ulnar", educationalId: "nervous.common-palmar-digital-ulnar-branches", anatomyIds: ["nervous.model-node-0240", "nervous.model-node-0241"] },
 ] as const;
 
+export const nervousCentralBatch13Candidates = [
+  { concept: "Canal central", educationalId: "nervous.central-canal", anatomyIds: ["nervous.model-node-0011", "nervous.model-node-0012"] },
+  { concept: "Tracto posterolateral", educationalId: "nervous.posterolateral-tract", anatomyIds: ["nervous.model-node-0310"] },
+  { concept: "Tracto reticuloespinal lateral", educationalId: "nervous.lateral-reticulospinal-tract", anatomyIds: ["nervous.model-node-0311"] },
+  { concept: "Tracto reticuloespinal medial", educationalId: "nervous.medial-reticulospinal-tract", anatomyIds: ["nervous.model-node-0312"] },
+] as const;
+
+export const nervousPeripheralBatch6Candidates = [
+  { concept: "Nervio coclear", educationalId: "nervous.cochlear-nerve", anatomyIds: ["nervous.model-node-0086", "nervous.model-node-0087"] },
+  { concept: "Ramas digitales palmares propias del nervio mediano", educationalId: "nervous.proper-palmar-digital-median-branches", anatomyIds: ["nervous.model-node-0242", "nervous.model-node-0243"] },
+  { concept: "Ramas digitales palmares propias del nervio ulnar", educationalId: "nervous.proper-palmar-digital-ulnar-branches", anatomyIds: ["nervous.model-node-0244", "nervous.model-node-0245"] },
+  { concept: "Ramas digitales plantares comunes del nervio plantar lateral", educationalId: "nervous.common-plantar-digital-lateral-branches", anatomyIds: ["nervous.model-node-0246", "nervous.model-node-0247"] },
+  { concept: "Ramas digitales plantares comunes del nervio plantar medial", educationalId: "nervous.common-plantar-digital-medial-branches", anatomyIds: ["nervous.model-node-0248", "nervous.model-node-0249"] },
+  { concept: "Ramas digitales plantares propias del nervio plantar lateral", educationalId: "nervous.proper-plantar-digital-lateral-branches", anatomyIds: ["nervous.model-node-0250", "nervous.model-node-0251"] },
+  { concept: "Ramas digitales plantares propias del nervio plantar medial", educationalId: "nervous.proper-plantar-digital-medial-branches", anatomyIds: ["nervous.model-node-0252", "nervous.model-node-0253"] },
+  { concept: "Ramas musculares del nervio axilar", educationalId: "nervous.muscular-axillary-branches", anatomyIds: ["nervous.model-node-0254", "nervous.model-node-0255"] },
+  { concept: "Ramas musculares del nervio fibular profundo", educationalId: "nervous.muscular-deep-fibular-branches", anatomyIds: ["nervous.model-node-0256", "nervous.model-node-0257"] },
+  { concept: "Ramas musculares del nervio mediano", educationalId: "nervous.muscular-median-branches", anatomyIds: ["nervous.model-node-0258", "nervous.model-node-0259"] },
+  { concept: "Ramas musculares del nervio radial", educationalId: "nervous.muscular-radial-branches", anatomyIds: ["nervous.model-node-0260", "nervous.model-node-0261"] },
+  { concept: "Ramas musculares del nervio ulnar", educationalId: "nervous.muscular-ulnar-branches", anatomyIds: ["nervous.model-node-0262", "nervous.model-node-0263"] },
+] as const;
+
+export const nervousSenseBatch1Candidates = [
+  { concept: "Ampolla del canalículo lagrimal", educationalId: "nervous.lacrimal-canaliculus-ampulla", anatomyIds: ["nervous.model-node-0005", "nervous.model-node-0006"] },
+  { concept: "Canalículo lagrimal", educationalId: "nervous.lacrimal-canaliculus", anatomyIds: ["nervous.model-node-0013", "nervous.model-node-0014"] },
+  { concept: "Ligamento suspensorio del globo ocular", educationalId: "nervous.suspensory-ligament-eyeball", anatomyIds: ["nervous.model-node-0073", "nervous.model-node-0074"] },
+  { concept: "Segmento anterior del globo ocular", educationalId: "nervous.anterior-eyeball-segment", anatomyIds: ["nervous.model-node-0272", "nervous.model-node-0273"] },
+  { concept: "Segmento posterior del globo ocular", educationalId: "nervous.posterior-eyeball-segment", anatomyIds: ["nervous.model-node-0274", "nervous.model-node-0275"] },
+] as const;
+
 export const nervousPeripheralBatch2Candidates = [
   { concept: "División anterior del tronco superior", educationalId: "nervous.superior-trunk-anterior-division", anatomyIds: ["nervous.model-node-0037", "nervous.model-node-0038"] },
   { concept: "División anterior del tronco medio", educationalId: "nervous.middle-trunk-anterior-division", anatomyIds: ["nervous.model-node-0035", "nervous.model-node-0036"] },
@@ -214,11 +244,11 @@ export const nervousPeripheralBatch1Candidates = [
 ] as const;
 
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 39,
-  centralEntriesWithoutEducationalContent: 5,
-  peripheralEntriesWithoutEducationalContent: 24,
-  senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 155,
-  completedEntries: 288,
-  entriesPendingReview: 39,
+  entriesWithoutEducationalContent: 0,
+  centralEntriesWithoutEducationalContent: 0,
+  peripheralEntriesWithoutEducationalContent: 0,
+  senseEntriesWithoutEducationalContent: 0,
+  completedConcepts: 176,
+  completedEntries: 327,
+  entriesPendingReview: 0,
 } as const;
