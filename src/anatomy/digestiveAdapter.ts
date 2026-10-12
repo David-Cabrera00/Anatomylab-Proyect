@@ -34,7 +34,6 @@ export function createDigestiveAnatomyEntries(
     const names = entry.originalNames ?? [entry.originalName];
     return names.map((originalName) => ({ originalName, data: entry.data }));
   });
-  bindings.push({ originalName: "Gingiva", data: undefined });
   return bindings.map(({ originalName, data }) => {
     const catalog = catalogEntriesByName.get(originalName);
     if (!catalog) throw new Error(`Nombre digestivo ausente del catálogo: ${originalName}`);

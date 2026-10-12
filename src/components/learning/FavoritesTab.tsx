@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 
 import { dbGetFavorites, dbRemoveFavorite, type Favorite } from "../../utils/db";
+import { getAnatomyDisplayName } from "../../utils/anatomyDisplayName";
+import { useI18n } from "../../i18n";
 
 export interface FavoritesTabProps { system: string; onFocus: (anatomyId: string) => void; refreshKey?: number; }
 
 const formatDate = (iso: string): string => new Date(iso).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
 
 export function FavoritesTab({ system, onFocus, refreshKey = 0 }: FavoritesTabProps) {
+  const { language } = useI18n();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +39,7 @@ export function FavoritesTab({ system, onFocus, refreshKey = 0 }: FavoritesTabPr
     <div className="max-h-[400px] space-y-2 overflow-y-auto">
       {favorites.map((favorite) => (
         <div key={favorite.id} className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white p-3">
-          <button onClick={() => onFocus(favorite.anatomy_id)} className="flex-1 text-left text-sm font-medium text-slate-700 hover:text-slate-900">{favorite.anatomy_id}</button>
+          <button onClick={() => onFocus(favorite.anatomy_id)} className="flex-1 text-left text-sm font-medium text-slate-700 hover:text-slate-900">{getAnatomyDisplayName(favorite.anatomy_id, language)}</button>
           <div className="flex items-center gap-1">
             {favorite.notes && <span className="rounded bg-slate-50 px-2 py-0.5 text-xs text-slate-500">{favorite.notes}</span>}
             <span className="text-xs text-slate-400">{formatDate(favorite.created_at)}</span>

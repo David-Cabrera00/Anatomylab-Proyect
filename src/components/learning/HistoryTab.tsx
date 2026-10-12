@@ -1,7 +1,8 @@
 ﻿import { useEffect, useState } from "react";
 
-import { dbGetQuizHistory, type QuizHistory } from "../../utils/db";
-import { useI18n } from "../../i18n";
+import { dbGetQuizAnswers, dbGetQuizHistory, type QuizAnswer, type QuizHistory } from "../../utils/db";
+import { getLocalizedText, useI18n } from "../../i18n";
+import { getQuizConfig } from "../../data/quiz";
 
 export interface HistoryTabProps {
   system: string;
@@ -28,6 +29,25 @@ export function HistoryTab({ system }: HistoryTabProps) {
   const [sessions, setSessions] = useState<QuizHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [answersBySession, setAnswersBySession] = useState<Record<string, QuizAnswer[]>>({});
+  const [loadingAnswers, setLoadingAnswers] = useState<string | null>(null);
+  const [answerErrors, setAnswerErrors] = useState<Record<string, boolean>>({});
+
+  const toggleSession = async (session: QuizHistory) => {
+    const isExpanded = expandedId === session.id;
+    setExpandedId(isExpanded ? null : session.id);
+    if (isExpanded || answersBySession[session.id]) return;
+    setLoadingAnswers(session.id);
+    try {
+      const answers = await dbGetQuizAnswers(session.id);
+      setAnswersBySession((current) => ({ ...current, [session.id]: answers }));
+    } catch (error) {
+      console.error("Error loading quiz answers:", error);
+      setAnswerErrors((current) => ({ ...current, [session.id]: true }));
+    } finally {
+      setLoadingAnswers((current) => current === session.id ? null : current);
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -66,13 +86,15 @@ export function HistoryTab({ system }: HistoryTabProps) {
     <div className="max-h-[400px] overflow-y-auto border-y border-line">
       {sessions.map((session) => {
         const isExpanded = expandedId === session.id;
+        const config = getQuizConfig(session.config_id);
+        const answers = answersBySession[session.id] ?? [];
         return (
           <div
             key={session.id}
             className="overflow-hidden border-b border-line last:border-b-0"
           >
             <button
-              onClick={() => setExpandedId(isExpanded ? null : session.id)}
+              onClick={() => void toggleSession(session)}
               className="group flex w-full items-center justify-between gap-3 px-3 py-3 text-left transition-colors duration-150 hover:bg-surface-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
             >
               <div className="flex-1 min-w-0">
@@ -109,9 +131,35 @@ export function HistoryTab({ system }: HistoryTabProps) {
                 <div className="text-xs text-ink-muted">
                   {t("historyConfig")}: {session.config_id} · {t("historyStart")}: {formatDate(session.started_at, language)}
                 </div>
-                <span className="text-xs text-ink-muted underline underline-offset-2">
-                  {t("historyDetailsSoon")}
-                </span>
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-subtle">{t("historyDetails")}</p>
+                {loadingAnswers === session.id ? (
+                  <p className="text-sm text-ink-muted">{t("historyAnswerLoading")}</p>
+                ) : answerErrors[session.id] ? (
+                  <p className="text-sm text-error">{t("historyAnswerError")}</p>
+                ) : answers.length === 0 ? (
+                  <p className="text-sm text-ink-muted">{t("historyQuestionUnavailable")}</p>
+                ) : (
+                  <div className="space-y-2">
+                    {answers.map((answer, index) => {
+                      const question = config?.questionPool.find((candidate) => candidate.id === answer.question_id);
+                      const selected = question?.options[answer.selected_index];
+                      const correct = question?.options[answer.correct_index];
+                      return (
+                        <div key={answer.id} className="border border-line bg-surface px-3 py-2 text-sm">
+                          <div className="flex items-start justify-between gap-3">
+                            <span className="font-medium text-ink">{index + 1}. {question ? getLocalizedText(question.prompt, language) : t("historyQuestionUnavailable")}</span>
+                            <span className={answer.is_correct ? "text-success" : "text-error"}>{answer.is_correct ? "✓" : "×"}</span>
+                          </div>
+                          <div className="mt-2 grid gap-1 text-xs text-ink-muted sm:grid-cols-2">
+                            <span>{t("historySelected")}: <strong className="font-medium text-ink">{selected ? getLocalizedText(selected, language) : "—"}</strong></span>
+                            <span>{t("historyCorrectAnswer")}: <strong className="font-medium text-ink">{correct ? getLocalizedText(correct, language) : "—"}</strong></span>
+                            <span>{t("historyAnswerTime")}: {formatTime(answer.time_ms)}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -2,6 +2,7 @@ import type { AnatomyStructureData, EducationalStructureBinding } from "./educat
 import { createEducationalCollection } from "./educationalCollection";
 import { appendicularEntries } from "./skeletal/appendicular";
 import { axialEntries } from "./skeletal/axial";
+import { additionalSkeletalEntries } from "./skeletal/additional";
 import { localizeSkeletalText } from "./skeletalLocalizedText";
 
 function toSpanish(value: string | { es: string }): string {
@@ -36,16 +37,19 @@ function localizeSkeletalEntry(entry: EducationalStructureBinding): EducationalS
 const skeletalEducationalGroupsRaw = {
   axial: axialEntries,
   appendicular: appendicularEntries,
+  additional: additionalSkeletalEntries,
 } as const;
 
 export const skeletalEducationalGroups = {
   axial: skeletalEducationalGroupsRaw.axial.map(localizeSkeletalEntry),
   appendicular: skeletalEducationalGroupsRaw.appendicular.map(localizeSkeletalEntry),
+  additional: skeletalEducationalGroupsRaw.additional.map(localizeSkeletalEntry),
 } as const;
 
 const collection = createEducationalCollection([
   ...skeletalEducationalGroupsRaw.axial.map(localizeSkeletalEntry),
   ...skeletalEducationalGroupsRaw.appendicular.map(localizeSkeletalEntry),
+  ...skeletalEducationalGroupsRaw.additional.map(localizeSkeletalEntry),
 ]);
 
 // Los IDs de las dos fichas piloto siguen resolviendo durante la migración.
