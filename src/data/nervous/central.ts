@@ -1002,6 +1002,41 @@ export const centralEntries: readonly EducationalStructureBinding[] = [
     location: "Superficie lateral del lóbulo frontal, entre los giros frontal superior y medio.",
     relationships: ["Giro frontal superior", "Giro frontal medio", "Corteza prefrontal dorsolateral"],
   }),
+  bilateral("Surco occipital transversal", {
+    id: "nervous.transverse-occipital-sulcus", name: "Surco occipital transversal", type: "Surco cerebral",
+    description: "Surco de orientación transversal situado en la superficie lateral del lóbulo occipital.",
+    function: "Ayuda a delimitar regiones occipitales involucradas en el procesamiento visual.",
+    location: "Superficie lateral del lóbulo occipital, entre los giros occipitales.",
+    relationships: ["Lóbulo occipital", "Giro occipital lateral", "Corteza visual"],
+  }),
+  bilateral("Surco olfatorio", {
+    id: "nervous.olfactory-sulcus", name: "Surco olfatorio", type: "Surco cerebral",
+    description: "Surco longitudinal de la superficie orbitaria del lóbulo frontal que aloja el bulbo y el tracto olfatorios.",
+    function: "Sirve como referencia anatómica para las estructuras olfatorias y la corteza orbitofrontal medial.",
+    location: "Superficie inferior del lóbulo frontal, medial a los giros orbitarios.",
+    relationships: ["Bulbo olfatorio", "Tracto olfatorio", "Giro recto"],
+  }),
+  bilateral("Surco paracentral", {
+    id: "nervous.paracentral-sulcus", name: "Surco paracentral", type: "Surco cerebral",
+    description: "Surco de la superficie medial cerebral que delimita el lobulillo paracentral.",
+    function: "Contribuye a delimitar las áreas motoras y sensitivas relacionadas con el miembro inferior.",
+    location: "Superficie medial del hemisferio, posterior al extremo superior del surco central.",
+    relationships: ["Lobulillo paracentral", "Surco central", "Corteza somatosensitiva"],
+  }),
+  bilateral("Surco parieto-occipital", {
+    id: "nervous.parieto-occipital-sulcus", name: "Surco parieto-occipital", type: "Surco cerebral",
+    description: "Surco profundo que marca el límite anatómico entre los lóbulos parietal y occipital.",
+    function: "Delimita territorios corticales con funciones visuales y de integración visuoespacial.",
+    location: "Superficie medial del hemisferio, entre los lóbulos parietal y occipital.",
+    relationships: ["Lóbulo parietal", "Lóbulo occipital", "Surco calcarino"],
+  }),
+  bilateral("Surco poscentral", {
+    id: "nervous.postcentral-sulcus", name: "Surco poscentral", type: "Surco cerebral",
+    description: "Surco situado detrás del giro poscentral en la superficie lateral del hemisferio cerebral.",
+    function: "Delimita la corteza somatosensitiva primaria de regiones parietales de asociación.",
+    location: "Lóbulo parietal, posterior y aproximadamente paralelo al surco central.",
+    relationships: ["Giro poscentral", "Corteza somatosensitiva primaria", "Lóbulo parietal"],
+  }),
   {
     originalName: "Tracto corticoespinal anterior",
     data: {

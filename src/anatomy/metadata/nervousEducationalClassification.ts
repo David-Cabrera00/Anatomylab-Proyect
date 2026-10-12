@@ -94,12 +94,20 @@ export const nervousCentralBatch7Candidates = [
   { concept: "Surco frontal superior", educationalId: "nervous.superior-frontal-sulcus", anatomyIds: ["nervous.model-node-0289", "nervous.model-node-0290"] },
 ] as const;
 
+export const nervousCentralBatch8Candidates = [
+  { concept: "Surco occipital transversal", educationalId: "nervous.transverse-occipital-sulcus", anatomyIds: ["nervous.model-node-0291", "nervous.model-node-0292"] },
+  { concept: "Surco olfatorio", educationalId: "nervous.olfactory-sulcus", anatomyIds: ["nervous.model-node-0293", "nervous.model-node-0294"] },
+  { concept: "Surco paracentral", educationalId: "nervous.paracentral-sulcus", anatomyIds: ["nervous.model-node-0295", "nervous.model-node-0296"] },
+  { concept: "Surco parieto-occipital", educationalId: "nervous.parieto-occipital-sulcus", anatomyIds: ["nervous.model-node-0297", "nervous.model-node-0298"] },
+  { concept: "Surco poscentral", educationalId: "nervous.postcentral-sulcus", anatomyIds: ["nervous.model-node-0299", "nervous.model-node-0300"] },
+] as const;
+
 export const nervousEducationalClassificationSnapshot = {
-  entriesWithoutEducationalContent: 222,
-  centralEntriesWithoutEducationalContent: 68,
+  entriesWithoutEducationalContent: 212,
+  centralEntriesWithoutEducationalContent: 58,
   peripheralEntriesWithoutEducationalContent: 144,
   senseEntriesWithoutEducationalContent: 10,
-  completedConcepts: 60,
-  completedEntries: 105,
-  entriesPendingReview: 222,
+  completedConcepts: 65,
+  completedEntries: 115,
+  entriesPendingReview: 212,
 } as const;

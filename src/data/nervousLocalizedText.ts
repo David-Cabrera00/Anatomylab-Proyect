@@ -493,6 +493,11 @@ const curatedNames: Readonly<Record<string, string>> = {
   "nervous.collateral-sulcus": "Collateral sulcus",
   "nervous.inferior-frontal-sulcus": "Inferior frontal sulcus",
   "nervous.superior-frontal-sulcus": "Superior frontal sulcus",
+  "nervous.transverse-occipital-sulcus": "Transverse occipital sulcus",
+  "nervous.olfactory-sulcus": "Olfactory sulcus",
+  "nervous.paracentral-sulcus": "Paracentral sulcus",
+  "nervous.parieto-occipital-sulcus": "Parieto-occipital sulcus",
+  "nervous.postcentral-sulcus": "Postcentral sulcus",
 };
 
 const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<NervousField, "name" | "relationship">, string>>>>> = {
@@ -705,6 +710,36 @@ const curatedFields: Readonly<Record<string, Readonly<Partial<Record<Exclude<Ner
     description: "Longitudinal sulcus separating the superior frontal gyrus from the middle frontal gyrus.",
     function: "Delimits dorsal prefrontal regions related to planning and executive control.",
     location: "Lateral surface of the frontal lobe, between the superior and middle frontal gyri.",
+  },
+  "nervous.transverse-occipital-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Transversely oriented sulcus on the lateral surface of the occipital lobe.",
+    function: "Helps delimit occipital regions involved in visual processing.",
+    location: "Lateral surface of the occipital lobe, between the occipital gyri.",
+  },
+  "nervous.olfactory-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Longitudinal sulcus on the orbital surface of the frontal lobe that accommodates the olfactory bulb and tract.",
+    function: "Provides an anatomical landmark for olfactory structures and medial orbitofrontal cortex.",
+    location: "Inferior surface of the frontal lobe, medial to the orbital gyri.",
+  },
+  "nervous.paracentral-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Sulcus on the medial cerebral surface that outlines the paracentral lobule.",
+    function: "Helps delimit motor and sensory areas related to the lower limb.",
+    location: "Medial surface of the hemisphere, posterior to the superior end of the central sulcus.",
+  },
+  "nervous.parieto-occipital-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Deep sulcus marking the anatomical boundary between the parietal and occipital lobes.",
+    function: "Delimits cortical territories involved in visual and visuospatial integration.",
+    location: "Medial surface of the hemisphere, between the parietal and occipital lobes.",
+  },
+  "nervous.postcentral-sulcus": {
+    type: "Cerebral sulcus",
+    description: "Sulcus located behind the postcentral gyrus on the lateral surface of the cerebral hemisphere.",
+    function: "Separates the primary somatosensory cortex from parietal association regions.",
+    location: "Parietal lobe, posterior and roughly parallel to the central sulcus.",
   },
 };
 
