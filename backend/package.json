@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "db:smoke": "node scripts/db-smoke.cjs"
+    "db:smoke": "node scripts/db-smoke.cjs",
+    "security:smoke": "node scripts/security-smoke.cjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

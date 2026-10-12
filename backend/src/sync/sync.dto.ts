@@ -1,14 +1,18 @@
 import { Type } from "class-transformer";
-import { IsArray, IsBoolean, IsDateString, IsInt, IsNumber, IsOptional, IsString, Min, ValidateNested } from "class-validator";
+import { ArrayMaxSize, IsArray, IsBoolean, IsDateString, IsIn, IsInt, IsNumber, IsOptional, IsString, MaxLength, Min, ValidateNested } from "class-validator";
+
+const anatomySystems = ["cardiovascular", "respiratory", "nervous", "skeletal", "muscular", "digestive"] as const;
 
 export class ProgressSyncDto {
   @IsString()
+  @IsIn(anatomySystems)
   system!: string;
 
   @IsString()
+  @MaxLength(160)
   anatomyId!: string;
 
-  @IsNumber()
+  @IsNumber({ allowInfinity: false, allowNaN: false })
   @Min(0)
   score!: number;
 
@@ -20,21 +24,26 @@ export class ProgressSyncDto {
 
 export class FavoriteSyncDto {
   @IsString()
+  @IsIn(anatomySystems)
   system!: string;
 
   @IsString()
+  @MaxLength(160)
   anatomyId!: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(500)
   notes?: string;
 }
 
 export class QuizAnswerSyncDto {
   @IsString()
+  @MaxLength(160)
   questionId!: string;
 
   @IsString()
+  @MaxLength(160)
   anatomyId!: string;
 
   @IsInt()
@@ -54,15 +63,18 @@ export class QuizAnswerSyncDto {
 
 export class QuizSessionSyncDto {
   @IsString()
+  @MaxLength(80)
   id!: string;
 
   @IsString()
+  @IsIn(anatomySystems)
   system!: string;
 
   @IsString()
+  @MaxLength(100)
   configId!: string;
 
-  @IsNumber()
+  @IsNumber({ allowInfinity: false, allowNaN: false })
   score!: number;
 
   @IsInt()
@@ -85,6 +97,7 @@ export class QuizSessionSyncDto {
   timeSpentMs?: number;
 
   @IsArray()
+  @ArrayMaxSize(200)
   @ValidateNested({ each: true })
   @Type(() => QuizAnswerSyncDto)
   answers: QuizAnswerSyncDto[] = [];
@@ -92,9 +105,11 @@ export class QuizSessionSyncDto {
 
 export class StudySessionSyncDto {
   @IsString()
+  @MaxLength(80)
   id!: string;
 
   @IsString()
+  @IsIn(anatomySystems)
   system!: string;
 
   @IsInt()
@@ -111,34 +126,41 @@ export class StudySessionSyncDto {
 
 export class PreferenceSyncDto {
   @IsString()
+  @MaxLength(100)
   key!: string;
 
   @IsString()
+  @MaxLength(2000)
   value!: string;
 }
 
 export class SyncDto {
   @IsArray()
+  @ArrayMaxSize(1000)
   @ValidateNested({ each: true })
   @Type(() => ProgressSyncDto)
   progress: ProgressSyncDto[] = [];
 
   @IsArray()
+  @ArrayMaxSize(1000)
   @ValidateNested({ each: true })
   @Type(() => FavoriteSyncDto)
   favorites: FavoriteSyncDto[] = [];
 
   @IsArray()
+  @ArrayMaxSize(500)
   @ValidateNested({ each: true })
   @Type(() => QuizSessionSyncDto)
   quizSessions: QuizSessionSyncDto[] = [];
 
   @IsArray()
+  @ArrayMaxSize(500)
   @ValidateNested({ each: true })
   @Type(() => StudySessionSyncDto)
   studySessions: StudySessionSyncDto[] = [];
 
   @IsArray()
+  @ArrayMaxSize(100)
   @ValidateNested({ each: true })
   @Type(() => PreferenceSyncDto)
   preferences: PreferenceSyncDto[] = [];
