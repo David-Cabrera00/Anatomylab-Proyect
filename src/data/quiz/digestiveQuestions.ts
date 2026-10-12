@@ -1,6 +1,8 @@
 import type { QuizQuestion } from "./types";
+import { getLocalizedText } from "../../i18n/localizedText";
+import { digestiveQuizEnglish } from "./digestiveQuizLocalizedText";
 
-export const digestiveQuizQuestions: QuizQuestion[] = [
+const digestiveQuizQuestionsRaw: QuizQuestion[] = [
   {
     id: "dig-q-001",
     type: "identify-by-description",
@@ -167,3 +169,17 @@ export const digestiveQuizQuestions: QuizQuestion[] = [
     tags: ["apendice", "patologia"],
   },
 ];
+
+export const digestiveQuizQuestions: QuizQuestion[] = digestiveQuizQuestionsRaw.map((question) => {
+  const english = digestiveQuizEnglish[question.id];
+  if (!english) throw new Error(`Traducción Quiz digestivo ausente: ${question.id}`);
+  if (english.options.length !== question.options.length) {
+    throw new Error(`Opciones Quiz digestivo incoherentes: ${question.id}`);
+  }
+  return {
+    ...question,
+    prompt: { es: getLocalizedText(question.prompt, "es"), en: english.prompt },
+    options: question.options.map((option, index) => ({ es: getLocalizedText(option, "es"), en: english.options[index] })),
+    explanation: { es: getLocalizedText(question.explanation, "es"), en: english.explanation },
+  };
+});

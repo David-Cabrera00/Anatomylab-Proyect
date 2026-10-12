@@ -21,6 +21,7 @@ const anatomyById = new Map(anatomyIndex.map((entry) => [entry.id, entry]));
 const configIds = new Set();
 const questionDefinitions = new Map();
 const errors = [];
+const spanishText = (value) => typeof value === "string" ? value : value.es;
 
 for (const system of expectedSystems) {
   if (!quizConfigs.some((config) => config.system === system)) {
@@ -55,10 +56,10 @@ for (const config of quizConfigs) {
     } else if (anatomyEntry.system !== question.system) {
       errors.push(`${question.id}: anatomyId pertenece a ${anatomyEntry.system}, no a ${question.system}.`);
     }
-    if (!question.prompt.trim()) errors.push(`${question.id}: prompt vacío.`);
-    if (!question.explanation.trim()) errors.push(`${question.id}: explicación vacía.`);
+    if (!spanishText(question.prompt).trim()) errors.push(`${question.id}: prompt vacío.`);
+    if (!spanishText(question.explanation).trim()) errors.push(`${question.id}: explicación vacía.`);
     if (question.options.length < 2) errors.push(`${question.id}: requiere al menos dos opciones.`);
-    if (new Set(question.options.map((option) => option.trim().toLocaleLowerCase())).size !== question.options.length) {
+    if (new Set(question.options.map((option) => spanishText(option).trim().toLocaleLowerCase())).size !== question.options.length) {
       errors.push(`${question.id}: contiene opciones duplicadas.`);
     }
     if (question.correctIndex < 0 || question.correctIndex >= question.options.length) {

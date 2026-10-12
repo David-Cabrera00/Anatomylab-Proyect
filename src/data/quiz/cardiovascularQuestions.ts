@@ -1,6 +1,8 @@
 import type { QuizQuestion } from "./types";
+import { getLocalizedText } from "../../i18n/localizedText";
+import { cardiovascularQuizEnglish } from "./cardiovascularQuizLocalizedText";
 
-export const cardiovascularQuizQuestions: QuizQuestion[] = [
+const cardiovascularQuizQuestionsRaw: QuizQuestion[] = [
   {
     id: "cv-q-001",
     type: "identify-by-description",
@@ -252,3 +254,17 @@ export const cardiovascularQuizQuestions: QuizQuestion[] = [
     tags: ["valvulas", "circulacion-pulmonar"],
   },
 ];
+
+export const cardiovascularQuizQuestions: QuizQuestion[] = cardiovascularQuizQuestionsRaw.map((question) => {
+  const english = cardiovascularQuizEnglish[question.id];
+  if (!english) throw new Error(`Traducción Quiz cardiovascular ausente: ${question.id}`);
+  if (english.options.length !== question.options.length) {
+    throw new Error(`Opciones Quiz cardiovascular incoherentes: ${question.id}`);
+  }
+  return {
+    ...question,
+    prompt: { es: getLocalizedText(question.prompt, "es"), en: english.prompt },
+    options: question.options.map((option, index) => ({ es: getLocalizedText(option, "es"), en: english.options[index] })),
+    explanation: { es: getLocalizedText(question.explanation, "es"), en: english.explanation },
+  };
+});

@@ -67,7 +67,7 @@ export function AuthAnatomyPreview() {
         <PreviewModel />
         <OrbitControls
           autoRotate
-          autoRotateSpeed={0.90}
+          autoRotateSpeed={0.50}
           enablePan={false}
           enableZoom={false}
           enableDamping

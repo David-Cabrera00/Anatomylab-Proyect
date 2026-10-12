@@ -1,6 +1,8 @@
 import type { QuizQuestion } from "./types";
+import { getLocalizedText } from "../../i18n/localizedText";
+import { muscularQuizEnglish } from "./muscularQuizLocalizedText";
 
-export const muscularQuizQuestions: QuizQuestion[] = [
+const muscularQuizQuestionsRaw: QuizQuestion[] = [
   {
     id: "mus-q-001",
     type: "identify-by-description",
@@ -201,3 +203,17 @@ export const muscularQuizQuestions: QuizQuestion[] = [
     tags: ["escápula", "protraccion", "nervio-toracico-largo"],
   },
 ];
+
+export const muscularQuizQuestions: QuizQuestion[] = muscularQuizQuestionsRaw.map((question) => {
+  const english = muscularQuizEnglish[question.id];
+  if (!english) throw new Error(`Traducción Quiz muscular ausente: ${question.id}`);
+  if (english.options.length !== question.options.length) {
+    throw new Error(`Opciones Quiz muscular incoherentes: ${question.id}`);
+  }
+  return {
+    ...question,
+    prompt: { es: getLocalizedText(question.prompt, "es"), en: english.prompt },
+    options: question.options.map((option, index) => ({ es: getLocalizedText(option, "es"), en: english.options[index] })),
+    explanation: { es: getLocalizedText(question.explanation, "es"), en: english.explanation },
+  };
+});
