@@ -6,18 +6,45 @@ export type OpenRouterMessage = {
   content: string;
 };
 
+type OpenRouterContentPart = {
+  type?: string;
+  text?: string;
+};
+
 type OpenRouterChatResponse = {
+  id?: string;
+  model?: string;
+  error?: {
+    code?: number | string;
+    message?: string;
+  };
   choices?: Array<{
+    index?: number;
+    finish_reason?: string | null;
     message?: {
+      role?: string;
       content?: unknown;
     };
   }>;
 };
 
+export type OpenRouterErrorCode =
+  | "missing_key"
+  | "connection"
+  | "http"
+  | "model"
+  | "timeout"
+  | "invalid-json"
+  | "missing-choices"
+  | "missing-message"
+  | "empty-content"
+  | "unsupported-content-format"
+  | "openrouter-error-response";
+
 export class OpenRouterClientError extends Error {
   constructor(
     message: string,
-    public readonly code: "missing_key" | "connection" | "http" | "model" | "invalid" | "timeout",
+    public readonly code: OpenRouterErrorCode,
   ) {
     super(message);
     this.name = "OpenRouterClientError";
@@ -49,6 +76,10 @@ export class OpenRouterClient {
     }
 
     const selectedModel = model.trim() || this.defaultModel;
+    const modelsList = selectedModel === "nvidia/nemotron-3-ultra-550b-a55b:free"
+      ? ["nvidia/nemotron-3-ultra-550b-a55b:free", "nvidia/nemotron-3.5-lightning:free"]
+      : [selectedModel];
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
 
@@ -63,6 +94,7 @@ export class OpenRouterClient {
         },
         body: JSON.stringify({
           model: selectedModel,
+          models: modelsList,
           messages,
         }),
         signal: controller.signal,
@@ -81,13 +113,44 @@ export class OpenRouterClient {
       try {
         payload = (await response.json()) as OpenRouterChatResponse;
       } catch {
-        throw new OpenRouterClientError("OpenRouter returned invalid JSON", "invalid");
+        throw new OpenRouterClientError("OpenRouter returned invalid JSON", "invalid-json");
       }
 
-      const content = payload.choices?.[0]?.message?.content;
-      const answer = typeof content === "string" ? content.trim() : "";
+      if (payload.error) {
+        const errorMsg = typeof payload.error.message === "string" ? payload.error.message.slice(0, 160) : "Unknown upstream error";
+        const errorCode = payload.error.code ? ` (${payload.error.code})` : "";
+        throw new OpenRouterClientError(
+          `OpenRouter returned error${errorCode}: ${errorMsg}`,
+          "openrouter-error-response",
+        );
+      }
+
+      if (!Array.isArray(payload.choices) || payload.choices.length === 0) {
+        throw new OpenRouterClientError("OpenRouter response does not contain choices", "missing-choices");
+      }
+
+      const firstChoice = payload.choices[0];
+      if (!firstChoice || !firstChoice.message) {
+        throw new OpenRouterClientError("OpenRouter choice does not contain a message", "missing-message");
+      }
+
+      const rawContent = firstChoice.message.content;
+      let answer = "";
+
+      if (typeof rawContent === "string") {
+        answer = rawContent.trim();
+      } else if (Array.isArray(rawContent)) {
+        const textParts = rawContent
+          .filter((part): part is OpenRouterContentPart => typeof part === "object" && part !== null && typeof (part as OpenRouterContentPart).text === "string")
+          .map((part) => (part.text || "").trim())
+          .filter(Boolean);
+        answer = textParts.join("\n\n");
+      } else if (rawContent !== undefined && rawContent !== null) {
+        throw new OpenRouterClientError("OpenRouter message content has an unsupported format", "unsupported-content-format");
+      }
+
       if (!answer) {
-        throw new OpenRouterClientError("OpenRouter returned an empty answer", "invalid");
+        throw new OpenRouterClientError("OpenRouter returned empty message content", "empty-content");
       }
 
       return answer;
