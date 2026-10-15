@@ -8,6 +8,7 @@ import {
 import {
   Canvas,
   type ThreeEvent,
+  useFrame,
 } from "@react-three/fiber";
 
 import {
@@ -1184,15 +1185,37 @@ function AnatomyModel({
 ====================================================== */
 
 function LoadingModel() {
+  const groupRef = useRef<THREE.Group>(null);
+  const { theme } = useI18n();
+  const color = theme === "dark" ? "#7aaebe" : "#4f8090";
+
+  useFrame((_, delta) => {
+    if (groupRef.current) groupRef.current.rotation.y += delta * 0.35;
+  });
+
   return (
-    <mesh>
-      <sphereGeometry
-        args={[0.15, 32, 32]}
-      />
-      <meshStandardMaterial
-        color="#94a3b8"
-      />
-    </mesh>
+    <group ref={groupRef} position={[0, 0.1, 0]}>
+      <mesh position={[0, 0.9, 0]}>
+        <sphereGeometry args={[0.18, 20, 20]} />
+        <meshStandardMaterial color={color} wireframe transparent opacity={0.72} />
+      </mesh>
+      {[0.48, 0.2, -0.08, -0.36].map((y, index) => (
+        <mesh key={y} position={[0, y, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1 - index * 0.08, 1, 0.68]}>
+          <torusGeometry args={[0.58 - index * 0.04, 0.025, 10, 32]} />
+          <meshStandardMaterial color={color} wireframe transparent opacity={0.55} />
+        </mesh>
+      ))}
+      <mesh position={[0, -0.7, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1.08, 1, 0.72]}>
+        <torusGeometry args={[0.34, 0.035, 10, 24]} />
+        <meshStandardMaterial color={color} wireframe transparent opacity={0.62} />
+      </mesh>
+      {[-0.52, -0.26, 0, 0.26, 0.52].map((x) => (
+        <mesh key={x} position={[x * 0.22, 0.72 - Math.abs(x) * 0.1, 0]}>
+          <sphereGeometry args={[0.045, 12, 12]} />
+          <meshStandardMaterial color={color} transparent opacity={0.8} />
+        </mesh>
+      ))}
+    </group>
   );
 }
 

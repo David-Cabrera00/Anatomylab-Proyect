@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { dbGetFavorites, dbRemoveFavorite, type Favorite } from "../../utils/db";
 import { getAnatomyDisplayName } from "../../utils/anatomyDisplayName";
 import { useI18n } from "../../i18n";
+import { ErrorState, LoadingState } from "../ui";
 
 export interface FavoritesTabProps { system: string; onFocus: (anatomyId: string) => void; refreshKey?: number; }
 
@@ -12,16 +13,19 @@ export function FavoritesTab({ system, onFocus, refreshKey = 0 }: FavoritesTabPr
   const { language, t } = useI18n();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setHasError(false);
     dbGetFavorites(system)
       .then((data) => { if (!cancelled) setFavorites(data); })
-      .catch((error) => console.error("Error loading favorites:", error))
+      .catch((error) => { console.error("Error loading favorites:", error); if (!cancelled) setHasError(true); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [refreshKey, system]);
+  }, [refreshKey, retryKey, system]);
 
   async function handleRemove(favorite: Favorite) {
     try {
@@ -32,7 +36,8 @@ export function FavoritesTab({ system, onFocus, refreshKey = 0 }: FavoritesTabPr
     }
   }
 
-  if (loading) return <div className="flex items-center justify-center py-8 text-body text-ink-muted">{t("favoritesLoading")}</div>;
+  if (loading) return <LoadingState label={t("favoritesLoading")} />;
+  if (hasError) return <ErrorState title={t("dataLoadErrorTitle")} description={t("favoritesLoadError")} retryLabel={t("commonRetry")} onRetry={() => setRetryKey((key) => key + 1)} />;
   if (favorites.length === 0) return <div className="border-l-2 border-accent bg-accent-soft/30 px-4 py-6 text-body text-ink-muted"><p className="font-medium text-ink">{t("favoritesEmpty")}</p><p className="mt-1 text-label">{t("favoritesEmptyHint")}</p></div>;
 
   return (

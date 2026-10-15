@@ -1,22 +1,132 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 import { PrismaService } from "../prisma/prisma.service";
+import { OllamaClient, OllamaClientError, type OllamaMessage } from "./ollama.client";
+import { OpenRouterClient, OpenRouterClientError, type OpenRouterMessage } from "./openrouter.client";
 import { TutorQuestionDto } from "./tutor.dto";
+
+const systemPrompt = [
+  "Eres el tutor educativo de anatomía de AnatomyLab.",
+  "Responde únicamente usando el contexto anatómico validado proporcionado.",
+  "No inventes estructuras, funciones, ubicaciones ni datos que no estén en el contexto.",
+  "Si el contexto no permite responder, dilo claramente.",
+  "No emitas diagnósticos médicos ni sustituyas el consejo de un profesional de la salud.",
+  "Responde de forma clara, breve y educativa en el idioma de la pregunta.",
+].join(" ");
 
 @Injectable()
 export class TutorService {
-  constructor(private readonly prisma: PrismaService, private readonly config: ConfigService) {}
+  private readonly logger = new Logger(TutorService.name);
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
+    private readonly openRouter: OpenRouterClient,
+    private readonly ollama: OllamaClient,
+  ) {}
 
   async ask(userId: string, input: TutorQuestionDto) {
     await this.prisma.tutorMessage.create({ data: { userId, system: input.system, anatomyId: input.anatomyId, role: "user", content: input.question } });
 
-    const provider = this.config.get<string>("AI_PROVIDER");
-    const answer = provider
-      ? "El proveedor de IA está configurado; aquí se conectará el adaptador seguro del servidor."
-      : "El tutor remoto todavía está en modo de preparación. La pregunta y su anatomyId quedaron registrados correctamente.";
+    const provider = this.config.get<string>("AI_PROVIDER")?.trim().toLowerCase();
 
-    await this.prisma.tutorMessage.create({ data: { userId, system: input.system, anatomyId: input.anatomyId, role: "assistant", content: answer } });
-    return { answer, system: input.system, anatomyId: input.anatomyId, provider: provider ?? "local" };
+    if (provider === "openrouter") {
+      const context = this.buildContext(input);
+      if (context) {
+        const messages: OpenRouterMessage[] = [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: `${context}\n\nPregunta del estudiante: ${input.question.trim()}` },
+        ];
+
+        try {
+          const answer = await this.openRouter.chat(messages);
+          return { answer, system: input.system, anatomyId: input.anatomyId, provider: "openrouter" };
+        } catch (error) {
+          this.logOpenRouterFailure(error);
+        }
+
+        try {
+          const answer = await this.ollama.chat(messages as OllamaMessage[]);
+          return { answer, system: input.system, anatomyId: input.anatomyId, provider: "ollama" };
+        } catch (error) {
+          this.logOllamaFailure(error);
+        }
+      } else {
+        this.logger.warn("OpenRouter tutor request skipped because validated anatomy context is missing.");
+      }
+
+      return {
+        answer: "No fue posible conectar con el proveedor de IA. Puedes continuar estudiando con la ficha anatómica seleccionada.",
+        system: input.system,
+        anatomyId: input.anatomyId,
+        provider: "local",
+      };
+    }
+
+    if (provider === "ollama") {
+      const context = this.buildContext(input);
+      if (context) {
+        try {
+          const messages: OllamaMessage[] = [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: `${context}\n\nPregunta del estudiante: ${input.question.trim()}` },
+          ];
+          const answer = await this.ollama.chat(messages);
+          return { answer, system: input.system, anatomyId: input.anatomyId, provider: "ollama" };
+        } catch (error) {
+          this.logOllamaFailure(error);
+        }
+      } else {
+        this.logger.warn("Ollama tutor request skipped because validated anatomy context is missing.");
+      }
+
+      return {
+        answer: "No fue posible conectar con el tutor local. Puedes continuar estudiando con la ficha anatómica seleccionada.",
+        system: input.system,
+        anatomyId: input.anatomyId,
+        provider: "local",
+      };
+    }
+
+    return {
+      answer: "El tutor remoto todavía está en modo de preparación. La pregunta y su anatomyId quedaron registrados correctamente.",
+      system: input.system,
+      anatomyId: input.anatomyId,
+      provider: "local",
+    };
+  }
+
+  private buildContext(input: TutorQuestionDto): string | null {
+    const structureName = input.structureName?.trim();
+    const description = input.description?.trim();
+    if (!structureName || !description) return null;
+
+    const lines = [
+      `Sistema anatómico: ${input.system}`,
+      `Estructura: ${structureName}`,
+      `Anatomy ID: ${input.anatomyId}`,
+      `Descripción educativa: ${description}`,
+    ];
+    if (input.function?.trim()) lines.push(`Función: ${input.function.trim()}`);
+    if (input.location?.trim()) lines.push(`Ubicación: ${input.location.trim()}`);
+    if (input.relationships?.trim()) lines.push(`Relaciones: ${input.relationships.trim()}`);
+    return lines.join("\n");
+  }
+
+  private logOpenRouterFailure(error: unknown): void {
+    if (error instanceof OpenRouterClientError) {
+      this.logger.warn(`OpenRouter request failed (${error.code}). Falling back to Ollama.`);
+      return;
+    }
+    this.logger.warn("OpenRouter request failed unexpectedly. Falling back to Ollama.");
+  }
+
+  private logOllamaFailure(error: unknown): void {
+    if (error instanceof OllamaClientError) {
+      this.logger.warn(`Ollama request failed (${error.code}).`);
+      return;
+    }
+    this.logger.warn("Ollama request failed unexpectedly.");
   }
 }

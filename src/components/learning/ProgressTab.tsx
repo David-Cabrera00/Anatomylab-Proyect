@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { dbGetMasteryStats, getMasteryColor, getMasteryLevel } from "../../utils/db";
 import { useI18n } from "../../i18n";
 import { getAnatomyDisplayName } from "../../utils/anatomyDisplayName";
+import { ErrorState, LoadingState } from "../ui";
 
 export type MasteryStat = { anatomy_id: string; correct: number; total: number };
 
@@ -31,6 +32,8 @@ export function ProgressTab({ system, stats: providedStats, onStatsLoaded, showS
   const { language, t } = useI18n();
   const [stats, setStats] = useState<MasteryStat[]>(normalizeStats(providedStats ?? []));
   const [loading, setLoading] = useState(providedStats === undefined);
+  const [hasError, setHasError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     if (providedStats) {
@@ -41,6 +44,7 @@ export function ProgressTab({ system, stats: providedStats, onStatsLoaded, showS
 
     let cancelled = false;
     setLoading(true);
+    setHasError(false);
     dbGetMasteryStats(system)
       .then((mastery) => {
         if (cancelled) return;
@@ -48,12 +52,13 @@ export function ProgressTab({ system, stats: providedStats, onStatsLoaded, showS
         setStats(normalizedStats);
         onStatsLoaded?.(normalizedStats);
       })
-      .catch((error) => console.error("Error loading progress:", error))
+      .catch((error) => { console.error("Error loading progress:", error); if (!cancelled) setHasError(true); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [system, providedStats, onStatsLoaded]);
+  }, [system, providedStats, onStatsLoaded, retryKey]);
 
-  if (loading) return <div className="flex items-center justify-center py-8 text-label text-ink-muted">{t("progressLoading")}</div>;
+  if (loading) return <LoadingState label={t("progressLoading")} />;
+  if (hasError) return <ErrorState title={t("dataLoadErrorTitle")} description={t("progressLoadError")} retryLabel={t("commonRetry")} onRetry={() => setRetryKey((key) => key + 1)} />;
 
   const totalAnswers = stats.reduce((sum, item) => sum + item.total, 0);
   const totalCorrect = stats.reduce((sum, item) => sum + item.correct, 0);

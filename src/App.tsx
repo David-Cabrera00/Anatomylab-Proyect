@@ -895,6 +895,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
             anatomyId={selectedAnatomyId}
             structureName={selectedDisplayName}
             data={selectedAnatomyIdData}
+            backendToken={backendSession?.accessToken ?? null}
             systemColor={activeConfig.color}
             onClose={() => setTutorOpen(false)}
           />

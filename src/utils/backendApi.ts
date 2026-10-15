@@ -56,6 +56,11 @@ export type TutorRequest = {
   system: string;
   anatomyId: string;
   question: string;
+  structureName?: string;
+  description?: string;
+  function?: string;
+  location?: string;
+  relationships?: string;
 };
 
 export type BackendSessionListener = (session: BackendSession | null) => void;
