@@ -1,5 +1,6 @@
-﻿import {
+import {
   useCallback,
+  useMemo,
   useState,
   useEffect,
   useRef,
@@ -50,6 +51,7 @@ import {
   type BackendSession,
 } from "./utils/backendApi";
 import { syncLocalLearningData } from "./utils/backendSync";
+import { type CurrentUser } from "./utils/user";
 import { AnatomyView } from "./views/AnatomyView";
 import { HomeView } from "./views/HomeView";
 import { LoginView } from "./views/LoginView";
@@ -85,6 +87,23 @@ function App() {
   const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced" | "error">("idle");
   const { language, t } = useI18n();
   const isEnglish = language === "en";
+
+  const currentUser: CurrentUser = useMemo(() => {
+    if (backendSession?.user) {
+      return {
+        id: backendSession.user.id,
+        name: backendSession.user.displayName?.trim() || backendSession.user.email.split("@")[0],
+        email: backendSession.user.email,
+        isLocal: false,
+      };
+    }
+    return {
+      id: "local-user",
+      name: isEnglish ? "Local Student" : "Estudiante Local",
+      email: isEnglish ? "Offline mode" : "Modo local",
+      isLocal: true,
+    };
+  }, [backendSession, isEnglish]);
   /* ====================================================
      SISTEMA ACTIVO
   ==================================================== */
@@ -817,6 +836,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
         <AppHeader
           currentView={appView}
           search={appView === "home" ? undefined : globalSearch}
+          user={currentUser}
+          onNavigate={handleViewChange}
         />
       }
       sidebar={<AppSidebar currentView={appView} onNavigate={handleViewChange} />}
@@ -939,6 +960,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
         <ProgressView system={activeSystem} />
       ) : appView === "profile" ? (
         <ProfileView
+          user={currentUser}
           system={activeSystem}
           onFocusFavorite={(anatomyId) => {
             handleViewChange("anatomy");
