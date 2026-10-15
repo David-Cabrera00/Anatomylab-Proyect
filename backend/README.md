@@ -29,6 +29,16 @@ Endpoints iniciales:
 - `POST /api/sync` (Bearer token)
 - `POST /api/tutor/ask` (Bearer token)
 
-El endpoint del tutor recibe `system`, `anatomyId` y `question`. La clave de IA se mantiene en el backend mediante `AI_API_KEY` y nunca se expone al cliente.
+El endpoint del tutor recibe `system`, `anatomyId`, `question` y, para un proveedor de IA, el contexto educativo validado (`structureName`, `description`, `function`, `location` y `relationships`). Con `AI_PROVIDER=ollama`, el backend usa el modelo local configurado mediante `OLLAMA_MODEL` y solo se conecta a una dirección local.
+
+La configuración local de Ollama es:
+
+```text
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=llama3:latest
+OLLAMA_TIMEOUT_MS=30000
+```
+
+Si Ollama no está disponible, el endpoint devuelve un fallback controlado y el backend registra únicamente un error técnico resumido. No se exponen stack traces al cliente ni se guarda la respuesta generada en SQLite.
 
 La aplicación de escritorio continúa usando SQLite local-first; este servicio se añadirá como capa de sincronización y tutor remoto.
