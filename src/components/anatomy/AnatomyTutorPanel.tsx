@@ -28,6 +28,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<"ollama" | "fallback" | null>(null);
   const requestIdRef = useRef(0);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const tutor = createLocalAnatomyTutor(
     (value) => value ? getLocalizedText(value, language) : null,
     {
@@ -45,6 +46,12 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
     setIsLoading(false);
     setMode(null);
   }, [anatomyId, system, language]);
+
+  useEffect(() => {
+    if (messages.length > 0 || isLoading) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isLoading]);
 
   const submitQuestion = async (value: string) => {
     const trimmed = value.trim();
@@ -139,12 +146,24 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
           </div>
           {isLoading && <p className="rounded-ds-md border border-line bg-surface-raised px-3 py-2 text-caption text-ink-muted" role="status" aria-live="polite">{t("anatomyTutorLoading")}</p>}
           {messages.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-3 pt-1">
               {messages.map((message, index) => (
-                <div key={`${message.role}-${index}`} className={message.role === "user" ? "ml-6 rounded-ds-md bg-accent px-3 py-2 text-label text-white" : "mr-6 rounded-ds-md border border-line bg-surface-raised px-3 py-2 text-label leading-5 text-ink"}>
-                  {message.text}
+                <div
+                  key={`${message.role}-${index}`}
+                  className={
+                    message.role === "user"
+                      ? "ml-6 rounded-ds-md bg-accent px-3.5 py-2.5 text-label text-white shadow-xs whitespace-pre-wrap"
+                      : "mr-2 rounded-ds-md border border-line bg-surface-raised px-4 py-3 text-label text-ink shadow-xs"
+                  }
+                >
+                  {message.role === "user" ? (
+                    message.text
+                  ) : (
+                    <FormattedAssistantMessage content={message.text} />
+                  )}
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
           )}
         </section>
@@ -158,5 +177,76 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
         <p className="mt-2 text-caption leading-5 text-ink-subtle">{isLoading ? t("anatomyTutorLoading") : mode === "ollama" ? t("anatomyTutorRemoteMode") : mode === "fallback" ? t("anatomyTutorFallbackMode") : t("anatomyTutorLocalMode")}</p>
       </footer>
     </aside>
+  );
+}
+
+function renderInlineFormatting(text: string) {
+  const parts = text.split(/(\*\*.*?\*\*|\*[^\*]+?\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
+      return (
+        <strong key={index} className="font-semibold text-ink">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    if (part.startsWith("*") && part.endsWith("*") && part.length >= 2) {
+      return (
+        <em key={index} className="italic text-ink-muted">
+          {part.slice(1, -1)}
+        </em>
+      );
+    }
+    return part;
+  });
+}
+
+function FormattedAssistantMessage({ content }: { content: string }) {
+  const normalized = content
+    .replace(/([.:;])\s+(\d+\.\s+\*\*)/g, "$1\n\n$2")
+    .replace(/([.:;])\s+(\*\s+\*\*)/g, "$1\n$2")
+    .replace(/([.:;])\s+(\*\*En resumen:\*\*)/gi, "$1\n\n$2");
+
+  const lines = normalized.split(/\r?\n/);
+
+  return (
+    <div className="space-y-2 text-label leading-relaxed text-ink">
+      {lines.map((rawLine, idx) => {
+        const line = rawLine.trim();
+        if (!line) return null;
+
+        const numberedMatch = line.match(/^(\d+)\.\s+(.*)$/);
+        if (numberedMatch) {
+          return (
+            <div key={idx} className="flex items-start gap-2 pt-1">
+              <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 text-[11px] font-bold text-accent">
+                {numberedMatch[1]}
+              </span>
+              <div className="flex-1 pt-0.5">
+                {renderInlineFormatting(numberedMatch[2])}
+              </div>
+            </div>
+          );
+        }
+
+        const bulletMatch = line.match(/^[\*\-•]\s+(.*)$/);
+        if (bulletMatch) {
+          return (
+            <div key={idx} className="flex items-start gap-2 pl-3">
+              <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent" />
+              <div className="flex-1">
+                {renderInlineFormatting(bulletMatch[1])}
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <p key={idx} className="leading-relaxed">
+            {renderInlineFormatting(line)}
+          </p>
+        );
+      })}
+    </div>
   );
 }
