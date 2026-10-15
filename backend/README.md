@@ -29,9 +29,25 @@ Endpoints iniciales:
 - `POST /api/sync` (Bearer token)
 - `POST /api/tutor/ask` (Bearer token)
 
-El endpoint del tutor recibe `system`, `anatomyId`, `question` y, para un proveedor de IA, el contexto educativo validado (`structureName`, `description`, `function`, `location` y `relationships`). Con `AI_PROVIDER=ollama`, el backend usa el modelo local configurado mediante `OLLAMA_MODEL` y solo se conecta a una dirección local.
+El endpoint del tutor recibe `system`, `anatomyId`, `question` y, para un proveedor de IA, el contexto educativo validado (`structureName`, `description`, `function`, `location` y `relationships`).
 
-La configuración local de Ollama es:
+### Proveedores de IA y orden de fallback
+
+La arquitectura del tutor sigue el orden jerárquico de resolución:
+1. **OpenRouter**: Proveedor principal si `AI_PROVIDER=openrouter`.
+2. **Ollama**: Proveedor local si OpenRouter falla o si `AI_PROVIDER=ollama`.
+3. **Tutor local**: Fallback seguro en frontend si los servicios remotos no responden.
+
+#### Configuración de OpenRouter (`AI_PROVIDER=openrouter`)
+
+```text
+OPENROUTER_API_KEY=tu-api-key-aqui
+OPENROUTER_MODEL=nvidia/nemotron-3-ultra:free
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+OPENROUTER_TIMEOUT_MS=30000
+```
+
+#### Configuración local de Ollama (`AI_PROVIDER=ollama`)
 
 ```text
 OLLAMA_BASE_URL=http://127.0.0.1:11434
@@ -39,6 +55,6 @@ OLLAMA_MODEL=llama3:latest
 OLLAMA_TIMEOUT_MS=30000
 ```
 
-Si Ollama no está disponible, el endpoint devuelve un fallback controlado y el backend registra únicamente un error técnico resumido. No se exponen stack traces al cliente ni se guarda la respuesta generada en SQLite.
+Si un proveedor falla, el endpoint pasa automáticamente al siguiente nivel de fallback y registra un error técnico resumido sin exponer credenciales ni stack traces. La clave `OPENROUTER_API_KEY` permanece protegida en el backend y nunca se envía al cliente.
 
 La aplicación de escritorio continúa usando SQLite local-first; este servicio se añadirá como capa de sincronización y tutor remoto.

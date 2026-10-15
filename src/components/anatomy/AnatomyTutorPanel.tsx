@@ -70,7 +70,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
           location: locationText ?? undefined,
           relationships: localizedRelationships || undefined,
         });
-        if (response.provider === "ollama") {
+        if (response.provider === "ollama" || response.provider === "openrouter") {
           answer = response.answer;
           responseMode = "ollama";
         } else {

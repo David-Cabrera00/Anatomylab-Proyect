@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 
 import { PrismaService } from "../prisma/prisma.service";
 import { OllamaClient, OllamaClientError, type OllamaMessage } from "./ollama.client";
+import { OpenRouterClient, OpenRouterClientError, type OpenRouterMessage } from "./openrouter.client";
 import { TutorQuestionDto } from "./tutor.dto";
 
 const systemPrompt = [
@@ -21,6 +22,7 @@ export class TutorService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
+    private readonly openRouter: OpenRouterClient,
     private readonly ollama: OllamaClient,
   ) {}
 
@@ -28,6 +30,40 @@ export class TutorService {
     await this.prisma.tutorMessage.create({ data: { userId, system: input.system, anatomyId: input.anatomyId, role: "user", content: input.question } });
 
     const provider = this.config.get<string>("AI_PROVIDER")?.trim().toLowerCase();
+
+    if (provider === "openrouter") {
+      const context = this.buildContext(input);
+      if (context) {
+        const messages: OpenRouterMessage[] = [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: `${context}\n\nPregunta del estudiante: ${input.question.trim()}` },
+        ];
+
+        try {
+          const answer = await this.openRouter.chat(messages);
+          return { answer, system: input.system, anatomyId: input.anatomyId, provider: "openrouter" };
+        } catch (error) {
+          this.logOpenRouterFailure(error);
+        }
+
+        try {
+          const answer = await this.ollama.chat(messages as OllamaMessage[]);
+          return { answer, system: input.system, anatomyId: input.anatomyId, provider: "ollama" };
+        } catch (error) {
+          this.logOllamaFailure(error);
+        }
+      } else {
+        this.logger.warn("OpenRouter tutor request skipped because validated anatomy context is missing.");
+      }
+
+      return {
+        answer: "No fue posible conectar con el proveedor de IA. Puedes continuar estudiando con la ficha anatómica seleccionada.",
+        system: input.system,
+        anatomyId: input.anatomyId,
+        provider: "local",
+      };
+    }
+
     if (provider === "ollama") {
       const context = this.buildContext(input);
       if (context) {
@@ -49,7 +85,7 @@ export class TutorService {
         answer: "No fue posible conectar con el tutor local. Puedes continuar estudiando con la ficha anatómica seleccionada.",
         system: input.system,
         anatomyId: input.anatomyId,
-        provider: "ollama-fallback",
+        provider: "local",
       };
     }
 
@@ -57,7 +93,7 @@ export class TutorService {
       answer: "El tutor remoto todavía está en modo de preparación. La pregunta y su anatomyId quedaron registrados correctamente.",
       system: input.system,
       anatomyId: input.anatomyId,
-      provider: provider || "local",
+      provider: "local",
     };
   }
 
@@ -76,6 +112,14 @@ export class TutorService {
     if (input.location?.trim()) lines.push(`Ubicación: ${input.location.trim()}`);
     if (input.relationships?.trim()) lines.push(`Relaciones: ${input.relationships.trim()}`);
     return lines.join("\n");
+  }
+
+  private logOpenRouterFailure(error: unknown): void {
+    if (error instanceof OpenRouterClientError) {
+      this.logger.warn(`OpenRouter request failed (${error.code}). Falling back to Ollama.`);
+      return;
+    }
+    this.logger.warn("OpenRouter request failed unexpectedly. Falling back to Ollama.");
   }
 
   private logOllamaFailure(error: unknown): void {

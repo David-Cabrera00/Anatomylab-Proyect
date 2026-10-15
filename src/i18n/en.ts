@@ -58,7 +58,7 @@ export const en: { [Key in keyof typeof es]: string } = {
   anatomyTutorFunctionHint: "Its main function is",
   anatomyTutorLocalMode: "Local study mode: answers are based on the selected card.",
   anatomyTutorRemoteMode: "Local AI connected through the backend.",
-  anatomyTutorFallbackMode: "Ollama is unavailable. The local tutor is being used.",
+  anatomyTutorFallbackMode: "The AI provider is unavailable. The local tutor is being used.",
   anatomyTutorLoading: "Asking the local tutor...",
   settingsThemeTitle: "Appearance",
   settingsThemeDescription: "Switch between a light and a dark interface.",

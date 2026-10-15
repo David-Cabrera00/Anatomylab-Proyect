@@ -56,7 +56,7 @@ export const es = {
   anatomyTutorFunctionHint: "Su función principal es",
   anatomyTutorLocalMode: "Modo de estudio local: respuestas basadas en la ficha seleccionada.",
   anatomyTutorRemoteMode: "IA local conectada mediante el backend.",
-  anatomyTutorFallbackMode: "Ollama no estÃ¡ disponible. Se estÃ¡ usando el tutor local.",
+  anatomyTutorFallbackMode: "El proveedor de IA no está disponible. Se está usando el tutor local.",
   anatomyTutorLoading: "Consultando el tutor local...",
   settingsThemeTitle: "Apariencia",
   settingsThemeDescription: "Cambia entre una interfaz clara y una interfaz oscura.",
