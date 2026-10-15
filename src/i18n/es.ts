@@ -62,6 +62,8 @@ export const es = {
   settingsThemeDescription: "Cambia entre una interfaz clara y una interfaz oscura.",
   settingsThemeLight: "Claro",
   settingsThemeDark: "Oscuro",
+  themeToggleToDark: "Cambiar a modo oscuro",
+  themeToggleToLight: "Cambiar a modo claro",
   settingsSyncTitle: "Sincronización",
   settingsSyncConnected: "Tu sesión está conectada a la base de datos. El progreso y los favoritos locales se sincronizan automáticamente.",
   settingsSyncLocal: "Estás usando el modo local. Inicia sesión para sincronizar tus datos.",

@@ -72,6 +72,29 @@ body {
   color: var(--color-ink);
 }
 
+/* Transición suave entre temas para una experiencia fluida y clínica */
+html,
+body,
+.app-header,
+aside,
+main,
+section,
+header {
+  transition: background-color 200ms ease-out, border-color 200ms ease-out, color 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body,
+  .app-header,
+  aside,
+  main,
+  section,
+  header {
+    transition: none !important;
+  }
+}
+
 /* Dark mode reuses the same design tokens; layouts and component geometry stay unchanged. */
 :root[data-theme="dark"] {
   color-scheme: dark;

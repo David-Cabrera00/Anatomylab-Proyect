@@ -64,6 +64,8 @@ export const en: { [Key in keyof typeof es]: string } = {
   settingsThemeDescription: "Switch between a light and a dark interface.",
   settingsThemeLight: "Light",
   settingsThemeDark: "Dark",
+  themeToggleToDark: "Switch to dark mode",
+  themeToggleToLight: "Switch to light mode",
   settingsSyncTitle: "Synchronization",
   settingsSyncConnected: "Your session is connected to the backend. Local progress and favorites sync automatically.",
   settingsSyncLocal: "You are using local mode. Sign in with the backend to synchronize your data.",
