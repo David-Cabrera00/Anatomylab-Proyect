@@ -44,7 +44,11 @@ export function InfoPanel({
 }: InfoPanelProps) {
   const { language, t } = useI18n();
   const explicitDisplayName = selectedAnatomyId ? anatomyLocalizedDisplayNames[selectedAnatomyId] : undefined;
-  const localizedDataName = selectedData ? getLocalizedText(selectedData.name, language) : selectedDisplayName ?? "";
+  const localizedDataName = activeConfig.id === "cardiovascular"
+    ? selectedDisplayName ?? ""
+    : selectedData
+      ? getLocalizedText(selectedData.name, language)
+      : selectedDisplayName ?? "";
   const muscularLaterality = activeConfig.id === "muscular"
     ? selectedDisplayName?.endsWith(" izquierdo")
       ? " left"

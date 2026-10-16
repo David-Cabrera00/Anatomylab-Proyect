@@ -22,7 +22,11 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
   const description = data ? getLocalizedText(data.description, language) : t("anatomyTutorNoCard");
   const functionText = data?.function ? getLocalizedText(data.function, language) : null;
   const locationText = data?.location ? getLocalizedText(data.location, language) : null;
-  const localizedStructureName = data ? getLocalizedText(data.name, language) : structureName;
+  const localizedStructureName = system === "cardiovascular"
+    ? structureName
+    : data
+      ? getLocalizedText(data.name, language)
+      : structureName;
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<AnatomyTutorMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
