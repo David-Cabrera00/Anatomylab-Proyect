@@ -36,6 +36,7 @@ import {
 
 import { getAnatomyStructureData } from "./data/anatomyStructureData";
 import { getAnatomyEntryById, type AnatomyModelKey } from "./anatomy";
+import { getAnatomyDisplayName } from "./utils/anatomyDisplayName";
 import type { AnatomyStructureData } from "./data/anatomyStructureData";
 
 import {
@@ -161,7 +162,9 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   const selectedAnatomyEntry = selectedAnatomyId
     ? getAnatomyEntryById(selectedAnatomyId)
     : null;
-  const selectedDisplayName = selectedAnatomyEntry?.displayName ?? null;
+  const selectedDisplayName = selectedAnatomyId
+    ? getAnatomyDisplayName(selectedAnatomyId, language)
+    : null;
 
   /* ====================================================
    ACCIÓN DEL VISOR

@@ -1,4 +1,5 @@
 import { cardiovascularData, getCardiovascularStructure } from "../data/cardiovascular";
+import { getEnglishStructureName } from "../utils/cardiovascular/cardiovascularNames";
 import { getSystemStructureName } from "../utils/systemNames";
 import {
   cardiovascularModelCatalog,
@@ -126,6 +127,10 @@ export function createCardiovascularAnatomyEntries(
         originalName: entry.originalName,
       })),
       displayName,
+      localizedDisplayName: {
+        es: displayName,
+        en: getEnglishStructureName(draft.originalName),
+      },
       layer,
       region,
       subregion: educationalLocation,
