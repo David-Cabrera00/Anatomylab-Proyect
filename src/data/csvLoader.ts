@@ -1,5 +1,9 @@
 import type { AnatomyStructureData } from "./educationalCollection";
 import { cardiovascularStableIdByOriginalName } from "../anatomy/metadata/cardiovascularStableIds";
+import {
+  localizeCardiovascularCsvField,
+  localizeCardiovascularCsvRelationships,
+} from "./cardiovascularCsvLocalized";
 
 /**
  * Carga datos educativos desde CSV en tiempo de ejecución.
@@ -28,7 +32,7 @@ export class CSVEducationalLoader {
       if (match) {
         const [, originalName, , description, func, location, relationshipsStr] = match;
         const relationships = relationshipsStr
-          ? relationshipsStr.split(/\s*[;,]\s*/).filter((relationship) => relationship.trim())
+          ? localizeCardiovascularCsvRelationships(relationshipsStr)
           : [];
         
         // Use the stable ID from the stable IDs map
@@ -47,9 +51,9 @@ export class CSVEducationalLoader {
           type: originalName.toLowerCase().includes('vein') || originalName.toLowerCase().includes('vena') ? 'Vena' : 
                 originalName.toLowerCase().includes('artery') || originalName.toLowerCase().includes('arteria') ? 'Arteria' :
                 originalName.toLowerCase().includes('vein') || originalName.toLowerCase().includes('vena') ? 'Vena' : 'Estructura',
-          description,
-          function: func,
-          location,
+          description: localizeCardiovascularCsvField("description", description),
+          function: localizeCardiovascularCsvField("function", func),
+          location: localizeCardiovascularCsvField("location", location),
           relationships,
         });
       }

@@ -40,6 +40,7 @@ function buildSearchIndex(): SearchEntry[] {
           : [];
     const baseKeywords = [
       entry.displayName,
+      entry.localizedDisplayName?.en,
       entry.id,
       entry.system,
       system.label,

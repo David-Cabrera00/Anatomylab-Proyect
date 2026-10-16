@@ -22,6 +22,11 @@ const { cardiovascularStableIdByOriginalName } = await import(
   "../src/anatomy/metadata/cardiovascularStableIds.ts"
 );
 const { cardiovascularData } = await import("../src/data/cardiovascular.ts");
+const {
+  localizeCardiovascularCsvField,
+  localizeCardiovascularCsvRelationships,
+  cardiovascularCsvLocalizationStats,
+} = await import("../src/data/cardiovascularCsvLocalized.ts");
 const { cardiovascularStudyGuide } = await import("../src/data/studyGuides.ts");
 const { getUnknownAnatomyWords, isInvalidStructureName } = await import(
   "../src/utils/cardiovascular/cardiovascularNames.ts"
@@ -121,13 +126,18 @@ const csvRows = csvText.trim().split(/\r?\n/).slice(1);
 const csvStableIds = new Set();
 const invalidCsvRows = [];
 const csvNamesMissingStableId = [];
+const csvLocalizationErrors = [];
+const csvDescriptionPhrases = new Set();
+const csvFunctionPhrases = new Set();
+const csvLocationPhrases = new Set();
+const csvRelationshipLists = new Set();
 for (const [index, row] of csvRows.entries()) {
   const match = row.match(/^"([^"]+)","([^"]+)","([^"]*)","([^"]*)","([^"]*)","([^"]*)"$/);
   if (!match) {
     invalidCsvRows.push(index + 2);
     continue;
   }
-  const [, originalName, , description, func, location] = match;
+  const [, originalName, , description, func, location, relationships] = match;
   const stableId = cardiovascularStableIdByOriginalName[originalName];
   if (!stableId) {
     csvNamesMissingStableId.push(originalName);
@@ -136,6 +146,22 @@ for (const [index, row] of csvRows.entries()) {
   if (![description, func, location].every((value) => value.trim())) {
     invalidCsvRows.push(index + 2);
     continue;
+  }
+  try {
+    const localizedDescription = localizeCardiovascularCsvField("description", description);
+    const localizedFunction = localizeCardiovascularCsvField("function", func);
+    const localizedLocation = localizeCardiovascularCsvField("location", location);
+    const localizedRelationships = localizeCardiovascularCsvRelationships(relationships);
+    if (!localizedDescription.en || !localizedFunction.en || !localizedLocation.en ||
+        localizedRelationships.some((relationship) => !relationship.en)) {
+      csvLocalizationErrors.push({ row: index + 2, originalName, reason: "missing-en" });
+    }
+    csvDescriptionPhrases.add(description);
+    csvFunctionPhrases.add(func);
+    csvLocationPhrases.add(location);
+    csvRelationshipLists.add(relationships);
+  } catch (error) {
+    csvLocalizationErrors.push({ row: index + 2, originalName, reason: error.message });
   }
   csvStableIds.add(stableId);
 }
@@ -156,6 +182,17 @@ const report = {
     entriesWithoutEducationalContent,
     invalidCsvRows,
     csvNamesMissingStableId,
+    localization: {
+      expectedPhraseCounts: cardiovascularCsvLocalizationStats,
+      usedPhraseCounts: {
+        description: csvDescriptionPhrases.size,
+        function: csvFunctionPhrases.size,
+        location: csvLocationPhrases.size,
+        relationships: csvRelationshipLists.size,
+      },
+      errors: csvLocalizationErrors,
+      bilingualRows: csvRows.length - csvLocalizationErrors.length,
+    },
   },
   entriesWithMultipleBindings: entries.filter((entry) => entry.modelBindings.length > 1).length,
   layers: {
@@ -211,6 +248,7 @@ const failures = [
   report.educationalCoverage.entriesWithoutEducationalContent,
   report.educationalCoverage.invalidCsvRows,
   report.educationalCoverage.csvNamesMissingStableId,
+  report.educationalCoverage.localization.errors,
   report.unknownTranslationWords,
   report.invalidDisplayNames,
   report.studyGuide.duplicateStepIds,

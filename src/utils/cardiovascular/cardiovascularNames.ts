@@ -1130,6 +1130,22 @@ export function getSpanishStructureName(
   );
 }
 
+/** Nombre visible en inglés; conserva el original solo como fuente lingüística. */
+export function getEnglishStructureName(structureName: string): string {
+  if (isInvalidStructureName(structureName)) {
+    return "Unidentified structure";
+  }
+
+  const { name, side } = normalizeStructureName(structureName);
+  const baseName = capitalize(name);
+  if (!side || /\b(left|right)\b/i.test(name)) {
+    return baseName;
+  }
+
+  const sentenceCaseBaseName = baseName.charAt(0).toLowerCase() + baseName.slice(1);
+  return `${side === "left" ? "Left" : "Right"} ${sentenceCaseBaseName}`;
+}
+
 /* ======================================================
    DETECTOR DE PALABRAS SIN TRADUCIR
 

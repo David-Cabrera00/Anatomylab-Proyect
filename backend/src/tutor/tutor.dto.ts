@@ -1,6 +1,9 @@
 import { IsIn, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 const anatomySystems = ["cardiovascular", "respiratory", "nervous", "skeletal", "muscular", "digestive"] as const;
+const tutorLanguages = ["es", "en"] as const;
+
+export type TutorLanguage = (typeof tutorLanguages)[number];
 
 export class TutorQuestionDto {
   @IsString()
@@ -10,6 +13,10 @@ export class TutorQuestionDto {
   @IsString()
   @MaxLength(160)
   anatomyId!: string;
+
+  @IsString()
+  @IsIn(tutorLanguages)
+  language!: TutorLanguage;
 
   @IsString()
   @MinLength(2)

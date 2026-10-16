@@ -8,6 +8,9 @@ export function getAnatomyDisplayName(anatomyId: string, language: Language): st
   if (localized) return getLocalizedText(localized, language);
 
   const entry = getAnatomyEntryById(anatomyId);
+  if (entry?.localizedDisplayName) {
+    return getLocalizedText(entry.localizedDisplayName, language);
+  }
   if (entry) return entry.displayName;
 
   return anatomyId;

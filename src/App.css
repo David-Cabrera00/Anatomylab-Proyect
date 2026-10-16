@@ -93,6 +93,15 @@ header {
   header {
     transition: none !important;
   }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Dark mode reuses the same design tokens; layouts and component geometry stay unchanged. */
@@ -188,6 +197,15 @@ header {
 
 .profile-hero:hover,
 .profile-card:hover {
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-ds-floating);
+}
+
+.settings-card {
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.settings-card:hover {
   border-color: var(--color-line-strong);
   box-shadow: var(--shadow-ds-floating);
 }

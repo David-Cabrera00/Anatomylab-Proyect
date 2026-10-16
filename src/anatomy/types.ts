@@ -2,6 +2,7 @@ import type {
   AnatomyLayerId,
   AnatomySystemId,
 } from "../config/anatomySystems";
+import type { LocalizedText } from "../i18n/localizedText";
 
 // general y complete son modos de vista, no divisiones anatómicas.
 export type AnatomyDivisionId = Exclude<
@@ -29,6 +30,8 @@ export type AnatomyStructureIndexEntry = Readonly<{
   /** Una estructura puede estar presente en varias variantes del modelo. */
   modelBindings: readonly AnatomyModelBinding[];
   displayName: string;
+  /** Nombre visible localizado; la identidad técnica sigue en modelBindings. */
+  localizedDisplayName?: LocalizedText;
   layer?: AnatomyDivisionId;
   region?: string;
   subregion?: string;

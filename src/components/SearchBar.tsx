@@ -5,6 +5,7 @@ import { systemTranslationKeys, useI18n } from "../i18n";
 import { Badge } from "../components/ui";
 import { searchAnatomy, getSearchEntriesBySystem } from "../search/anatomySearchIndex";
 import type { SearchEntry } from "../search/anatomySearchIndex";
+import { getAnatomyDisplayName } from "../utils/anatomyDisplayName";
 
 interface SearchBarProps {
   onSelect: (entry: Pick<SearchEntry, "anatomyId" | "system">, context: { query: string; resultsCount: number }) => void;
@@ -13,7 +14,7 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBarProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState("");
@@ -140,7 +141,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium text-ink">{entry.displayName}</p>
+                  <p className="truncate font-medium text-ink">{getAnatomyDisplayName(entry.anatomyId, language)}</p>
                   <div className="mt-1 flex flex-wrap items-center gap-1.5">
                     <Badge variant="info" className="text-xs">{t(systemTranslationKeys[entry.system])}</Badge>
                     <Badge variant="neutral" className="text-xs">{entry.layer}</Badge>
