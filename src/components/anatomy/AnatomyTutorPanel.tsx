@@ -74,6 +74,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
         const response = await backendAskTutor(backendToken, {
           system,
           anatomyId,
+          language,
           question: trimmed,
           structureName: localizedStructureName,
           description,

@@ -55,6 +55,7 @@ export type BackendPreferenceItem = { key: string; value: string };
 export type TutorRequest = {
   system: string;
   anatomyId: string;
+  language: "es" | "en";
   question: string;
   structureName?: string;
   description?: string;

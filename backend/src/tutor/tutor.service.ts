@@ -4,16 +4,29 @@ import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../prisma/prisma.service";
 import { OmniRouteClient, OmniRouteClientError, type OmniRouteMessage } from "./omniroute.client";
 import { OpenRouterClient, OpenRouterClientError, type OpenRouterMessage } from "./openrouter.client";
-import { TutorQuestionDto } from "./tutor.dto";
+import { TutorQuestionDto, type TutorLanguage } from "./tutor.dto";
 
-const systemPrompt = [
-  "Eres el tutor educativo de anatomía de AnatomyLab.",
-  "Responde únicamente usando el contexto anatómico validado proporcionado.",
-  "No inventes estructuras, funciones, ubicaciones ni datos que no estén en el contexto.",
-  "Si el contexto no permite responder, dilo claramente.",
-  "No emitas diagnósticos médicos ni sustituyas el consejo de un profesional de la salud.",
-  "Responde de forma clara, breve y educativa en el idioma de la pregunta.",
-].join(" ");
+function buildLocalizedSystemPrompt(language: TutorLanguage): string {
+  return language === "en"
+    ? [
+        "You are AnatomyLab's educational anatomy tutor.",
+        "Respond only in English.",
+        "Use only the validated anatomical context provided.",
+        "Do not invent structures, functions, locations, or facts that are not in the context.",
+        "If the context is insufficient, say so clearly.",
+        "Do not provide medical diagnoses or replace advice from a healthcare professional.",
+        "Respond clearly, briefly, and educationally.",
+      ].join(" ")
+    : [
+        "Eres el tutor educativo de anatomía de AnatomyLab.",
+        "Responde únicamente en español.",
+        "Usa únicamente el contexto anatómico validado proporcionado.",
+        "No inventes estructuras, funciones, ubicaciones ni datos que no estén en el contexto.",
+        "Si el contexto no permite responder, dilo claramente.",
+        "No emitas diagnósticos médicos ni sustituyas el consejo de un profesional de la salud.",
+        "Responde de forma clara, breve y educativa.",
+      ].join(" ");
+}
 
 @Injectable()
 export class TutorService {
@@ -31,7 +44,7 @@ export class TutorService {
 
     const provider = this.config.get<string>("AI_PROVIDER")?.trim().toLowerCase();
     const context = this.buildContext(input);
-    const messages = context ? this.buildMessages(context, input.question) : null;
+    const messages = context ? this.buildMessages(context, input.question, input.language) : null;
 
     if (provider === "omniroute" && messages) {
       try {
@@ -57,6 +70,15 @@ export class TutorService {
       this.logger.warn("Remote tutor request skipped because validated anatomy context is missing.");
     }
 
+    if (input.language === "en") {
+      return {
+        answer: "The remote tutor could not be reached. You can continue studying with the selected anatomy card.",
+        system: input.system,
+        anatomyId: input.anatomyId,
+        provider: "local",
+      };
+    }
+
     return {
       answer: "No fue posible conectar con el tutor remoto. Puedes continuar estudiando con la ficha anatómica seleccionada.",
       system: input.system,
@@ -65,10 +87,15 @@ export class TutorService {
     };
   }
 
-  private buildMessages(context: string, question: string): Array<OmniRouteMessage | OpenRouterMessage> {
+  private buildMessages(context: string, question: string, language: TutorLanguage): Array<OmniRouteMessage | OpenRouterMessage> {
     return [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: `${context}\n\nPregunta del estudiante: ${question.trim()}` },
+      { role: "system", content: buildLocalizedSystemPrompt(language) },
+      {
+        role: "user",
+        content: language === "en"
+          ? `${context}\n\nStudent question: ${question.trim()}`
+          : `${context}\n\nPregunta del estudiante: ${question.trim()}`,
+      },
     ];
   }
 
@@ -76,6 +103,19 @@ export class TutorService {
     const structureName = input.structureName?.trim();
     const description = input.description?.trim();
     if (!structureName || !description) return null;
+
+    if (input.language === "en") {
+      const lines = [
+        `Anatomical system: ${input.system}`,
+        `Structure: ${structureName}`,
+        `Anatomy ID: ${input.anatomyId}`,
+        `Educational description: ${description}`,
+      ];
+      if (input.function?.trim()) lines.push(`Function: ${input.function.trim()}`);
+      if (input.location?.trim()) lines.push(`Location: ${input.location.trim()}`);
+      if (input.relationships?.trim()) lines.push(`Relationships: ${input.relationships.trim()}`);
+      return lines.join("\n");
+    }
 
     const lines = [
       `Sistema anatómico: ${input.system}`,
