@@ -192,6 +192,15 @@ header {
   box-shadow: var(--shadow-ds-floating);
 }
 
+.settings-card {
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.settings-card:hover {
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-ds-floating);
+}
+
 .progress-page {
   background-image: radial-gradient(circle at 8% 10%, rgb(23 96 117 / 6%), transparent 24rem);
 }
