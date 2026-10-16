@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 import { PrismaService } from "../prisma/prisma.service";
-import { OllamaClient, OllamaClientError, type OllamaMessage } from "./ollama.client";
+import { OmniRouteClient, OmniRouteClientError, type OmniRouteMessage } from "./omniroute.client";
 import { OpenRouterClient, OpenRouterClientError, type OpenRouterMessage } from "./openrouter.client";
 import { TutorQuestionDto } from "./tutor.dto";
 
@@ -22,79 +22,54 @@ export class TutorService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
+    private readonly omniRoute: OmniRouteClient,
     private readonly openRouter: OpenRouterClient,
-    private readonly ollama: OllamaClient,
   ) {}
 
   async ask(userId: string, input: TutorQuestionDto) {
     await this.prisma.tutorMessage.create({ data: { userId, system: input.system, anatomyId: input.anatomyId, role: "user", content: input.question } });
 
     const provider = this.config.get<string>("AI_PROVIDER")?.trim().toLowerCase();
+    const context = this.buildContext(input);
+    const messages = context ? this.buildMessages(context, input.question) : null;
 
-    if (provider === "openrouter") {
-      const context = this.buildContext(input);
-      if (context) {
-        const messages: OpenRouterMessage[] = [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: `${context}\n\nPregunta del estudiante: ${input.question.trim()}` },
-        ];
-
-        try {
-          const answer = await this.openRouter.chat(messages);
-          return { answer, system: input.system, anatomyId: input.anatomyId, provider: "openrouter" };
-        } catch (error) {
-          this.logOpenRouterFailure(error);
-        }
-
-        try {
-          const answer = await this.ollama.chat(messages as OllamaMessage[]);
-          return { answer, system: input.system, anatomyId: input.anatomyId, provider: "ollama" };
-        } catch (error) {
-          this.logOllamaFailure(error);
-        }
-      } else {
-        this.logger.warn("OpenRouter tutor request skipped because validated anatomy context is missing.");
+    if (provider === "omniroute" && messages) {
+      try {
+        const answer = await this.omniRoute.chat(messages);
+        return { answer, system: input.system, anatomyId: input.anatomyId, provider: "omniroute" };
+      } catch (error) {
+        this.logOmniRouteFailure(error);
       }
-
-      return {
-        answer: "No fue posible conectar con el proveedor de IA. Puedes continuar estudiando con la ficha anatómica seleccionada.",
-        system: input.system,
-        anatomyId: input.anatomyId,
-        provider: "local",
-      };
-    }
-
-    if (provider === "ollama") {
-      const context = this.buildContext(input);
-      if (context) {
-        try {
-          const messages: OllamaMessage[] = [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: `${context}\n\nPregunta del estudiante: ${input.question.trim()}` },
-          ];
-          const answer = await this.ollama.chat(messages);
-          return { answer, system: input.system, anatomyId: input.anatomyId, provider: "ollama" };
-        } catch (error) {
-          this.logOllamaFailure(error);
-        }
-      } else {
-        this.logger.warn("Ollama tutor request skipped because validated anatomy context is missing.");
+      try {
+        const answer = await this.openRouter.chat(messages);
+        return { answer, system: input.system, anatomyId: input.anatomyId, provider: "openrouter" };
+      } catch (error) {
+        this.logOpenRouterFailure(error);
       }
-
-      return {
-        answer: "No fue posible conectar con el tutor local. Puedes continuar estudiando con la ficha anatómica seleccionada.",
-        system: input.system,
-        anatomyId: input.anatomyId,
-        provider: "local",
-      };
+    } else if (provider === "openrouter" && messages) {
+      try {
+        const answer = await this.openRouter.chat(messages);
+        return { answer, system: input.system, anatomyId: input.anatomyId, provider: "openrouter" };
+      } catch (error) {
+        this.logOpenRouterFailure(error);
+      }
+    } else if ((provider === "omniroute" || provider === "openrouter") && !messages) {
+      this.logger.warn("Remote tutor request skipped because validated anatomy context is missing.");
     }
 
     return {
-      answer: "El tutor remoto todavía está en modo de preparación. La pregunta y su anatomyId quedaron registrados correctamente.",
+      answer: "No fue posible conectar con el tutor remoto. Puedes continuar estudiando con la ficha anatómica seleccionada.",
       system: input.system,
       anatomyId: input.anatomyId,
       provider: "local",
     };
+  }
+
+  private buildMessages(context: string, question: string): Array<OmniRouteMessage | OpenRouterMessage> {
+    return [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: `${context}\n\nPregunta del estudiante: ${question.trim()}` },
+    ];
   }
 
   private buildContext(input: TutorQuestionDto): string | null {
@@ -114,19 +89,19 @@ export class TutorService {
     return lines.join("\n");
   }
 
-  private logOpenRouterFailure(error: unknown): void {
-    if (error instanceof OpenRouterClientError) {
-      this.logger.warn(`OpenRouter request failed (${error.code}). Falling back to Ollama.`);
+  private logOmniRouteFailure(error: unknown): void {
+    if (error instanceof OmniRouteClientError) {
+      this.logger.warn(`OmniRoute request failed (${error.code}). Falling back to OpenRouter.`);
       return;
     }
-    this.logger.warn("OpenRouter request failed unexpectedly. Falling back to Ollama.");
+    this.logger.warn("OmniRoute request failed unexpectedly. Falling back to OpenRouter.");
   }
 
-  private logOllamaFailure(error: unknown): void {
-    if (error instanceof OllamaClientError) {
-      this.logger.warn(`Ollama request failed (${error.code}).`);
+  private logOpenRouterFailure(error: unknown): void {
+    if (error instanceof OpenRouterClientError) {
+      this.logger.warn(`OpenRouter request failed (${error.code}). Falling back to local tutor.`);
       return;
     }
-    this.logger.warn("Ollama request failed unexpectedly.");
+    this.logger.warn("OpenRouter request failed unexpectedly. Falling back to local tutor.");
   }
 }

@@ -26,7 +26,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<AnatomyTutorMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [mode, setMode] = useState<"ollama" | "fallback" | null>(null);
+  const [mode, setMode] = useState<"remote" | "fallback" | null>(null);
   const requestIdRef = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const tutor = createLocalAnatomyTutor(
@@ -62,7 +62,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
     setIsLoading(true);
 
     let answer: string;
-    let responseMode: "ollama" | "fallback" = "fallback";
+    let responseMode: "remote" | "fallback" = "fallback";
     const localizedRelationships = data?.relationships?.map((relationship) => getLocalizedText(relationship, language)).join("; ");
 
     if (backendToken && data && description.trim()) {
@@ -77,9 +77,9 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
           location: locationText ?? undefined,
           relationships: localizedRelationships || undefined,
         });
-        if (response.provider === "ollama" || response.provider === "openrouter") {
+        if (response.provider === "omniroute" || response.provider === "openrouter") {
           answer = response.answer;
-          responseMode = "ollama";
+          responseMode = "remote";
         } else {
           answer = await tutor.answer(trimmed, { system, anatomyId, structureName: localizedStructureName, data });
         }
@@ -174,7 +174,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
           <input value={question} disabled={isLoading} onChange={(event) => setQuestion(event.target.value)} placeholder={t("anatomyTutorPlaceholder")} className="min-w-0 flex-1 rounded-ds-sm border border-line bg-surface px-3 py-2 text-label text-ink outline-none transition-colors placeholder:text-ink-subtle focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-60" />
           <button type="submit" disabled={isLoading || !question.trim()} className="rounded-ds-sm bg-accent px-3 py-2 text-label font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40">{t("anatomyTutorSend")}</button>
         </form>
-        <p className="mt-2 text-caption leading-5 text-ink-subtle">{isLoading ? t("anatomyTutorLoading") : mode === "ollama" ? t("anatomyTutorRemoteMode") : mode === "fallback" ? t("anatomyTutorFallbackMode") : t("anatomyTutorLocalMode")}</p>
+        <p className="mt-2 text-caption leading-5 text-ink-subtle">{isLoading ? t("anatomyTutorLoading") : mode === "remote" ? t("anatomyTutorRemoteMode") : mode === "fallback" ? t("anatomyTutorFallbackMode") : t("anatomyTutorLocalMode")}</p>
       </footer>
     </aside>
   );
