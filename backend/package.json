@@ -5,6 +5,7 @@
   "description": "Backend modular para AnatomyLab",
   "scripts": {
     "build": "nest build",
+    "postinstall": "prisma generate",
     "start:dev": "nest start --watch",
     "start": "node dist/main.js",
     "prisma:generate": "prisma generate",
