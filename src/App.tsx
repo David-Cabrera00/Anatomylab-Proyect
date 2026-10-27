@@ -845,7 +845,8 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       }
       sidebar={<AppSidebar currentView={appView} onNavigate={handleViewChange} />}
     >
-      {appView === "anatomy" ? (
+      <div key={appView} className="view-enter h-full w-full">
+        {appView === "anatomy" ? (
         <AnatomyView>
             <div className="relative flex min-h-0 min-w-0 flex-1">
             {/* =================================================
@@ -974,6 +975,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
       ) : (
         <SettingsView onLogout={handleLogout} backendConnected={Boolean(backendSession)} syncStatus={syncStatus} onSync={syncBackendData} />
       )}
+      </div>
     </AppShell>
   );
 }
