@@ -67,7 +67,7 @@ export type TutorRequest = {
 export type BackendSessionListener = (session: BackendSession | null) => void;
 
 const backendUrl = (): string =>
-  (import.meta.env.VITE_BACKEND_URL as string | undefined)?.replace(/\/$/, "") || "http://localhost:3000/api";
+  (import.meta.env.VITE_BACKEND_URL as string | undefined)?.replace(/\/$/, "") || "https://anatomylab-backend.onrender.com/api";
 
 const backendSessionKey = "anatomylab.backend.session";
 
