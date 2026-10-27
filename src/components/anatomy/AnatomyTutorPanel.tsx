@@ -31,8 +31,21 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
   const [messages, setMessages] = useState<AnatomyTutorMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<"remote" | "fallback" | null>(null);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const requestIdRef = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  const copyMessage = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => {
+        setCopiedIndex((current) => (current === index ? null : current));
+      }, 2000);
+    } catch {
+      // Fallback si la API de portapapeles no está permitida
+    }
+  };
   const tutor = createLocalAnatomyTutor(
     (value) => value ? getLocalizedText(value, language) : null,
     {
@@ -146,8 +159,38 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
             {messages.length > 0 && <button type="button" onClick={() => setMessages([])} className="text-caption text-accent transition-colors hover:text-ink">{t("anatomyTutorClear")}</button>}
           </div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" disabled={isLoading} onClick={() => void submitQuestion(t("anatomyTutorPromptFunction"))} className="rounded-full border border-line px-3 py-1.5 text-caption text-ink-muted transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50">{t("anatomyTutorPromptFunction")}</button>
-            <button type="button" disabled={isLoading} onClick={() => void submitQuestion(t("anatomyTutorPromptLocation"))} className="rounded-full border border-line px-3 py-1.5 text-caption text-ink-muted transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50">{t("anatomyTutorPromptLocation")}</button>
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={() => void submitQuestion(t("anatomyTutorPromptFunction"))}
+              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {t("anatomyTutorPromptFunction")}
+            </button>
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={() => void submitQuestion(t("anatomyTutorPromptVascular"))}
+              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {t("anatomyTutorPromptVascular")}
+            </button>
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={() => void submitQuestion(t("anatomyTutorPromptClinical"))}
+              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {t("anatomyTutorPromptClinical")}
+            </button>
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={() => void submitQuestion(t("anatomyTutorPromptBiomechanics"))}
+              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {t("anatomyTutorPromptBiomechanics")}
+            </button>
           </div>
           {isLoading && <p className="rounded-ds-md border border-line bg-surface-raised px-3 py-2 text-caption text-ink-muted" role="status" aria-live="polite">{t("anatomyTutorLoading")}</p>}
           {messages.length > 0 && (
@@ -158,13 +201,43 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
                   className={
                     message.role === "user"
                       ? "ml-6 rounded-ds-md bg-accent px-3.5 py-2.5 text-label text-white shadow-xs whitespace-pre-wrap"
-                      : "mr-2 rounded-ds-md border border-line bg-surface-raised px-4 py-3 text-label text-ink shadow-xs"
+                      : "mr-1 rounded-ds-md border border-line bg-surface-raised p-4 text-label text-ink shadow-xs"
                   }
                 >
                   {message.role === "user" ? (
                     message.text
                   ) : (
-                    <FormattedAssistantMessage content={message.text} />
+                    <div>
+                      <div className="mb-2.5 flex items-center justify-between border-b border-line/60 pb-2">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-subtle">
+                          AnatomyLab IA
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => void copyMessage(message.text, index)}
+                          className="flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] font-medium text-ink-muted transition-colors hover:bg-canvas-muted hover:text-accent"
+                          title={t("anatomyTutorCopyNote")}
+                          aria-label={t("anatomyTutorCopyNote")}
+                        >
+                          {copiedIndex === index ? (
+                            <>
+                              <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="text-accent">{t("anatomyTutorCopied")}</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                              <span>{t("anatomyTutorCopyNote")}</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <FormattedAssistantMessage content={message.text} />
+                    </div>
                   )}
                 </div>
               ))}
@@ -186,7 +259,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
 }
 
 function renderInlineFormatting(text: string) {
-  const parts = text.split(/(\*\*.*?\*\*|\*[^\*]+?\*)/g);
+  const parts = text.split(/(\*\*.*?\*\*|\*[^\*]+?\*|`[^`]+?`)/g);
   return parts.map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
       return (
@@ -202,47 +275,112 @@ function renderInlineFormatting(text: string) {
         </em>
       );
     }
+    if (part.startsWith("`") && part.endsWith("`") && part.length >= 2) {
+      return (
+        <code key={index} className="rounded bg-canvas-muted px-1.5 py-0.5 font-mono text-[11px] font-semibold text-accent">
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
     return part;
   });
 }
 
 function FormattedAssistantMessage({ content }: { content: string }) {
+  // Pre-procesar texto:
+  // 1. Convertir saltos de línea con números aislados (\n2\nInserción -> \n2. Inserción)
+  // 2. Normalizar encabezados y puntos clave
   const normalized = content
-    .replace(/([.:;])\s+(\d+\.\s+\*\*)/g, "$1\n\n$2")
+    .replace(/\r/g, "")
+    .replace(/\n\s*(\d+)\s*\n/g, "\n$1. ")
+    .replace(/([.:;])\s+(\d+[\.\)]\s+\*\*)/g, "$1\n\n$2")
     .replace(/([.:;])\s+(\*\s+\*\*)/g, "$1\n$2")
     .replace(/([.:;])\s+(\*\*En resumen:\*\*)/gi, "$1\n\n$2");
 
-  const lines = normalized.split(/\r?\n/);
+  const lines = normalized.split("\n");
 
   return (
-    <div className="space-y-2 text-label leading-relaxed text-ink">
+    <div className="space-y-2.5 text-label leading-relaxed text-ink">
       {lines.map((rawLine, idx) => {
         const line = rawLine.trim();
         if (!line) return null;
 
-        const numberedMatch = line.match(/^(\d+)\.\s+(.*)$/);
-        if (numberedMatch) {
+        // Encabezados estilo markdown (### o ##)
+        const headingMatch = line.match(/^#{1,3}\s+(.*)$/);
+        if (headingMatch) {
           return (
-            <div key={idx} className="flex items-start gap-2 pt-1">
+            <h4 key={idx} className="mt-3 text-label font-bold uppercase tracking-wider text-accent first:mt-0">
+              {renderInlineFormatting(headingMatch[1])}
+            </h4>
+          );
+        }
+
+        // Cita o bloque de énfasis (> ...)
+        const quoteMatch = line.match(/^>\s*(.*)$/);
+        if (quoteMatch) {
+          return (
+            <blockquote key={idx} className="my-1.5 border-l-2 border-accent/60 pl-3 italic text-ink-muted">
+              {renderInlineFormatting(quoteMatch[1])}
+            </blockquote>
+          );
+        }
+
+        // Lista numerada (1. Texto... o 1) Texto...)
+        const numberedMatch = line.match(/^(\d+)[\.\)]\s+(.*)$/);
+        if (numberedMatch) {
+          const itemText = numberedMatch[2];
+          const titleColonMatch = itemText.match(/^([^:\n]{2,50}):\s*(.*)$/);
+
+          return (
+            <div key={idx} className="flex items-start gap-2.5 pt-1">
               <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 text-[11px] font-bold text-accent">
                 {numberedMatch[1]}
               </span>
-              <div className="flex-1 pt-0.5">
-                {renderInlineFormatting(numberedMatch[2])}
+              <div className="flex-1 text-label leading-relaxed text-ink">
+                {titleColonMatch ? (
+                  <>
+                    <strong className="font-semibold text-ink">{titleColonMatch[1]}: </strong>
+                    {renderInlineFormatting(titleColonMatch[2])}
+                  </>
+                ) : (
+                  renderInlineFormatting(itemText)
+                )}
               </div>
             </div>
           );
         }
 
+        // Viñetas (*, -, •)
         const bulletMatch = line.match(/^[\*\-•]\s+(.*)$/);
         if (bulletMatch) {
+          const itemText = bulletMatch[1];
+          const titleColonMatch = itemText.match(/^([^:\n]{2,50}):\s*(.*)$/);
+
           return (
-            <div key={idx} className="flex items-start gap-2 pl-3">
+            <div key={idx} className="flex items-start gap-2.5 pl-2 pt-0.5">
               <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent" />
-              <div className="flex-1">
-                {renderInlineFormatting(bulletMatch[1])}
+              <div className="flex-1 text-label leading-relaxed text-ink">
+                {titleColonMatch ? (
+                  <>
+                    <strong className="font-semibold text-ink">{titleColonMatch[1]}: </strong>
+                    {renderInlineFormatting(titleColonMatch[2])}
+                  </>
+                ) : (
+                  renderInlineFormatting(itemText)
+                )}
               </div>
             </div>
+          );
+        }
+
+        // Párrafo con título inicial (ej. "Origen dual diferenciado: Memoriza...")
+        const leadTitleMatch = line.match(/^([A-ZÁÉÍÓÚÑ][^:\n]{2,45}):\s+(.*)$/);
+        if (leadTitleMatch && !line.startsWith("http")) {
+          return (
+            <p key={idx} className="leading-relaxed">
+              <strong className="font-semibold text-ink">{leadTitleMatch[1]}: </strong>
+              {renderInlineFormatting(leadTitleMatch[2])}
+            </p>
           );
         }
 
