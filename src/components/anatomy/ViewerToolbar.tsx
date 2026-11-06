@@ -15,7 +15,11 @@ export function ViewerToolbar({ hasSelection, onIsolate, onHide, onTransparency,
   const { t } = useI18n();
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-5 z-30 flex justify-center px-4">
-      <div role="toolbar" aria-label={t("anatomyViewerControls")} className="pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-1 rounded-ds-md border border-line bg-surface/95 p-1.5 shadow-ds-floating backdrop-blur-sm">
+      <div
+        role="toolbar"
+        aria-label={t("anatomyViewerControls")}
+        className="viewer-toolbar-enter pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-1 rounded-ds-md border border-line bg-surface/95 p-1.5 shadow-ds-floating backdrop-blur-sm transition-all duration-200 hover:shadow-ds-modal"
+      >
         <ToolbarButton label={t("anatomyIsolate")} disabled={!hasSelection} onClick={onIsolate} icon={<IsolateIcon />} />
         <ToolbarButton label={t("anatomyHide")} disabled={!hasSelection} onClick={onHide} icon={<HideIcon />} />
         <ToolbarButton label={t("anatomyTransparency")} disabled={!hasSelection} onClick={onTransparency} icon={<TransparencyIcon />} />
@@ -27,8 +31,16 @@ export function ViewerToolbar({ hasSelection, onIsolate, onHide, onTransparency,
 
 function ToolbarButton({ label, icon, onClick, disabled = false, variant = "ghost" }: { label: string; icon: ReactNode; onClick: () => void; disabled?: boolean; variant?: "ghost" | "secondary" }) {
   return (
-    <Button variant={variant} size="sm" disabled={disabled} onClick={onClick} className="gap-1.5 whitespace-nowrap">
-      {icon}
+    <Button
+      variant={variant}
+      size="sm"
+      disabled={disabled}
+      onClick={onClick}
+      className="group gap-1.5 whitespace-nowrap transition-all duration-150 active:scale-95"
+    >
+      <span className="transition-transform duration-150 group-hover:scale-110">
+        {icon}
+      </span>
       <span className="hidden sm:inline">{label}</span>
     </Button>
   );
