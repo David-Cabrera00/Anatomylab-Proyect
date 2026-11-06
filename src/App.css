@@ -463,8 +463,100 @@ header {
 }
 
 @keyframes search-results-enter {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.search-results-enter {
+  animation: search-results-enter 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes search-item-slide {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.search-item-enter {
+  animation: search-item-slide 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.card-stagger-enter {
+  animation: card-reveal-up 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.structure-detail-enter {
+  animation: structure-detail-fade 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes structure-detail-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.viewer-toolbar-enter {
+  animation: toolbar-slide-up 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes toolbar-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.study-step-enter {
+  animation: study-step-fade 250ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes study-step-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-check {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-check {
+  animation: scale-check 220ms ease-out both;
 }
 
 .quiz-question-enter {
@@ -526,7 +618,14 @@ header {
   .quiz-question-enter,
   .quiz-option-enter,
   .quiz-card-enter,
-  .quiz-score-badge {
+  .quiz-score-badge,
+  .structure-detail-enter,
+  .viewer-toolbar-enter,
+  .study-step-enter,
+  .search-results-enter,
+  .search-item-enter,
+  .card-stagger-enter,
+  .animate-scale-check {
     animation: none !important;
   }
 }
