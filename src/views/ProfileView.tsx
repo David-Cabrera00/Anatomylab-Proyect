@@ -96,11 +96,11 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
       <div className="mx-auto max-w-5xl space-y-5 sm:space-y-6">
         
         {/* Cabecera / Hero de Identidad */}
-        <header className="profile-hero rounded-ds-lg border border-line bg-surface px-5 py-5 shadow-ds-raised sm:px-8 sm:py-6">
+        <header className="profile-hero card-stagger-enter rounded-ds-lg border border-line bg-surface px-5 py-5 shadow-ds-raised sm:px-8 sm:py-6">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
             <div className="flex min-w-0 items-center gap-4 sm:gap-5">
               <div
-                className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${currentTone.bgClass} text-title font-bold text-white shadow-ds-raised transition-all duration-200 sm:h-20 sm:w-20 sm:text-display`}
+                className={`relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${currentTone.bgClass} text-title font-bold text-white shadow-ds-raised transition-all duration-300 sm:h-20 sm:w-20 sm:text-display ring-4 ring-offset-2 ring-offset-surface ring-accent/20`}
                 aria-label={displayName}
                 role="img"
               >
@@ -121,7 +121,7 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success-soft/30 px-3 py-1.5 text-caption font-medium text-success">
-                  <span className="h-2 w-2 rounded-full bg-success" />
+                  <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
                   {t("settingsSyncConnected")}
                 </span>
               )}
@@ -133,8 +133,8 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           
           {/* Card Stat 1: Favoritos */}
-          <div className="flex items-center gap-4 rounded-ds-lg border border-line bg-surface p-4 shadow-ds-raised">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+          <div className="card-stagger-enter group flex items-center gap-4 rounded-ds-lg border border-line bg-surface p-4 shadow-ds-raised transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-ds-floating" style={{ animationDelay: "60ms" }}>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6">
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
                 <path d="M5 3.5A1.5 1.5 0 0 1 6.5 2h7A1.5 1.5 0 0 1 15 3.5V17l-5-3-5 3V3.5Z" />
               </svg>
@@ -146,8 +146,8 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
           </div>
 
           {/* Card Stat 2: Quizzes */}
-          <div className="flex items-center gap-4 rounded-ds-lg border border-line bg-surface p-4 shadow-ds-raised">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+          <div className="card-stagger-enter group flex items-center gap-4 rounded-ds-lg border border-line bg-surface p-4 shadow-ds-raised transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-ds-floating" style={{ animationDelay: "120ms" }}>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6">
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
                 <circle cx="10" cy="10" r="7.5" />
                 <path d="m7 10 2 2 4-4" />
@@ -160,8 +160,8 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
           </div>
 
           {/* Card Stat 3: Sistema Activo */}
-          <div className="flex items-center gap-4 rounded-ds-lg border border-line bg-surface p-4 shadow-ds-raised">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+          <div className="card-stagger-enter group flex items-center gap-4 rounded-ds-lg border border-line bg-surface p-4 shadow-ds-raised transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-ds-floating" style={{ animationDelay: "180ms" }}>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6">
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
                 <path d="M3 10h3l2.5-6 3 12 2.5-6h3" />
               </svg>
@@ -178,7 +178,7 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           
           {/* Área de Formación */}
-          <section className="rounded-ds-lg border border-line bg-surface p-5 shadow-ds-raised" aria-labelledby="profile-specialty-title">
+          <section className="card-stagger-enter rounded-ds-lg border border-line bg-surface p-5 shadow-ds-raised transition-all duration-200 hover:border-line-strong" style={{ animationDelay: "220ms" }} aria-labelledby="profile-specialty-title">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-accent" aria-hidden="true">
                 <path d="M10 2 2 6l8 4 8-4-8-4Z" />
@@ -198,10 +198,10 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
                     type="button"
                     onClick={() => handleSelectSpecialty(item.id)}
                     aria-pressed={isActive}
-                    className={`rounded-full border px-3.5 py-1.5 text-label font-medium transition-all duration-150 ${
+                    className={`rounded-full border px-3.5 py-1.5 text-label font-medium transition-all duration-150 active:scale-95 ${
                       isActive
-                        ? "border-accent bg-accent text-white shadow-ds-raised"
-                        : "border-line bg-surface-raised text-ink-muted hover:border-accent/40 hover:text-ink"
+                        ? "border-accent bg-accent text-white shadow-ds-raised scale-105"
+                        : "border-line bg-surface-raised text-ink-muted hover:border-accent/40 hover:text-ink hover:scale-102"
                     }`}
                   >
                     {t(item.labelKey)}
@@ -212,7 +212,7 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
           </section>
 
           {/* Color del Avatar */}
-          <section className="rounded-ds-lg border border-line bg-surface p-5 shadow-ds-raised" aria-labelledby="profile-tone-title">
+          <section className="card-stagger-enter rounded-ds-lg border border-line bg-surface p-5 shadow-ds-raised transition-all duration-200 hover:border-line-strong" style={{ animationDelay: "260ms" }} aria-labelledby="profile-tone-title">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-accent" aria-hidden="true">
                 <circle cx="10" cy="10" r="7" />
@@ -230,8 +230,8 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
                     key={item.id}
                     type="button"
                     onClick={() => handleSelectTone(item.id)}
-                    className={`h-7 w-7 rounded-full ${item.bgClass} transition-all duration-150 hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-                      isSelected ? "ring-2 ring-accent ring-offset-2 ring-offset-surface scale-105" : "opacity-80 hover:opacity-100"
+                    className={`h-8 w-8 rounded-full ${item.bgClass} transition-all duration-150 hover:scale-110 active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                      isSelected ? "ring-2 ring-accent ring-offset-2 ring-offset-surface scale-110 shadow-sm" : "opacity-80 hover:opacity-100"
                     }`}
                     aria-label={item.id}
                     aria-pressed={isSelected}
@@ -244,7 +244,7 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
         </div>
 
         {/* Sección de Favoritos */}
-        <section className="profile-card rounded-ds-lg border border-line bg-surface p-4 shadow-ds-raised sm:p-6" aria-labelledby="profile-favorites-title">
+        <section className="profile-card card-stagger-enter rounded-ds-lg border border-line bg-surface p-4 shadow-ds-raised sm:p-6" style={{ animationDelay: "300ms" }} aria-labelledby="profile-favorites-title">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
             <div>
               <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">01</p>

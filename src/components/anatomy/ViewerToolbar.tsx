@@ -5,43 +5,85 @@ import { useI18n } from "../../i18n";
 
 type ViewerToolbarProps = {
   hasSelection: boolean;
+  activeMode?: "isolate" | "transparency" | null;
   onIsolate: () => void;
   onHide: () => void;
   onTransparency: () => void;
   onReset: () => void;
 };
 
-export function ViewerToolbar({ hasSelection, onIsolate, onHide, onTransparency, onReset }: ViewerToolbarProps) {
+export function ViewerToolbar({ hasSelection, activeMode, onIsolate, onHide, onTransparency, onReset }: ViewerToolbarProps) {
   const { t } = useI18n();
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-5 z-30 flex justify-center px-4">
       <div
         role="toolbar"
         aria-label={t("anatomyViewerControls")}
-        className="viewer-toolbar-enter pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-1 rounded-ds-md border border-line bg-surface/95 p-1.5 shadow-ds-floating backdrop-blur-sm transition-all duration-200 hover:shadow-ds-modal"
+        className="viewer-toolbar-enter pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-1.5 rounded-ds-md border border-line bg-surface/95 p-1.5 shadow-ds-floating backdrop-blur-sm transition-all duration-200 hover:shadow-ds-modal"
       >
-        <ToolbarButton label={t("anatomyIsolate")} disabled={!hasSelection} onClick={onIsolate} icon={<IsolateIcon />} />
-        <ToolbarButton label={t("anatomyHide")} disabled={!hasSelection} onClick={onHide} icon={<HideIcon />} />
-        <ToolbarButton label={t("anatomyTransparency")} disabled={!hasSelection} onClick={onTransparency} icon={<TransparencyIcon />} />
-        <ToolbarButton label={t("anatomyReset")} onClick={onReset} icon={<ResetIcon />} variant="secondary" />
+        <ToolbarButton
+          label={t("anatomyIsolate")}
+          disabled={!hasSelection}
+          isActive={activeMode === "isolate"}
+          onClick={onIsolate}
+          icon={<IsolateIcon />}
+        />
+        <ToolbarButton
+          label={t("anatomyHide")}
+          disabled={!hasSelection}
+          onClick={onHide}
+          icon={<HideIcon />}
+        />
+        <ToolbarButton
+          label={t("anatomyTransparency")}
+          disabled={!hasSelection}
+          isActive={activeMode === "transparency"}
+          onClick={onTransparency}
+          icon={<TransparencyIcon />}
+        />
+        <ToolbarButton
+          label={t("anatomyReset")}
+          onClick={onReset}
+          icon={<ResetIcon />}
+          variant="secondary"
+        />
       </div>
     </div>
   );
 }
 
-function ToolbarButton({ label, icon, onClick, disabled = false, variant = "ghost" }: { label: string; icon: ReactNode; onClick: () => void; disabled?: boolean; variant?: "ghost" | "secondary" }) {
+function ToolbarButton({
+  label,
+  icon,
+  onClick,
+  disabled = false,
+  isActive = false,
+  variant = "ghost",
+}: {
+  label: string;
+  icon: ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  isActive?: boolean;
+  variant?: "ghost" | "secondary";
+}) {
   return (
     <Button
-      variant={variant}
+      variant={isActive ? "primary" : variant}
       size="sm"
       disabled={disabled}
       onClick={onClick}
-      className="group gap-1.5 whitespace-nowrap transition-all duration-150 active:scale-95"
+      className={`group relative gap-1.5 whitespace-nowrap transition-all duration-150 active:scale-95 ${
+        isActive ? "shadow-ds-raised ring-2 ring-accent/30 font-semibold" : ""
+      }`}
     >
       <span className="transition-transform duration-150 group-hover:scale-110">
         {icon}
       </span>
       <span className="hidden sm:inline">{label}</span>
+      {isActive && (
+        <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" aria-hidden="true" />
+      )}
     </Button>
   );
 }

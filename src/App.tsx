@@ -154,9 +154,11 @@ function App() {
   >(
     null
   );
+  const [activeVisualMode, setActiveVisualMode] = useState<"isolate" | "transparency" | null>(null);
 
 const handleStructureSelect = useCallback((anatomyId: string | null) => {
     setSelectedAnatomyId(anatomyId);
+    setActiveVisualMode(null);
   }, []);
 
   const selectedAnatomyEntry = selectedAnatomyId
@@ -422,6 +424,13 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     type:
       ViewerActionType
   ) => {
+    if (type === "isolate") {
+      setActiveVisualMode((prev) => (prev === "isolate" ? null : "isolate"));
+    } else if (type === "transparency") {
+      setActiveVisualMode((prev) => (prev === "transparency" ? null : "transparency"));
+    } else if (type === "reset" || type === "hide") {
+      setActiveVisualMode(null);
+    }
     setViewerAction(
       (previous) => ({
         type,
@@ -826,6 +835,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
   const viewerToolbar = (
     <ViewerToolbar
       hasSelection={Boolean(selectedAnatomyId)}
+      activeMode={activeVisualMode}
       onIsolate={() => runViewerAction("isolate")}
       onHide={() => runViewerAction("hide")}
       onTransparency={() => runViewerAction("transparency")}
