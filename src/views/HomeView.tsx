@@ -131,10 +131,11 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
             aside={<p className="max-w-sm text-body text-ink-muted lg:text-right">{t("homeChooseSystem")}</p>}
           />
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {systems.map((system) => (
+            {systems.map((system, index) => (
               <AnatomySystemItem
                 key={system.id}
                 system={system}
+                index={index}
                 description={systemDescriptions[language][system.id]}
                 onOpen={() => onOpenSystem(system.id)}
               />
@@ -197,18 +198,28 @@ function ContinueStudy({ system, progress, description, onOpen }: { system: Home
   );
 }
 
-function AnatomySystemItem({ system, description, onOpen }: { system: HomeSystem; description: string; onOpen: () => void }) {
+function AnatomySystemItem({ system, index = 0, description, onOpen }: { system: HomeSystem; index?: number; description: string; onOpen: () => void }) {
   const { t } = useI18n();
   const config = anatomySystems[system.id];
 
   return (
-    <button type="button" onClick={onOpen} className="dashboard-system-card group relative flex min-h-[6.75rem] min-w-0 items-start gap-3 border border-line bg-surface px-4 py-3.5 text-left shadow-ds-raised transition-[border-color,background-color,transform,box-shadow] duration-200 hover:-translate-y-1 hover:border-line-strong hover:bg-surface-raised hover:shadow-ds-floating focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:translate-y-0 active:bg-accent-soft">
-      <span className="h-full min-h-12 w-1 shrink-0 rounded-full" style={{ backgroundColor: config.color }} aria-hidden="true" />
-      <SystemIcon system={system.id} color={config.color} />
+    <button
+      type="button"
+      onClick={onOpen}
+      style={{ animationDelay: `${index * 60}ms` }}
+      className="dashboard-system-card dashboard-card-enter group relative flex min-h-[6.75rem] min-w-0 items-start gap-3 border border-line bg-surface px-4 py-3.5 text-left shadow-ds-raised transition-all duration-200 hover:-translate-y-1 hover:border-line-strong hover:bg-surface-raised hover:shadow-ds-floating focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:translate-y-0 active:scale-[0.99] active:bg-accent-soft"
+    >
+      <span className="h-full min-h-12 w-1 shrink-0 rounded-full transition-transform duration-200 group-hover:scale-y-105" style={{ backgroundColor: config.color }} aria-hidden="true" />
+      <span className="transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-3">
+        <SystemIcon system={system.id} color={config.color} />
+      </span>
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="block text-heading font-semibold text-ink">{t(systemTranslationKeys[system.id])}</span>
         <span className="mt-1 block text-label leading-5 text-ink-muted">{description}</span>
-        <span className="mt-auto flex items-center gap-2 pt-3 text-caption font-semibold uppercase tracking-[0.1em] text-accent">{t("homeOpenSystem")}<ArrowIcon className="transition-transform duration-150 group-hover:translate-x-1" /></span>
+        <span className="mt-auto flex items-center gap-2 pt-3 text-caption font-semibold uppercase tracking-[0.1em] text-accent">
+          {t("homeOpenSystem")}
+          <ArrowIcon className="transition-transform duration-200 group-hover:translate-x-1.5" />
+        </span>
       </span>
     </button>
   );

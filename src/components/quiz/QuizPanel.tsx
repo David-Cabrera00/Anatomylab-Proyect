@@ -140,20 +140,21 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
         </header>
 
         <div className="px-6 py-8 sm:px-12 sm:py-10">
-          <div className="max-w-3xl">
+          <div key={session.currentIndex} className="quiz-question-enter max-w-3xl">
             <p className="text-caption font-semibold uppercase tracking-[0.14em] text-accent">{difficultyLabel(question.difficulty, t)}</p>
             <h1 className="mt-3 text-[1.65rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2rem]">{getLocalizedText(question.prompt, language)}</h1>
           </div>
-          <div className="mt-8 grid gap-3">
+          <div key={`options-${session.currentIndex}`} className="mt-8 grid gap-3">
             {question.options.map((option, index) => (
               <button
                 key={index}
                 type="button"
+                style={{ animationDelay: `${index * 45}ms` }}
                 onClick={() => handleAnswer(index)}
-                className="quiz-option group flex min-h-14 w-full items-center gap-4 border border-line bg-surface-raised px-4 py-3 text-left transition-[border-color,background-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft/45 hover:shadow-ds-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="quiz-option quiz-option-enter group flex min-h-14 w-full items-center gap-4 border border-line bg-surface-raised px-4 py-3 text-left shadow-xs transition-all duration-150 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft/45 hover:shadow-ds-raised active:translate-y-0 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                <span className="quiz-option-index flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line-strong text-label font-semibold text-ink-muted transition-[border-color,color,transform] duration-150 group-hover:border-accent group-hover:text-accent">{String.fromCharCode(65 + index)}</span>
-                <span className="text-body text-ink">{getLocalizedText(option, language)}</span>
+                <span className="quiz-option-index flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line-strong text-label font-semibold text-ink-muted transition-all duration-150 group-hover:scale-105 group-hover:border-accent group-hover:bg-accent group-hover:text-white">{String.fromCharCode(65 + index)}</span>
+                <span className="text-body font-medium text-ink">{getLocalizedText(option, language)}</span>
               </button>
             ))}
           </div>
@@ -178,9 +179,14 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
               <h1 className="mt-3 text-display font-semibold tracking-tight text-ink">{passed ? t("quizPassed") : t("quizKeepPracticing")}</h1>
               <p className="mt-2 text-body text-ink-muted">{correctCount} {t("studyOf")} {config.questionsPerSession} {t("quizCorrectCount")} · {formatTime(totalTime)}</p>
             </div>
-            <div className="text-right"><span className="text-[3.5rem] font-semibold leading-none tracking-tight text-ink">{score}%</span><p className="mt-2 text-caption uppercase tracking-[0.12em] text-ink-subtle">{t("quizScore")}</p></div>
+            <div className="quiz-score-badge text-right">
+              <span className="text-[3.5rem] font-semibold leading-none tracking-tight text-ink">{score}%</span>
+              <p className="mt-2 text-caption uppercase tracking-[0.12em] text-ink-subtle">{t("quizScore")}</p>
+            </div>
           </div>
-          <div className="mt-6 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${score}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={score}><div className={`h-full rounded-full ${passed ? "bg-success" : "bg-accent"}`} style={{ width: `${score}%` }} /></div>
+          <div className="mt-6 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${score}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={score}>
+            <div className={`h-full rounded-full transition-[width] duration-700 ease-out ${passed ? "bg-success" : "bg-accent"}`} style={{ width: `${score}%` }} />
+          </div>
         </header>
 
         <div className="space-y-3 px-6 py-6 sm:px-8">
@@ -193,7 +199,11 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
 
             const isCorrect = answer.correct;
             return (
-              <article key={qId} className={`quiz-review-card border px-4 py-4 ${isCorrect ? "border-success/40 bg-success-soft/40" : "border-error/40 bg-error-soft/40"}`}>
+              <article
+                key={qId}
+                style={{ animationDelay: `${index * 50}ms` }}
+                className={`quiz-review-card quiz-card-enter border px-4 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-ds-raised ${isCorrect ? "border-success/40 bg-success-soft/40" : "border-error/40 bg-error-soft/40"}`}
+              >
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <span className="text-caption font-semibold uppercase tracking-[0.12em] text-ink-subtle">{t("quizQuestion")} {index + 1}</span>
                   <span className={`flex items-center gap-2 text-label font-semibold ${isCorrect ? "text-success" : "text-error"}`}><StatusIcon correct={isCorrect} />{isCorrect ? t("quizCorrect") : t("quizIncorrect")}</span>

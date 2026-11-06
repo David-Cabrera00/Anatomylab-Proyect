@@ -82,7 +82,7 @@ export function InfoPanel({
       </div>
 
       {selectedAnatomyId ? (
-        <div className="flex flex-col gap-5 px-5 py-5">
+        <div key={selectedAnatomyId} className="structure-detail-enter flex flex-col gap-5 px-5 py-5">
           <InfoSection title={t("anatomyDescription")}>
             <p className="break-words">{selectedData ? getLocalizedText(selectedData.description, language) : `${t("anatomySelectedPrefix")} ${localizedDisplayName}. ${emptyDescription}`}</p>
           </InfoSection>
@@ -104,9 +104,38 @@ export function InfoPanel({
         <div className="sticky bottom-0 z-20 mt-auto shrink-0 border-t border-line bg-surface px-5 py-4">
           <p className="mb-2.5 text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("anatomyActions")}</p>
           <div className="space-y-2">
-            {canExploreHeart && <Button variant="secondary" onClick={onExploreHeart} className="w-full whitespace-normal">{t("anatomyExploreHeart")}</Button>}
-            <Button variant="secondary" disabled={favoriteSaved} onClick={onSaveFavorite} className="w-full whitespace-normal">{favoriteSaved ? t("anatomySavedFavorite") : t("anatomySaveFavorite")}</Button>
-            <Button variant="primary" onClick={onAskAI} className="w-full whitespace-normal">{t("anatomyAskAI")}</Button>
+            {canExploreHeart && <Button variant="secondary" onClick={onExploreHeart} className="w-full whitespace-normal transition-all duration-150 active:scale-[0.98]">{t("anatomyExploreHeart")}</Button>}
+            <Button
+              variant="secondary"
+              disabled={favoriteSaved}
+              onClick={onSaveFavorite}
+              className={`w-full whitespace-normal transition-all duration-200 active:scale-[0.98] ${
+                favoriteSaved ? "border-success/60 bg-success-soft text-success" : ""
+              }`}
+            >
+              {favoriteSaved ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="h-4 w-4 animate-scale-check" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {t("anatomySavedFavorite")}
+                </span>
+              ) : (
+                t("anatomySaveFavorite")
+              )}
+            </Button>
+            <Button
+              variant="primary"
+              onClick={onAskAI}
+              className="group w-full whitespace-normal shadow-xs transition-all duration-200 hover:shadow-ds-raised active:scale-[0.98]"
+            >
+              <span className="flex items-center justify-center gap-2">
+                <svg className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+                {t("anatomyAskAI")}
+              </span>
+            </Button>
           </div>
         </div>
       ) : null}

@@ -52,13 +52,17 @@ export function ContextPanel({
                   type="button"
                   aria-pressed={selected}
                   onClick={() => onChangeSystem(system.id)}
-                    className={`relative flex w-full items-center gap-2 rounded-ds-sm px-2.5 py-1.5 text-left text-label transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                  className={`group relative flex w-full items-center gap-2.5 rounded-ds-sm px-2.5 py-2 text-left text-label transition-all duration-150 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
                     selected
-                      ? "bg-accent-soft font-semibold text-accent before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-accent"
-                      : "text-ink-muted hover:bg-canvas-muted hover:text-ink"
+                      ? "bg-accent-soft font-semibold text-accent before:absolute before:inset-y-1.5 before:left-0 before:w-1 before:rounded-full before:bg-accent"
+                      : "text-ink-muted hover:bg-canvas-muted hover:text-ink hover:translate-x-0.5"
                   }`}
                 >
-                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: system.color }} aria-hidden="true" />
+                  <span
+                    className={`h-2.5 w-2.5 shrink-0 rounded-full transition-transform duration-200 ${selected ? "scale-125 ring-2 ring-accent/30" : "group-hover:scale-110"}`}
+                    style={{ backgroundColor: system.color }}
+                    aria-hidden="true"
+                  />
                   <span className="min-w-0 truncate">{t(systemTranslationKeys[system.id])}</span>
                 </button>
               );
@@ -91,7 +95,11 @@ export function ContextPanel({
                     type="button"
                     aria-pressed={selected}
                     onClick={() => onChangeLayer(layer.id)}
-                    className={`w-full rounded-ds-sm px-2.5 py-1.5 text-left text-label transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${selected ? "bg-canvas-muted font-semibold text-ink" : "text-ink-muted hover:bg-canvas-muted hover:text-ink"}`}
+                    className={`relative w-full rounded-ds-sm px-2.5 py-1.5 text-left text-label transition-all duration-150 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                      selected
+                        ? "bg-canvas-muted font-semibold text-ink pl-3.5 before:absolute before:inset-y-1.5 before:left-1 before:w-1 before:rounded-full before:bg-accent"
+                        : "text-ink-muted hover:bg-canvas-muted hover:text-ink hover:translate-x-0.5"
+                    }`}
                   >
                     {t(anatomyLayerTranslationKeys[layer.id])}
                   </button>

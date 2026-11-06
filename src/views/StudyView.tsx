@@ -156,7 +156,7 @@ function SessionProgress({ progress, stepNumber, totalSteps, label, ofLabel }: {
         <span className="text-ink-muted">{Math.round(progress)}%</span>
       </div>
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${Math.round(progress)}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
-        <div className="h-full rounded-full bg-accent transition-[width] duration-300" style={{ width: `${progress}%` }} />
+        <div className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out" style={{ width: `${progress}%` }} />
       </div>
     </div>
   );
@@ -166,38 +166,40 @@ function StudyContentPanel({ systemLabel, structure, currentStep, stepNumber, to
   const { t } = useI18n();
   return (
     <aside className="study-content-panel min-w-0 border border-line bg-surface p-5 shadow-ds-raised sm:p-6" aria-label={t("studyContent")}>
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{systemLabel}</p>
-        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} aria-hidden="true" />
-      </div>
-      <p className="mt-5 text-caption uppercase tracking-[0.12em] text-ink-subtle">{t("studyCurrentStructure")}</p>
-      <h2 className="mt-2 text-[1.65rem] font-semibold leading-tight tracking-tight text-ink">{structure}</h2>
-
-      <div className="mt-7 border-l-2 border-accent bg-accent-soft/45 px-4 py-4">
-        <div className="flex items-center gap-2 text-caption font-semibold uppercase tracking-[0.14em] text-accent">
-          <InstructionIcon />
-          {t("studyInstruction")}
+      <div key={stepNumber} className="study-step-enter">
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{systemLabel}</p>
+          <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} aria-hidden="true" />
         </div>
-        <p className="mt-2 text-body leading-6 text-ink">{getLocalizedText(currentStep.instruction, language)}</p>
-      </div>
+        <p className="mt-5 text-caption uppercase tracking-[0.12em] text-ink-subtle">{t("studyCurrentStructure")}</p>
+        <h2 className="mt-2 text-[1.65rem] font-semibold leading-tight tracking-tight text-ink">{structure}</h2>
 
-      {currentStep.hint ? (
-        <div className="mt-5 flex gap-3 border-t border-line pt-5">
-          <HintIcon />
-          <div>
-            <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("studyHint")}</p>
-            <p className="mt-1 text-label leading-5 text-ink-muted">{getLocalizedText(currentStep.hint, language)}</p>
+        <div className="mt-7 border-l-2 border-accent bg-accent-soft/45 px-4 py-4 transition-colors">
+          <div className="flex items-center gap-2 text-caption font-semibold uppercase tracking-[0.14em] text-accent">
+            <InstructionIcon />
+            {t("studyInstruction")}
           </div>
+          <p className="mt-2 text-body leading-6 text-ink">{getLocalizedText(currentStep.instruction, language)}</p>
         </div>
-      ) : null}
 
-      <dl className="mt-6 divide-y divide-line border-t border-line">
-        <RailItem label={t("studyStep")} value={`${stepNumber} / ${totalSteps}`} />
-        <RailItem label={t("studyStatus")} value={isActive ? t("studyInProgress") : t("studyReady")} />
-      </dl>
-      <div className="mt-5">
-        <div className="flex items-baseline justify-between gap-3"><span className="text-label text-ink-muted">{t("studyProgress")}</span><span className="text-heading font-semibold text-ink">{Math.round(progress)}%</span></div>
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-canvas-muted"><div className="h-full rounded-full bg-accent transition-[width] duration-300" style={{ width: `${progress}%` }} /></div>
+        {currentStep.hint ? (
+          <div className="mt-5 flex gap-3 border-t border-line pt-5">
+            <HintIcon />
+            <div>
+              <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("studyHint")}</p>
+              <p className="mt-1 text-label leading-5 text-ink-muted">{getLocalizedText(currentStep.hint, language)}</p>
+            </div>
+          </div>
+        ) : null}
+
+        <dl className="mt-6 divide-y divide-line border-t border-line">
+          <RailItem label={t("studyStep")} value={`${stepNumber} / ${totalSteps}`} />
+          <RailItem label={t("studyStatus")} value={isActive ? t("studyInProgress") : t("studyReady")} />
+        </dl>
+        <div className="mt-5">
+          <div className="flex items-baseline justify-between gap-3"><span className="text-label text-ink-muted">{t("studyProgress")}</span><span className="text-heading font-semibold text-ink">{Math.round(progress)}%</span></div>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-canvas-muted"><div className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out" style={{ width: `${progress}%` }} /></div>
+        </div>
       </div>
     </aside>
   );

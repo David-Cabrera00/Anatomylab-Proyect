@@ -68,7 +68,12 @@ export function ProgressTab({ system, stats: providedStats, onStatsLoaded, showS
       {showSummary ? (
         <div className="border-b border-line pb-5">
           <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-caption font-semibold uppercase tracking-[0.12em] text-ink-subtle">{t("progressActiveSystem")}</p><h4 className="mt-1 text-heading font-semibold text-ink">{system}</h4></div><span className="text-heading font-semibold text-accent">{totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0}%</span></div>
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-canvas-muted"><div className="h-full rounded-full bg-accent" style={{ width: `${totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0}%` }} /></div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-canvas-muted">
+            <div
+              className="h-full rounded-full bg-accent transition-[width] duration-700 ease-out"
+              style={{ width: `${totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0}%` }}
+            />
+          </div>
         </div>
       ) : null}
       <div>
@@ -77,14 +82,23 @@ export function ProgressTab({ system, stats: providedStats, onStatsLoaded, showS
           <div className="border-l-2 border-accent bg-accent-soft/40 px-4 py-4 text-body text-ink-muted">{t("progressNoMastery")}</div>
         ) : (
           <div className="max-h-[360px] divide-y divide-line overflow-y-auto border-y border-line">
-            {[...stats].sort((a, b) => MASTERY_ORDER[getMasteryLevel(a.correct, a.total)] - MASTERY_ORDER[getMasteryLevel(b.correct, b.total)]).map((item) => {
+            {[...stats].sort((a, b) => MASTERY_ORDER[getMasteryLevel(a.correct, a.total)] - MASTERY_ORDER[getMasteryLevel(b.correct, b.total)]).map((item, index) => {
               const level = getMasteryLevel(item.correct, item.total);
               const accuracy = item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0;
               return (
-                <div key={item.anatomy_id} className="flex flex-wrap items-center gap-4 px-2 py-3 text-body transition-colors duration-150 hover:bg-surface-raised">
-                  <span className="h-8 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-                  <span className="min-w-0 flex-1 truncate font-medium text-ink">{getAnatomyDisplayName(item.anatomy_id, language)}</span>
-                  <div className="flex items-center gap-3"><span className={`rounded-ds-sm px-2 py-1 text-caption font-medium ${getMasteryColor(level)}`}>{t(MASTERY_LABEL_KEYS[level])}</span><span className="min-w-12 text-right text-label text-ink-muted">{accuracy}%</span></div>
+                <div
+                  key={item.anatomy_id}
+                  className="card-stagger-enter group flex flex-wrap items-center gap-4 px-2 py-3 text-body transition-colors duration-150 hover:bg-surface-raised"
+                  style={{ animationDelay: `${Math.min(index * 30, 200)}ms` }}
+                >
+                  <span className="h-8 w-1 shrink-0 rounded-full bg-accent transition-transform duration-200 group-hover:scale-y-110" aria-hidden="true" />
+                  <span className="min-w-0 flex-1 truncate font-medium text-ink transition-colors group-hover:text-accent">{getAnatomyDisplayName(item.anatomy_id, language)}</span>
+                  <div className="flex items-center gap-3">
+                    <span className={`rounded-ds-sm px-2 py-1 text-caption font-medium transition-transform duration-150 group-hover:scale-105 ${getMasteryColor(level)}`}>
+                      {t(MASTERY_LABEL_KEYS[level])}
+                    </span>
+                    <span className="min-w-12 text-right text-label text-ink-muted">{accuracy}%</span>
+                  </div>
                 </div>
               );
             })}

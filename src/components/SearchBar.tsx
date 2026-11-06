@@ -111,7 +111,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
           <button
             type="button"
             onClick={() => { setQuery(""); setHighlightedIndex(-1); }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle transition-colors hover:text-ink"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle transition-all duration-150 hover:rotate-90 hover:scale-110 active:scale-90 hover:text-ink"
             aria-label={t("searchClear")}
           >
             <span aria-hidden="true">&times;</span>
@@ -120,7 +120,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
       </div>
 
       {showDropdown && (
-        <div id="anatomy-search-results" className="search-results absolute left-0 right-0 top-full z-50 mt-2 max-h-96 divide-y divide-line overflow-y-auto rounded-ds-md border border-line bg-surface shadow-ds-floating" role="listbox">
+        <div id="anatomy-search-results" className="search-results search-results-enter absolute left-0 right-0 top-full z-50 mt-2 max-h-96 divide-y divide-line overflow-y-auto rounded-ds-md border border-line bg-surface/95 backdrop-blur-sm shadow-ds-floating" role="listbox">
           {items.length === 0 && query.trim() && (
             <div className="p-4 text-center text-body text-ink-muted">{t("searchNoResults")} &quot;{query}&quot;</div>
           )}
@@ -137,20 +137,25 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
               aria-selected={index === highlightedIndex}
               onClick={() => handleSelect(entry)}
               onMouseEnter={() => setHighlightedIndex(index)}
-              className={`w-full px-4 py-3 text-left text-body transition-colors ${index === highlightedIndex ? "bg-accent-soft" : "hover:bg-canvas-muted"}`}
+              className={`search-item-enter group relative w-full px-4 py-3 text-left text-body transition-all duration-150 ${
+                index === highlightedIndex
+                  ? "bg-accent-soft/70 pl-5 text-accent before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-accent"
+                  : "hover:bg-canvas-muted hover:pl-5"
+              }`}
+              style={{ animationDelay: `${Math.min(index * 20, 160)}ms` }}
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium text-ink">{getAnatomyDisplayName(entry.anatomyId, language)}</p>
+                  <p className="truncate font-medium text-ink transition-colors group-hover:text-accent">{getAnatomyDisplayName(entry.anatomyId, language)}</p>
                   <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                    <Badge variant="info" className="text-xs">{t(systemTranslationKeys[entry.system])}</Badge>
+                    <Badge variant="info" className="text-xs transition-transform duration-150 group-hover:scale-105">{t(systemTranslationKeys[entry.system])}</Badge>
                     <Badge variant="neutral" className="text-xs">{entry.layer}</Badge>
                     {entry.laterality && <Badge variant="info" className="text-xs">{entry.laterality === "left" ? "Izq" : entry.laterality === "right" ? "Der" : "Med"}</Badge>}
                     {entry.hasEducationalCard && <Badge variant="success" className="text-xs">Ficha</Badge>}
                   </div>
                   {entry.region && <p className="mt-1 truncate text-caption text-ink-muted">{entry.region}</p>}
                 </div>
-                <kbd className="hidden items-center rounded-ds-sm bg-canvas-muted px-2 py-1 text-caption text-ink-subtle sm:inline-flex">Enter</kbd>
+                <kbd className="hidden items-center rounded-ds-sm bg-canvas-muted px-2 py-1 text-caption text-ink-subtle transition-all duration-150 group-hover:bg-accent group-hover:text-white sm:inline-flex">Enter</kbd>
               </div>
             </button>
           ))}

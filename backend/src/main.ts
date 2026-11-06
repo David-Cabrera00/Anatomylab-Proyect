@@ -17,8 +17,14 @@ async function bootstrap() {
   }
 
   app.setGlobalPrefix("api");
+  const rawCors = config.get<string>("CORS_ORIGIN", "*");
+  const allowedOrigins = rawCors === "*"
+    ? true
+    : rawCors.split(",").map((origin) => origin.trim());
+
   app.enableCors({
-    origin: config.get<string>("CORS_ORIGIN", "http://localhost:1420").split(",").map((origin) => origin.trim()),
+    origin: allowedOrigins,
+    credentials: true,
   });
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
@@ -26,7 +32,8 @@ async function bootstrap() {
     transform: true,
   }));
 
-  await app.listen(config.get<number>("PORT", 3000));
+  const port = Number(process.env.PORT) || config.get<number>("PORT", 3000);
+  await app.listen(port, "0.0.0.0");
 }
 
 void bootstrap();
