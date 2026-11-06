@@ -354,8 +354,29 @@ header {
   box-shadow: 0 4px 16px rgb(0 0 0 / 24%);
 }
 
+.dashboard-card-enter {
+  animation: card-reveal-up 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes card-reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .anatomy-tutor-panel {
-  animation: tutor-panel-enter 180ms ease-out;
+  animation: drawer-slide-in 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.anatomy-info-panel {
+  animation: panel-fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
 }
 
 .view-enter {
@@ -373,9 +394,72 @@ header {
   }
 }
 
-@keyframes tutor-panel-enter {
-  from { opacity: 0; transform: translateX(12px); }
-  to { opacity: 1; transform: translateX(0); }
+@keyframes drawer-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes panel-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-line) 0%,
+    var(--color-accent-soft) 50%,
+    var(--color-line) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+:root[data-theme="dark"] .animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-line) 0%,
+    var(--color-accent-soft) 50%,
+    var(--color-line) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes ecg-pulse {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+.animate-ecg-pulse {
+  animation: ecg-pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes search-results-enter {
@@ -383,8 +467,66 @@ header {
   to { opacity: 1; transform: translateY(0); }
 }
 
+.quiz-question-enter {
+  animation: question-fade-enter 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quiz-option-enter {
+  animation: option-reveal 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quiz-card-enter {
+  animation: card-reveal-up 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quiz-score-badge {
+  animation: score-pop 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes question-fade-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes option-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes score-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .view-enter {
+  .view-enter,
+  .dashboard-card-enter,
+  .anatomy-tutor-panel,
+  .anatomy-info-panel,
+  .animate-shimmer,
+  .animate-ecg-pulse,
+  .quiz-question-enter,
+  .quiz-option-enter,
+  .quiz-card-enter,
+  .quiz-score-badge {
     animation: none !important;
   }
 }

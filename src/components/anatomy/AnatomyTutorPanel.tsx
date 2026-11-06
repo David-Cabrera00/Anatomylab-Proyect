@@ -192,7 +192,43 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
               {t("anatomyTutorPromptBiomechanics")}
             </button>
           </div>
-          {isLoading && <p className="rounded-ds-md border border-line bg-surface-raised px-3 py-2 text-caption text-ink-muted" role="status" aria-live="polite">{t("anatomyTutorLoading")}</p>}
+          {isLoading && (
+            <div
+              className="mr-1 rounded-ds-md border border-accent/25 bg-surface-raised p-4 shadow-xs"
+              role="status"
+              aria-live="polite"
+            >
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75"></span>
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-accent"></span>
+                  </span>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-accent">
+                    {t("anatomyTutorLoading")}
+                  </span>
+                </div>
+                {/* Indicador de pulso ECG clínico */}
+                <svg
+                  className="h-3.5 w-10 text-accent/70 animate-ecg-pulse"
+                  viewBox="0 0 40 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M0 8h10l3-6 5 12 4-8 3 4 5-2h10" />
+                </svg>
+              </div>
+              <div className="space-y-2">
+                <div className="h-2.5 w-11/12 rounded bg-line animate-shimmer" />
+                <div className="h-2.5 w-4/5 rounded bg-line animate-shimmer" />
+                <div className="h-2.5 w-3/5 rounded bg-line animate-shimmer" />
+              </div>
+            </div>
+          )}
           {messages.length > 0 && (
             <div className="space-y-3 pt-1">
               {messages.map((message, index) => (
