@@ -163,7 +163,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
               type="button"
               disabled={isLoading}
               onClick={() => void submitQuestion(t("anatomyTutorPromptFunction"))}
-              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-all duration-150 hover:border-accent hover:bg-accent-soft hover:text-accent hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t("anatomyTutorPromptFunction")}
             </button>
@@ -171,7 +171,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
               type="button"
               disabled={isLoading}
               onClick={() => void submitQuestion(t("anatomyTutorPromptVascular"))}
-              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-all duration-150 hover:border-accent hover:bg-accent-soft hover:text-accent hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t("anatomyTutorPromptVascular")}
             </button>
@@ -179,7 +179,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
               type="button"
               disabled={isLoading}
               onClick={() => void submitQuestion(t("anatomyTutorPromptClinical"))}
-              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-all duration-150 hover:border-accent hover:bg-accent-soft hover:text-accent hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t("anatomyTutorPromptClinical")}
             </button>
@@ -187,14 +187,14 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
               type="button"
               disabled={isLoading}
               onClick={() => void submitQuestion(t("anatomyTutorPromptBiomechanics"))}
-              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-full border border-line px-3 py-1.5 text-caption font-medium text-ink-muted transition-all duration-150 hover:border-accent hover:bg-accent-soft hover:text-accent hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t("anatomyTutorPromptBiomechanics")}
             </button>
           </div>
           {isLoading && (
             <div
-              className="mr-1 rounded-ds-md border border-accent/25 bg-surface-raised p-4 shadow-xs"
+              className="structure-detail-enter mr-1 rounded-ds-md border border-accent/25 bg-surface-raised p-4 shadow-xs"
               role="status"
               aria-live="polite"
             >
@@ -236,8 +236,8 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
                   key={`${message.role}-${index}`}
                   className={
                     message.role === "user"
-                      ? "ml-6 rounded-ds-md bg-accent px-3.5 py-2.5 text-label text-white shadow-xs whitespace-pre-wrap"
-                      : "mr-1 rounded-ds-md border border-line bg-surface-raised p-4 text-label text-ink shadow-xs"
+                      ? "structure-detail-enter ml-6 rounded-ds-md bg-accent px-3.5 py-2.5 text-label text-white shadow-xs whitespace-pre-wrap"
+                      : "structure-detail-enter mr-1 rounded-ds-md border border-line bg-surface-raised p-4 text-label text-ink shadow-xs transition-all duration-200 hover:border-line-strong"
                   }
                 >
                   {message.role === "user" ? (
@@ -251,16 +251,20 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
                         <button
                           type="button"
                           onClick={() => void copyMessage(message.text, index)}
-                          className="flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] font-medium text-ink-muted transition-colors hover:bg-canvas-muted hover:text-accent"
+                          className={`flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] font-medium transition-all duration-150 ${
+                            copiedIndex === index
+                              ? "bg-success-soft text-success"
+                              : "text-ink-muted hover:bg-canvas-muted hover:text-accent active:scale-95"
+                          }`}
                           title={t("anatomyTutorCopyNote")}
                           aria-label={t("anatomyTutorCopyNote")}
                         >
                           {copiedIndex === index ? (
                             <>
-                              <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <svg className="h-3.5 w-3.5 text-success animate-scale-check" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                               </svg>
-                              <span className="text-accent">{t("anatomyTutorCopied")}</span>
+                              <span>{t("anatomyTutorCopied")}</span>
                             </>
                           ) : (
                             <>
@@ -285,8 +289,23 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
 
       <footer className="border-t border-line bg-surface-raised px-5 py-4">
         <form onSubmit={(event) => { event.preventDefault(); void submitQuestion(question); }} className="flex items-center gap-2">
-          <input value={question} disabled={isLoading} onChange={(event) => setQuestion(event.target.value)} placeholder={t("anatomyTutorPlaceholder")} className="min-w-0 flex-1 rounded-ds-sm border border-line bg-surface px-3 py-2 text-label text-ink outline-none transition-colors placeholder:text-ink-subtle focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-60" />
-          <button type="submit" disabled={isLoading || !question.trim()} className="rounded-ds-sm bg-accent px-3 py-2 text-label font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40">{t("anatomyTutorSend")}</button>
+          <input
+            value={question}
+            disabled={isLoading}
+            onChange={(event) => setQuestion(event.target.value)}
+            placeholder={t("anatomyTutorPlaceholder")}
+            className="min-w-0 flex-1 rounded-ds-sm border border-line bg-surface px-3 py-2 text-label text-ink outline-none transition-all placeholder:text-ink-subtle focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-60"
+          />
+          <button
+            type="submit"
+            disabled={isLoading || !question.trim()}
+            className="group flex items-center gap-1.5 rounded-ds-sm bg-accent px-3.5 py-2 text-label font-semibold text-white shadow-xs transition-all duration-150 hover:bg-accent-hover active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <span>{t("anatomyTutorSend")}</span>
+            <svg className="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="m7 4 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </form>
         <p className="mt-2 text-caption leading-5 text-ink-subtle">{isLoading ? t("anatomyTutorLoading") : mode === "remote" ? t("anatomyTutorRemoteMode") : mode === "fallback" ? t("anatomyTutorFallbackMode") : t("anatomyTutorLocalMode")}</p>
       </footer>
