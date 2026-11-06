@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { dbGetQuizAnswers, dbGetQuizHistory, type QuizAnswer, type QuizHistory } from "../../utils/db";
 import { getLocalizedText, useI18n } from "../../i18n";
@@ -86,23 +86,24 @@ export function HistoryTab({ system }: HistoryTabProps) {
 
   return (
     <div className="max-h-[400px] overflow-y-auto border-y border-line">
-      {sessions.map((session) => {
+      {sessions.map((session, index) => {
         const isExpanded = expandedId === session.id;
         const config = getQuizConfig(session.config_id);
         const answers = answersBySession[session.id] ?? [];
         return (
           <div
             key={session.id}
-            className="overflow-hidden border-b border-line last:border-b-0"
+            className="card-stagger-enter overflow-hidden border-b border-line last:border-b-0"
+            style={{ animationDelay: `${Math.min(index * 30, 180)}ms` }}
           >
             <button
               onClick={() => void toggleSession(session)}
-              className="group flex w-full items-center justify-between gap-3 px-3 py-3 text-left transition-colors duration-150 hover:bg-surface-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
+              className="group flex w-full items-center justify-between gap-3 px-3 py-3 text-left transition-colors duration-150 hover:bg-surface-raised active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 text-sm text-ink">
                   <span className="font-semibold">{session.correct_count}/{session.total_questions}</span>
-                  <span className={`px-2 py-0.5 text-xs font-medium ${
+                  <span className={`px-2 py-0.5 text-xs font-medium rounded-ds-sm transition-transform duration-150 group-hover:scale-105 ${
                     session.score >= 70
                       ? "bg-success-soft text-success"
                       : "bg-error-soft text-error"
@@ -118,7 +119,7 @@ export function HistoryTab({ system }: HistoryTabProps) {
               </div>
               <svg
                 aria-hidden="true"
-                className={`h-4 w-4 shrink-0 text-ink-muted transition-transform duration-150 ${isExpanded ? "rotate-180" : ""}`}
+                className={`h-4 w-4 shrink-0 text-ink-muted transition-transform duration-200 ease-out ${isExpanded ? "rotate-180 text-accent" : "group-hover:text-ink"}`}
                 viewBox="0 0 20 20"
                 fill="none"
                 stroke="currentColor"
@@ -129,7 +130,7 @@ export function HistoryTab({ system }: HistoryTabProps) {
             </button>
 
             {isExpanded && (
-              <div className="space-y-3 border-t border-line bg-surface-raised px-3 py-3">
+              <div className="structure-detail-enter space-y-3 border-t border-line bg-surface-raised px-3 py-3">
                 <div className="text-xs text-ink-muted">
                   {t("historyConfig")}: {session.config_id} · {t("historyStart")}: {formatDate(session.started_at, language)}
                 </div>
