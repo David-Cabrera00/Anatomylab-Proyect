@@ -29,10 +29,10 @@ export function EmptyState({
   className = "",
 }: EmptyStateProps) {
   return (
-    <div className={`flex flex-col items-start ${className}`}>
+    <div className={`structure-detail-enter flex flex-col items-start ${className}`}>
       <div
         aria-hidden="true"
-        className="flex h-12 w-12 items-center justify-center rounded-ds-md bg-accent-soft text-accent"
+        className="flex h-12 w-12 items-center justify-center rounded-ds-md bg-accent-soft text-accent transition-transform duration-300 hover:scale-105"
       >
         {icon}
       </div>
