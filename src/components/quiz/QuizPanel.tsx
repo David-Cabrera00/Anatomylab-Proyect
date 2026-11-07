@@ -41,7 +41,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
 
   if (quizState.status === "idle") {
     return (
-      <section className="quiz-panel border border-line bg-surface shadow-ds-raised">
+      <section className="quiz-panel learning-surface">
         <header className="border-b border-line px-6 py-6 sm:px-8">
           <div className="flex items-start justify-between gap-5">
             <div>
@@ -60,13 +60,16 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
                 key={config.id}
                 type="button"
                 onClick={() => handleStartQuiz(config.id)}
-                className="group flex w-full items-center justify-between gap-5 border border-line bg-surface-raised px-4 py-4 text-left transition-[border-color,background-color,transform] duration-150 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft/45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="group flex w-full items-center justify-between gap-5 rounded-ds-md border border-line bg-surface-raised px-5 py-4 text-left transition-[border-color,background-color,box-shadow,transform] duration-150 hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft/45 hover:shadow-ds-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <span className="min-w-0">
                   <span className="block text-heading font-semibold text-ink">{getLocalizedText(config.title, language)}</span>
                   <span className="mt-1 block text-body leading-6 text-ink-muted">{getLocalizedText(config.description, language)}</span>
                 </span>
-                <ArrowIcon className="shrink-0 text-accent transition-transform duration-150 group-hover:translate-x-1" />
+                <span className="flex shrink-0 items-center gap-2 text-label font-semibold text-accent">
+                  <span className="hidden sm:inline">{t("quizStart")}</span>
+                  <ArrowIcon className="transition-transform duration-150 group-hover:translate-x-1" />
+                </span>
               </button>
             ))}
           </div>
@@ -123,7 +126,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
     };
 
     return (
-      <section className="quiz-panel quiz-active-panel border border-line bg-surface shadow-ds-raised">
+      <section className="quiz-panel quiz-active-panel learning-surface">
         <header className="border-b border-line px-6 py-5 sm:px-8">
           <div className="flex items-center justify-between gap-5">
             <div className="min-w-0 flex-1">
@@ -132,7 +135,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
                 <span>{t("quizQuestion")} {session.currentIndex + 1} {t("studyOf")} {config.questionsPerSession}</span>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${Math.round(progress)}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
-                <div className="h-full rounded-full bg-accent transition-[width] duration-300" style={{ width: `${progress}%` }} />
+                <div className="progress-fill-premium h-full rounded-full transition-[width] duration-300" style={{ width: `${progress}%` }} />
               </div>
             </div>
             <Button variant="ghost" size="sm" onClick={onClose} aria-label={t("quizClose")}>×</Button>
@@ -171,7 +174,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
     const totalTime = session.completedAt ? session.completedAt - session.startedAt : 0;
 
     return (
-      <section className="quiz-panel quiz-review-panel border border-line bg-surface shadow-ds-raised">
+      <section className="quiz-panel quiz-review-panel learning-surface">
         <header className="border-b border-line px-6 py-7 sm:px-8">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -185,7 +188,7 @@ export function QuizPanel({ activeSystem: activeSystemId, quizState, onStateChan
             </div>
           </div>
           <div className="mt-6 h-2 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${score}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={score}>
-            <div className={`h-full rounded-full transition-[width] duration-700 ease-out ${passed ? "bg-success" : "bg-accent"}`} style={{ width: `${score}%` }} />
+            <div className={`progress-fill-premium h-full rounded-full transition-[width] duration-700 ease-out ${passed ? "progress-fill-success" : ""}`} style={{ width: `${score}%` }} />
           </div>
         </header>
 
