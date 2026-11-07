@@ -54,7 +54,7 @@ export function ContextPanel({
                   onClick={() => onChangeSystem(system.id)}
                   className={`group relative flex w-full items-center gap-2.5 rounded-ds-sm px-2.5 py-2 text-left text-label transition-all duration-150 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
                     selected
-                      ? "bg-accent-soft font-semibold text-accent before:absolute before:inset-y-1.5 before:left-0 before:w-1 before:rounded-full before:bg-accent"
+                      ? "context-selection-active bg-accent-soft font-semibold text-accent before:absolute before:inset-y-1.5 before:left-0 before:w-1 before:rounded-full before:bg-accent"
                       : "text-ink-muted hover:bg-canvas-muted hover:text-ink hover:translate-x-0.5"
                   }`}
                 >
@@ -97,7 +97,7 @@ export function ContextPanel({
                     onClick={() => onChangeLayer(layer.id)}
                     className={`relative w-full rounded-ds-sm px-2.5 py-1.5 text-left text-label transition-all duration-150 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
                       selected
-                        ? "bg-canvas-muted font-semibold text-ink pl-3.5 before:absolute before:inset-y-1.5 before:left-1 before:w-1 before:rounded-full before:bg-accent"
+                        ? "context-selection-active bg-canvas-muted font-semibold text-ink pl-3.5 before:absolute before:inset-y-1.5 before:left-1 before:w-1 before:rounded-full before:bg-accent"
                         : "text-ink-muted hover:bg-canvas-muted hover:text-ink hover:translate-x-0.5"
                     }`}
                   >
