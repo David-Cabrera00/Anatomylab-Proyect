@@ -36,7 +36,7 @@ export function AppHeader({ currentView, search, user, onNavigate }: AppHeaderPr
           <h1 className="text-heading font-semibold tracking-tight text-ink">{t("appName")}</h1>
           <p className="text-caption text-ink-subtle">{t(viewTitleKeys[currentView])}</p>
         </div>
-        {search}
+        {search ? <div className="header-search min-w-0 flex-1">{search}</div> : null}
       </div>
 
       <div className="ml-4 flex shrink-0 items-center gap-2 lg:gap-3">
