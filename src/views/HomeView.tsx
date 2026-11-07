@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { anatomySystems, type AnatomySystemId } from "../config/anatomySystems";
-import { systemTranslationKeys, useI18n, type Language } from "../i18n";
-import { Button } from "../components/ui";
+import { systemFullNameTranslationKeys, systemTranslationKeys, useI18n, type Language } from "../i18n";
+import { Button, EmptyState } from "../components/ui";
 import { dbGetMasteryStats } from "../utils/db";
 
 type HomeSystem = {
@@ -75,7 +75,7 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
   return (
     <section className="dashboard-page h-full overflow-y-auto bg-canvas px-6 py-6 lg:px-10 lg:py-8">
       <div className="mx-auto max-w-[88rem] space-y-8">
-        <header className="dashboard-hero relative overflow-hidden border border-line bg-surface px-6 py-6 shadow-ds-raised lg:px-8 lg:py-7">
+        <header className="dashboard-hero relative overflow-visible border border-line bg-surface px-6 py-6 shadow-ds-raised lg:px-8 lg:py-7">
           <div className="dashboard-hero-glow pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full" aria-hidden="true" />
           <div className="relative z-10">
           <div className="flex items-center justify-between gap-4">
@@ -90,13 +90,13 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
               <h1 className="max-w-3xl text-display font-semibold tracking-[-0.025em] text-ink sm:text-[2.45rem] sm:leading-[1.08]">{t("homeWelcome")}</h1>
               <p className="mt-3 max-w-2xl text-body leading-7 text-ink-muted">{t("homeIntro")}</p>
             </div>
-            <div className="min-w-0">{search}</div>
+            <div className="relative z-30 min-w-0">{search}</div>
           </div>
           </div>
         </header>
 
         <div>
-          <section aria-labelledby="continue-studying-title" className="min-w-0">
+          <section aria-labelledby="continue-studying-title" className="dashboard-section-enter min-w-0" style={{ animationDelay: "80ms" }}>
             <SectionHeading number="01" title={t("homeContinue")} action={<Button variant="ghost" size="sm" onClick={onOpenAnatomy}>{t("homeViewAnatomy")}<ArrowIcon /></Button>} />
             {continueSystem && continueProgress ? (
               <ContinueStudy
@@ -106,25 +106,16 @@ export function HomeView({ systems, search, onOpenSystem, onOpenAnatomy }: HomeV
                 onOpen={() => onOpenSystem(continueSystem.id)}
               />
             ) : (
-              <div className="dashboard-card mt-4 flex flex-col gap-4 border-l-4 border-accent bg-surface px-4 py-4 shadow-ds-raised sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-                <div className="flex min-w-0 items-center gap-4">
-                  <EmptyProgressIcon />
-                  <div className="min-w-0">
-                    <h3 className="text-body font-semibold text-ink">{t("homeNoProgress")}</h3>
-                    <p className="mt-1 text-label leading-5 text-ink-muted">{t("homeChooseSystem")}</p>
-                  </div>
-                </div>
-                <Button variant="primary" size="md" onClick={onOpenAnatomy} className="shrink-0">
-                  {t("homeOpenAnatomy")}<ArrowIcon />
-                </Button>
+              <div className="dashboard-card mt-4 border-l-4 border-accent bg-surface px-4 py-3.5 shadow-ds-raised sm:px-5">
+                <EmptyState compact title={t("homeNoProgress")} description={t("homeChooseSystem")} icon={<EmptyProgressIcon />} action={<Button variant="primary" size="md" onClick={onOpenAnatomy}>{t("homeOpenAnatomy")}<ArrowIcon /></Button>} />
               </div>
             )}
           </section>
         </div>
 
-        <ProgressSummary progress={progress} onOpen={onOpenAnatomy} />
+        <div className="dashboard-section-enter" style={{ animationDelay: "140ms" }}><ProgressSummary progress={progress} onOpen={onOpenAnatomy} /></div>
 
-        <section aria-labelledby="explore-systems-title">
+        <section aria-labelledby="explore-systems-title" className="dashboard-section-enter" style={{ animationDelay: "200ms" }}>
           <SectionHeading
             number="03"
             title={t("systemsTitle")}
@@ -174,7 +165,7 @@ function ContinueStudy({ system, progress, description, onOpen }: { system: Home
               <SystemIcon system={system.id} color={config.color} />
               <p className="text-caption font-semibold uppercase tracking-[0.12em] text-ink-subtle">{t(systemTranslationKeys[system.id])}</p>
             </div>
-            <h3 className="mt-3 text-heading font-semibold text-ink">{system.fullName}</h3>
+            <h3 className="mt-3 text-heading font-semibold text-ink">{t(systemFullNameTranslationKeys[system.id])}</h3>
             <p className="mt-2 text-body text-ink-muted">{description}</p>
           </div>
         </div>
