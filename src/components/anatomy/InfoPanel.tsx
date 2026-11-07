@@ -65,7 +65,7 @@ export function InfoPanel({
         <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("anatomyInformation")}</p>
 
         {selectedAnatomyId ? (
-          <div className="mt-4 min-w-0">
+          <div key={selectedAnatomyId} className="selection-header-enter mt-4 min-w-0">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-ds-md text-heading font-semibold" style={{ backgroundColor: activeConfig.accentColor, color: activeConfig.color }} aria-hidden="true">
               {systemIcon}
             </div>
