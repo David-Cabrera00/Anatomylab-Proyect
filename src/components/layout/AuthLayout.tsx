@@ -34,25 +34,25 @@ export function AuthLayout({
   return (
     <main className="min-h-screen overflow-y-auto bg-canvas">
       <div className="grid min-h-screen lg:grid-cols-[minmax(0,1.55fr)_minmax(22rem,1fr)]">
-        <section className="relative flex min-h-[620px] min-w-0 flex-col overflow-hidden border-b border-line bg-auth-panel px-6 py-8 sm:px-10 sm:py-10 lg:min-h-screen lg:border-b-0 lg:border-r lg:px-12 lg:py-10 xl:px-16">
+        <section className="relative flex min-h-[min(520px,72vh)] min-w-0 flex-col overflow-hidden border-b border-line bg-auth-panel px-6 py-7 sm:px-10 sm:py-8 lg:min-h-screen lg:border-b-0 lg:border-r lg:px-12 lg:py-10 xl:px-16">
           <div className="auth-panel-glow pointer-events-none absolute inset-0" aria-hidden="true" />
           <div className="auth-panel-particles pointer-events-none absolute inset-0" aria-hidden="true" />
           <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col">
             <div className="flex items-center justify-between gap-5">
-              <p className="text-caption font-semibold uppercase tracking-[0.18em] text-accent">{brand}</p>
-              {productMeta ? <p className="hidden text-caption font-medium uppercase tracking-[0.16em] text-ink-subtle sm:block">{productMeta}</p> : null}
+              <p className="auth-brand-enter text-caption font-semibold uppercase tracking-[0.18em] text-accent">{brand}</p>
+              {productMeta ? <p className="auth-brand-enter hidden text-caption font-medium uppercase tracking-[0.16em] text-ink-subtle sm:block">{productMeta}</p> : null}
             </div>
 
-            <div className="grid flex-1 items-center gap-8 py-10 md:grid-cols-[minmax(0,0.9fr)_minmax(18rem,1.1fr)] md:gap-10 lg:gap-12 xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
+            <div className="grid flex-1 items-center gap-7 py-7 md:grid-cols-[minmax(0,0.9fr)_minmax(18rem,1.1fr)] md:gap-10 lg:gap-12 xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
               <div className="min-w-0">
                 {productMeta ? <p className="mb-4 text-caption font-semibold uppercase tracking-[0.16em] text-accent sm:hidden">{productMeta}</p> : null}
-                <h1 className="max-w-xl text-display font-semibold leading-tight tracking-[-0.025em] text-ink sm:text-[2.45rem] sm:leading-[1.08]">{productTitle}</h1>
-                <p className="mt-5 max-w-lg text-body leading-7 text-ink-muted">{productDescription}</p>
+                <h1 className="auth-title-enter max-w-xl text-display font-semibold leading-tight tracking-[-0.025em] text-ink sm:text-[2.45rem] sm:leading-[1.08]">{productTitle}</h1>
+                <p className="auth-description-enter mt-5 max-w-lg text-body leading-7 text-ink-muted">{productDescription}</p>
 
                 <div className="mt-8 border-l border-accent/50 pl-5">
                   <div className="space-y-3.5">
-                    {benefits.map((benefit) => (
-                      <div key={benefit.number} className="grid grid-cols-[2rem_minmax(0,1fr)] items-baseline gap-3">
+                    {benefits.map((benefit, index) => (
+                      <div key={benefit.number} className="auth-benefit-enter grid grid-cols-[2rem_minmax(0,1fr)] items-baseline gap-3" style={{ animationDelay: `${360 + index * 90}ms` }}>
                         <span className="text-caption font-semibold tracking-[0.12em] text-accent">{benefit.number}</span>
                         <span className="text-body text-ink">{benefit.content}</span>
                       </div>
@@ -60,12 +60,12 @@ export function AuthLayout({
                   </div>
                 </div>
               </div>
-              {productVisual ? <div className="relative hidden min-w-0 md:block">{productVisual}</div> : null}
+              {productVisual ? <div className="auth-preview-enter relative hidden min-w-0 md:block">{productVisual}</div> : null}
             </div>
           </div>
         </section>
 
-        <section className="flex min-w-0 items-center bg-surface px-6 py-12 sm:px-10 lg:px-12 lg:py-16 xl:px-16">
+        <section className="auth-form-surface flex min-w-0 items-center bg-surface px-6 py-12 sm:px-10 lg:px-12 lg:py-16 xl:px-16">
           <div className="mx-auto w-full max-w-[26rem]">
             <div className="mb-9">
               <div className="flex items-start justify-between gap-4">
