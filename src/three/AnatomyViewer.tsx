@@ -544,6 +544,7 @@ function AnatomyModel({
 
   const selectedMeshRef =
     useRef<THREE.Mesh | null>(null);
+  const selectionPulseRef = useRef(0);
 
   const model = useMemo(() => {
     attachOriginalAnatomyNames(scene, parser);
@@ -714,8 +715,29 @@ function AnatomyModel({
     material.emissive.set(
       COLORS.selectedEmissive
     );
-    material.emissiveIntensity = 0.35;
+    material.emissiveIntensity = 0.52;
+    selectionPulseRef.current = 0;
   };
+
+  // A subtle breathing highlight makes the selected structure feel alive
+  // without changing the model's geometry or distracting from study.
+  useFrame((_, delta) => {
+    const selectedMesh = selectedMeshRef.current;
+
+    if (!selectedMesh) {
+      return;
+    }
+
+    const material = getMeshMaterial(selectedMesh);
+
+    if (!material) {
+      return;
+    }
+
+    selectionPulseRef.current += delta;
+    material.emissiveIntensity =
+      0.38 + Math.sin(selectionPulseRef.current * 4.2) * 0.14;
+  });
 
   /* ====================================================
      DIAGNÓSTICO
