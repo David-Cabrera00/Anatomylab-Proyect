@@ -10,7 +10,7 @@ type ViewportFrameProps = {
 export function ViewportFrame({ children, label, metadata, hint }: ViewportFrameProps) {
   return (
     <div className="viewer-stage relative min-h-0 min-w-0 flex-1 overflow-hidden bg-canvas p-4">
-      <div className="viewer-canvas relative h-full min-h-0 overflow-hidden rounded-ds-md border border-line bg-surface">
+      <div className="viewer-canvas relative h-full min-h-0 overflow-hidden rounded-ds-md border border-line bg-surface transition-[border-color,box-shadow] duration-300 hover:border-line-strong hover:shadow-ds-raised">
         <span className="pointer-events-none absolute left-3 top-3 z-10 h-3 w-3 border-l border-t border-line-strong" aria-hidden="true" />
         <span className="pointer-events-none absolute right-3 top-3 z-10 h-3 w-3 border-r border-t border-line-strong" aria-hidden="true" />
         <span className="pointer-events-none absolute bottom-3 left-3 z-10 h-3 w-3 border-b border-l border-line-strong" aria-hidden="true" />
@@ -24,7 +24,7 @@ export function ViewportFrame({ children, label, metadata, hint }: ViewportFrame
 
         <div className="h-full min-h-0 w-full">{children}</div>
 
-        <p className="pointer-events-none absolute bottom-4 left-5 z-10 text-caption text-ink-subtle">{hint}</p>
+        <p className="pointer-events-none absolute bottom-4 left-5 z-10 rounded-full border border-line bg-surface/80 px-2.5 py-1 text-caption text-ink-subtle shadow-xs backdrop-blur-sm">{hint}</p>
       </div>
     </div>
   );
