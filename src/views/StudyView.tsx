@@ -4,7 +4,7 @@ import { anatomySystems, type AnatomySystemId } from "../config/anatomySystems";
 import { getLocalizedText, systemTranslationKeys, useI18n } from "../i18n";
 import type { StudyGuide, StudyStep } from "../data/studyGuides";
 import { anatomyLocalizedDisplayNames } from "../data/anatomyLocalizedDisplayNames";
-import { Button } from "../components/ui";
+import { Button, EmptyState } from "../components/ui";
 
 type StudyViewProps = {
   system: AnatomySystemId;
@@ -45,8 +45,7 @@ export function StudyView({
       <section className="flex h-full items-center justify-center overflow-y-auto bg-canvas px-6 py-8 lg:px-10">
         <div className="max-w-xl border-l-4 border-accent bg-surface px-6 py-6 shadow-ds-raised">
           <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{t("studyGuidedLearning")}</p>
-          <h1 className="mt-3 text-title font-semibold tracking-tight text-ink">{t("studyTitle")}</h1>
-          <p className="mt-2 text-body leading-6 text-ink-muted">{t("studyUnavailable")} {t(systemTranslationKeys[system])}.</p>
+          <EmptyState compact className="mt-4" title={t("studyTitle")} description={`${t("studyUnavailable")} ${t(systemTranslationKeys[system])}.`} />
         </div>
       </section>
     );
@@ -85,7 +84,7 @@ export function StudyView({
         </header>
 
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.85fr)_minmax(20rem,1fr)] xl:gap-10">
-          <section className="study-viewer relative min-h-[28rem] min-w-0 overflow-hidden border border-line bg-surface shadow-ds-raised" aria-label={t("studyViewer")}>
+          <section className="study-viewer learning-surface relative min-h-[28rem] min-w-0 overflow-hidden" aria-label={t("studyViewer")}>
             <div className="pointer-events-none absolute left-5 top-4 z-10 flex items-center gap-3 text-caption text-ink-subtle">
               <span className="font-semibold uppercase tracking-[0.14em] text-ink-muted">{systemLabel}</span>
               <span className="h-3 w-px bg-line-strong" aria-hidden="true" />
@@ -165,7 +164,7 @@ function SessionProgress({ progress, stepNumber, totalSteps, label, ofLabel }: {
 function StudyContentPanel({ systemLabel, structure, currentStep, stepNumber, totalSteps, progress, isActive, language, color }: { systemLabel: string; structure: string; currentStep: StudyStep; stepNumber: number; totalSteps: number; progress: number; isActive: boolean; language: "es" | "en"; color: string }) {
   const { t } = useI18n();
   return (
-    <aside className="study-content-panel min-w-0 border border-line bg-surface p-5 shadow-ds-raised sm:p-6" aria-label={t("studyContent")}>
+    <aside className="study-content-panel learning-surface learning-surface-hover min-w-0 p-5 sm:p-6" aria-label={t("studyContent")}>
       <div key={stepNumber} className="study-step-enter">
         <div className="flex items-center justify-between gap-4">
           <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{systemLabel}</p>

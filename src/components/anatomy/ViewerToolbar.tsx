@@ -73,6 +73,8 @@ function ToolbarButton({
       size="sm"
       disabled={disabled}
       onClick={onClick}
+      aria-pressed={isActive}
+      title={label}
       className={`group relative gap-1.5 whitespace-nowrap transition-all duration-150 active:scale-95 ${
         isActive ? "shadow-ds-raised ring-2 ring-accent/30 font-semibold" : ""
       }`}

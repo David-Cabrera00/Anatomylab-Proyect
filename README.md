@@ -18,7 +18,7 @@ El proyecto está diseñado con una arquitectura **local-first**: la aplicación
 - Autenticación con registro e inicio de sesión.
 - Sincronización de progreso, favoritos, quizzes, sesiones y preferencias.
 - Modo local de respaldo cuando no hay conexión con el backend.
-- Tutor anatómico local preparado para conectarse posteriormente a un proveedor real de IA.
+- Tutor anatómico conectado al backend desplegado y operativo, con fallback local.
 
 ## Arquitectura
 
@@ -138,7 +138,7 @@ Si no se define, el cliente utiliza esa URL local por defecto.
 | `POST` | `/api/auth/register` | Crear una cuenta |
 | `POST` | `/api/auth/login` | Iniciar sesión |
 | `POST` | `/api/sync` | Sincronizar datos del usuario |
-| `POST` | `/api/tutor/ask` | Endpoint preparado para el tutor |
+| `POST` | `/api/tutor/ask` | Tutor anatómico IA |
 
 Las rutas protegidas requieren `Authorization: Bearer <accessToken>`.
 
@@ -146,7 +146,7 @@ La sincronización actual incluye progreso por sistema y `anatomyId`, favoritos,
 
 ## Tutor de IA
 
-La interfaz del tutor y el endpoint backend ya están preparados, pero la conexión con un proveedor real de IA queda pendiente de decisión.
+La interfaz del tutor está conectada al endpoint desplegado. El proveedor y las credenciales se configuran exclusivamente en el backend; el cliente nunca recibe claves de IA.
 
 Cuando se elija el proveedor, la clave debe configurarse únicamente en el backend mediante variables de entorno. Nunca se deben incluir claves de IA en React, Vite, Tauri ni en el repositorio.
 
@@ -177,9 +177,18 @@ git diff --check
 
 ## Estado actual
 
-La base funcional del producto está implementada y validada: visor 3D, contenido anatómico, estudio, quiz, persistencia local, autenticación, backend y sincronización.
+AnatomyLab está en fase **Release Candidate**. La base funcional está implementada y desplegada: visor 3D, contenido anatómico, estudio, quiz, persistencia local, autenticación, backend, sincronización y tutor IA.
 
-El trabajo pendiente principal es seleccionar e integrar el proveedor real del tutor de IA, además de preparar la configuración de despliegue y endurecimiento para producción.
+El ejecutable de escritorio `.exe` está generado. El trabajo pendiente de esta fase es completar smoke tests de producción, validar una instalación limpia y cerrar la documentación de release.
+
+### Infraestructura desplegada
+
+- Backend y API: Render.
+- Persistencia remota: Supabase.
+- Cliente de escritorio: ejecutable Tauri `.exe`.
+- Persistencia offline: SQLite local-first.
+
+Consulta el checklist de salida en [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md).
 
 ## Control de versiones y secretos
 

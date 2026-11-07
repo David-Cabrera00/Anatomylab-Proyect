@@ -60,4 +60,4 @@ OPENROUTER_TIMEOUT_MS=30000
 
 Si un proveedor falla, el endpoint pasa automáticamente al siguiente nivel de fallback y registra un error técnico resumido sin exponer credenciales ni stack traces. La clave `OPENROUTER_API_KEY` permanece protegida en el backend y nunca se envía al cliente.
 
-La aplicación de escritorio continúa usando SQLite local-first; este servicio se añadirá como capa de sincronización y tutor remoto.
+La aplicación de escritorio usa SQLite local-first y este servicio desplegado funciona como capa de sincronización y tutor remoto.

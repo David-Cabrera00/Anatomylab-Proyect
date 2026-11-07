@@ -115,7 +115,7 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
   };
 
   return (
-    <aside className="anatomy-tutor-panel absolute inset-y-0 right-0 z-40 flex w-full max-w-[390px] flex-col border-l border-line bg-surface shadow-ds-modal" aria-label={t("anatomyTutorTitle")}>
+    <aside className="anatomy-tutor-panel absolute inset-y-0 right-0 z-40 flex w-full max-w-[390px] flex-col border-l border-line bg-surface shadow-ds-modal" aria-label={t("anatomyTutorTitle")} aria-busy={isLoading}>
       <header className="border-b border-line px-5 py-5">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -192,52 +192,15 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
               {t("anatomyTutorPromptBiomechanics")}
             </button>
           </div>
-          {isLoading && (
-            <div
-              className="structure-detail-enter mr-1 rounded-ds-md border border-accent/25 bg-surface-raised p-4 shadow-xs"
-              role="status"
-              aria-live="polite"
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75"></span>
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-accent"></span>
-                  </span>
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-accent">
-                    {t("anatomyTutorLoading")}
-                  </span>
-                </div>
-                {/* Indicador de pulso ECG clínico */}
-                <svg
-                  className="h-3.5 w-10 text-accent/70 animate-ecg-pulse"
-                  viewBox="0 0 40 16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M0 8h10l3-6 5 12 4-8 3 4 5-2h10" />
-                </svg>
-              </div>
-              <div className="space-y-2">
-                <div className="h-2.5 w-11/12 rounded bg-line animate-shimmer" />
-                <div className="h-2.5 w-4/5 rounded bg-line animate-shimmer" />
-                <div className="h-2.5 w-3/5 rounded bg-line animate-shimmer" />
-              </div>
-            </div>
-          )}
           {messages.length > 0 && (
             <div className="space-y-3 pt-1">
               {messages.map((message, index) => (
                 <div
                   key={`${message.role}-${index}`}
                   className={
-                    message.role === "user"
-                      ? "structure-detail-enter ml-6 rounded-ds-md bg-accent px-3.5 py-2.5 text-label text-white shadow-xs whitespace-pre-wrap"
-                      : "structure-detail-enter mr-1 rounded-ds-md border border-line bg-surface-raised p-4 text-label text-ink shadow-xs transition-all duration-200 hover:border-line-strong"
+                      message.role === "user"
+                      ? "tutor-message-user ml-6 rounded-ds-md bg-accent px-3.5 py-2.5 text-label text-white shadow-xs whitespace-pre-wrap"
+                      : "tutor-message-assistant mr-1 rounded-ds-md border border-line bg-surface-raised p-4 text-label text-ink shadow-xs transition-all duration-200 hover:border-line-strong"
                   }
                 >
                   {message.role === "user" ? (
@@ -281,9 +244,21 @@ export function AnatomyTutorPanel({ system, anatomyId, structureName, data, back
                   )}
                 </div>
               ))}
-              <div ref={messagesEndRef} />
             </div>
           )}
+          {isLoading && (
+            <div className="structure-detail-enter mr-1 rounded-ds-md border border-accent/25 bg-surface-raised p-4 shadow-xs" role="status" aria-live="polite">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-accent" /></span>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-accent">{t("anatomyTutorLoading")}</span>
+                </div>
+                <svg className="h-3.5 w-10 animate-ecg-pulse text-accent/70" viewBox="0 0 40 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M0 8h10l3-6 5 12 4-8 3 4 5-2h10" /></svg>
+              </div>
+              <div className="space-y-2"><div className="tutor-skeleton-line h-2.5 w-11/12 animate-shimmer rounded bg-line" /><div className="tutor-skeleton-line h-2.5 w-4/5 animate-shimmer rounded bg-line" /><div className="tutor-skeleton-line h-2.5 w-3/5 animate-shimmer rounded bg-line" /></div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </section>
       </div>
 
@@ -347,6 +322,10 @@ function FormattedAssistantMessage({ content }: { content: string }) {
   // 2. Normalizar encabezados y puntos clave
   const normalized = content
     .replace(/\r/g, "")
+    .replace(/&#x20;|&#32;|&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/\\([*_`#>])/g, "$1")
+    .replace(/^\s*\**(\d+)\**\s*$/gm, "$1.")
     .replace(/\n\s*(\d+)\s*\n/g, "\n$1. ")
     .replace(/([.:;])\s+(\d+[\.\)]\s+\*\*)/g, "$1\n\n$2")
     .replace(/([.:;])\s+(\*\s+\*\*)/g, "$1\n$2")

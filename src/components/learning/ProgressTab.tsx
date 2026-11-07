@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
 import { dbGetMasteryStats, getMasteryColor, getMasteryLevel } from "../../utils/db";
-import { useI18n } from "../../i18n";
+import { systemTranslationKeys, useI18n } from "../../i18n";
 import { getAnatomyDisplayName } from "../../utils/anatomyDisplayName";
-import { ErrorState, LoadingState } from "../ui";
+import { EmptyState, ErrorState, LoadingState } from "../ui";
 
 export type MasteryStat = { anatomy_id: string; correct: number; total: number };
 
@@ -67,10 +67,10 @@ export function ProgressTab({ system, stats: providedStats, onStatsLoaded, showS
     <div className="space-y-6">
       {showSummary ? (
         <div className="border-b border-line pb-5">
-          <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-caption font-semibold uppercase tracking-[0.12em] text-ink-subtle">{t("progressActiveSystem")}</p><h4 className="mt-1 text-heading font-semibold text-ink">{system}</h4></div><span className="text-heading font-semibold text-accent">{totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0}%</span></div>
+          <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-caption font-semibold uppercase tracking-[0.12em] text-ink-subtle">{t("progressActiveSystem")}</p><h4 className="mt-1 text-heading font-semibold text-ink">{systemTranslationKeys[system as keyof typeof systemTranslationKeys] ? t(systemTranslationKeys[system as keyof typeof systemTranslationKeys]) : system}</h4></div><span className="text-heading font-semibold text-accent">{totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0}%</span></div>
           <div className="mt-4 h-2 overflow-hidden rounded-full bg-canvas-muted">
             <div
-              className="h-full rounded-full bg-accent transition-[width] duration-700 ease-out"
+              className="progress-fill-premium h-full rounded-full transition-[width] duration-700 ease-out"
               style={{ width: `${totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : 0}%` }}
             />
           </div>
@@ -79,7 +79,7 @@ export function ProgressTab({ system, stats: providedStats, onStatsLoaded, showS
       <div>
         <div className="mb-3 flex items-center justify-between gap-4"><h4 className="text-heading font-semibold text-ink">{t("progressMastery")}</h4><span className="text-caption uppercase tracking-[0.1em] text-ink-subtle">{stats.length} {t("progressMasteryCount")}</span></div>
         {stats.length === 0 ? (
-          <div className="border-l-2 border-accent bg-accent-soft/40 px-4 py-4 text-body text-ink-muted">{t("progressNoMastery")}</div>
+          <EmptyState compact title={t("progressNoMastery")} description={t("homeChooseSystem")} />
         ) : (
           <div className="max-h-[360px] divide-y divide-line overflow-y-auto border-y border-line">
             {[...stats].sort((a, b) => MASTERY_ORDER[getMasteryLevel(a.correct, a.total)] - MASTERY_ORDER[getMasteryLevel(b.correct, b.total)]).map((item, index) => {

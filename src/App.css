@@ -159,6 +159,62 @@ header {
   transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
+/* Shared learning surfaces keep Study, Quiz and Progress at the same visual density. */
+.learning-surface {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-ds-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-ds-raised);
+}
+
+.learning-surface-hover {
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.learning-surface-hover:hover {
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-ds-floating);
+}
+
+/* Keep the shell usable when the desktop canvas narrows before mobile layout takes over. */
+@media (max-width: 900px) {
+  .app-header {
+    padding-inline: 1rem;
+  }
+
+  .app-header > div:first-child {
+    gap: 0.75rem;
+  }
+
+  .app-header .header-search {
+    max-width: 22rem;
+  }
+
+  .app-header .header-search .search-field {
+    min-width: 10rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .app-header {
+    height: auto;
+    min-height: 4rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-block: 0.5rem;
+  }
+
+  .app-header > div:first-child {
+    flex: 1 1 auto;
+  }
+
+  .app-header .header-search {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+  }
+}
+
 .dashboard-card:hover,
 .dashboard-summary:hover {
   border-color: var(--color-line-strong);
@@ -256,6 +312,20 @@ header {
   background-size: auto, 56px 56px, 56px 56px;
 }
 
+.viewer-canvas::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: radial-gradient(circle at 50% 42%, transparent 38%, rgb(23 96 117 / 4%) 100%);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.viewer-canvas:hover::after {
+  opacity: 1;
+}
+
 .anatomy-context-panel,
 .anatomy-info-panel {
   box-shadow: var(--shadow-ds-raised);
@@ -269,6 +339,80 @@ header {
 .anatomy-context-panel button:hover:not(:disabled),
 .anatomy-info-panel button:hover:not(:disabled) {
   transform: translateX(1px);
+}
+
+.context-selection-active {
+  animation: context-selection-settle 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.context-selection-active::before {
+  transform-origin: center;
+  animation: sidebar-marker-grow 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.selection-header-enter {
+  animation: selection-header-reveal 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.tutor-message-user {
+  animation: tutor-message-user-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.tutor-message-assistant {
+  animation: tutor-message-assistant-in 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.tutor-skeleton-line:nth-child(2) { animation-delay: 80ms; }
+.tutor-skeleton-line:nth-child(3) { animation-delay: 160ms; }
+
+.progress-fill-premium {
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+  box-shadow: 0 0 12px rgb(23 96 117 / 18%);
+  animation: progress-fill-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.progress-fill-premium::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 28%) 50%, transparent 80%);
+  transform: translateX(-100%);
+  animation: progress-sheen 1.2s 240ms ease-out both;
+}
+
+.progress-fill-success {
+  background-image: linear-gradient(90deg, var(--color-success), color-mix(in srgb, var(--color-success) 72%, white));
+}
+
+@keyframes progress-fill-in {
+  from { opacity: 0.35; transform: scaleX(0.96); transform-origin: left; }
+  to { opacity: 1; transform: scaleX(1); transform-origin: left; }
+}
+
+@keyframes progress-sheen {
+  to { transform: translateX(100%); }
+}
+
+@keyframes tutor-message-user-in {
+  from { opacity: 0; transform: translateX(10px) scale(0.98); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes tutor-message-assistant-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes context-selection-settle {
+  from { opacity: 0.7; transform: translateX(-4px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes selection-header-reveal {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 :root[data-theme="dark"] .viewer-stage {
@@ -345,6 +489,15 @@ header {
   transform: translateX(2px);
 }
 
+.sidebar-item-active {
+  animation: sidebar-active-settle 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.sidebar-item-active::before {
+  transform-origin: center;
+  animation: sidebar-marker-grow 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 :root[data-theme="dark"] .app-header {
   box-shadow: 0 1px 0 rgb(0 0 0 / 20%), 0 6px 18px rgb(0 0 0 / 14%);
 }
@@ -356,6 +509,35 @@ header {
 
 .dashboard-card-enter {
   animation: card-reveal-up 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dashboard-hero {
+  z-index: 40;
+  animation: hero-reveal 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dashboard-section-enter {
+  animation: dashboard-section-reveal 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes dashboard-section-reveal {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-reveal {
+  from { opacity: 0; transform: translateY(8px) scale(0.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes sidebar-active-settle {
+  from { opacity: 0.72; transform: translateX(-3px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes sidebar-marker-grow {
+  from { opacity: 0; transform: scaleY(0.35); }
+  to { opacity: 1; transform: scaleY(1); }
 }
 
 @keyframes card-reveal-up {
@@ -610,6 +792,17 @@ header {
 
 @media (prefers-reduced-motion: reduce) {
   .view-enter,
+  .dashboard-hero,
+  .dashboard-section-enter,
+  .sidebar-item-active,
+  .sidebar-item-active::before,
+  .context-selection-active,
+  .context-selection-active::before,
+  .selection-header-enter,
+  .tutor-message-user,
+  .tutor-message-assistant,
+  .progress-fill-premium,
+  .progress-fill-premium::after,
   .dashboard-card-enter,
   .anatomy-tutor-panel,
   .anatomy-info-panel,
@@ -632,6 +825,30 @@ header {
 
 .auth-panel-glow {
   background: radial-gradient(circle at 72% 48%, rgb(255 255 255 / 28%), transparent 43%);
+}
+
+.auth-brand-enter,
+.auth-title-enter,
+.auth-description-enter,
+.auth-benefit-enter,
+.auth-preview-enter,
+.auth-form-surface {
+  animation: auth-content-reveal 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-title-enter { animation-delay: 120ms; }
+.auth-description-enter { animation-delay: 220ms; }
+.auth-preview-enter { animation-delay: 260ms; }
+.auth-form-surface { animation-name: auth-form-reveal; animation-delay: 120ms; }
+
+@keyframes auth-content-reveal {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes auth-form-reveal {
+  from { opacity: 0; transform: translateX(22px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .auth-panel-particles {
@@ -684,6 +901,12 @@ header {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .auth-brand-enter,
+  .auth-title-enter,
+  .auth-description-enter,
+  .auth-benefit-enter,
+  .auth-preview-enter,
+  .auth-form-surface,
   .auth-panel-particles { animation: none; }
 }
 

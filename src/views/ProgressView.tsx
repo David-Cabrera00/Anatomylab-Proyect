@@ -3,6 +3,7 @@ import { useI18n, systemFullNameTranslationKeys } from "../i18n";
 
 import { HistoryTab, ProgressTab } from "../components/learning";
 import { anatomySystemList, type AnatomySystemId } from "../config/anatomySystems";
+import { EmptyState } from "../components/ui";
 
 export function ProgressView({ system }: { system: AnatomySystemId }) {
   const { t } = useI18n();
@@ -35,7 +36,7 @@ export function ProgressView({ system }: { system: AnatomySystemId }) {
         </header>
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.75fr)] lg:gap-10">
-          <section aria-labelledby="overall-progress-title" className="progress-card card-stagger-enter min-w-0 border border-line bg-surface p-6 shadow-ds-raised transition-all duration-200 hover:shadow-ds-floating sm:p-7" style={{ animationDelay: "100ms" }}>
+          <section aria-labelledby="overall-progress-title" className="progress-card learning-surface learning-surface-hover card-stagger-enter min-w-0 p-6 sm:p-7" style={{ animationDelay: "100ms" }}>
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div><p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">01</p><h2 id="overall-progress-title" className="mt-2 text-title font-semibold tracking-tight text-ink">{t("progressOverall")}</h2></div>
               <span className="text-caption uppercase tracking-[0.12em] text-ink-subtle">{t("progressActiveSystem")}</span>
@@ -48,12 +49,12 @@ export function ProgressView({ system }: { system: AnatomySystemId }) {
 
         <section aria-labelledby="mastery-title" className="progress-section card-stagger-enter border-t border-line pt-7" style={{ animationDelay: "180ms" }}>
           <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">02</p><h2 id="mastery-title" className="mt-2 text-title font-semibold tracking-tight text-ink">{t("progressMastery")}</h2></div><p className="max-w-md text-body text-ink-muted">{t("progressMasteryIntro")}</p></div>
-          <div className="progress-card mt-5 border border-line bg-surface p-5 shadow-ds-raised sm:p-6"><ProgressTab system={system} stats={stats} onStatsLoaded={setStats} showSummary={false} /></div>
+          <div className="progress-card learning-surface mt-5 p-5 sm:p-6"><ProgressTab system={system} stats={stats} onStatsLoaded={setStats} showSummary={false} /></div>
         </section>
 
         <section aria-labelledby="history-title" className="progress-section card-stagger-enter border-t border-line pt-7" style={{ animationDelay: "240ms" }}>
           <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">03</p><h2 id="history-title" className="mt-2 text-title font-semibold tracking-tight text-ink">{t("progressHistory")}</h2></div><p className="max-w-md text-body text-ink-muted">{t("progressHistoryIntro")}</p></div>
-          <div className="progress-card mt-5 border border-line bg-surface p-5 shadow-ds-raised sm:p-6"><HistoryTab system={system} /></div>
+          <div className="progress-card learning-surface mt-5 p-5 sm:p-6"><HistoryTab system={system} /></div>
         </section>
       </div>
     </section>
@@ -73,9 +74,15 @@ function GeneralSummary({ accuracy, totalAnswers, structures }: { accuracy: numb
         <span className="text-label text-ink-muted">{totalAnswers} {t("progressAnswered")}</span>
       </div>
       <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-canvas-muted" role="progressbar" aria-label={`${accuracy}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={accuracy}>
-        <div className="h-full rounded-full bg-accent transition-[width] duration-700 ease-out" style={{ width: `${accuracy}%` }} />
+        <div className="progress-fill-premium h-full rounded-full transition-[width] duration-700 ease-out" style={{ width: `${accuracy}%` }} />
       </div>
-      <p className="mt-4 max-w-xl text-body leading-6 text-ink-muted">{totalAnswers > 0 ? `${structures} ${t("progressActivity")}` : t("progressEmpty")}</p>
+      {totalAnswers > 0 ? (
+        <p className="mt-4 max-w-xl text-body leading-6 text-ink-muted">{structures} {t("progressActivity")}</p>
+      ) : (
+        <div className="mt-5 border-t border-line pt-5">
+          <EmptyState compact title={t("progressEmpty")} description={t("homeChooseSystem")} />
+        </div>
+      )}
     </div>
   );
 }
@@ -83,7 +90,7 @@ function GeneralSummary({ accuracy, totalAnswers, structures }: { accuracy: numb
 function SystemIndex({ activeSystem }: { activeSystem: AnatomySystemId }) {
   const { t } = useI18n();
   return (
-    <aside className="progress-card card-stagger-enter border border-line bg-surface p-5 shadow-ds-raised transition-all duration-200" style={{ animationDelay: "140ms" }} aria-label={t("systemsTitle")}>
+    <aside className="progress-card learning-surface learning-surface-hover card-stagger-enter p-5" style={{ animationDelay: "140ms" }} aria-label={t("systemsTitle")}>
       <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("systemsTitle")}</p>
       <div className="mt-4 divide-y divide-line">
         {anatomySystemList.map((system) => {
