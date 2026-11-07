@@ -83,7 +83,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
   const showDropdown = isOpen && (!!query.trim() || systemSuggestions.length > 0);
 
   return (
-    <div ref={containerRef} className={`relative min-w-0 ${className}`}>
+    <div ref={containerRef} className={`relative w-full min-w-0 ${className}`}>
       <label htmlFor="anatomy-search" className="sr-only">{t("searchLabel")}</label>
       <div className="relative">
         <svg className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,7 +102,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
           aria-expanded={showDropdown}
           aria-controls="anatomy-search-results"
           aria-autocomplete="list"
-          className="search-field w-full rounded-ds-md border border-line bg-surface py-2.5 pl-10 pr-10 text-body text-ink outline-none transition-[border-color,box-shadow] focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="search-field min-h-11 w-full rounded-ds-md border border-line bg-surface py-2.5 pl-10 pr-10 text-body text-ink outline-none transition-[border-color,box-shadow] placeholder:text-ink-subtle focus:border-accent focus:ring-2 focus:ring-accent/20"
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
@@ -111,7 +111,7 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
           <button
             type="button"
             onClick={() => { setQuery(""); setHighlightedIndex(-1); }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle transition-all duration-150 hover:rotate-90 hover:scale-110 active:scale-90 hover:text-ink"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-ink-subtle transition-all duration-150 hover:rotate-90 hover:scale-110 hover:bg-canvas-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-90"
             aria-label={t("searchClear")}
           >
             <span aria-hidden="true">&times;</span>
@@ -150,12 +150,12 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
                   <div className="mt-1 flex flex-wrap items-center gap-1.5">
                     <Badge variant="info" className="text-xs transition-transform duration-150 group-hover:scale-105">{t(systemTranslationKeys[entry.system])}</Badge>
                     <Badge variant="neutral" className="text-xs">{entry.layer}</Badge>
-                    {entry.laterality && <Badge variant="info" className="text-xs">{entry.laterality === "left" ? "Izq" : entry.laterality === "right" ? "Der" : "Med"}</Badge>}
-                    {entry.hasEducationalCard && <Badge variant="success" className="text-xs">Ficha</Badge>}
+                    {entry.laterality && <Badge variant="info" className="text-xs">{entry.laterality === "left" ? t("searchLeft") : entry.laterality === "right" ? t("searchRight") : t("searchMidline")}</Badge>}
+                    {entry.hasEducationalCard && <Badge variant="success" className="text-xs">{t("searchCard")}</Badge>}
                   </div>
                   {entry.region && <p className="mt-1 truncate text-caption text-ink-muted">{entry.region}</p>}
                 </div>
-                <kbd className="hidden items-center rounded-ds-sm bg-canvas-muted px-2 py-1 text-caption text-ink-subtle transition-all duration-150 group-hover:bg-accent group-hover:text-white sm:inline-flex">Enter</kbd>
+                <kbd className="hidden items-center rounded-ds-sm bg-canvas-muted px-2 py-1 text-caption text-ink-subtle transition-all duration-150 group-hover:bg-accent group-hover:text-white sm:inline-flex">{t("searchEnter")}</kbd>
               </div>
             </button>
           ))}
