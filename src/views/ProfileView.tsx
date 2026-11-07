@@ -187,7 +187,7 @@ export function ProfileView({ system, onFocusFavorite, refreshKey = 0, user }: P
               </svg>
               <h2 id="profile-specialty-title" className="text-heading font-semibold text-ink">{t("profileSpecialtyTitle")}</h2>
             </div>
-            <p className="mt-1 text-caption text-ink-muted">{language === "en" ? "Select your medical study focus" : "Selecciona tu enfoque de estudio"}</p>
+            <p className="mt-1 text-caption text-ink-muted">{t("profileSpecialtyDescription")}</p>
             
             <div className="mt-4 flex flex-wrap gap-2">
               {specialties.map((item) => {
