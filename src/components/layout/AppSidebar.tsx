@@ -57,7 +57,7 @@ export function AppSidebar({ currentView, onNavigate }: AppSidebarProps) {
         onClick={() => onNavigate(id)}
         className={`sidebar-item group relative flex w-full items-center gap-3 rounded-ds-sm px-3 py-2.5 text-left text-label font-medium transition-all duration-200 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
           isActive
-            ? "bg-accent-soft text-accent before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-full before:bg-accent"
+            ? "sidebar-item-active bg-accent-soft text-accent before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-full before:bg-accent"
             : "text-ink-muted hover:bg-canvas-muted hover:text-ink"
         }`}
       >
