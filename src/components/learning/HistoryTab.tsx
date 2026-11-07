@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { dbGetQuizAnswers, dbGetQuizHistory, type QuizAnswer, type QuizHistory } from "../../utils/db";
 import { getLocalizedText, useI18n } from "../../i18n";
 import { getQuizConfig } from "../../data/quiz";
-import { ErrorState, LoadingState } from "../ui";
+import { EmptyState, ErrorState, LoadingState } from "../ui";
 
 export interface HistoryTabProps {
   system: string;
@@ -76,12 +76,7 @@ export function HistoryTab({ system }: HistoryTabProps) {
   if (hasError) return <ErrorState title={t("dataLoadErrorTitle")} description={t("historyLoadError")} retryLabel={t("commonRetry")} onRetry={() => setRetryKey((key) => key + 1)} />;
 
   if (sessions.length === 0) {
-    return (
-      <div className="border-l-2 border-accent bg-accent-soft/30 px-4 py-5 text-sm text-ink-muted">
-        <p className="font-medium text-ink">{t("historyEmpty")}</p>
-        <p className="mt-1 text-xs">{t("historyEmptyHint")}</p>
-      </div>
-    );
+    return <EmptyState compact title={t("historyEmpty")} description={t("historyEmptyHint")} />;
   }
 
   return (
