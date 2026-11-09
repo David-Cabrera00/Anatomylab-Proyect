@@ -17,6 +17,15 @@ async function bootstrap() {
   }
 
   app.setGlobalPrefix("api");
+  // Keep the public probe outside the /api prefix for Render/UptimeRobot.
+  app.getHttpAdapter().get("/health", (_request, response) => {
+    response.status(200).json({
+      status: "ok",
+      service: "AnatomyLab Backend",
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+    });
+  });
   const rawCors = config.get<string>("CORS_ORIGIN", "*");
   const allowedOrigins = rawCors === "*"
     ? true
