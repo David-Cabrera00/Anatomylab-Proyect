@@ -6,7 +6,8 @@ export class HealthController {
   getHealth() {
     return {
       status: "ok",
-      service: "anatomylab-backend",
+      service: "AnatomyLab Backend",
+      uptime: process.uptime(),
       timestamp: new Date().toISOString(),
     };
   }
