@@ -443,6 +443,38 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     );
   };
 
+  useEffect(() => {
+    if (appView !== "anatomy") {
+      return;
+    }
+
+    const handleViewerShortcut = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target?.tagName ?? "")) {
+        return;
+      }
+
+      const shortcut = event.key.toLowerCase();
+      const actionByShortcut: Partial<Record<string, ViewerActionType>> = {
+        r: "reset",
+        i: "isolate",
+        h: "hide",
+        t: "transparency",
+      };
+      const action = actionByShortcut[shortcut];
+
+      if (!action || (action !== "reset" && !selectedAnatomyId)) {
+        return;
+      }
+
+      event.preventDefault();
+      runViewerAction(action);
+    };
+
+    window.addEventListener("keydown", handleViewerShortcut);
+    return () => window.removeEventListener("keydown", handleViewerShortcut);
+  }, [appView, selectedAnatomyId]);
+
   /* ====================================================
    CAMBIAR SISTEMA
   ==================================================== */

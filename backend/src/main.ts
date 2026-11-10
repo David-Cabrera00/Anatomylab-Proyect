@@ -17,7 +17,7 @@ async function bootstrap() {
   }
 
   app.setGlobalPrefix("api");
-  // Keep the monitoring probe outside the /api prefix for Render/UptimeRobot.
+  // Keep the public probe outside the /api prefix for Render/UptimeRobot.
   app.getHttpAdapter().get("/health", (_request, response) => {
     response.status(200).json({
       status: "ok",
