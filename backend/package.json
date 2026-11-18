@@ -1,6 +1,6 @@
 {
   "name": "anatomylab-backend",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Backend modular para AnatomyLab",
   "scripts": {
@@ -12,7 +12,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "db:smoke": "node scripts/db-smoke.cjs",
-    "security:smoke": "node scripts/security-smoke.cjs"
+    "security:smoke": "node scripts/security-smoke.cjs",
+    "release:smoke": "node --use-system-ca scripts/release-smoke.cjs"
   },
   "dependencies": {
     "@nestjs/cli": "^11.0.0",
@@ -28,6 +29,7 @@
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "dotenv": "17.4.1",
     "prisma": "^6.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",

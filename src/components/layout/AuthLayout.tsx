@@ -51,8 +51,8 @@ export function AuthLayout({
 
                 <div className="mt-8 border-l border-accent/50 pl-5">
                   <div className="space-y-3.5">
-                    {benefits.map((benefit, index) => (
-                      <div key={benefit.number} className="auth-benefit-enter grid grid-cols-[2rem_minmax(0,1fr)] items-baseline gap-3" style={{ animationDelay: `${360 + index * 90}ms` }}>
+                    {benefits.map((benefit) => (
+                      <div key={benefit.number} className="grid grid-cols-[2rem_minmax(0,1fr)] items-baseline gap-3">
                         <span className="text-caption font-semibold tracking-[0.12em] text-accent">{benefit.number}</span>
                         <span className="text-body text-ink">{benefit.content}</span>
                       </div>

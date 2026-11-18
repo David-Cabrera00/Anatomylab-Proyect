@@ -7,6 +7,7 @@ import { Badge, Button, EmptyState, InfoSection } from "../ui";
 import { getLocalizedText, systemFullNameTranslationKeys, systemTranslationKeys, useI18n } from "../../i18n";
 
 type InfoPanelProps = {
+  open: boolean;
   activeSystem: AnatomySystemId;
   activeConfig: AnatomySystemConfig;
   activeViewName: string;
@@ -26,6 +27,7 @@ type InfoPanelProps = {
 };
 
 export function InfoPanel({
+  open,
   activeConfig,
   activeViewName,
   selectedAnatomyId,
@@ -60,7 +62,7 @@ export function InfoPanel({
     ? getLocalizedText(explicitDisplayName ?? { es: localizedDataName, en: `${localizedDataName}${muscularLaterality}` }, language)
     : null;
   return (
-    <aside className="anatomy-info-panel flex w-[340px] min-w-0 shrink-0 flex-col overflow-y-auto border-l border-line bg-surface">
+    <aside id="anatomy-info-panel" data-open={open} className="anatomy-info-panel flex w-[340px] min-w-0 shrink-0 flex-col overflow-y-auto border-l border-line bg-surface">
       <div className="border-b border-line px-5 pb-4 pt-4">
         <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("anatomyInformation")}</p>
 
@@ -103,13 +105,13 @@ export function InfoPanel({
       {selectedAnatomyId ? (
         <div className="sticky bottom-0 z-20 mt-auto shrink-0 border-t border-line bg-surface px-5 py-4">
           <p className="mb-2.5 text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("anatomyActions")}</p>
-          <div className="space-y-2">
-            {canExploreHeart && <Button variant="secondary" onClick={onExploreHeart} className="w-full whitespace-normal transition-all duration-150 active:scale-[0.98]">{t("anatomyExploreHeart")}</Button>}
+          <div className="flex flex-col gap-2">
+            {canExploreHeart && <Button variant="primary" onClick={onExploreHeart} className="w-full whitespace-normal">{t("anatomyExploreHeart")}</Button>}
             <Button
-              variant="secondary"
+              variant="ghost"
               disabled={favoriteSaved}
               onClick={onSaveFavorite}
-              className={`w-full whitespace-normal transition-all duration-200 active:scale-[0.98] ${
+              className={`w-full whitespace-normal ${
                 favoriteSaved ? "border-success/60 bg-success-soft text-success" : ""
               }`}
             >
@@ -125,12 +127,12 @@ export function InfoPanel({
               )}
             </Button>
             <Button
-              variant="primary"
+              variant="ghost"
               onClick={onAskAI}
-              className="group w-full whitespace-normal shadow-xs transition-all duration-200 hover:shadow-ds-raised active:scale-[0.98]"
+              className="w-full whitespace-normal"
             >
               <span className="flex items-center justify-center gap-2">
-                <svg className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
                 {t("anatomyAskAI")}

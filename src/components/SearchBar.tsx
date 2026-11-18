@@ -2,7 +2,6 @@ import { useRef, useEffect, useCallback, useState, useMemo, type KeyboardEvent a
 
 import { type AnatomySystemId } from "../config/anatomySystems";
 import { systemTranslationKeys, useI18n } from "../i18n";
-import { Badge } from "../components/ui";
 import { searchAnatomy, getSearchEntriesBySystem } from "../search/anatomySearchIndex";
 import type { SearchEntry } from "../search/anatomySearchIndex";
 import { getAnatomyDisplayName } from "../utils/anatomyDisplayName";
@@ -23,12 +22,12 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
-    return searchAnatomy(query, { limit: 50 });
+    return searchAnatomy(query, { limit: 12 });
   }, [query]);
 
   const systemSuggestions = useMemo(() => {
     if (!currentSystem || query.trim()) return [];
-    return getSearchEntriesBySystem(currentSystem).slice(0, 20);
+    return getSearchEntriesBySystem(currentSystem).slice(0, 8);
   }, [currentSystem, query]);
 
   const open = useCallback(() => setIsOpen(true), []);
@@ -137,25 +136,22 @@ export function SearchBar({ onSelect, currentSystem, className = "" }: SearchBar
               aria-selected={index === highlightedIndex}
               onClick={() => handleSelect(entry)}
               onMouseEnter={() => setHighlightedIndex(index)}
-              className={`search-item-enter group relative w-full px-4 py-3 text-left text-body transition-all duration-150 ${
+              className={`group relative w-full px-4 py-3 text-left text-body transition-colors duration-150 ${
                 index === highlightedIndex
-                  ? "bg-accent-soft/70 pl-5 text-accent before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-accent"
-                  : "hover:bg-canvas-muted hover:pl-5"
+                  ? "bg-accent-soft/70 text-accent before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-accent"
+                  : "hover:bg-canvas-muted"
               }`}
-              style={{ animationDelay: `${Math.min(index * 20, 160)}ms` }}
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium text-ink transition-colors group-hover:text-accent">{getAnatomyDisplayName(entry.anatomyId, language)}</p>
-                  <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                    <Badge variant="info" className="text-xs transition-transform duration-150 group-hover:scale-105">{t(systemTranslationKeys[entry.system])}</Badge>
-                    <Badge variant="neutral" className="text-xs">{entry.layer}</Badge>
-                    {entry.laterality && <Badge variant="info" className="text-xs">{entry.laterality === "left" ? t("searchLeft") : entry.laterality === "right" ? t("searchRight") : t("searchMidline")}</Badge>}
-                    {entry.hasEducationalCard && <Badge variant="success" className="text-xs">{t("searchCard")}</Badge>}
-                  </div>
-                  {entry.region && <p className="mt-1 truncate text-caption text-ink-muted">{entry.region}</p>}
+                  <p className="line-clamp-2 font-medium text-ink">{getAnatomyDisplayName(entry.anatomyId, language)}</p>
+                  <p className="mt-1 truncate text-caption text-ink-muted">
+                    {t(systemTranslationKeys[entry.system])}
+                    {entry.region ? ` · ${entry.region}` : ` · ${entry.layer}`}
+                    {entry.laterality ? ` · ${entry.laterality === "left" ? t("searchLeft") : entry.laterality === "right" ? t("searchRight") : t("searchMidline")}` : ""}
+                    {entry.hasEducationalCard ? ` · ${t("searchCard")}` : ""}
+                  </p>
                 </div>
-                <kbd className="hidden items-center rounded-ds-sm bg-canvas-muted px-2 py-1 text-caption text-ink-subtle transition-all duration-150 group-hover:bg-accent group-hover:text-white sm:inline-flex">{t("searchEnter")}</kbd>
               </div>
             </button>
           ))}

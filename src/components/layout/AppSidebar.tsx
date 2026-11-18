@@ -54,6 +54,8 @@ export function AppSidebar({ currentView, onNavigate }: AppSidebarProps) {
         key={id}
         type="button"
         aria-current={isActive ? "page" : undefined}
+        aria-label={t(label)}
+        title={t(label)}
         onClick={() => onNavigate(id)}
         className={`sidebar-item group relative flex w-full items-center gap-3 rounded-ds-sm px-3 py-2.5 text-left text-label font-medium transition-all duration-200 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
           isActive
@@ -64,7 +66,7 @@ export function AppSidebar({ currentView, onNavigate }: AppSidebarProps) {
         <span className="transition-transform duration-200 group-hover:scale-110">
           <NavigationIcon name={icon} />
         </span>
-        <span className="min-w-0 truncate">{t(label)}</span>
+        <span className="sidebar-item-label min-w-0 truncate">{t(label)}</span>
       </button>
     );
   };
@@ -73,7 +75,7 @@ export function AppSidebar({ currentView, onNavigate }: AppSidebarProps) {
     <nav className="flex h-full flex-col gap-6 overflow-y-auto bg-surface p-4" aria-label={t("navMain")}>
       <div className="space-y-1">{primaryNavigation.map(renderItem)}</div>
       <div className="border-t border-line pt-5">
-        <p className="mb-3 px-2 text-caption font-semibold uppercase tracking-wider text-ink-subtle">
+        <p className="sidebar-account-label mb-3 px-2 text-caption font-semibold uppercase tracking-wider text-ink-subtle">
           {t("navAccount")}
         </p>
         <div className="space-y-1">{secondaryNavigation.map(renderItem)}</div>

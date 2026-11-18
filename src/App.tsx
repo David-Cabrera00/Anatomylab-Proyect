@@ -83,6 +83,8 @@ type CardiovascularView =
 
 function App() {
   const [appView, setAppView] = useState<AppView>("login");
+  const [contextPanelOpen, setContextPanelOpen] = useState(false);
+  const [infoPanelOpen, setInfoPanelOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [backendSession, setBackendSession] = useState<BackendSession | null>(null);
   const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced" | "error">("idle");
@@ -159,6 +161,10 @@ function App() {
 const handleStructureSelect = useCallback((anatomyId: string | null) => {
     setSelectedAnatomyId(anatomyId);
     setActiveVisualMode(null);
+    if (anatomyId) {
+      setInfoPanelOpen(true);
+      setContextPanelOpen(false);
+    }
   }, []);
 
   const selectedAnatomyEntry = selectedAnatomyId
@@ -506,6 +512,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
     );
 
     handleStructureSelect(null);
+    setInfoPanelOpen(false);
 
     setViewerAction(
       null
@@ -891,19 +898,24 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
         {appView === "anatomy" ? (
         <AnatomyView>
             <div className="relative flex min-h-0 min-w-0 flex-1">
+            <div className="anatomy-panel-switcher absolute right-6 top-4 z-40 hidden gap-1 rounded-ds-md border border-line bg-surface p-1 shadow-ds-floating">
+              <button type="button" aria-controls="anatomy-context-panel" aria-expanded={contextPanelOpen} onClick={() => { setContextPanelOpen((open) => !open); setInfoPanelOpen(false); }} className="anatomy-context-toggle hidden rounded-ds-sm px-3 py-2 text-label text-ink focus-visible:outline-2 focus-visible:outline-accent" data-active={contextPanelOpen}>{t("anatomyContext")}</button>
+              <button type="button" aria-controls="anatomy-info-panel" aria-expanded={infoPanelOpen} onClick={() => { setInfoPanelOpen((open) => !open); setContextPanelOpen(false); }} className="anatomy-info-toggle rounded-ds-sm px-3 py-2 text-label text-ink focus-visible:outline-2 focus-visible:outline-accent" data-active={infoPanelOpen}>{t("anatomyInformation")}</button>
+            </div>
             {/* =================================================
                 VISOR 3D
             ================================================= */}
 
         <ContextPanel
+          open={contextPanelOpen}
           activeSystem={activeSystem}
           activeConfig={activeConfig}
           activeLayer={activeLayer}
           activeLayers={activeLayers}
           studyMode={studyMode}
           heartDetail={activeSystem === "cardiovascular" && cardiovascularView === "heart-detail"}
-          onChangeSystem={changeSystem}
-          onChangeLayer={changeLayer}
+          onChangeSystem={(system) => { changeSystem(system); setContextPanelOpen(false); }}
+          onChangeLayer={(layer) => { changeLayer(layer); setContextPanelOpen(false); }}
           onReturnToOverview={returnToOverview}
         />
 
@@ -928,6 +940,7 @@ const handleStructureSelect = useCallback((anatomyId: string | null) => {
         ================================================= */}
 
         <InfoPanel
+          open={infoPanelOpen}
           activeSystem={activeSystem}
           activeConfig={activeConfig}
           activeViewName={activeViewName}

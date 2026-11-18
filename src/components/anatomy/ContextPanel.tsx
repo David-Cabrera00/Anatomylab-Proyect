@@ -3,6 +3,7 @@ import { anatomySystemList } from "../../config/anatomySystems";
 import { anatomyLayerTranslationKeys, anatomyLegendTranslationKeys, systemFullNameTranslationKeys, systemTranslationKeys, useI18n } from "../../i18n";
 
 type ContextPanelProps = {
+  open: boolean;
   activeSystem: AnatomySystemId;
   activeConfig: AnatomySystemConfig;
   activeLayer: AnatomyLayerId;
@@ -15,6 +16,7 @@ type ContextPanelProps = {
 };
 
 export function ContextPanel({
+  open,
   activeSystem,
   activeConfig,
   activeLayer,
@@ -28,7 +30,7 @@ export function ContextPanel({
   const { t } = useI18n();
 
   return (
-    <aside className="anatomy-context-panel flex w-[236px] min-w-0 shrink-0 flex-col overflow-y-auto border-r border-line bg-surface">
+    <aside id="anatomy-context-panel" data-open={open} className="anatomy-context-panel flex w-[236px] min-w-0 shrink-0 flex-col overflow-y-auto border-r border-line bg-surface">
       <div className="border-b border-line px-4 py-4">
         <p className="text-caption font-semibold uppercase tracking-[0.14em] text-ink-subtle">{t("anatomyContext")}</p>
         <div className="mt-2 flex items-center gap-2">

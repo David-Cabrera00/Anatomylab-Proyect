@@ -24,7 +24,7 @@ export function ViewportFrame({ children, label, metadata, hint }: ViewportFrame
 
         <div className="h-full min-h-0 w-full">{children}</div>
 
-        <p className="pointer-events-none absolute bottom-4 left-5 z-10 rounded-full border border-line bg-surface/80 px-2.5 py-1 text-caption text-ink-subtle shadow-xs backdrop-blur-sm">{hint}</p>
+        <p className="viewer-hint pointer-events-none absolute bottom-4 left-5 z-10 rounded-full border border-line bg-surface/80 px-2.5 py-1 text-caption text-ink-subtle shadow-xs backdrop-blur-sm">{hint}</p>
       </div>
     </div>
   );

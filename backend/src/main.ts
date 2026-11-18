@@ -26,10 +26,11 @@ async function bootstrap() {
       timestamp: new Date().toISOString(),
     });
   });
-  const rawCors = config.get<string>("CORS_ORIGIN", "*");
-  const allowedOrigins = rawCors === "*"
-    ? true
-    : rawCors.split(",").map((origin) => origin.trim());
+  const desktopOrigins = ["http://tauri.localhost", "http://localhost:1420", "http://127.0.0.1:1420"];
+  const rawCors = config.get<string>("CORS_ORIGIN", "");
+  const allowedOrigins = rawCors.trim() && rawCors.trim() !== "*"
+    ? rawCors.split(",").map((origin) => origin.trim()).filter(Boolean)
+    : desktopOrigins;
 
   app.enableCors({
     origin: allowedOrigins,
